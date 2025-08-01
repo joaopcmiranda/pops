@@ -36,15 +36,31 @@ A personal trip planning application built with React, TypeScript, and Vite to o
 - [ ] **Mobile Responsive Design** - Make app work beautifully on phones/tablets
 - [ ] **Budget Calculator** - Add expense tracking and budget management
 
+### 🚀 **Backend & Production**
+
+- [ ] **Backend API Development** - Node.js/Express or Python/FastAPI backend
+  - Database design (PostgreSQL/MongoDB)
+  - User authentication & authorization
+  - Trip data persistence (itineraries, content, budget)
+  - RESTful API endpoints
+  - Data validation & security
+- [ ] **Multi-user Support** - User accounts, trip sharing, collaboration
+- [ ] **Database Integration** - Replace in-memory storage with persistent DB
+- [ ] **Authentication System** - Login, registration, JWT tokens
+- [ ] **API Client Integration** - Replace services with API calls
+- [ ] **Deployment Setup** - Docker, CI/CD, hosting (Vercel + Railway/Supabase)
+
 ### 🎯 **Future Enhancements**
 
 - [ ] **Hover Animations** - Add micro-interactions for polished UI
 - [ ] **Loading States** - Skeleton components and loading indicators
 - [ ] **Search & Filtering** - Find content and itinerary items quickly
-- [ ] **Image Upload** - Add photos to destinations and activities
+- [ ] **Image Upload** - Add photos to destinations and activities (requires backend)
 - [ ] **Interactive Maps** - Integration for location visualization
 - [ ] **Export to PDF** - Generate trip documents
 - [ ] **Offline Support** - Work without internet connection
+- [ ] **Real-time Collaboration** - Live updates when multiple users edit
+- [ ] **Trip Templates** - Pre-built templates for different Brazil destinations
 
 ## Tech Stack
 
