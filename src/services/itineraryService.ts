@@ -8,8 +8,6 @@ import {
   AccommodationItem,
   EventItem,
   WorkItem,
-  ActivityItem,
-  TransportItem,
   OverarchingEventItem
 } from '@/types/itinerary'
 
