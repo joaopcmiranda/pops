@@ -9,6 +9,7 @@ import {
   BarChart3,
   Settings,
   Home,
+  BookOpen,
 } from 'lucide-react'
 
 interface AppSidebarProps {
@@ -84,6 +85,14 @@ export function AppSidebar({
         <div className='nav-section-title' style={{ marginTop: '2rem' }}>
           Settings
         </div>
+
+        <button
+          className={`nav-item ${activeCategory === 'readme' ? 'active' : ''}`}
+          onClick={() => handleCategoryClick('readme')}
+        >
+          <BookOpen className='nav-item-icon' />
+          Documentation
+        </button>
 
         <button
           className={`nav-item ${activeCategory === 'settings' ? 'active' : ''}`}

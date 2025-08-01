@@ -5,6 +5,7 @@ import { AppSidebar } from '@/components/AppSidebar'
 import { Dashboard } from '@/components/Dashboard'
 import { ItineraryView } from '@/components/ItineraryView'
 import { CategoryPageMinimal } from '@/components/CategoryPageMinimal'
+import { ReadmeView } from '@/components/ReadmeView'
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -44,6 +45,10 @@ function App() {
           <p style={{ color: '#64748b' }}>Trip analytics coming soon...</p>
         </main>
       )
+    }
+
+    if (currentView === 'readme') {
+      return <ReadmeView />
     }
 
     if (currentView === 'settings') {
