@@ -2,23 +2,58 @@
 
 A personal trip planning application built with React, TypeScript, and Vite to organize an amazing Brazilian adventure!
 
-## Features
+## ✅ Current Features
 
-- **Destinations Management** - Research and organize places to visit
-- **Itinerary Planning** - Create detailed daily schedules
-- **Transport Tracking** - Manage flights, buses, and local transport
-- **Accommodation Organization** - Keep track of hotels and bookings
-- **Activities Planning** - Organize tours, restaurants, and attractions
-- **Budget Management** - Track expenses and cost planning
-- **Document Storage** - Organize travel documents and important info
+### 🗓️ **Comprehensive Itinerary System**
+
+- **Timeline View** - Beautiful day-by-day organization with stats
+- **Accommodation Management** - Hotels, friends' houses, parents' house, own house
+- **Event System** - Christmas, New Year's, etc. with people tracking and attendees
+- **Work Integration** - Research locations, interviews, remote work with company contacts
+- **Overarching Events** - Carnival support with sub-activities
+- **Sample Data** - Christmas dinner, parents' house stay, work interviews
+
+### 🎨 **Modern UI & Developer Experience**
+
+- **Beautiful Dashboard** - Overview cards and category navigation
+- **shadcn/ui Components** - Professional, consistent design system
+- **TypeScript** - Full type safety with strict ESLint rules (no `any` types!)
+- **Code Quality** - ESLint + Prettier + Husky pre-commit hooks
+- **Responsive Design** - Works on desktop (mobile improvements coming)
+
+### 📄 **Content Management Foundation**
+
+- **Markdown Support** - Content stored in `/content` directory
+- **Content Service** - CRUD operations for trip content
+- **Sample Content** - Rio de Janeiro destination, sample itinerary
+
+## 🚧 In Progress & Todo
+
+### 🔧 **Next Up**
+
+- [ ] **Fix CategoryPage Navigation** - Debug import issues to enable destinations/documents viewing
+- [ ] **Content Editing System** - Rich editor for creating/editing trip content
+- [ ] **Mobile Responsive Design** - Make app work beautifully on phones/tablets
+- [ ] **Budget Calculator** - Add expense tracking and budget management
+
+### 🎯 **Future Enhancements**
+
+- [ ] **Hover Animations** - Add micro-interactions for polished UI
+- [ ] **Loading States** - Skeleton components and loading indicators
+- [ ] **Search & Filtering** - Find content and itinerary items quickly
+- [ ] **Image Upload** - Add photos to destinations and activities
+- [ ] **Interactive Maps** - Integration for location visualization
+- [ ] **Export to PDF** - Generate trip documents
+- [ ] **Offline Support** - Work without internet connection
 
 ## Tech Stack
 
 - **Frontend**: React 19 with TypeScript
 - **Build Tool**: Vite
-- **Styling**: Tailwind CSS
+- **Styling**: Tailwind CSS v4
 - **UI Components**: shadcn/ui
 - **Icons**: Lucide React
+- **Code Quality**: ESLint + Prettier + Husky
 - **Content Management**: Markdown files in `/content` directory
 
 ## Getting Started
@@ -72,37 +107,52 @@ Simply add markdown files to these directories and the app will automatically lo
 - `yarn dev` - Start development server
 - `yarn build` - Build for production
 - `yarn preview` - Preview production build
-- `yarn lint` - Run ESLint
+- `yarn lint` - Run ESLint with TypeScript rules
+- `yarn lint:fix` - Auto-fix ESLint issues
+- `yarn format` - Format code with Prettier
+- `yarn type-check` - Run TypeScript type checking
 
 ### Project Structure
 
 ```
 src/
 ├── components/
-│   └── ui/           # shadcn/ui components
+│   ├── ui/              # shadcn/ui components (Card, Button, etc.)
+│   ├── AppSidebar.tsx   # Main navigation sidebar
+│   ├── AppHeader.tsx    # Top navigation header
+│   ├── Dashboard.tsx    # Main dashboard with overview
+│   ├── ItineraryView.tsx # Timeline view for trip planning
+│   ├── CategoryPage.tsx # Content category displays (needs debugging)
+│   └── ContentViewer.tsx # Markdown content renderer
+├── services/
+│   ├── contentService.ts    # Content CRUD operations
+│   └── itineraryService.ts  # Itinerary management with sample data
+├── types/
+│   └── itinerary.ts    # TypeScript interfaces for trip data
 ├── lib/
-│   └── utils.ts      # Utility functions
-└── App.tsx           # Main application component
+│   └── utils.ts        # Utility functions (cn, etc.)
+└── App.tsx             # Main application component
 
-content/              # Markdown content files
-├── destinations/
-├── itinerary/
-├── transport/
-├── accommodation/
-├── activities/
-├── budget/
-└── documents/
+content/                # Markdown content files
+├── destinations/       # Rio de Janeiro sample content
+├── itinerary/         # Sample day planning
+├── transport/         # (empty, ready for content)
+├── accommodation/     # (empty, ready for content)
+├── activities/        # (empty, ready for content)
+├── budget/           # (empty, ready for content)
+└── documents/        # (empty, ready for content)
 ```
 
-## Future Enhancements
+## 🤖 Development Notes
 
-- Markdown file parsing and display
-- Search and filtering functionality
-- Interactive maps integration
-- Expense tracking with charts
-- Export to PDF functionality
-- Offline support
-- Mobile responsiveness improvements
+**For Claude Code Assistant:**
+
+- Always read this README before starting work
+- Update the "In Progress & Todo" section when completing tasks
+- Move completed items from Todo to "Current Features"
+- Add new features discovered during development to the appropriate sections
+- Keep the project structure updated as new files are added
+- Update available scripts when new npm scripts are added
 
 ## License
 
