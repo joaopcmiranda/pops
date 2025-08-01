@@ -151,11 +151,12 @@ export class ItineraryService {
     const index = this.items.findIndex(item => item.id === id)
     if (index === -1) return false
 
+    // Type assertion to ensure TypeScript understands the update is valid
     this.items[index] = {
       ...this.items[index],
       ...updates,
       updatedAt: new Date(),
-    }
+    } as ItineraryItem
     return true
   }
 

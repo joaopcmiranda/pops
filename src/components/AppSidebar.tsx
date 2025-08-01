@@ -1,6 +1,7 @@
 import {
   MapPin,
   Calendar,
+  CalendarDays,
   Plane,
   Home as HomeIcon,
   Activity,
@@ -54,6 +55,14 @@ export function AppSidebar({
         >
           <Home className='nav-item-icon' />
           Dashboard
+        </button>
+
+        <button
+          className={`nav-item nav-item-hover focus-ring ${activeCategory === 'calendar' ? 'active' : ''}`}
+          onClick={() => handleCategoryClick('calendar')}
+        >
+          <CalendarDays className='nav-item-icon' />
+          Calendar
         </button>
 
         <button

@@ -12,7 +12,9 @@
     "format:check": "prettier --check .",
     "type-check": "tsc --noEmit",
     "preview": "vite preview",
-    "prepare": "husky"
+    "prepare": "husky",
+    "deploy:test": "./scripts/test-deployment.sh",
+    "deploy:health": "./scripts/health-check.sh"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.11",
@@ -31,6 +33,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
+    "@types/node": "^24.1.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@typescript-eslint/eslint-plugin": "^8.38.0",

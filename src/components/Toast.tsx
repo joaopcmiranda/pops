@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
-import { useState, createContext, useContext, ReactNode } from 'react'
+import { useState, createContext, useContext } from 'react'
+import type { ReactNode } from 'react'
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react'
 import { Button } from './ui/button'
 
@@ -220,7 +221,7 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
             size='sm'
             onClick={toast.action.onClick}
             style={{ marginTop: '0.5rem', fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}
-            className='button-hover'
+            className='button-hover button-entrance'
           >
             {toast.action.label}
           </Button>

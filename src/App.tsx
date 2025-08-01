@@ -1,9 +1,18 @@
 import { useState } from 'react'
-import { MapPin, Calendar, Plane, Home, Activity, DollarSign, FileText } from 'lucide-react'
+import {
+  MapPin,
+  Calendar as CalIcon,
+  Plane,
+  Home,
+  Activity,
+  DollarSign,
+  FileText,
+} from 'lucide-react'
 import { AppHeader } from '@/components/AppHeader'
 import { AppSidebar } from '@/components/AppSidebar'
 import { Dashboard } from '@/components/Dashboard'
 import { ItineraryView } from '@/components/ItineraryView'
+import { Calendar } from '@/components/Calendar'
 import { CategoryPageMinimal } from '@/components/CategoryPageMinimal'
 import { ReadmeView } from '@/components/ReadmeView'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
@@ -24,7 +33,7 @@ function App() {
 
   const categoryMetadata = {
     destinations: { name: 'Destinations', icon: MapPin },
-    itinerary: { name: 'Itinerary', icon: Calendar },
+    itinerary: { name: 'Itinerary', icon: CalIcon },
     transport: { name: 'Transport', icon: Plane },
     accommodation: { name: 'Accommodation', icon: Home },
     activities: { name: 'Activities', icon: Activity },
@@ -39,6 +48,21 @@ function App() {
 
     if (currentView === 'itinerary') {
       return <ItineraryView />
+    }
+
+    if (currentView === 'calendar') {
+      return (
+        <Calendar
+          onEventClick={event => {
+            console.log('Event clicked:', event)
+            // Could open event details modal here
+          }}
+          onAddEvent={date => {
+            console.log('Add event for date:', date)
+            // Could open add event modal here
+          }}
+        />
+      )
     }
 
     if (currentView === 'analytics') {

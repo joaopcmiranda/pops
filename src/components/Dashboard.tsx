@@ -216,8 +216,8 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
             </h2>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <Button
-                variant='outline'
-                className='button-hover'
+                variant='default'
+                className='button-hover button-premium button-entrance'
                 onClick={() => onCategorySelect('itinerary')}
               >
                 <Calendar style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
@@ -226,8 +226,8 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
 
               {/* Demo notification button (remove in production) */}
               <Button
-                variant='outline'
-                className='button-hover'
+                variant='secondary'
+                className='button-hover button-entrance'
                 onClick={() =>
                   showSuccess('Trip Updated!', 'Your Brazil itinerary has been saved successfully.')
                 }
@@ -312,7 +312,10 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
                 <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>
                   Start planning your Brazil trip by adding events to your itinerary.
                 </p>
-                <Button className='button-hover' onClick={() => onCategorySelect('itinerary')}>
+                <Button
+                  className='button-hover button-premium button-entrance'
+                  onClick={() => onCategorySelect('itinerary')}
+                >
                   <Plus style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
                   Add Your First Event
                 </Button>
@@ -355,6 +358,32 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
                     </p>
                     <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>
                       {categoryMetadata.destinations || 0} saved
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card
+              className='card-hover cursor-pointer'
+              onClick={() => onCategorySelect('calendar')}
+            >
+              <CardContent style={{ padding: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <Calendar style={{ width: '20px', height: '20px', color: '#8b5cf6' }} />
+                  <div>
+                    <p
+                      style={{
+                        fontSize: '0.875rem',
+                        fontWeight: '500',
+                        color: '#0f172a',
+                        margin: 0,
+                      }}
+                    >
+                      View Calendar
+                    </p>
+                    <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>
+                      Full trip timeline
                     </p>
                   </div>
                 </div>
