@@ -32,28 +32,24 @@ function App() {
     if (currentView === 'dashboard') {
       return <Dashboard onCategorySelect={handleCategorySelect} />
     }
-    
+
     if (currentView === 'itinerary') {
       return <ItineraryView />
     }
-    
+
     if (currentView === 'analytics') {
       return (
-        <main className="app-content">
-          <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#0f172a' }}>
-            Analytics
-          </h1>
+        <main className='app-content'>
+          <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#0f172a' }}>Analytics</h1>
           <p style={{ color: '#64748b' }}>Trip analytics coming soon...</p>
         </main>
       )
     }
-    
+
     if (currentView === 'settings') {
       return (
-        <main className="app-content">
-          <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#0f172a' }}>
-            Settings
-          </h1>
+        <main className='app-content'>
+          <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#0f172a' }}>Settings</h1>
           <p style={{ color: '#64748b' }}>App settings coming soon...</p>
         </main>
       )
@@ -63,10 +59,8 @@ function App() {
     const meta = categoryMetadata[currentView as keyof typeof categoryMetadata]
     if (meta) {
       return (
-        <main className="app-content">
-          <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#0f172a' }}>
-            {meta.name}
-          </h1>
+        <main className='app-content'>
+          <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#0f172a' }}>{meta.name}</h1>
           <p style={{ color: '#64748b' }}>
             {meta.name} content will be displayed here. CategoryPage component needs debugging.
           </p>
@@ -79,14 +73,14 @@ function App() {
   }
 
   return (
-    <div className="app-layout">
+    <div className='app-layout'>
       <AppSidebar
         isOpen={sidebarOpen}
         activeCategory={activeCategory}
         onCategorySelect={handleCategorySelect}
       />
-      
-      <div className="app-main">
+
+      <div className='app-main'>
         <AppHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
         {renderCurrentView()}
       </div>

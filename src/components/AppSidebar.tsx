@@ -1,14 +1,14 @@
-import { 
-  MapPin, 
-  Calendar, 
-  Plane, 
-  Home as HomeIcon, 
-  Activity, 
-  DollarSign, 
+import {
+  MapPin,
+  Calendar,
+  Plane,
+  Home as HomeIcon,
+  Activity,
+  DollarSign,
   FileText,
   BarChart3,
   Settings,
-  Home
+  Home,
 } from 'lucide-react'
 
 interface AppSidebarProps {
@@ -17,7 +17,11 @@ interface AppSidebarProps {
   onCategorySelect?: (category: string) => void
 }
 
-export function AppSidebar({ isOpen = true, activeCategory = 'dashboard', onCategorySelect }: AppSidebarProps) {
+export function AppSidebar({
+  isOpen = true,
+  activeCategory = 'dashboard',
+  onCategorySelect,
+}: AppSidebarProps) {
   const categories = [
     { id: 'destinations', name: 'Destinations', icon: MapPin },
     { id: 'itinerary', name: 'Itinerary', icon: Calendar },
@@ -34,36 +38,36 @@ export function AppSidebar({ isOpen = true, activeCategory = 'dashboard', onCate
 
   return (
     <aside className={`app-sidebar ${isOpen ? 'open' : ''}`}>
-      <div className="sidebar-header">
-        <a href="#" className="sidebar-brand">
+      <div className='sidebar-header'>
+        <a href='#' className='sidebar-brand'>
           🇧🇷
           <span>Brazil Trip</span>
         </a>
       </div>
-      
-      <nav className="sidebar-nav">
-        <div className="nav-section-title">Overview</div>
-        <button 
+
+      <nav className='sidebar-nav'>
+        <div className='nav-section-title'>Overview</div>
+        <button
           className={`nav-item ${activeCategory === 'dashboard' ? 'active' : ''}`}
           onClick={() => handleCategoryClick('dashboard')}
         >
-          <Home className="nav-item-icon" />
+          <Home className='nav-item-icon' />
           Dashboard
         </button>
-        
-        <button 
+
+        <button
           className={`nav-item ${activeCategory === 'analytics' ? 'active' : ''}`}
           onClick={() => handleCategoryClick('analytics')}
         >
-          <BarChart3 className="nav-item-icon" />
+          <BarChart3 className='nav-item-icon' />
           Analytics
         </button>
-        
-        <div className="nav-section-title" style={{ marginTop: '2rem' }}>
+
+        <div className='nav-section-title' style={{ marginTop: '2rem' }}>
           Trip Planning
         </div>
-        
-        {categories.map((category) => {
+
+        {categories.map(category => {
           const IconComponent = category.icon
           return (
             <button
@@ -71,21 +75,21 @@ export function AppSidebar({ isOpen = true, activeCategory = 'dashboard', onCate
               className={`nav-item ${activeCategory === category.id ? 'active' : ''}`}
               onClick={() => handleCategoryClick(category.id)}
             >
-              <IconComponent className="nav-item-icon" />
+              <IconComponent className='nav-item-icon' />
               {category.name}
             </button>
           )
         })}
-        
-        <div className="nav-section-title" style={{ marginTop: '2rem' }}>
+
+        <div className='nav-section-title' style={{ marginTop: '2rem' }}>
           Settings
         </div>
-        
-        <button 
+
+        <button
           className={`nav-item ${activeCategory === 'settings' ? 'active' : ''}`}
           onClick={() => handleCategoryClick('settings')}
         >
-          <Settings className="nav-item-icon" />
+          <Settings className='nav-item-icon' />
           Settings
         </button>
       </nav>

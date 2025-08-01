@@ -1,28 +1,28 @@
 // Core itinerary types for flexible trip planning
 
-export type ItemType = 
-  | 'accommodation' 
-  | 'event' 
-  | 'work' 
+export type ItemType =
+  | 'accommodation'
+  | 'event'
+  | 'work'
   | 'activity'
   | 'transport'
   | 'overarching-event'
 
-export type AccommodationType = 
-  | 'hotel' 
-  | 'friends-house' 
-  | 'parents-house' 
+export type AccommodationType =
+  | 'hotel'
+  | 'friends-house'
+  | 'parents-house'
   | 'own-house'
   | 'airbnb'
   | 'hostel'
 
-export type EventType = 
+export type EventType =
   | 'holiday' // Christmas, New Year's, etc.
-  | 'social'  // Parties, meetups
+  | 'social' // Parties, meetups
   | 'cultural' // Concerts, festivals
   | 'personal' // Birthdays, etc.
 
-export type WorkType = 
+export type WorkType =
   | 'research-location'
   | 'interview'
   | 'remote-work'
@@ -147,11 +147,11 @@ export interface OverarchingEventItem extends BaseItineraryItem {
   specialNotes?: string[]
 }
 
-export type ItineraryItem = 
-  | AccommodationItem 
-  | EventItem 
-  | WorkItem 
-  | ActivityItem 
+export type ItineraryItem =
+  | AccommodationItem
+  | EventItem
+  | WorkItem
+  | ActivityItem
   | TransportItem
   | OverarchingEventItem
 

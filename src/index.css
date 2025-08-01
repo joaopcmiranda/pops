@@ -54,13 +54,19 @@
     border-color: hsl(var(--border));
     box-sizing: border-box;
   }
-  
+
   html {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family:
+      'Inter',
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      Roboto,
+      sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
+
   body {
     background-color: #f8fafc;
     color: #0f172a;
@@ -68,8 +74,13 @@
     padding: 0;
     line-height: 1.6;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
     line-height: 1.2;
@@ -97,13 +108,27 @@
   border-color: #bfdbfe;
 }
 
-.icon-blue { background-color: #3b82f6; }
-.icon-green { background-color: #10b981; }
-.icon-purple { background-color: #8b5cf6; }
-.icon-orange { background-color: #f97316; }
-.icon-red { background-color: #ef4444; }
-.icon-yellow { background-color: #eab308; }
-.icon-gray { background-color: #6b7280; }
+.icon-blue {
+  background-color: #3b82f6;
+}
+.icon-green {
+  background-color: #10b981;
+}
+.icon-purple {
+  background-color: #8b5cf6;
+}
+.icon-orange {
+  background-color: #f97316;
+}
+.icon-red {
+  background-color: #ef4444;
+}
+.icon-yellow {
+  background-color: #eab308;
+}
+.icon-gray {
+  background-color: #6b7280;
+}
 
 /* App Layout */
 .app-layout {
@@ -233,15 +258,15 @@
     z-index: 50;
     transition: left 0.3s ease;
   }
-  
+
   .app-sidebar.open {
     left: 0;
   }
-  
+
   .app-main {
     width: 100%;
   }
-  
+
   .app-content {
     padding: 1rem;
   }

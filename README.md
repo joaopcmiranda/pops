@@ -24,23 +24,27 @@ A personal trip planning application built with React, TypeScript, and Vite to o
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 20.19.0+ or 22.12.0+
 - Yarn package manager
 
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/joaopcmiranda/brazil-trip-organizer.git
 cd brazil-trip-organizer
 ```
 
 2. Install dependencies:
+
 ```bash
 yarn install
 ```
 
 3. Start the development server:
+
 ```bash
 yarn dev
 ```
@@ -52,7 +56,7 @@ yarn dev
 The app uses a markdown-based content system located in the `/content` directory:
 
 - `destinations/` - Information about places to visit
-- `itinerary/` - Daily schedules and trip timeline  
+- `itinerary/` - Daily schedules and trip timeline
 - `transport/` - Flight bookings, train tickets, etc.
 - `accommodation/` - Hotel bookings and lodging details
 - `activities/` - Tours, experiences, restaurants
@@ -82,7 +86,7 @@ src/
 
 content/              # Markdown content files
 ├── destinations/
-├── itinerary/ 
+├── itinerary/
 ├── transport/
 ├── accommodation/
 ├── activities/

@@ -6,7 +6,7 @@ export interface ContentItem {
   category: string
   slug: string
   lastModified?: Date
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 // For now, we'll manually import the content files
@@ -42,8 +42,8 @@ The vibrant city known for its beaches, culture, and iconic landmarks.
 ## Notes
 - Plan for at least 3-4 days to see main attractions
 - Book Christ the Redeemer tickets in advance
-- Be aware of safety in certain areas, especially at night`
-    }
+- Be aware of safety in certain areas, especially at night`,
+    },
   ],
   itinerary: [
     {
@@ -78,14 +78,14 @@ The vibrant city known for its beaches, culture, and iconic landmarks.
 ## Notes
 - Keep first day light due to jet lag
 - Confirm hotel check-in time in advance
-- Have some Brazilian Reais ready for small purchases`
-    }
+- Have some Brazilian Reais ready for small purchases`,
+    },
   ],
   transport: [],
   accommodation: [],
   activities: [],
   budget: [],
-  documents: []
+  documents: [],
 }
 
 export class ContentService {
@@ -147,7 +147,7 @@ export class ContentService {
     contentDatabase[category][itemIndex] = {
       ...categoryContent[itemIndex],
       ...updates,
-      lastModified: new Date()
+      lastModified: new Date(),
     }
     return true
   }

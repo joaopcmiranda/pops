@@ -1,10 +1,10 @@
-import { 
-  ItineraryItem, 
-  ItineraryDay, 
+import {
+  ItineraryItem,
+  ItineraryDay,
   ItineraryFilters,
   Person,
   Location,
-  OverarchingEventItem
+  OverarchingEventItem,
 } from '@/types/itinerary'
 
 // Sample data for development
@@ -14,22 +14,22 @@ const samplePeople: Person[] = [
     name: 'Maria Santos',
     relationshipType: 'family',
     contactInfo: { phone: '+55 11 99999-1234' },
-    notes: 'Cousin in São Paulo'
+    notes: 'Cousin in São Paulo',
   },
   {
-    id: 'p2', 
+    id: 'p2',
     name: 'João Silva',
     relationshipType: 'friend',
     contactInfo: { whatsapp: '+55 21 88888-5678' },
-    notes: 'Friend from Rio, knows great restaurants'
+    notes: 'Friend from Rio, knows great restaurants',
   },
   {
     id: 'p3',
     name: 'Ana Costa',
     relationshipType: 'colleague',
     contactInfo: { email: 'ana@company.com' },
-    notes: 'Work contact for research interviews'
-  }
+    notes: 'Work contact for research interviews',
+  },
 ]
 
 const sampleLocations: Location[] = [
@@ -39,23 +39,23 @@ const sampleLocations: Location[] = [
     address: 'Av. Atlântica, 1702',
     city: 'Rio de Janeiro',
     state: 'RJ',
-    type: 'accommodation'
+    type: 'accommodation',
   },
   {
     id: 'l2',
     name: 'Christ the Redeemer',
     address: 'Parque Nacional da Tijuca',
-    city: 'Rio de Janeiro', 
+    city: 'Rio de Janeiro',
     state: 'RJ',
-    type: 'tourist-spot'
+    type: 'tourist-spot',
   },
   {
     id: 'l3',
     name: 'Parents House',
     city: 'São Paulo',
     state: 'SP',
-    type: 'accommodation'
-  }
+    type: 'accommodation',
+  },
 ]
 
 // Sample itinerary items
@@ -77,7 +77,7 @@ const sampleItinerary: ItineraryItem[] = [
     priority: 'high',
     tags: ['family', 'holidays'],
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   },
   {
     id: 'event1',
@@ -95,7 +95,7 @@ const sampleItinerary: ItineraryItem[] = [
     tags: ['family', 'christmas'],
     dresscode: 'Semi-formal',
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   },
   {
     id: 'work1',
@@ -106,11 +106,11 @@ const sampleItinerary: ItineraryItem[] = [
     startDate: new Date('2024-12-30T14:00:00'),
     endDate: new Date('2024-12-30T16:00:00'),
     isAllDay: false,
-    location: { 
-      id: 'l4', 
-      name: 'Startup Hub SP', 
-      city: 'São Paulo', 
-      type: 'workplace' 
+    location: {
+      id: 'l4',
+      name: 'Startup Hub SP',
+      city: 'São Paulo',
+      type: 'workplace',
     },
     attendees: [samplePeople[2]],
     status: 'planned',
@@ -121,8 +121,8 @@ const sampleItinerary: ItineraryItem[] = [
     preparationNotes: ['Review company background', 'Prepare interview questions'],
     followUpRequired: true,
     createdAt: new Date(),
-    updatedAt: new Date()
-  }
+    updatedAt: new Date(),
+  },
 ]
 
 export class ItineraryService {
@@ -143,7 +143,7 @@ export class ItineraryService {
     this.items.push({
       ...item,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     })
   }
 
@@ -154,7 +154,7 @@ export class ItineraryService {
     this.items[index] = {
       ...this.items[index],
       ...updates,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }
     return true
   }
@@ -176,16 +176,17 @@ export class ItineraryService {
     }
 
     if (filters.dateRange) {
-      filtered = filtered.filter(item => 
-        item.startDate >= filters.dateRange!.start && 
-        item.startDate <= filters.dateRange!.end
+      filtered = filtered.filter(
+        item =>
+          item.startDate >= filters.dateRange!.start && item.startDate <= filters.dateRange!.end
       )
     }
 
     if (filters.location) {
-      filtered = filtered.filter(item => 
-        item.location?.city.toLowerCase().includes(filters.location!.toLowerCase()) ||
-        item.location?.name.toLowerCase().includes(filters.location!.toLowerCase())
+      filtered = filtered.filter(
+        item =>
+          item.location?.city.toLowerCase().includes(filters.location!.toLowerCase()) ||
+          item.location?.name.toLowerCase().includes(filters.location!.toLowerCase())
       )
     }
 
@@ -200,9 +201,7 @@ export class ItineraryService {
     }
 
     if (filters.tags && filters.tags.length > 0) {
-      filtered = filtered.filter(item =>
-        item.tags?.some(tag => filters.tags!.includes(tag))
-      )
+      filtered = filtered.filter(item => item.tags?.some(tag => filters.tags!.includes(tag)))
     }
 
     return filtered
@@ -210,9 +209,10 @@ export class ItineraryService {
 
   // Get items organized by day
   static getItemsByDay(startDate?: Date, endDate?: Date): ItineraryDay[] {
-    const items = startDate && endDate 
-      ? this.getFilteredItems({ dateRange: { start: startDate, end: endDate } })
-      : this.getAllItems()
+    const items =
+      startDate && endDate
+        ? this.getFilteredItems({ dateRange: { start: startDate, end: endDate } })
+        : this.getAllItems()
 
     const itemsByDate = new Map<string, ItineraryItem[]>()
 
@@ -227,7 +227,7 @@ export class ItineraryService {
     return Array.from(itemsByDate.entries())
       .map(([dateStr, dayItems]) => ({
         date: new Date(dateStr),
-        items: dayItems.sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
+        items: dayItems.sort((a, b) => a.startDate.getTime() - b.startDate.getTime()),
       }))
       .sort((a, b) => a.date.getTime() - b.date.getTime())
   }
@@ -238,26 +238,32 @@ export class ItineraryService {
     if (items.length === 0) {
       return {
         totalItems: 0,
-        byType: {} as Record<any, number>,
+        byType: {} as Record<string, number>,
         byStatus: {},
         totalBudget: 0,
         timeSpan: {
           start: new Date(),
           end: new Date(),
-          totalDays: 0
-        }
+          totalDays: 0,
+        },
       }
     }
 
-    const byType = items.reduce((acc, item) => {
-      acc[item.type] = (acc[item.type] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
+    const byType = items.reduce(
+      (acc, item) => {
+        acc[item.type] = (acc[item.type] || 0) + 1
+        return acc
+      },
+      {} as Record<string, number>
+    )
 
-    const byStatus = items.reduce((acc, item) => {
-      acc[item.status] = (acc[item.status] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
+    const byStatus = items.reduce(
+      (acc, item) => {
+        acc[item.status] = (acc[item.status] || 0) + 1
+        return acc
+      },
+      {} as Record<string, number>
+    )
 
     const dates = items.map(item => item.startDate).sort((a, b) => a.getTime() - b.getTime())
     const start = dates[0]
@@ -277,7 +283,7 @@ export class ItineraryService {
       byType,
       byStatus,
       totalBudget,
-      timeSpan: { start, end, totalDays }
+      timeSpan: { start, end, totalDays },
     }
   }
 
