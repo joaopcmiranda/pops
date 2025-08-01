@@ -1,69 +1,105 @@
-# React + TypeScript + Vite
+# 🇧🇷 Brazil Trip Organizer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A personal trip planning application built with React, TypeScript, and Vite to organize an amazing Brazilian adventure!
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Destinations Management** - Research and organize places to visit
+- **Itinerary Planning** - Create detailed daily schedules
+- **Transport Tracking** - Manage flights, buses, and local transport
+- **Accommodation Organization** - Keep track of hotels and bookings
+- **Activities Planning** - Organize tours, restaurants, and attractions
+- **Budget Management** - Track expenses and cost planning
+- **Document Storage** - Organize travel documents and important info
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend**: React 19 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui
+- **Icons**: Lucide React
+- **Content Management**: Markdown files in `/content` directory
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting Started
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### Prerequisites
+- Node.js 20.19.0+ or 22.12.0+
+- Yarn package manager
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/joaopcmiranda/brazil-trip-organizer.git
+cd brazil-trip-organizer
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. Install dependencies:
+```bash
+yarn install
 ```
+
+3. Start the development server:
+```bash
+yarn dev
+```
+
+4. Open [http://localhost:5173](http://localhost:5173) in your browser
+
+## Content Management
+
+The app uses a markdown-based content system located in the `/content` directory:
+
+- `destinations/` - Information about places to visit
+- `itinerary/` - Daily schedules and trip timeline  
+- `transport/` - Flight bookings, train tickets, etc.
+- `accommodation/` - Hotel bookings and lodging details
+- `activities/` - Tours, experiences, restaurants
+- `budget/` - Cost breakdowns and expense tracking
+- `documents/` - Travel documents and important info
+
+Simply add markdown files to these directories and the app will automatically load and display them.
+
+## Development
+
+### Available Scripts
+
+- `yarn dev` - Start development server
+- `yarn build` - Build for production
+- `yarn preview` - Preview production build
+- `yarn lint` - Run ESLint
+
+### Project Structure
+
+```
+src/
+├── components/
+│   └── ui/           # shadcn/ui components
+├── lib/
+│   └── utils.ts      # Utility functions
+└── App.tsx           # Main application component
+
+content/              # Markdown content files
+├── destinations/
+├── itinerary/ 
+├── transport/
+├── accommodation/
+├── activities/
+├── budget/
+└── documents/
+```
+
+## Future Enhancements
+
+- Markdown file parsing and display
+- Search and filtering functionality
+- Interactive maps integration
+- Expense tracking with charts
+- Export to PDF functionality
+- Offline support
+- Mobile responsiveness improvements
+
+## License
+
+Private repository for personal use.
