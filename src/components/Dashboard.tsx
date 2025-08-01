@@ -14,6 +14,8 @@ import { Button } from './ui/button'
 import { SkeletonCard } from './ui/skeleton'
 import { ContentService } from '@/services/contentService'
 import { ItineraryService } from '@/services/itineraryService'
+import { useToast } from '@/components/Toast'
+import { ErrorScreen } from '@/components/ErrorScreen'
 import type { ItineraryItem } from '@/types/itinerary'
 
 interface DashboardProps {
@@ -22,28 +24,56 @@ interface DashboardProps {
 
 export function Dashboard({ onCategorySelect }: DashboardProps) {
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [categoryMetadata, setCategoryMetadata] = useState<Record<string, number>>({})
   const [upcomingItems, setUpcomingItems] = useState<ItineraryItem[]>([])
+  const { showError, showSuccess } = useToast()
+
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      // Load category metadata
+      const metadata = ContentService.getCategorySummary()
+      setCategoryMetadata(metadata)
+
+      // Load upcoming items
+      const allItems = ItineraryService.getAllItems()
+      const upcoming = allItems
+        .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+        .slice(0, 5)
+      setUpcomingItems(upcoming)
+
+      setLoading(false)
+    } catch (error) {
+      console.error('Error loading dashboard data:', error)
+      setError('Failed to load dashboard data')
+      setLoading(false)
+      showError('Loading Error', 'Unable to load your trip data. Please try refreshing the page.')
+    }
+  }
 
   useEffect(() => {
-    // Simulate loading
-    setTimeout(() => {
-      setCategoryMetadata(ContentService.getCategorySummary())
-      // Get upcoming items from itinerary
-      try {
-        const allItems = ItineraryService.getAllItems()
-        // For demo purposes, get some recent items since sample data might be in the past
-        const upcoming = allItems
-          .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
-          .slice(0, 5)
-        setUpcomingItems(upcoming)
-      } catch (error) {
-        console.error('Error loading itinerary items:', error)
-        setUpcomingItems([])
-      }
-      setLoading(false)
-    }, 200)
-  }, [])
+    // Simulate loading delay for demonstration
+    setTimeout(loadDashboardData, 200)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleRetry = () => {
+    loadDashboardData()
+  }
+
+  if (error) {
+    return (
+      <ErrorScreen
+        type='loading'
+        title='Dashboard Loading Error'
+        description={error}
+        onRetry={handleRetry}
+        showHome={false}
+      />
+    )
+  }
 
   const quickStats = [
     {
@@ -184,14 +214,28 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
             >
               What's Next
             </h2>
-            <Button
-              variant='outline'
-              className='button-hover'
-              onClick={() => onCategorySelect('itinerary')}
-            >
-              <Calendar style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
-              View Itinerary
-            </Button>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <Button
+                variant='outline'
+                className='button-hover'
+                onClick={() => onCategorySelect('itinerary')}
+              >
+                <Calendar style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
+                View Itinerary
+              </Button>
+
+              {/* Demo notification button (remove in production) */}
+              <Button
+                variant='outline'
+                className='button-hover'
+                onClick={() =>
+                  showSuccess('Trip Updated!', 'Your Brazil itinerary has been saved successfully.')
+                }
+                style={{ fontSize: '0.75rem', padding: '0.5rem' }}
+              >
+                Test Toast
+              </Button>
+            </div>
           </div>
 
           {loading ? (

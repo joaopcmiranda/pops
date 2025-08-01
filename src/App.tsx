@@ -6,6 +6,8 @@ import { Dashboard } from '@/components/Dashboard'
 import { ItineraryView } from '@/components/ItineraryView'
 import { CategoryPageMinimal } from '@/components/CategoryPageMinimal'
 import { ReadmeView } from '@/components/ReadmeView'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { ToastProvider } from '@/components/Toast'
 import '@/styles/animations.css'
 
 function App() {
@@ -78,18 +80,44 @@ function App() {
   }
 
   return (
-    <div className='app-layout'>
-      <AppSidebar
-        isOpen={sidebarOpen}
-        activeCategory={activeCategory}
-        onCategorySelect={handleCategorySelect}
-      />
+    <ToastProvider>
+      <ErrorBoundary
+        onError={(error, errorInfo) => {
+          console.error('App Error Boundary:', error, errorInfo)
+          // In production, you would send this to your error reporting service
+        }}
+      >
+        <div className='app-layout'>
+          <ErrorBoundary
+            fallback={
+              <div style={{ padding: '1rem', backgroundColor: '#fee2e2', color: '#dc2626' }}>
+                Navigation error occurred. Please refresh the page.
+              </div>
+            }
+          >
+            <AppSidebar
+              isOpen={sidebarOpen}
+              activeCategory={activeCategory}
+              onCategorySelect={handleCategorySelect}
+            />
+          </ErrorBoundary>
 
-      <div className='app-main'>
-        <AppHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
-        {renderCurrentView()}
-      </div>
-    </div>
+          <div className='app-main'>
+            <ErrorBoundary
+              fallback={
+                <div style={{ padding: '1rem', backgroundColor: '#fee2e2', color: '#dc2626' }}>
+                  Header error occurred. Please refresh the page.
+                </div>
+              }
+            >
+              <AppHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
+            </ErrorBoundary>
+
+            <ErrorBoundary>{renderCurrentView()}</ErrorBoundary>
+          </div>
+        </div>
+      </ErrorBoundary>
+    </ToastProvider>
   )
 }
 
