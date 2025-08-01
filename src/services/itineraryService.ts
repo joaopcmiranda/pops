@@ -1,8 +1,7 @@
 import { 
   ItineraryItem, 
   ItineraryDay, 
-  ItineraryFilters, 
-  ItineraryStats,
+  ItineraryFilters,
   Person,
   Location,
   OverarchingEventItem
@@ -234,7 +233,7 @@ export class ItineraryService {
   }
 
   // Statistics
-  static getStats(): ItineraryStats {
+  static getStats() {
     const items = this.getAllItems()
     if (items.length === 0) {
       return {
