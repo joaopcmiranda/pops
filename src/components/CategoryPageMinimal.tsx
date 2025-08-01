@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Plus, FileText, Eye } from 'lucide-react'
-import { ContentService, ContentItem } from '@/services/contentService'
+import { Plus, FileText, Eye, ArrowLeft } from 'lucide-react'
+import { ContentService, type ContentItem } from '@/services/contentService'
+import { ContentViewer } from '@/components/ContentViewer'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 
@@ -16,11 +17,35 @@ export function CategoryPageMinimal({
   categoryIcon: IconComponent,
 }: CategoryPageProps) {
   const [contentItems, setContentItems] = useState<ContentItem[]>([])
+  const [selectedContent, setSelectedContent] = useState<ContentItem | null>(null)
 
   useEffect(() => {
     const items = ContentService.getContentByCategory(category)
     setContentItems(items)
   }, [category])
+
+  const handleViewContent = (item: ContentItem) => {
+    setSelectedContent(item)
+  }
+
+  const handleBackToList = () => {
+    setSelectedContent(null)
+  }
+
+  // If viewing a specific content item, show the content viewer
+  if (selectedContent) {
+    return (
+      <main className='app-content'>
+        <div style={{ marginBottom: '2rem' }}>
+          <Button variant='outline' onClick={handleBackToList} style={{ marginBottom: '1rem' }}>
+            <ArrowLeft style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
+            Back to {categoryName}
+          </Button>
+        </div>
+        <ContentViewer content={selectedContent} />
+      </main>
+    )
+  }
 
   return (
     <main className='app-content'>
@@ -108,7 +133,11 @@ export function CategoryPageMinimal({
               </CardHeader>
               <CardContent>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <Button variant='outline' style={{ flex: 1 }}>
+                  <Button
+                    variant='outline'
+                    style={{ flex: 1 }}
+                    onClick={() => handleViewContent(item)}
+                  >
                     <Eye style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
                     View
                   </Button>

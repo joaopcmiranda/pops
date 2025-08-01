@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Plus, FileText, Eye } from 'lucide-react'
-import { ContentService, ContentItem } from '@/services/contentService'
+import { ContentService, type ContentItem } from '@/services/contentService'
 import { ContentViewer } from './ContentViewer'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'

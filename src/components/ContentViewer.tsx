@@ -1,6 +1,6 @@
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { ContentItem } from '@/services/contentService'
+import type { ContentItem } from '@/services/contentService'
 
 interface ContentViewerProps {
   content: ContentItem

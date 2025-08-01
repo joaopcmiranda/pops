@@ -31,10 +31,10 @@ A personal trip planning application built with React, TypeScript, and Vite to o
 
 ### 🔧 **Next Up**
 
-- [ ] **Fix CategoryPage Navigation** - Debug import issues to enable destinations/documents viewing
 - [ ] **Content Editing System** - Rich editor for creating/editing trip content
 - [ ] **Mobile Responsive Design** - Make app work beautifully on phones/tablets
 - [ ] **Budget Calculator** - Add expense tracking and budget management
+- [ ] **Content Display Enhancement** - Show Rio de Janeiro and sample content in category pages
 
 ### 🚀 **Backend & Production**
 
