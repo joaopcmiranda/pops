@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { BookOpen } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { SkeletonContent } from '@/components/ui/skeleton'
 
 export function ReadmeView() {
   const [readmeContent, setReadmeContent] = useState<string>('')
@@ -85,18 +86,39 @@ This documentation is integrated directly into the application for easy access t
 
   if (loading) {
     return (
-      <main className='app-content'>
-        <div style={{ textAlign: 'center', padding: '3rem' }}>
-          <BookOpen
-            style={{
-              width: '48px',
-              height: '48px',
-              color: '#94a3b8',
-              margin: '0 auto 1rem',
-              animation: 'pulse 2s infinite',
-            }}
-          />
-          <p style={{ color: '#64748b' }}>Loading documentation...</p>
+      <main className='app-content animate-fade-in'>
+        {/* Header */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            marginBottom: '2rem',
+          }}
+          className='animate-fade-in-up'
+        >
+          <BookOpen style={{ width: '32px', height: '32px', color: '#3b82f6' }} />
+          <div>
+            <h1
+              style={{
+                fontSize: '2rem',
+                fontWeight: '700',
+                color: '#0f172a',
+                margin: 0,
+                fontFamily: 'Poppins, sans-serif',
+              }}
+            >
+              Documentation
+            </h1>
+            <p style={{ color: '#64748b', fontSize: '1rem', margin: 0 }}>
+              Loading project documentation...
+            </p>
+          </div>
+        </div>
+
+        {/* Skeleton Content */}
+        <div style={{ maxWidth: '800px' }}>
+          <SkeletonContent />
         </div>
       </main>
     )

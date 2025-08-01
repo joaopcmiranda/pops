@@ -4,6 +4,7 @@ import { ContentService, type ContentItem } from '@/services/contentService'
 import { ContentViewer } from '@/components/ContentViewer'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
+import { SkeletonCard } from './ui/skeleton'
 
 interface CategoryPageProps {
   category: string
@@ -18,10 +19,16 @@ export function CategoryPageMinimal({
 }: CategoryPageProps) {
   const [contentItems, setContentItems] = useState<ContentItem[]>([])
   const [selectedContent, setSelectedContent] = useState<ContentItem | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const items = ContentService.getContentByCategory(category)
-    setContentItems(items)
+    setLoading(true)
+    // Simulate loading delay for demonstration
+    setTimeout(() => {
+      const items = ContentService.getContentByCategory(category)
+      setContentItems(items)
+      setLoading(false)
+    }, 300)
   }, [category])
 
   const handleViewContent = (item: ContentItem) => {
@@ -35,9 +42,14 @@ export function CategoryPageMinimal({
   // If viewing a specific content item, show the content viewer
   if (selectedContent) {
     return (
-      <main className='app-content'>
+      <main className='app-content animate-fade-in'>
         <div style={{ marginBottom: '2rem' }}>
-          <Button variant='outline' onClick={handleBackToList} style={{ marginBottom: '1rem' }}>
+          <Button
+            variant='outline'
+            onClick={handleBackToList}
+            style={{ marginBottom: '1rem' }}
+            className='button-hover focus-ring'
+          >
             <ArrowLeft style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
             Back to {categoryName}
           </Button>
@@ -48,7 +60,7 @@ export function CategoryPageMinimal({
   }
 
   return (
-    <main className='app-content'>
+    <main className='app-content animate-fade-in page-enter'>
       {/* Header */}
       <div
         style={{
@@ -78,14 +90,28 @@ export function CategoryPageMinimal({
           </div>
         </div>
 
-        <Button>
+        <Button className='button-hover focus-ring'>
           <Plus style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
           Add New
         </Button>
       </div>
 
       {/* Content List */}
-      {contentItems.length === 0 ? (
+      {loading ? (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+            gap: '1.5rem',
+          }}
+        >
+          {[1, 2, 3].map(i => (
+            <Card key={i}>
+              <SkeletonCard />
+            </Card>
+          ))}
+        </div>
+      ) : contentItems.length === 0 ? (
         <Card style={{ textAlign: 'center', padding: '3rem' }}>
           <CardContent>
             <FileText
@@ -109,7 +135,7 @@ export function CategoryPageMinimal({
             <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>
               Get started by adding your first {categoryName.toLowerCase().slice(0, -1)} item.
             </p>
-            <Button>
+            <Button className='button-hover focus-ring'>
               <Plus style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
               Add Your First {categoryName.slice(0, -1)}
             </Button>
@@ -123,8 +149,11 @@ export function CategoryPageMinimal({
             gap: '1.5rem',
           }}
         >
-          {contentItems.map(item => (
-            <Card key={item.id} className='category-card'>
+          {contentItems.map((item, index) => (
+            <Card
+              key={item.id}
+              className={`category-card card-hover animate-fade-in-up stagger-${index + 1}`}
+            >
               <CardHeader>
                 <CardTitle style={{ fontSize: '1.25rem' }}>{item.title}</CardTitle>
                 <CardDescription>
@@ -137,11 +166,12 @@ export function CategoryPageMinimal({
                     variant='outline'
                     style={{ flex: 1 }}
                     onClick={() => handleViewContent(item)}
+                    className='button-hover focus-ring'
                   >
                     <Eye style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
                     View
                   </Button>
-                  <Button variant='outline' style={{ flex: 1 }}>
+                  <Button variant='outline' style={{ flex: 1 }} className='button-hover focus-ring'>
                     Edit
                   </Button>
                 </div>

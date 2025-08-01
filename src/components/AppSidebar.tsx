@@ -38,7 +38,7 @@ export function AppSidebar({
   }
 
   return (
-    <aside className={`app-sidebar ${isOpen ? 'open' : ''}`}>
+    <aside className={`app-sidebar ${isOpen ? 'open' : ''} animate-slide-in-left`}>
       <div className='sidebar-header'>
         <a href='#' className='sidebar-brand'>
           🇧🇷
@@ -49,7 +49,7 @@ export function AppSidebar({
       <nav className='sidebar-nav'>
         <div className='nav-section-title'>Overview</div>
         <button
-          className={`nav-item ${activeCategory === 'dashboard' ? 'active' : ''}`}
+          className={`nav-item nav-item-hover focus-ring ${activeCategory === 'dashboard' ? 'active' : ''}`}
           onClick={() => handleCategoryClick('dashboard')}
         >
           <Home className='nav-item-icon' />
@@ -57,7 +57,7 @@ export function AppSidebar({
         </button>
 
         <button
-          className={`nav-item ${activeCategory === 'analytics' ? 'active' : ''}`}
+          className={`nav-item nav-item-hover focus-ring ${activeCategory === 'analytics' ? 'active' : ''}`}
           onClick={() => handleCategoryClick('analytics')}
         >
           <BarChart3 className='nav-item-icon' />
@@ -73,7 +73,7 @@ export function AppSidebar({
           return (
             <button
               key={category.id}
-              className={`nav-item ${activeCategory === category.id ? 'active' : ''}`}
+              className={`nav-item nav-item-hover focus-ring ${activeCategory === category.id ? 'active' : ''}`}
               onClick={() => handleCategoryClick(category.id)}
             >
               <IconComponent className='nav-item-icon' />
@@ -87,7 +87,7 @@ export function AppSidebar({
         </div>
 
         <button
-          className={`nav-item ${activeCategory === 'readme' ? 'active' : ''}`}
+          className={`nav-item nav-item-hover focus-ring ${activeCategory === 'readme' ? 'active' : ''}`}
           onClick={() => handleCategoryClick('readme')}
         >
           <BookOpen className='nav-item-icon' />
@@ -95,7 +95,7 @@ export function AppSidebar({
         </button>
 
         <button
-          className={`nav-item ${activeCategory === 'settings' ? 'active' : ''}`}
+          className={`nav-item nav-item-hover focus-ring ${activeCategory === 'settings' ? 'active' : ''}`}
           onClick={() => handleCategoryClick('settings')}
         >
           <Settings className='nav-item-icon' />

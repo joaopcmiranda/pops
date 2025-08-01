@@ -6,6 +6,7 @@ import { Dashboard } from '@/components/Dashboard'
 import { ItineraryView } from '@/components/ItineraryView'
 import { CategoryPageMinimal } from '@/components/CategoryPageMinimal'
 import { ReadmeView } from '@/components/ReadmeView'
+import '@/styles/animations.css'
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)

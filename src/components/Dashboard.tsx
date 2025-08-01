@@ -1,76 +1,49 @@
+import { useState, useEffect } from 'react'
 import {
   MapPin,
   Calendar,
-  Plane,
-  Home,
-  Activity,
   DollarSign,
   FileText,
   Clock,
   Target,
+  ArrowRight,
+  Plus,
 } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
+import { Card, CardContent } from './ui/card'
 import { Button } from './ui/button'
+import { SkeletonCard } from './ui/skeleton'
 import { ContentService } from '@/services/contentService'
+import { ItineraryService } from '@/services/itineraryService'
+import type { ItineraryItem } from '@/types/itinerary'
 
 interface DashboardProps {
   onCategorySelect: (category: string) => void
 }
 
 export function Dashboard({ onCategorySelect }: DashboardProps) {
-  const categoryMetadata = ContentService.getCategorySummary()
+  const [loading, setLoading] = useState(true)
+  const [categoryMetadata, setCategoryMetadata] = useState<Record<string, number>>({})
+  const [upcomingItems, setUpcomingItems] = useState<ItineraryItem[]>([])
 
-  const categories = [
-    {
-      id: 'destinations',
-      name: 'Destinations',
-      icon: MapPin,
-      color: 'icon-blue',
-      count: categoryMetadata.destinations,
-    },
-    {
-      id: 'itinerary',
-      name: 'Itinerary',
-      icon: Calendar,
-      color: 'icon-green',
-      count: categoryMetadata.itinerary,
-    },
-    {
-      id: 'transport',
-      name: 'Transport',
-      icon: Plane,
-      color: 'icon-purple',
-      count: categoryMetadata.transport,
-    },
-    {
-      id: 'accommodation',
-      name: 'Accommodation',
-      icon: Home,
-      color: 'icon-orange',
-      count: categoryMetadata.accommodation,
-    },
-    {
-      id: 'activities',
-      name: 'Activities',
-      icon: Activity,
-      color: 'icon-red',
-      count: categoryMetadata.activities,
-    },
-    {
-      id: 'budget',
-      name: 'Budget',
-      icon: DollarSign,
-      color: 'icon-yellow',
-      count: categoryMetadata.budget,
-    },
-    {
-      id: 'documents',
-      name: 'Documents',
-      icon: FileText,
-      color: 'icon-gray',
-      count: categoryMetadata.documents,
-    },
-  ]
+  useEffect(() => {
+    // Simulate loading
+    setTimeout(() => {
+      setCategoryMetadata(ContentService.getCategorySummary())
+      // Get upcoming items from itinerary
+      try {
+        const allItems = ItineraryService.getAllItems()
+        // For demo purposes, get some recent items since sample data might be in the past
+        const upcoming = allItems
+          .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+          .slice(0, 5)
+        setUpcomingItems(upcoming)
+      } catch (error) {
+        console.error('Error loading itinerary items:', error)
+        setUpcomingItems([])
+      }
+      setLoading(false)
+    }, 200)
+  }, [])
 
   const quickStats = [
     {
@@ -104,9 +77,9 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
   ]
 
   return (
-    <main className='app-content'>
+    <main className='app-content animate-fade-in'>
       {/* Welcome Section */}
-      <div style={{ marginBottom: '2rem' }}>
+      <div style={{ marginBottom: '2rem' }} className='animate-fade-in-up'>
         <h1
           style={{
             fontSize: '2rem',
@@ -135,7 +108,11 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
         {quickStats.map((stat, index) => {
           const IconComponent = stat.icon
           return (
-            <Card key={index} style={{ padding: '1.5rem' }}>
+            <Card
+              key={index}
+              style={{ padding: '1.5rem' }}
+              className={`card-hover animate-fade-in stagger-${index + 1}`}
+            >
               <div
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
               >
@@ -167,6 +144,7 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
+                  className='icon-bounce'
                 >
                   <IconComponent style={{ width: '24px', height: '24px', color: '#64748b' }} />
                 </div>
@@ -176,79 +154,218 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
         })}
       </div>
 
-      {/* Categories Grid */}
-      <div style={{ marginBottom: '2rem' }}>
-        <h2
-          style={{
-            fontSize: '1.5rem',
-            fontWeight: '600',
-            color: '#0f172a',
-            marginBottom: '1rem',
-            fontFamily: 'Poppins, sans-serif',
-          }}
-        >
-          Trip Categories
-        </h2>
-        <div className='app-grid'>
-          {categories.map(category => {
-            const IconComponent = category.icon
-            return (
-              <Card key={category.id} className='category-card'>
-                <CardHeader style={{ paddingBottom: '16px' }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginBottom: '12px',
-                    }}
-                  >
-                    <div
-                      className={`${category.color}`}
-                      style={{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '10px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <IconComponent style={{ width: '20px', height: '20px', color: 'white' }} />
+      {/* What's Next Section */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '2fr 1fr',
+          gap: '2rem',
+          marginBottom: '2rem',
+        }}
+      >
+        {/* Upcoming Items */}
+        <div>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '1rem',
+            }}
+          >
+            <h2
+              style={{
+                fontSize: '1.5rem',
+                fontWeight: '600',
+                color: '#0f172a',
+                margin: 0,
+                fontFamily: 'Poppins, sans-serif',
+              }}
+            >
+              What's Next
+            </h2>
+            <Button
+              variant='outline'
+              className='button-hover'
+              onClick={() => onCategorySelect('itinerary')}
+            >
+              <Calendar style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
+              View Itinerary
+            </Button>
+          </div>
+
+          {loading ? (
+            <div className='space-y-3'>
+              {[1, 2, 3].map(i => (
+                <Card key={i}>
+                  <SkeletonCard />
+                </Card>
+              ))}
+            </div>
+          ) : upcomingItems.length > 0 ? (
+            <div className='space-y-3'>
+              {upcomingItems.map((item, index) => (
+                <Card
+                  key={item.id}
+                  className={`card-hover animate-fade-in-up stagger-${index + 1}`}
+                >
+                  <CardContent style={{ padding: '1.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <div
+                        style={{
+                          width: '12px',
+                          height: '12px',
+                          borderRadius: '50%',
+                          backgroundColor:
+                            item.type === 'event'
+                              ? '#ef4444'
+                              : item.type === 'accommodation'
+                                ? '#f97316'
+                                : '#3b82f6',
+                        }}
+                      />
+                      <div style={{ flex: 1 }}>
+                        <h3
+                          style={{
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                            color: '#0f172a',
+                            marginBottom: '0.25rem',
+                          }}
+                        >
+                          {item.title}
+                        </h3>
+                        <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>
+                          {new Date(item.startDate).toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </p>
+                      </div>
+                      <ArrowRight style={{ width: '16px', height: '16px', color: '#94a3b8' }} />
                     </div>
-                    <span
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card style={{ textAlign: 'center', padding: '3rem' }}>
+              <CardContent>
+                <Calendar
+                  style={{ width: '48px', height: '48px', color: '#94a3b8', margin: '0 auto 1rem' }}
+                />
+                <h3
+                  style={{
+                    fontSize: '1.25rem',
+                    fontWeight: '600',
+                    color: '#1e293b',
+                    marginBottom: '0.5rem',
+                  }}
+                >
+                  No upcoming events
+                </h3>
+                <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>
+                  Start planning your Brazil trip by adding events to your itinerary.
+                </p>
+                <Button className='button-hover' onClick={() => onCategorySelect('itinerary')}>
+                  <Plus style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
+                  Add Your First Event
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Quick Actions */}
+        <div>
+          <h3
+            style={{
+              fontSize: '1.25rem',
+              fontWeight: '600',
+              color: '#0f172a',
+              marginBottom: '1rem',
+              fontFamily: 'Poppins, sans-serif',
+            }}
+          >
+            Quick Actions
+          </h3>
+          <div className='space-y-3'>
+            <Card
+              className='card-hover cursor-pointer'
+              onClick={() => onCategorySelect('destinations')}
+            >
+              <CardContent style={{ padding: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <MapPin style={{ width: '20px', height: '20px', color: '#3b82f6' }} />
+                  <div>
+                    <p
                       style={{
-                        backgroundColor: '#f1f5f9',
-                        color: '#64748b',
-                        padding: '4px 8px',
-                        borderRadius: '12px',
-                        fontSize: '0.75rem',
+                        fontSize: '0.875rem',
                         fontWeight: '500',
+                        color: '#0f172a',
+                        margin: 0,
                       }}
                     >
-                      {category.count} items
-                    </span>
+                      Explore Destinations
+                    </p>
+                    <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>
+                      {categoryMetadata.destinations || 0} saved
+                    </p>
                   </div>
-                  <CardTitle style={{ fontSize: '1.125rem', marginBottom: '4px' }}>
-                    {category.name}
-                  </CardTitle>
-                  <CardDescription style={{ fontSize: '0.875rem' }}>
-                    Manage your {category.name.toLowerCase()} information and planning details.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent style={{ paddingTop: 0 }}>
-                  <Button
-                    variant='outline'
-                    className='w-full'
-                    onClick={() => onCategorySelect(category.id)}
-                    style={{ fontSize: '0.875rem' }}
-                  >
-                    View {category.name}
-                  </Button>
-                </CardContent>
-              </Card>
-            )
-          })}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className='card-hover cursor-pointer' onClick={() => onCategorySelect('budget')}>
+              <CardContent style={{ padding: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <DollarSign style={{ width: '20px', height: '20px', color: '#eab308' }} />
+                  <div>
+                    <p
+                      style={{
+                        fontSize: '0.875rem',
+                        fontWeight: '500',
+                        color: '#0f172a',
+                        margin: 0,
+                      }}
+                    >
+                      Manage Budget
+                    </p>
+                    <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>
+                      Track expenses
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card
+              className='card-hover cursor-pointer'
+              onClick={() => onCategorySelect('documents')}
+            >
+              <CardContent style={{ padding: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <FileText style={{ width: '20px', height: '20px', color: '#6b7280' }} />
+                  <div>
+                    <p
+                      style={{
+                        fontSize: '0.875rem',
+                        fontWeight: '500',
+                        color: '#0f172a',
+                        margin: 0,
+                      }}
+                    >
+                      Travel Documents
+                    </p>
+                    <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>
+                      Keep organized
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </main>

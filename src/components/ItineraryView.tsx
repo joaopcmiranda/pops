@@ -64,7 +64,7 @@ export function ItineraryView() {
   }
 
   return (
-    <main className='app-content'>
+    <main className='app-content animate-fade-in page-enter'>
       {/* Header */}
       <div
         style={{
