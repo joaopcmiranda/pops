@@ -4,7 +4,7 @@ import { AppHeader } from '@/components/AppHeader'
 import { AppSidebar } from '@/components/AppSidebar'
 import { Dashboard } from '@/components/Dashboard'
 import { ItineraryView } from '@/components/ItineraryView'
-// import { CategoryPage } from '@/components/CategoryPage'
+import { CategoryPageMinimal } from '@/components/CategoryPageMinimal'
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -59,12 +59,11 @@ function App() {
     const meta = categoryMetadata[currentView as keyof typeof categoryMetadata]
     if (meta) {
       return (
-        <main className='app-content'>
-          <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#0f172a' }}>{meta.name}</h1>
-          <p style={{ color: '#64748b' }}>
-            {meta.name} content will be displayed here. CategoryPage component needs debugging.
-          </p>
-        </main>
+        <CategoryPageMinimal
+          category={currentView}
+          categoryName={meta.name}
+          categoryIcon={meta.icon}
+        />
       )
     }
 

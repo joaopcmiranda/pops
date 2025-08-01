@@ -3,7 +3,7 @@ import { Plus, Calendar, MapPin, Users, Clock, Tag, MoreHorizontal } from 'lucid
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import { ItineraryService } from '@/services/itineraryService'
-import { ItineraryDay, ItemType } from '@/types/itinerary'
+import type { ItineraryDay, ItemType } from '@/types/itinerary'
 
 export function ItineraryView() {
   const [itineraryDays, setItineraryDays] = useState<ItineraryDay[]>([])
