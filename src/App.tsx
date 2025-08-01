@@ -3,6 +3,7 @@ import { MapPin, Calendar, Plane, Home, Activity, DollarSign, FileText } from 'l
 import { AppHeader } from '@/components/AppHeader'
 import { AppSidebar } from '@/components/AppSidebar'
 import { Dashboard } from '@/components/Dashboard'
+import { ItineraryView } from '@/components/ItineraryView'
 // import { CategoryPage } from '@/components/CategoryPage'
 
 function App() {
@@ -30,6 +31,10 @@ function App() {
   const renderCurrentView = () => {
     if (currentView === 'dashboard') {
       return <Dashboard onCategorySelect={handleCategorySelect} />
+    }
+    
+    if (currentView === 'itinerary') {
+      return <ItineraryView />
     }
     
     if (currentView === 'analytics') {
