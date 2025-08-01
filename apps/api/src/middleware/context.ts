@@ -5,12 +5,12 @@ export interface Context {
   prisma: typeof prisma
   req: CreateExpressContextOptions['req']
   res: CreateExpressContextOptions['res']
-  userId?: string
-  user?: {
+  userId: string | undefined
+  user: {
     id: string
     name: string
     email: string
-  }
+  } | undefined
 }
 
 export const createContext = async ({ req, res }: CreateExpressContextOptions): Promise<Context> => {
@@ -53,7 +53,7 @@ export const createContext = async ({ req, res }: CreateExpressContextOptions): 
     prisma,
     req,
     res,
-    userId,
-    user,
+    userId: userId || undefined,
+    user: user || undefined,
   }
 }

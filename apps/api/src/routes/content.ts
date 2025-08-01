@@ -54,12 +54,20 @@ export const contentRouter = router({
         ]
       }
 
-      const items = await ctx.prisma.contentItem.findMany({
+      const queryOptions: any = {
         where,
         orderBy: { updatedAt: 'desc' },
-        take: input.limit,
-        skip: input.offset,
-      })
+      }
+      
+      if (input.limit !== undefined) {
+        queryOptions.take = input.limit
+      }
+      
+      if (input.offset !== undefined) {
+        queryOptions.skip = input.offset
+      }
+
+      const items = await ctx.prisma.contentItem.findMany(queryOptions)
 
       return items.map(item => ({
         ...item,
@@ -190,9 +198,11 @@ export const contentRouter = router({
       const item = await ctx.prisma.contentItem.update({
         where: { id },
         data: {
-          ...updates,
+          ...Object.fromEntries(
+            Object.entries(updates).filter(([_, value]) => value !== undefined)
+          ),
           slug: newSlug,
-          tags: tags ? JSON.stringify(tags) : undefined,
+          ...(tags !== undefined && { tags: tags ? JSON.stringify(tags) : null }),
         },
       })
 

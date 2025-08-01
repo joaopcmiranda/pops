@@ -6,64 +6,84 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": ".turbo/cookies/2.cookie",
-        "hash": "3244421341483603138"
-      },
-      {
         "file": ".turbo/preferences/tui.json",
         "hash": "10445677638450763447"
-      },
-      {
-        "file": ".turbo/cookies/3.cookie",
-        "hash": "3244421341483603138"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "13046175384202504187"
-      },
-      {
-        "file": "docker-compose.yml",
-        "hash": "13144926498511808283"
-      },
-      {
-        "file": "content/README.md",
-        "hash": "6637085216648179112"
       },
       {
         "file": ".prettierignore",
         "hash": "3100077232754546725"
       },
       {
+        "file": "scripts/health-check.sh",
+        "hash": "455013848404398995"
+      },
+      {
+        "file": "dev.sh",
+        "hash": "10280367785826118910"
+      },
+      {
         "file": ".turbo/daemon/c706f89091f8e400-turbo.log.2025-08-01",
         "hash": "12484781142653438908"
       },
       {
-        "file": "README.md",
-        "hash": "11619579162141251888"
+        "file": ".github/workflows/deploy.yml",
+        "hash": "1847677235897637487"
       },
       {
-        "file": ".turbo/cookies/1.cookie",
+        "file": ".turbo/cookies/3.cookie",
         "hash": "3244421341483603138"
       },
       {
-        "file": "CLAUDE.md",
-        "hash": "10783786055509990419"
+        "file": ".turbo/cookies/2.cookie",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": ".husky/pre-commit",
+        "hash": "12722559883533187475"
+      },
+      {
+        "file": "content/README.md",
+        "hash": "6637085216648179112"
+      },
+      {
+        "file": "docker-compose.yml",
+        "hash": "13144926498511808283"
+      },
+      {
+        "file": ".eslintrc.js",
+        "hash": "3643950328639693408"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "3861387886831593592"
       },
       {
         "file": "content/itinerary/sample-day.md",
         "hash": "13319851790084133703"
       },
       {
-        "file": "yarn.lock",
-        "hash": "16135080295789448710"
+        "file": "CLAUDE.md",
+        "hash": "10783786055509990419"
+      },
+      {
+        "file": "nx.json",
+        "hash": "13765608528137665836"
+      },
+      {
+        "file": "scripts/test-deployment.sh",
+        "hash": "13294798055760022809"
       },
       {
         "file": "content/destinations/rio-de-janeiro.md",
         "hash": "12530683614609176328"
       },
       {
-        "file": ".eslintrc.js",
-        "hash": "3643950328639693408"
+        "file": "eslint.config.js",
+        "hash": "142212017292357276"
+      },
+      {
+        "file": "yarn.lock",
+        "hash": "16135080295789448710"
       },
       {
         "file": ".prettierrc",
@@ -74,240 +94,23 @@
         "hash": "12979182726333338941"
       },
       {
-        "file": "dev.sh",
-        "hash": "10280367785826118910"
-      },
-      {
-        "file": "nx.json",
-        "hash": "13765608528137665836"
-      },
-      {
-        "file": "scripts/health-check.sh",
-        "hash": "455013848404398995"
-      },
-      {
         "file": "nginx.conf",
         "hash": "5717261216995188123"
       },
       {
-        "file": ".github/workflows/deploy.yml",
-        "hash": "1847677235897637487"
+        "file": "README.md",
+        "hash": "11619579162141251888"
       },
       {
-        "file": ".husky/pre-commit",
-        "hash": "12722559883533187475"
-      },
-      {
-        "file": "eslint.config.js",
-        "hash": "142212017292357276"
-      },
-      {
-        "file": ".claude/settings.local.json",
-        "hash": "14149723502119120188"
+        "file": ".turbo/cookies/1.cookie",
+        "hash": "3244421341483603138"
       },
       {
         "file": "DEPLOYMENT.md",
         "hash": "1186055202805865779"
-      },
-      {
-        "file": "scripts/test-deployment.sh",
-        "hash": "13294798055760022809"
       }
     ],
     "projectFileMap": {
-      "types": [
-        {
-          "file": "packages/types/package.json",
-          "hash": "15457510737155155777",
-          "deps": [
-            "npm:tsup",
-            "npm:typescript",
-            "npm:zod"
-          ]
-        },
-        {
-          "file": "packages/types/project.json",
-          "hash": "4580823688194547018"
-        },
-        {
-          "file": "packages/types/src/index.ts",
-          "hash": "3646753493871056774"
-        },
-        {
-          "file": "packages/types/src/itinerary.ts",
-          "hash": "6716843967815140162"
-        },
-        {
-          "file": "packages/types/src/trip.ts",
-          "hash": "1684249728745959943"
-        },
-        {
-          "file": "packages/types/tsconfig.json",
-          "hash": "9751019901663183814"
-        },
-        {
-          "file": "packages/types/tsup.config.ts",
-          "hash": "16820905800690594824"
-        }
-      ],
-      "shared": [
-        {
-          "file": "packages/shared/package.json",
-          "hash": "12670195146463190566",
-          "deps": [
-            "npm:tsup",
-            "npm:typescript",
-            "types",
-            "npm:clsx",
-            "npm:tailwind-merge"
-          ]
-        },
-        {
-          "file": "packages/shared/project.json",
-          "hash": "14176143924600802907"
-        },
-        {
-          "file": "packages/shared/src/index.ts",
-          "hash": "13917356448624668712"
-        },
-        {
-          "file": "packages/shared/src/utils.ts",
-          "hash": "11516636435278812601"
-        },
-        {
-          "file": "packages/shared/tsconfig.json",
-          "hash": "9751019901663183814"
-        },
-        {
-          "file": "packages/shared/tsup.config.ts",
-          "hash": "16820905800690594824"
-        }
-      ],
-      "api": [
-        {
-          "file": "apps/api/.env",
-          "hash": "16834669617151079024"
-        },
-        {
-          "file": "apps/api/.env.example",
-          "hash": "11716238173531123481"
-        },
-        {
-          "file": "apps/api/Dockerfile",
-          "hash": "2796980735363687855"
-        },
-        {
-          "file": "apps/api/Dockerfile.dev",
-          "hash": "9196737813724394347"
-        },
-        {
-          "file": "apps/api/package.json",
-          "hash": "3794656673696274390",
-          "deps": [
-            "npm:@types/express",
-            "npm:@types/cors",
-            "npm:@types/compression",
-            "npm:@types/morgan",
-            "npm:@types/bcrypt",
-            "npm:@types/jsonwebtoken",
-            "npm:prisma",
-            "npm:tsx",
-            "npm:typescript",
-            "shared",
-            "types",
-            "npm:@trpc/server",
-            "npm:@prisma/client",
-            "npm:express",
-            "npm:cors",
-            "npm:helmet",
-            "npm:compression",
-            "npm:morgan",
-            "npm:dotenv",
-            "npm:zod",
-            "npm:bcrypt",
-            "npm:jsonwebtoken",
-            "npm:rate-limiter-flexible"
-          ]
-        },
-        {
-          "file": "apps/api/prisma/dev.db",
-          "hash": "8954507478857545300"
-        },
-        {
-          "file": "apps/api/prisma/schema.prisma",
-          "hash": "4617266364368895029"
-        },
-        {
-          "file": "apps/api/project.json",
-          "hash": "15952023368656964064"
-        },
-        {
-          "file": "apps/api/src/config/database.ts",
-          "hash": "18190928068451614214"
-        },
-        {
-          "file": "apps/api/src/config/env.ts",
-          "hash": "1360951650716194690"
-        },
-        {
-          "file": "apps/api/src/config/trpc.ts",
-          "hash": "6657950358839484684"
-        },
-        {
-          "file": "apps/api/src/index.ts",
-          "hash": "13576917857550636232",
-          "deps": [
-            "npm:express",
-            "npm:cors",
-            "npm:helmet",
-            "npm:compression",
-            "npm:morgan",
-            "npm:@trpc/server"
-          ]
-        },
-        {
-          "file": "apps/api/src/middleware/context.ts",
-          "hash": "12312631340836803525",
-          "deps": [
-            "npm:@trpc/server"
-          ]
-        },
-        {
-          "file": "apps/api/src/middleware/errorHandler.ts",
-          "hash": "15504005234817305684"
-        },
-        {
-          "file": "apps/api/src/middleware/rateLimiter.ts",
-          "hash": "8287023318633350271"
-        },
-        {
-          "file": "apps/api/src/routes/content.ts",
-          "hash": "18126888744404942353",
-          "deps": [
-            "shared"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/index.ts",
-          "hash": "15177655764928715957"
-        },
-        {
-          "file": "apps/api/src/routes/itinerary.ts",
-          "hash": "3764540979076987109"
-        },
-        {
-          "file": "apps/api/src/routes/trip.ts",
-          "hash": "11640369771743915283"
-        },
-        {
-          "file": "apps/api/src/routes/user.ts",
-          "hash": "12819693730997686920"
-        },
-        {
-          "file": "apps/api/tsconfig.json",
-          "hash": "8904581790859217315"
-        }
-      ],
       "web": [
         {
           "file": "apps/web/index.html",
@@ -339,7 +142,7 @@
         },
         {
           "file": "apps/web/src/App.tsx",
-          "hash": "2843668621216028181",
+          "hash": "80354411396657084",
           "deps": [
             "npm:react",
             "npm:lucide-react"
@@ -519,6 +322,209 @@
         {
           "file": "apps/web/vite.config.ts",
           "hash": "7282952772557682408"
+        }
+      ],
+      "types": [
+        {
+          "file": "packages/types/package.json",
+          "hash": "15457510737155155777",
+          "deps": [
+            "npm:tsup",
+            "npm:typescript",
+            "npm:zod"
+          ]
+        },
+        {
+          "file": "packages/types/project.json",
+          "hash": "4580823688194547018"
+        },
+        {
+          "file": "packages/types/src/index.ts",
+          "hash": "3646753493871056774"
+        },
+        {
+          "file": "packages/types/src/itinerary.ts",
+          "hash": "6716843967815140162"
+        },
+        {
+          "file": "packages/types/src/trip.ts",
+          "hash": "1684249728745959943"
+        },
+        {
+          "file": "packages/types/tsconfig.json",
+          "hash": "9751019901663183814"
+        },
+        {
+          "file": "packages/types/tsup.config.ts",
+          "hash": "16820905800690594824"
+        }
+      ],
+      "shared": [
+        {
+          "file": "packages/shared/package.json",
+          "hash": "12670195146463190566",
+          "deps": [
+            "npm:tsup",
+            "npm:typescript",
+            "types",
+            "npm:clsx",
+            "npm:tailwind-merge"
+          ]
+        },
+        {
+          "file": "packages/shared/project.json",
+          "hash": "14176143924600802907"
+        },
+        {
+          "file": "packages/shared/src/index.ts",
+          "hash": "13917356448624668712"
+        },
+        {
+          "file": "packages/shared/src/utils.ts",
+          "hash": "11516636435278812601"
+        },
+        {
+          "file": "packages/shared/tsconfig.json",
+          "hash": "9751019901663183814"
+        },
+        {
+          "file": "packages/shared/tsup.config.ts",
+          "hash": "16820905800690594824"
+        }
+      ],
+      "api": [
+        {
+          "file": "apps/api/.env.example",
+          "hash": "11716238173531123481"
+        },
+        {
+          "file": "apps/api/Dockerfile",
+          "hash": "2796980735363687855"
+        },
+        {
+          "file": "apps/api/Dockerfile.dev",
+          "hash": "9196737813724394347"
+        },
+        {
+          "file": "apps/api/package.json",
+          "hash": "3794656673696274390",
+          "deps": [
+            "npm:@types/express",
+            "npm:@types/cors",
+            "npm:@types/compression",
+            "npm:@types/morgan",
+            "npm:@types/bcrypt",
+            "npm:@types/jsonwebtoken",
+            "npm:prisma",
+            "npm:tsx",
+            "npm:typescript",
+            "shared",
+            "types",
+            "npm:@trpc/server",
+            "npm:@prisma/client",
+            "npm:express",
+            "npm:cors",
+            "npm:helmet",
+            "npm:compression",
+            "npm:morgan",
+            "npm:dotenv",
+            "npm:zod",
+            "npm:bcrypt",
+            "npm:jsonwebtoken",
+            "npm:rate-limiter-flexible"
+          ]
+        },
+        {
+          "file": "apps/api/prisma/schema.prisma",
+          "hash": "4617266364368895029"
+        },
+        {
+          "file": "apps/api/project.json",
+          "hash": "15952023368656964064"
+        },
+        {
+          "file": "apps/api/src/config/database.ts",
+          "hash": "18190928068451614214"
+        },
+        {
+          "file": "apps/api/src/config/env.ts",
+          "hash": "6441757943036223204",
+          "deps": [
+            "npm:dotenv",
+            "npm:zod"
+          ]
+        },
+        {
+          "file": "apps/api/src/config/trpc.ts",
+          "hash": "6657950358839484684"
+        },
+        {
+          "file": "apps/api/src/index.ts",
+          "hash": "2323298902234209660",
+          "deps": [
+            "npm:express",
+            "npm:cors",
+            "npm:helmet",
+            "npm:compression",
+            "npm:morgan",
+            "npm:@trpc/server"
+          ]
+        },
+        {
+          "file": "apps/api/src/middleware/context.ts",
+          "hash": "4233420030332859879",
+          "deps": [
+            "npm:@trpc/server"
+          ]
+        },
+        {
+          "file": "apps/api/src/middleware/errorHandler.ts",
+          "hash": "15504005234817305684"
+        },
+        {
+          "file": "apps/api/src/middleware/rateLimiter.ts",
+          "hash": "7999834682153376275",
+          "deps": [
+            "npm:rate-limiter-flexible",
+            "npm:express"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/content.ts",
+          "hash": "3348094556733515391",
+          "deps": [
+            "npm:zod",
+            "shared"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/index.ts",
+          "hash": "15177655764928715957"
+        },
+        {
+          "file": "apps/api/src/routes/itinerary.ts",
+          "hash": "15637700532915427226",
+          "deps": [
+            "npm:zod"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/trip.ts",
+          "hash": "11792121728282404493",
+          "deps": [
+            "npm:zod"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/user.ts",
+          "hash": "9020169668814774114",
+          "deps": [
+            "npm:zod"
+          ]
+        },
+        {
+          "file": "apps/api/tsconfig.json",
+          "hash": "8904581790859217315"
         }
       ]
     }

@@ -40,8 +40,14 @@ export const userRouter = router({
         throw new Error('User with this email already exists')
       }
 
+      // Convert undefined to null for avatar field
+      const createData = {
+        ...input,
+        avatar: input.avatar ?? null,
+      }
+
       const user = await ctx.prisma.user.create({
-        data: input,
+        data: createData,
         select: {
           id: true,
           name: true,
@@ -61,9 +67,20 @@ export const userRouter = router({
       avatar: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
+      // Filter out undefined values and convert avatar appropriately
+      const updateData: any = {}
+      
+      if (input.name !== undefined) {
+        updateData.name = input.name
+      }
+      
+      if (input.avatar !== undefined) {
+        updateData.avatar = input.avatar ?? null
+      }
+
       const user = await ctx.prisma.user.update({
         where: { id: ctx.userId },
-        data: input,
+        data: updateData,
         select: {
           id: true,
           name: true,

@@ -79,16 +79,24 @@ export const itineraryRouter = router({
         where.status = { in: input.status }
       }
 
-      const items = await ctx.prisma.itineraryItem.findMany({
+      const queryOptions: any = {
         where,
         include: {
           location: true,
           attendees: true,
         },
         orderBy: { startDate: 'asc' },
-        take: input.limit,
-        skip: input.offset,
-      })
+      }
+      
+      if (input.limit !== undefined) {
+        queryOptions.take = input.limit
+      }
+      
+      if (input.offset !== undefined) {
+        queryOptions.skip = input.offset
+      }
+
+      const items = await ctx.prisma.itineraryItem.findMany(queryOptions)
 
       return items.map(item => ({
         ...item,
@@ -149,18 +157,23 @@ export const itineraryRouter = router({
 
       const { attendeeIds, tags, typeData, ...itemData } = input
 
-      const item = await ctx.prisma.itineraryItem.create({
-        data: {
-          ...itemData,
-          startDate: new Date(input.startDate),
-          endDate: input.endDate ? new Date(input.endDate) : null,
-          userId: ctx.userId,
-          tags: tags ? JSON.stringify(tags) : null,
-          typeData: typeData ? JSON.stringify(typeData) : null,
-          attendees: {
-            connect: attendeeIds.map(id => ({ id })),
-          },
+      // Filter out undefined values and convert them appropriately
+      const createData: any = {
+        ...Object.fromEntries(
+          Object.entries(itemData).filter(([_, value]) => value !== undefined)
+        ),
+        startDate: new Date(input.startDate),
+        endDate: input.endDate ? new Date(input.endDate) : null,
+        userId: ctx.userId,
+        tags: tags ? JSON.stringify(tags) : null,
+        typeData: typeData ? JSON.stringify(typeData) : null,
+        attendees: {
+          connect: attendeeIds.map(id => ({ id })),
         },
+      }
+
+      const item = await ctx.prisma.itineraryItem.create({
+        data: createData,
         include: {
           location: true,
           attendees: true,
@@ -197,20 +210,38 @@ export const itineraryRouter = router({
         throw new Error('Itinerary item not found or insufficient permissions')
       }
 
+      // Filter out undefined values and build update data
+      const updateData: any = {
+        ...Object.fromEntries(
+          Object.entries(updates).filter(([_, value]) => value !== undefined)
+        ),
+      }
+      
+      if (input.startDate !== undefined) {
+        updateData.startDate = new Date(input.startDate)
+      }
+      
+      if (input.endDate !== undefined) {
+        updateData.endDate = input.endDate ? new Date(input.endDate) : null
+      }
+      
+      if (tags !== undefined) {
+        updateData.tags = tags ? JSON.stringify(tags) : null
+      }
+      
+      if (typeData !== undefined) {
+        updateData.typeData = typeData ? JSON.stringify(typeData) : null
+      }
+      
+      if (attendeeIds !== undefined) {
+        updateData.attendees = {
+          set: attendeeIds.map(id => ({ id })),
+        }
+      }
+
       const item = await ctx.prisma.itineraryItem.update({
         where: { id },
-        data: {
-          ...updates,
-          startDate: input.startDate ? new Date(input.startDate) : undefined,
-          endDate: input.endDate ? new Date(input.endDate) : undefined,
-          tags: tags ? JSON.stringify(tags) : undefined,
-          typeData: typeData ? JSON.stringify(typeData) : undefined,
-          ...(attendeeIds && {
-            attendees: {
-              set: attendeeIds.map(id => ({ id })),
-            },
-          }),
-        },
+        data: updateData,
         include: {
           location: true,
           attendees: true,
@@ -288,10 +319,10 @@ export const itineraryRouter = router({
 
       const dates = items.map(item => item.startDate).sort()
       const timeSpan = dates.length > 0 ? {
-        start: dates[0],
-        end: dates[dates.length - 1],
+        start: dates[0]!,
+        end: dates[dates.length - 1]!,
         totalDays: dates.length > 0 ? 
-          Math.ceil((dates[dates.length - 1].getTime() - dates[0].getTime()) / (1000 * 60 * 60 * 24)) + 1 : 
+          Math.ceil((dates[dates.length - 1]!.getTime() - dates[0]!.getTime()) / (1000 * 60 * 60 * 24)) + 1 : 
           0,
       } : null
 

@@ -17,7 +17,7 @@ const app = express()
 
 // Security middleware
 app.use(helmet())
-app.use(compression())
+app.use(compression() as any)
 
 // CORS configuration
 app.use(cors({

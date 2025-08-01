@@ -4,7 +4,6 @@ import { config } from '@/config/env'
 
 // Create rate limiter instance
 const rateLimiter = new RateLimiterMemory({
-  keyGenerator: (req: Request) => req.ip || 'unknown',
   points: config.RATE_LIMIT_MAX_REQUESTS, // Number of requests
   duration: Math.floor(config.RATE_LIMIT_WINDOW_MS / 1000), // Per duration in seconds
   blockDuration: 60, // Block for 60 seconds if limit exceeded

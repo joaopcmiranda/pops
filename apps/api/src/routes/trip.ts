@@ -133,8 +133,8 @@ export const tripRouter = router({
           }
         },
         orderBy,
-        take: limit,
-        skip: offset,
+        ...(limit !== undefined && { take: limit }),
+        ...(offset !== undefined && { skip: offset }),
       })
 
       return trips.map(trip => ({
@@ -239,16 +239,21 @@ export const tripRouter = router({
         ...settings,
       }
 
+      // Filter out undefined values and convert them appropriately
+      const createData: any = {
+        ...Object.fromEntries(
+          Object.entries(tripData).filter(([_, value]) => value !== undefined)
+        ),
+        startDate: new Date(input.startDate),
+        endDate: new Date(input.endDate),
+        userId: ctx.userId,
+        budget: budget ? JSON.stringify(budget) : null,
+        settings: JSON.stringify(defaultSettings),
+        tags: tags ? JSON.stringify(tags) : null,
+      }
+
       const trip = await ctx.prisma.trip.create({
-        data: {
-          ...tripData,
-          startDate: new Date(input.startDate),
-          endDate: new Date(input.endDate),
-          userId: ctx.userId,
-          budget: budget ? JSON.stringify(budget) : null,
-          settings: JSON.stringify(defaultSettings),
-          tags: tags ? JSON.stringify(tags) : null,
-        },
+        data: createData,
         include: {
           user: { select: { id: true, name: true, avatar: true } },
           _count: {
@@ -289,16 +294,36 @@ export const tripRouter = router({
         throw new Error('Trip not found or insufficient permissions')
       }
 
+      // Filter out undefined values and build update data
+      const updateData: any = {
+        ...Object.fromEntries(
+          Object.entries(updates).filter(([_, value]) => value !== undefined)
+        ),
+      }
+      
+      if (input.startDate !== undefined) {
+        updateData.startDate = new Date(input.startDate)
+      }
+      
+      if (input.endDate !== undefined) {
+        updateData.endDate = new Date(input.endDate)
+      }
+      
+      if (budget !== undefined) {
+        updateData.budget = budget ? JSON.stringify(budget) : null
+      }
+      
+      if (settings !== undefined) {
+        updateData.settings = JSON.stringify(settings)
+      }
+      
+      if (tags !== undefined) {
+        updateData.tags = tags ? JSON.stringify(tags) : null
+      }
+
       const trip = await ctx.prisma.trip.update({
         where: { id },
-        data: {
-          ...updates,
-          startDate: input.startDate ? new Date(input.startDate) : undefined,
-          endDate: input.endDate ? new Date(input.endDate) : undefined,
-          budget: budget ? JSON.stringify(budget) : undefined,
-          settings: settings ? JSON.stringify(settings) : undefined,
-          tags: tags ? JSON.stringify(tags) : undefined,
-        },
+        data: updateData,
         include: {
           user: { select: { id: true, name: true, avatar: true } },
           collaborators: {

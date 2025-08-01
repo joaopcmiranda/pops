@@ -227,12 +227,9 @@ function ModalRenderer() {
     setShowNewTripModal(false)
   }
 
-  // TEMPORARY: Force modal open for testing
-  const forceModalOpen = true
-
   return (
     <NewTripModal
-      isOpen={forceModalOpen} // Temporarily force open for testing
+      isOpen={showNewTripModal}
       onClose={() => setShowNewTripModal(false)}
       onTripCreated={handleTripCreated}
     />
