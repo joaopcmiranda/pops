@@ -1,44 +1,31 @@
 {
-  "name": "brazil-trip-organizer",
+  "name": "trip-organizer",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "eslint . --ext ts,tsx --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "type-check": "tsc --noEmit",
-    "preview": "vite preview",
+    "build": "nx run-many -t build",
+    "dev": "nx run-many -t dev --verbose --parallel",
+    "lint": "nx run-many -t lint",
+    "lint:fix": "nx run-many -t lint:fix",
+    "format": "nx run-many -t format",
+    "format:check": "nx run-many -t format:check",
+    "type-check": "nx run-many -t type-check",
+    "test": "nx run-many -t test",
+    "clean": "nx reset",
     "prepare": "husky",
     "deploy:test": "./scripts/test-deployment.sh",
     "deploy:health": "./scripts/health-check.sh"
   },
-  "dependencies": {
-    "@tailwindcss/postcss": "^4.1.11",
-    "autoprefixer": "^10.4.21",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "lucide-react": "^0.536.0",
-    "postcss": "^8.5.6",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-markdown": "^10.1.0",
-    "react-router-dom": "^7.7.1",
-    "remark-gfm": "^4.0.1",
-    "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^4.1.11"
-  },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
     "@types/node": "^24.1.0",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
-    "@vitejs/plugin-react": "^4.6.0",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
@@ -51,9 +38,10 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
     "prettier": "^3.6.2",
+    "nx": "^20.3.0",
+    "@nx/workspace": "^20.3.0",
     "typescript": "~5.8.3",
-    "typescript-eslint": "^8.35.1",
-    "vite": "^7.0.4"
+    "typescript-eslint": "^8.35.1"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -63,5 +51,6 @@
     "*.{js,jsx,json,css,md}": [
       "prettier --write"
     ]
-  }
+  },
+  "packageManager": "yarn@1.22.22"
 }

@@ -1,31 +1,33 @@
-# 🇧🇷 Brazil Trip Organizer
+# ✈️ Trip Organizer
 
-A personal trip planning application built with React, TypeScript, and Vite to organize an amazing Brazilian adventure!
+A comprehensive trip planning application built with React, TypeScript, and Vite to organize multiple trips and adventures around the world!
 
 ## ✅ Current Features
 
-### 🗓️ **Comprehensive Itinerary System**
+### 🗂️ **Multi-Trip Management System**
 
-- **Timeline View** - Beautiful day-by-day organization with stats
-- **Accommodation Management** - Hotels, friends' houses, parents' house, own house
-- **Event System** - Christmas, New Year's, etc. with people tracking and attendees
-- **Work Integration** - Research locations, interviews, remote work with company contacts
-- **Overarching Events** - Carnival support with sub-activities
-- **Sample Data** - Christmas dinner, parents' house stay, work interviews
+- **Trip Selector Interface** - Beautiful trip selection with empty states and creation flow
+- **Trip Context Management** - Global state management with localStorage persistence
+- **New Trip Creation** - Professional form with validation for title, destination, dates, and type
+- **Trip-Aware Navigation** - Header shows current trip with switching capability
+- **Database Integration** - Persistent trip storage with user management
+
+### 🔧 **Full-Stack Architecture**
+
+- **tRPC Backend API** - Type-safe API with Express.js and Prisma ORM
+- **Frontend-Backend Connection** - React Query integration with authentication
+- **Database Schema** - Trip, User, and Collaborator models with SQLite
+- **Development User** - Mock authentication for seamless development experience
+- **Health Monitoring** - Connection status indicators and error handling
 
 ### 🎨 **Modern UI & Developer Experience**
 
-- **Beautiful Dashboard** - Overview cards and category navigation
-- **shadcn/ui Components** - Professional, consistent design system
+- **Professional Design** - shadcn/ui components with consistent styling
+- **Loading States** - Skeleton components and connection indicators
+- **Form Validation** - Client-side validation with user feedback
+- **Error Boundaries** - Comprehensive error handling throughout the app
 - **TypeScript** - Full type safety with strict ESLint rules (no `any` types!)
 - **Code Quality** - ESLint + Prettier + Husky pre-commit hooks
-- **Responsive Design** - Works on desktop (mobile improvements coming)
-
-### 📄 **Content Management Foundation**
-
-- **Markdown Support** - Content stored in `/content` directory
-- **Content Service** - CRUD operations for trip content
-- **Sample Content** - Rio de Janeiro destination, sample itinerary
 
 ## 🚧 In Progress & Todo
 
@@ -60,47 +62,71 @@ A personal trip planning application built with React, TypeScript, and Vite to o
 - [ ] **Export to PDF** - Generate trip documents
 - [ ] **Offline Support** - Work without internet connection
 - [ ] **Real-time Collaboration** - Live updates when multiple users edit
-- [ ] **Trip Templates** - Pre-built templates for different Brazil destinations
+- [ ] **Trip Templates** - Pre-built templates for different destinations worldwide
 
 ## Tech Stack
 
-- **Frontend**: React 19 with TypeScript
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS v4
+- **Architecture**: Nx monorepo with yarn workspaces
+- **Frontend**: React 19 with TypeScript (apps/web)
+- **Backend**: tRPC with Express.js and Prisma ORM (apps/api)
+- **Database**: SQLite with Prisma client generation
+- **Shared Packages**: Types and utilities (packages/types, packages/shared)
+- **Build Tools**: Vite 7 (frontend), tsx (backend), tsup (packages)
+- **Styling**: Tailwind CSS v4 with PostCSS
 - **UI Components**: shadcn/ui
 - **Icons**: Lucide React
+- **State Management**: React Query + tRPC + Context API
 - **Code Quality**: ESLint + Prettier + Husky
-- **Content Management**: Markdown files in `/content` directory
+- **Node Version**: v24.5.0 (required for Vite 7 compatibility)
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 20.19.0+ or 22.12.0+
-- Yarn package manager
+- **Node.js v24.5.0+** (required for Vite 7 compatibility)
+- **Yarn v1.22.22** package manager
+- **nvm** (recommended for Node version management)
 
 ### Installation
 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/joaopcmiranda/brazil-trip-organizer.git
-cd brazil-trip-organizer
+git clone https://github.com/joaopcmiranda/trip-organizer.git
+cd trip-organizer
 ```
 
-2. Install dependencies:
+2. Use the correct Node.js version:
+
+```bash
+nvm use 24.5.0
+```
+
+3. Install dependencies:
 
 ```bash
 yarn install
 ```
 
-3. Start the development server:
+4. Start all development servers:
 
 ```bash
 yarn dev
 ```
 
-4. Open [http://localhost:5173](http://localhost:5173) in your browser
+5. **Alternative**: Run services individually in separate terminals:
+
+```bash
+# Terminal 1: API Server
+yarn nx run api:dev
+
+# Terminal 2: Web App  
+yarn nx run web:dev
+```
+
+6. Open the application:
+   - **Frontend**: [http://localhost:5173](http://localhost:5173) 
+   - **API Health**: [http://localhost:3001/health](http://localhost:3001/health)
 
 ## Content Management
 
@@ -120,13 +146,16 @@ Simply add markdown files to these directories and the app will automatically lo
 
 ### Available Scripts
 
-- `yarn dev` - Start development server
-- `yarn build` - Build for production
-- `yarn preview` - Preview production build
-- `yarn lint` - Run ESLint with TypeScript rules
+- `yarn dev` - Start all development servers (Nx run-many)
+- `yarn build` - Build all apps and packages
+- `yarn lint` - Run ESLint across all projects
 - `yarn lint:fix` - Auto-fix ESLint issues
 - `yarn format` - Format code with Prettier
 - `yarn type-check` - Run TypeScript type checking
+- `yarn nx run api:dev` - Start API server only
+- `yarn nx run web:dev` - Start web app only
+- `yarn nx run api:db:generate` - Generate Prisma client
+- `yarn nx run api:db:push` - Push database schema changes
 
 ### Project Structure
 

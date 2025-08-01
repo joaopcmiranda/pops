@@ -1,4 +1,4 @@
-# Brazil Trip Organizer - Project Context
+# Trip Organizer - Project Context
 
 ## 🚀 Current Status
 
