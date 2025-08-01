@@ -5,9 +5,6 @@ import {
   ItineraryStats,
   Person,
   Location,
-  AccommodationItem,
-  EventItem,
-  WorkItem,
   OverarchingEventItem
 } from '@/types/itinerary'
 
@@ -82,7 +79,7 @@ const sampleItinerary: ItineraryItem[] = [
     tags: ['family', 'holidays'],
     createdAt: new Date(),
     updatedAt: new Date()
-  } as AccommodationItem,
+  },
   {
     id: 'event1',
     title: 'Christmas Dinner',
@@ -100,7 +97,7 @@ const sampleItinerary: ItineraryItem[] = [
     dresscode: 'Semi-formal',
     createdAt: new Date(),
     updatedAt: new Date()
-  } as EventItem,
+  },
   {
     id: 'work1',
     title: 'Research Interview - Local Startup',
@@ -126,7 +123,7 @@ const sampleItinerary: ItineraryItem[] = [
     followUpRequired: true,
     createdAt: new Date(),
     updatedAt: new Date()
-  } as WorkItem
+  }
 ]
 
 export class ItineraryService {
