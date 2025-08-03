@@ -13,7 +13,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@trip-organizer/types": "1.0.0",
+    "@trip-organizer/types": "workspace:*",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.3.1"
   },

@@ -4,6 +4,7 @@
 
 **Status**: ✅ Core UI complete, ready for feature development
 **Server**: Running on http://localhost:5174 (Node.js v24.5.0 required)
+**Package Manager**: pnpm (migrated from Yarn for better performance)
 **Last Updated**: January 2025
 
 ## 🏗️ Tech Stack
@@ -98,13 +99,14 @@ content/
 nvm use stable
 
 # Start development server
-npm run dev          # http://localhost:5174
+pnpm run dev         # http://localhost:5174
 
 # Build for production
-npm run build
+pnpm run build
 
-# Type checking
-npm run lint
+# Type checking and linting
+pnpm run lint
+pnpm run type-check
 ```
 
 ## 💡 Development Notes

@@ -68,7 +68,9 @@ A comprehensive trip planning application built with React, TypeScript, and Vite
 
 ## Tech Stack
 
-- **Architecture**: Nx monorepo with yarn workspaces
+> **📦 Package Manager Migration**: Successfully migrated from Yarn to pnpm for faster installs, better dependency management, and reduced disk usage.
+
+- **Architecture**: Nx monorepo with pnpm workspaces
 - **Frontend**: React 19 with TypeScript (apps/web)
 - **Backend**: tRPC with Express.js and Prisma ORM (apps/api)
 - **Database**: SQLite with Prisma client generation
@@ -86,7 +88,7 @@ A comprehensive trip planning application built with React, TypeScript, and Vite
 ### Prerequisites
 
 - **Node.js v24.5.0+** (required for Vite 7 compatibility)
-- **Yarn v1.22.22** package manager
+- **pnpm v10.14.0+** package manager (fast, efficient, strict dependency management)
 - **nvm** (recommended for Node version management)
 
 ### Installation
@@ -107,23 +109,23 @@ nvm use 24.5.0
 3. Install dependencies:
 
 ```bash
-yarn install
+pnpm install
 ```
 
 4. Start all development servers:
 
 ```bash
-yarn dev
+pnpm run dev
 ```
 
 5. **Alternative**: Run services individually in separate terminals:
 
 ```bash
 # Terminal 1: API Server
-yarn nx run api:dev
+pnpm nx run api:dev
 
 # Terminal 2: Web App  
-yarn nx run web:dev
+pnpm nx run web:dev
 ```
 
 6. Open the application:
@@ -148,18 +150,18 @@ Simply add markdown files to these directories and the app will automatically lo
 
 ### Available Scripts
 
-- `yarn dev` - Start all development servers (Nx run-many)
-- `yarn build` - Build all apps and packages
-- `yarn lint` - Run ESLint across all projects
-- `yarn lint:fix` - Auto-fix ESLint issues
-- `yarn format` - Format code with Prettier
-- `yarn format:check` - Check code formatting
-- `yarn type-check` - Run TypeScript type checking
-- `yarn nx run api:dev` - Start API server only
-- `yarn nx run web:dev` - Start web app only
-- `yarn nx run web:storybook` - Start Ladle for component development
-- `yarn nx run api:db:generate` - Generate Prisma client
-- `yarn nx run api:db:push` - Push database schema changes
+- `pnpm run dev` - Start all development servers (Nx run-many)
+- `pnpm run build` - Build all apps and packages
+- `pnpm run lint` - Run ESLint across all projects
+- `pnpm run lint:fix` - Auto-fix ESLint issues
+- `pnpm run format` - Format code with Prettier
+- `pnpm run format:check` - Check code formatting
+- `pnpm run type-check` - Run TypeScript type checking
+- `pnpm nx run api:dev` - Start API server only
+- `pnpm nx run web:dev` - Start web app only
+- `pnpm nx run web:storybook` - Start Ladle for component development
+- `pnpm nx run api:db:generate` - Generate Prisma client
+- `pnpm nx run api:db:push` - Push database schema changes
 
 ### Project Structure
 
@@ -211,7 +213,7 @@ trip-organizer/
 - Add new features discovered during development to the appropriate sections
 - Keep the project structure updated as new files are added
 - Update available scripts when new npm scripts are added
-- Run `yarn lint`, `yarn type-check`, and `yarn format:check` before committing
+- Run `pnpm run lint`, `pnpm run type-check`, and `pnpm run format:check` before committing
 - All code quality checks must pass before pushing
 
 ## License
