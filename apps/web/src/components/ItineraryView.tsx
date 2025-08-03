@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Plus, Calendar, MapPin, Users, Clock, Tag, MoreHorizontal } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
-import { Button } from './ui/button/button.tsx'
+import { Button } from './ui/button/button'
 import { ItineraryService } from '@/services/itineraryService'
 import type { ItineraryDay, ItemType } from '@/types/itinerary'
 

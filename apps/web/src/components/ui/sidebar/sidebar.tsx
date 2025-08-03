@@ -5,24 +5,19 @@ import { Slot } from '@radix-ui/react-slot'
 import { type VariantProps } from 'class-variance-authority'
 import { PanelLeftIcon } from 'lucide-react'
 import { cn } from '@/lib/utils.ts'
-import { Button } from '@/components/ui/button/button.tsx'
-import { Input } from '@/components/ui/input.tsx'
-import { Separator } from '@/components/ui/separator.tsx'
+import { Button } from '@/components/ui/button/button'
+import { Input } from '@/components/ui/input'
+import { Separator } from '@/components/ui/separator'
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet.tsx'
-import { Skeleton } from '@/components/ui/skeleton.tsx'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  TooltipProvider,
-} from '@/components/ui/tooltip.tsx'
-import { useSidebar } from '@/components/ui/sidebar/useSidebar.tsx'
+} from '@/components/ui/sheet'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
+import { useSidebar } from '@/components/ui/sidebar/useSidebar'
 import {
   sidebarMenuButtonVariants,
   SIDEBAR_WIDTH_MOBILE,
@@ -31,10 +26,10 @@ import {
   SIDEBAR_KEYBOARD_SHORTCUT,
   SIDEBAR_WIDTH,
   SIDEBAR_WIDTH_ICON,
-} from '@/components/ui/sidebar/constants.tsx'
+} from '@/components/ui/sidebar/constants'
 import { useIsMobile } from '@/hooks/use-mobile.ts'
-import { SidebarContext as SidebarContext1 } from '@/components/ui/use_sidebar.tsx'
-import type { SidebarContextProps } from '@/components/ui/sidebar/context.tsx'
+import { SidebarContext as SidebarContext1 } from '@/components/ui/use_sidebar'
+import type { SidebarContextProps } from '@/components/ui/sidebar/context'
 
 export function Sidebar({
   side = 'left',

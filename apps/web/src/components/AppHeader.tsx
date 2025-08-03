@@ -1,7 +1,7 @@
 import { Search, Bell, User, ChevronDown, MapPin } from 'lucide-react'
-import { Button } from './ui/button/button.tsx'
+import { Button } from './ui/button/button'
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
-import { SidebarTrigger } from './ui/sidebar/sidebar.tsx'
+import { SidebarTrigger } from './ui/sidebar/sidebar'
 
 interface Trip {
   id: string

@@ -10,7 +10,7 @@ echo ""
 
 # Step 1: Install dependencies
 echo "📦 Step 1: Installing dependencies..."
-if ! npm ci --silent; then
+if ! pnpm install --frozen-lockfile --silent; then
     echo "❌ Failed to install dependencies"
     exit 1
 fi
@@ -19,7 +19,7 @@ echo "✅ Dependencies installed"
 # Step 2: Run linting
 echo ""
 echo "🔍 Step 2: Running linter..."
-if ! npm run lint; then
+if ! pnpm run lint; then
     echo "❌ Linting failed"
     exit 1
 fi
@@ -28,7 +28,7 @@ echo "✅ Linting passed"
 # Step 3: Run type checking
 echo ""
 echo "🔧 Step 3: Running type check..."
-if ! npm run type-check; then
+if ! pnpm run type-check; then
     echo "❌ Type checking failed"
     exit 1
 fi
@@ -37,7 +37,7 @@ echo "✅ Type checking passed"
 # Step 4: Build application
 echo ""
 echo "🏗️  Step 4: Building application..."
-if ! npm run build; then
+if ! pnpm run build; then
     echo "❌ Build failed"
     exit 1
 fi

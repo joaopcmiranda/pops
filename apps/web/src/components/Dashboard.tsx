@@ -10,7 +10,7 @@ import {
   Plus,
 } from 'lucide-react'
 import { Card, CardContent } from './ui/card'
-import { Button } from './ui/button/button.tsx'
+import { Button } from './ui/button/button'
 import { SkeletonCard } from './ui/skeleton'
 import { ContentService } from '@/services/contentService'
 import { ItineraryService } from '@/services/itineraryService'

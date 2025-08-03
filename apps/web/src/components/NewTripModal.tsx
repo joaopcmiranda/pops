@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { MapPin, Calendar } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog'
-import { Button } from './ui/button/button.tsx'
+import { Button } from './ui/button/button'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { Textarea } from './ui/textarea'

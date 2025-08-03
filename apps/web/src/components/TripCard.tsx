@@ -1,7 +1,7 @@
 import { MapPin, Calendar, Settings } from 'lucide-react'
 import { Card, CardContent } from './ui/card'
-import { Button } from './ui/button/button.tsx'
-import { Badge } from './ui/badge/badge.tsx'
+import { Button } from './ui/button/button'
+import { Badge } from './ui/badge/badge'
 
 interface Trip {
   id: string

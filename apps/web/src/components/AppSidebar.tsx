@@ -23,7 +23,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar/sidebar.tsx'
+} from '@/components/ui/sidebar/sidebar'
 
 interface AppSidebarProps {
   activeCategory?: string

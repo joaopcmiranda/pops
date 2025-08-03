@@ -2,7 +2,7 @@ import type { ReactNode, ErrorInfo } from 'react'
 import { Component } from 'react'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 import { Card, CardContent } from './ui/card'
-import { Button } from './ui/button/button.tsx'
+import { Button } from './ui/button/button'
 
 interface Props {
   children: ReactNode

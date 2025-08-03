@@ -1,6 +1,6 @@
 import { Plus, MapPin } from 'lucide-react'
 import { Card, CardContent } from './ui/card'
-import { Button } from './ui/button/button.tsx'
+import { Button } from './ui/button/button'
 
 interface EmptyTripsStateProps {
   onCreateTrip: () => void

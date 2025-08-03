@@ -38,7 +38,7 @@ A comprehensive trip planning application built with React, TypeScript, and Vite
 
 ### 🔧 **Immediate Priorities**
 
-- [ ] **Fix Category Pages** - Debug content loading and display issues in category pages
+- [x] **Storybook Integration** - Complete Ladle stories for all UI components with comprehensive variants and controls
 - [ ] **Content Editing System** - Rich editor for creating/editing trip content
 - [ ] **Mobile Responsive Design** - Optimize for phones/tablets (sidebar, cards, forms)
 - [ ] **Budget Calculator** - Add expense tracking and budget management
@@ -124,12 +124,12 @@ pnpm run dev
 # Terminal 1: API Server
 pnpm nx run api:dev
 
-# Terminal 2: Web App  
+# Terminal 2: Web App
 pnpm nx run web:dev
 ```
 
 6. Open the application:
-   - **Frontend**: [http://localhost:5173](http://localhost:5173) 
+   - **Frontend**: [http://localhost:5173](http://localhost:5173)
    - **API Health**: [http://localhost:3001/health](http://localhost:3001/health)
 
 ## Content Management

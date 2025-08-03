@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ItineraryView } from './ItineraryView'
 
 // Mock itinerary data for ItineraryView stories

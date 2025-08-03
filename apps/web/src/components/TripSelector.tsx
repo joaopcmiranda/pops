@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Plus, MapPin, Calendar, Settings } from 'lucide-react'
 import { Card, CardContent } from './ui/card'
-import { Button } from './ui/button/button.tsx'
+import { Button } from './ui/button/button'
 import { TripService } from '@/services/tripService'
 import { useTripContext } from '@/hooks/useTripContext'
 

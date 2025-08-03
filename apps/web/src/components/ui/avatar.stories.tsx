@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Avatar, AvatarImage, AvatarFallback } from './avatar'
 import { ComponentStory } from '../StoryWrapper'
 import '../../styles/story-fonts.css'
