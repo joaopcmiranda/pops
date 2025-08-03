@@ -11649,12 +11649,12 @@
     "web": [
       {
         "source": "web",
-        "target": "npm:vite",
+        "target": "npm:@storybook/react-vite",
         "type": "static"
       },
       {
         "source": "web",
-        "target": "npm:@storybook/react",
+        "target": "npm:vite",
         "type": "static"
       },
       {
@@ -11675,11 +11675,6 @@
       {
         "source": "web",
         "target": "npm:@storybook/core-server",
-        "type": "static"
-      },
-      {
-        "source": "web",
-        "target": "npm:@storybook/react-vite",
         "type": "static"
       },
       {
@@ -12025,6 +12020,11 @@
       {
         "source": "web",
         "target": "npm:zod@4.0.14",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:@storybook/react",
         "type": "static"
       }
     ],
@@ -27866,5 +27866,5 @@
   },
   "version": "6.0",
   "errors": [],
-  "computedAt": 1754227406857
+  "computedAt": 1754227879172
 }

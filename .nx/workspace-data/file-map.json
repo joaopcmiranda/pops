@@ -16,22 +16,6 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "nginx.conf",
-        "hash": "5717261216995188123"
-      },
-      {
-        "file": "scripts/test-deployment.sh",
-        "hash": "13294798055760022809"
-      },
-      {
-        "file": ".prettierrc",
-        "hash": "11151191966163949737"
-      },
-      {
-        "file": "README.md",
-        "hash": "16007836291942749769"
-      },
-      {
         "file": "migrations.json",
         "hash": "17530419296529070050"
       },
@@ -40,112 +24,128 @@
         "hash": "10445677638450763447"
       },
       {
-        "file": "package.json",
-        "hash": "18035695551633877343"
-      },
-      {
-        "file": "nx.json",
-        "hash": "17466072587773761495"
-      },
-      {
-        "file": "pnpm-workspace.yaml",
-        "hash": "2534718733797859458"
-      },
-      {
-        "file": "CLAUDE.md",
-        "hash": "3310685565617146023"
-      },
-      {
-        "file": ".prettierignore",
-        "hash": "3100077232754546725"
-      },
-      {
-        "file": ".github/workflows/deploy.yml",
-        "hash": "1847677235897637487"
-      },
-      {
         "file": ".turbo/cookies/2.cookie",
         "hash": "3244421341483603138"
       },
       {
-        "file": "scripts/health-check.sh",
-        "hash": "455013848404398995"
+        "file": "nginx.conf",
+        "hash": "5717261216995188123"
       },
       {
-        "file": "content/destinations/rio-de-janeiro.md",
-        "hash": "12530683614609176328"
-      },
-      {
-        "file": ".claude/agents/puppeteer-ui-tester.md",
-        "hash": "12395911058391178972"
+        "file": "content/README.md",
+        "hash": "6637085216648179112"
       },
       {
         "file": "eslint.config.js",
         "hash": "13645960335865297250"
       },
       {
-        "file": ".eslintrc.js",
-        "hash": "3643950328639693408"
+        "file": ".prettierignore",
+        "hash": "3100077232754546725"
       },
       {
-        "file": "dev.sh",
-        "hash": "10280367785826118910"
-      },
-      {
-        "file": "content/itinerary/sample-day.md",
-        "hash": "13319851790084133703"
-      },
-      {
-        "file": ".turbo/cookies/3.cookie",
-        "hash": "3244421341483603138"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "16936441711144470533"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "8980021360909672484"
-      },
-      {
-        "file": ".npmrc",
-        "hash": "3964332830813929635"
-      },
-      {
-        "file": ".turbo/daemon/c706f89091f8e400-turbo.log.2025-08-01",
-        "hash": "8908873773021654703"
+        "file": "scripts/health-check.sh",
+        "hash": "455013848404398995"
       },
       {
         "file": "DEPLOYMENT.md",
         "hash": "1186055202805865779"
       },
       {
-        "file": "docker-compose.yml",
-        "hash": "13144926498511808283"
+        "file": "pnpm-lock.yaml",
+        "hash": "2661252661681895231"
       },
       {
-        "file": ".claude/agents/shadcn-component-importer.md",
-        "hash": "6512954990862712886"
+        "file": ".eslintrc.js",
+        "hash": "3643950328639693408"
+      },
+      {
+        "file": "pnpm-workspace.yaml",
+        "hash": "2534718733797859458"
+      },
+      {
+        "file": "dev.sh",
+        "hash": "10280367785826118910"
+      },
+      {
+        "file": "README.md",
+        "hash": "16007836291942749769"
       },
       {
         "file": ".turbo/cookies/1.cookie",
         "hash": "3244421341483603138"
       },
       {
-        "file": "pnpm-lock.yaml",
-        "hash": "2661252661681895231"
+        "file": ".claude/agents/ladle-story-creator.md",
+        "hash": "196608715692776803"
+      },
+      {
+        "file": ".claude/agents/puppeteer-ui-tester.md",
+        "hash": "12395911058391178972"
+      },
+      {
+        "file": "scripts/test-deployment.sh",
+        "hash": "13294798055760022809"
+      },
+      {
+        "file": ".claude/agents/shadcn-component-importer.md",
+        "hash": "6512954990862712886"
+      },
+      {
+        "file": ".npmrc",
+        "hash": "3964332830813929635"
+      },
+      {
+        "file": ".prettierrc",
+        "hash": "11151191966163949737"
+      },
+      {
+        "file": ".github/workflows/deploy.yml",
+        "hash": "1847677235897637487"
+      },
+      {
+        "file": ".turbo/cookies/3.cookie",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "docker-compose.yml",
+        "hash": "13144926498511808283"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "8980021360909672484"
       },
       {
         "file": ".husky/pre-commit",
         "hash": "12722559883533187475"
       },
       {
-        "file": ".claude/agents/ladle-story-creator.md",
-        "hash": "196608715692776803"
+        "file": "package.json",
+        "hash": "18035695551633877343"
       },
       {
-        "file": "content/README.md",
-        "hash": "6637085216648179112"
+        "file": "content/itinerary/sample-day.md",
+        "hash": "13319851790084133703"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "16936441711144470533"
+      },
+      {
+        "file": "nx.json",
+        "hash": "7988766637426106183"
+      },
+      {
+        "file": "CLAUDE.md",
+        "hash": "3310685565617146023"
+      },
+      {
+        "file": "content/destinations/rio-de-janeiro.md",
+        "hash": "12530683614609176328"
+      },
+      {
+        "file": ".turbo/daemon/c706f89091f8e400-turbo.log.2025-08-01",
+        "hash": "8908873773021654703"
       }
     ],
     "projectFileMap": {
@@ -198,24 +198,65 @@
           ]
         }
       ],
+      "types": [
+        {
+          "file": "packages/types/package.json",
+          "hash": "18046299449354917912",
+          "deps": [
+            "npm:@eslint/js",
+            "npm:@typescript-eslint/eslint-plugin",
+            "npm:@typescript-eslint/parser",
+            "npm:eslint",
+            "npm:eslint-config-prettier",
+            "npm:eslint-plugin-import",
+            "npm:eslint-plugin-prettier",
+            "npm:prettier",
+            "npm:tsup",
+            "npm:typescript",
+            "npm:typescript-eslint",
+            "npm:zod@3.25.76"
+          ]
+        },
+        {
+          "file": "packages/types/project.json",
+          "hash": "4580823688194547018"
+        },
+        {
+          "file": "packages/types/src/index.ts",
+          "hash": "3646753493871056774"
+        },
+        {
+          "file": "packages/types/src/itinerary.ts",
+          "hash": "6716843967815140162"
+        },
+        {
+          "file": "packages/types/src/trip.ts",
+          "hash": "1684249728745959943"
+        },
+        {
+          "file": "packages/types/tsconfig.json",
+          "hash": "9751019901663183814"
+        },
+        {
+          "file": "packages/types/tsup.config.ts",
+          "hash": "16820905800690594824",
+          "deps": [
+            "npm:tsup"
+          ]
+        }
+      ],
       "web": [
         {
-          "file": "apps/web/.storybook/main.mjs",
-          "hash": "10414693205205388320",
+          "file": "apps/web/.storybook/main.ts",
+          "hash": "9852430645424673696",
           "deps": [
+            "npm:@storybook/react-vite",
             "npm:vite"
           ]
         },
         {
           "file": "apps/web/.storybook/preview.js",
-          "hash": "259762930414814926"
-        },
-        {
-          "file": "apps/web/.storybook/preview.ts",
-          "hash": "13554554932539240775",
-          "deps": [
-            "npm:@storybook/react"
-          ]
+          "hash": "1474541314783245110"
         },
         {
           "file": "apps/web/components.json",
@@ -2219,53 +2260,6 @@
         {
           "file": "apps/api/tsconfig.json",
           "hash": "8904581790859217315"
-        }
-      ],
-      "types": [
-        {
-          "file": "packages/types/package.json",
-          "hash": "18046299449354917912",
-          "deps": [
-            "npm:@eslint/js",
-            "npm:@typescript-eslint/eslint-plugin",
-            "npm:@typescript-eslint/parser",
-            "npm:eslint",
-            "npm:eslint-config-prettier",
-            "npm:eslint-plugin-import",
-            "npm:eslint-plugin-prettier",
-            "npm:prettier",
-            "npm:tsup",
-            "npm:typescript",
-            "npm:typescript-eslint",
-            "npm:zod@3.25.76"
-          ]
-        },
-        {
-          "file": "packages/types/project.json",
-          "hash": "4580823688194547018"
-        },
-        {
-          "file": "packages/types/src/index.ts",
-          "hash": "3646753493871056774"
-        },
-        {
-          "file": "packages/types/src/itinerary.ts",
-          "hash": "6716843967815140162"
-        },
-        {
-          "file": "packages/types/src/trip.ts",
-          "hash": "1684249728745959943"
-        },
-        {
-          "file": "packages/types/tsconfig.json",
-          "hash": "9751019901663183814"
-        },
-        {
-          "file": "packages/types/tsup.config.ts",
-          "hash": "16820905800690594824",
-          "deps": [
-            "npm:tsup"
-          ]
         }
       ]
     }

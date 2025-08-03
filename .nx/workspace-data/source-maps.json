@@ -5,35 +5,35 @@
       "nx/core/project-json"
     ],
     "targets": [
-      "apps/web/.storybook/main.mjs",
+      "apps/web/.storybook/main.ts",
       "@nx/storybook/plugin"
     ],
     "targets.static-storybook": [
-      "apps/web/.storybook/main.mjs",
+      "apps/web/.storybook/main.ts",
       "@nx/storybook/plugin"
     ],
     "targets.static-storybook.dependsOn": [
-      "apps/web/.storybook/main.mjs",
+      "apps/web/.storybook/main.ts",
       "@nx/storybook/plugin"
     ],
     "targets.static-storybook.continuous": [
-      "apps/web/.storybook/main.mjs",
+      "apps/web/.storybook/main.ts",
       "@nx/storybook/plugin"
     ],
     "targets.static-storybook.executor": [
-      "apps/web/.storybook/main.mjs",
+      "apps/web/.storybook/main.ts",
       "@nx/storybook/plugin"
     ],
     "targets.static-storybook.options": [
-      "apps/web/.storybook/main.mjs",
+      "apps/web/.storybook/main.ts",
       "@nx/storybook/plugin"
     ],
     "targets.static-storybook.options.buildTarget": [
-      "apps/web/.storybook/main.mjs",
+      "apps/web/.storybook/main.ts",
       "@nx/storybook/plugin"
     ],
     "targets.static-storybook.options.staticFilePath": [
-      "apps/web/.storybook/main.mjs",
+      "apps/web/.storybook/main.ts",
       "@nx/storybook/plugin"
     ],
     "name": [
