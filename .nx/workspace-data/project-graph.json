@@ -344,23 +344,19 @@
       "type": "app",
       "data": {
         "root": "apps/web",
-        "name": "web",
-        "tags": [
-          "npm:private"
-        ],
-        "metadata": {
-          "targetGroups": {
-            "NPM Scripts": [
-              "storybook",
-              "build-storybook"
-            ]
-          },
-          "js": {
-            "packageName": "@trip-organizer/web",
-            "isInPackageManagerWorkspaces": true
-          }
-        },
         "targets": {
+          "build-storybook": {
+            "executor": "nx:run-script",
+            "options": {
+              "script": "build-storybook"
+            },
+            "metadata": {
+              "scriptContent": "storybook build",
+              "runCommand": "yarn build-storybook"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
           "storybook": {
             "executor": "nx:run-script",
             "options": {
@@ -373,14 +369,28 @@
             "configurations": {},
             "parallelism": true
           },
-          "build-storybook": {
-            "executor": "nx:run-script",
+          "test-storybook": {
             "options": {
-              "script": "build-storybook"
+              "cwd": "apps/web",
+              "command": "test-storybook"
             },
-            "metadata": {
-              "scriptContent": "storybook build",
-              "runCommand": "yarn build-storybook"
+            "inputs": [
+              {
+                "externalDependencies": [
+                  "storybook",
+                  "@storybook/test-runner"
+                ]
+              }
+            ],
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
+          "static-storybook": {
+            "executor": "@nx/web:file-server",
+            "options": {
+              "buildTarget": "build-storybook",
+              "staticFilePath": "apps/web/storybook-static"
             },
             "configurations": {},
             "parallelism": true
@@ -481,6 +491,22 @@
               "^build"
             ],
             "cache": true
+          }
+        },
+        "name": "web",
+        "tags": [
+          "npm:private"
+        ],
+        "metadata": {
+          "targetGroups": {
+            "NPM Scripts": [
+              "storybook",
+              "build-storybook"
+            ]
+          },
+          "js": {
+            "packageName": "@trip-organizer/web",
+            "isInPackageManagerWorkspaces": true
           }
         },
         "$schema": "../../node_modules/nx/schemas/project-schema.json",
@@ -2138,15 +2164,6 @@
         "hash": "sha512-DmdYgtezMkh3cpU8/1uyXakv3tJRcmcXxBOcO0tbaozPwpmh4YMsnWrQm9ZmZMfa5ocbxzbFk6O4bDPEc/iAnA=="
       }
     },
-    "npm:@jest/schemas@28.1.3": {
-      "type": "npm",
-      "name": "npm:@jest/schemas@28.1.3",
-      "data": {
-        "version": "28.1.3",
-        "packageName": "@jest/schemas",
-        "hash": "sha512-/l/VWsdt/aBXgjshLWOFyFt3IVdYypu5y2Wn2rOO1un6nkqIn8SLXzgIMYXFyYsRWDyF5EthmKJMIdJvk08grg=="
-      }
-    },
     "npm:@jest/schemas": {
       "type": "npm",
       "name": "npm:@jest/schemas",
@@ -2199,15 +2216,6 @@
         "version": "30.0.5",
         "packageName": "@jest/types",
         "hash": "sha512-aREYa3aku9SSnea4aX6bhKn4bgv3AXkgijoQgbYV3yvbiGt6z+MQ85+6mIhx9DsKW2BuB/cLR/A+tcMThx+KLQ=="
-      }
-    },
-    "npm:@jest/types@27.5.1": {
-      "type": "npm",
-      "name": "npm:@jest/types@27.5.1",
-      "data": {
-        "version": "27.5.1",
-        "packageName": "@jest/types",
-        "hash": "sha512-Cx46iJ9QpwQTjIdq5VJu2QTMMs3QlEjI0x1QbBP5W1+nMzyc2XmimiRR/CbX9TO0cPTeUlxWMOu8mslYsJ8DEw=="
       }
     },
     "npm:@jest/types": {
@@ -3263,15 +3271,6 @@
         "hash": "sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ=="
       }
     },
-    "npm:@sinclair/typebox@0.24.51": {
-      "type": "npm",
-      "name": "npm:@sinclair/typebox@0.24.51",
-      "data": {
-        "version": "0.24.51",
-        "packageName": "@sinclair/typebox",
-        "hash": "sha512-1P1OROm/rdubP5aFDSZQILU0vrLCJ4fvHt6EoqHEM+2D/G5MK3bIaymUKLit8Js9gbns5UyJnkP/TZROLw4tUA=="
-      }
-    },
     "npm:@sinclair/typebox": {
       "type": "npm",
       "name": "npm:@sinclair/typebox",
@@ -3479,15 +3478,6 @@
         "hash": "sha512-7xOOwCLGB3ebM87eemep89MYRFTko+D8qE7EdAAq74lgdqRR5cOUtYWJLjO2dLtP94nqoOdHJo6MdLLKzg412Q=="
       }
     },
-    "npm:@storybook/expect": {
-      "type": "npm",
-      "name": "npm:@storybook/expect",
-      "data": {
-        "version": "28.1.3-5",
-        "packageName": "@storybook/expect",
-        "hash": "sha512-lS1oJnY1qTAxnH87C765NdfvGhksA6hBcbUVI5CHiSbNsEtr456wtg/z+dT9XlPriq1D5t2SgfNL9dBAoIGyIA=="
-      }
-    },
     "npm:@storybook/global": {
       "type": "npm",
       "name": "npm:@storybook/global",
@@ -3513,15 +3503,6 @@
         "version": "8.6.14",
         "packageName": "@storybook/instrumenter",
         "hash": "sha512-iG4MlWCcz1L7Yu8AwgsnfVAmMbvyRSk700Mfy2g4c8y5O+Cv1ejshE1LBBsCwHgkuqU0H4R0qu4g23+6UnUemQ=="
-      }
-    },
-    "npm:@storybook/jest": {
-      "type": "npm",
-      "name": "npm:@storybook/jest",
-      "data": {
-        "version": "0.2.3",
-        "packageName": "@storybook/jest",
-        "hash": "sha512-ov5izrmbAFObzKeh9AOC5MlmFxAcf0o5i6YFGae9sDx6DGh6alXsRM+chIbucVkUwVHVlSzdfbLDEFGY/ShaYw=="
       }
     },
     "npm:@storybook/manager-api": {
@@ -4055,22 +4036,13 @@
         "hash": "sha512-FlS4ZWlp97iiNWig0Muq8p+3rVDjRiYE+YKGbAqXOu9nwJFFOdL00kFpz42M+4huzYi86vAK1sOOfyOG45muIQ=="
       }
     },
-    "npm:@testing-library/jest-dom@6.5.0": {
-      "type": "npm",
-      "name": "npm:@testing-library/jest-dom@6.5.0",
-      "data": {
-        "version": "6.5.0",
-        "packageName": "@testing-library/jest-dom",
-        "hash": "sha512-xGGHpBXYSHUUr6XsKBfs85TWlYKpTc37cSBBVrXcib2MkHLboWlkClhWF37JKlDb9KEq3dHs+f2xR7XJEWGBxA=="
-      }
-    },
     "npm:@testing-library/jest-dom": {
       "type": "npm",
       "name": "npm:@testing-library/jest-dom",
       "data": {
-        "version": "6.6.4",
+        "version": "6.5.0",
         "packageName": "@testing-library/jest-dom",
-        "hash": "sha512-xDXgLjVunjHqczScfkCJ9iyjdNOVHvvCdqHSSxwM9L0l/wHkTRum67SDc020uAlCoqktJplgO2AAQeLP1wgqDQ=="
+        "hash": "sha512-xGGHpBXYSHUUr6XsKBfs85TWlYKpTc37cSBBVrXcib2MkHLboWlkClhWF37JKlDb9KEq3dHs+f2xR7XJEWGBxA=="
       }
     },
     "npm:@testing-library/user-event": {
@@ -4388,15 +4360,6 @@
         "hash": "sha512-pk2B1NWalF9toCRu6gjBzR69syFjP4Od8WRAX+0mmf9lAjCRicLOWc+ZrxZHx/0XRjotgkF9t6iaMJ+aXcOdZQ=="
       }
     },
-    "npm:@types/jest": {
-      "type": "npm",
-      "name": "npm:@types/jest",
-      "data": {
-        "version": "28.1.3",
-        "packageName": "@types/jest",
-        "hash": "sha512-Tsbjk8Y2hkBaY/gJsataeb4q9Mubw9EOz7+4RjPkzD5KjTvHHs7cpws22InaoXxAVAhF5HfFbzJjo6oKWqSZLw=="
-      }
-    },
     "npm:@types/json-schema": {
       "type": "npm",
       "name": "npm:@types/json-schema",
@@ -4604,15 +4567,6 @@
         "hash": "sha512-I4q9QU9MQv4oEOz4tAHJtNz1cwuLxn2F3xcc2iV5WdqLPpUnj30aUuxt1mAxYTG+oe8CZMV/+6rU4S4gRDzqtQ=="
       }
     },
-    "npm:@types/yargs@16.0.9": {
-      "type": "npm",
-      "name": "npm:@types/yargs@16.0.9",
-      "data": {
-        "version": "16.0.9",
-        "packageName": "@types/yargs",
-        "hash": "sha512-tHhzvkFXZQeTECenFoRljLBYPZJ7jAVxqqtEI0qTLOmuultnFp4I9yKE17vTuhf7BkhCu7I4XuemPgikDVuYqA=="
-      }
-    },
     "npm:@types/yargs": {
       "type": "npm",
       "name": "npm:@types/yargs",
@@ -4739,18 +4693,18 @@
         "hash": "sha512-yHZtwuP7JZivj65Gxoi8upUN2OzHTi3zVfjwdpu2WrvCZPLwsJ2Ey5ILIPccoW23dd/zQBlJ4/dhi7DWNyXCpA=="
       }
     },
-    "npm:@vitest/pretty-format@2.0.5": {
+    "npm:@vitest/pretty-format": {
       "type": "npm",
-      "name": "npm:@vitest/pretty-format@2.0.5",
+      "name": "npm:@vitest/pretty-format",
       "data": {
         "version": "2.0.5",
         "packageName": "@vitest/pretty-format",
         "hash": "sha512-h8k+1oWHfwTkyTkb9egzwNMfJAEx4veaPSnMeKbVSjp4euqGSbQlm5+6VHwTr7u4FJslVVsUG5nopCaAYdOmSQ=="
       }
     },
-    "npm:@vitest/pretty-format": {
+    "npm:@vitest/pretty-format@2.1.9": {
       "type": "npm",
-      "name": "npm:@vitest/pretty-format",
+      "name": "npm:@vitest/pretty-format@2.1.9",
       "data": {
         "version": "2.1.9",
         "packageName": "@vitest/pretty-format",
@@ -4766,18 +4720,18 @@
         "hash": "sha512-c/jdthAhvJdpfVuaexSrnawxZz6pywlTPe84LUB2m/4t3rl2fTo9NFGBG4oWgaD+FTgDDV8hJ/nibT7IfH3JfA=="
       }
     },
-    "npm:@vitest/utils@2.0.5": {
+    "npm:@vitest/utils": {
       "type": "npm",
-      "name": "npm:@vitest/utils@2.0.5",
+      "name": "npm:@vitest/utils",
       "data": {
         "version": "2.0.5",
         "packageName": "@vitest/utils",
         "hash": "sha512-d8HKbqIcya+GR67mkZbrzhS5kKhtp8dQLcmRZLGTscGVg7yImT82cIrhtn2L8+VujWcy6KZweApgNmPsTAO/UQ=="
       }
     },
-    "npm:@vitest/utils": {
+    "npm:@vitest/utils@2.1.9": {
       "type": "npm",
-      "name": "npm:@vitest/utils",
+      "name": "npm:@vitest/utils@2.1.9",
       "data": {
         "version": "2.1.9",
         "packageName": "@vitest/utils",
@@ -6528,15 +6482,6 @@
         "version": "1.1.0",
         "packageName": "devlop",
         "hash": "sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA=="
-      }
-    },
-    "npm:diff-sequences@28.1.1": {
-      "type": "npm",
-      "name": "npm:diff-sequences@28.1.1",
-      "data": {
-        "version": "28.1.1",
-        "packageName": "diff-sequences",
-        "hash": "sha512-FU0iFaH/E23a+a718l8Qa/19bF9p06kgE0KipMOMadwa3SjnaElKzPaUC0vnibs6/B/9ni97s61mcejk8W1fQw=="
       }
     },
     "npm:diff-sequences": {
@@ -8843,15 +8788,6 @@
         "hash": "sha512-uXbpfeQ7R6TZBqI3/TxCU4q4ttk3u0PJeC+E0zbfSoSjq6bJ7buBPxzQPL0ifrkY4DNu4JUdk0ImlBUYi840eQ=="
       }
     },
-    "npm:jest-diff@28.1.3": {
-      "type": "npm",
-      "name": "npm:jest-diff@28.1.3",
-      "data": {
-        "version": "28.1.3",
-        "packageName": "jest-diff",
-        "hash": "sha512-8RqP1B/OXzjjTWkqMX67iqgwBVJRgCyKD3L9nq+6ZqJMdvjE8RgHktqZ6jNrkdMT+dJuYNI3rhQpxaz7drJHfw=="
-      }
-    },
     "npm:jest-diff": {
       "type": "npm",
       "name": "npm:jest-diff",
@@ -8886,15 +8822,6 @@
         "version": "29.7.0",
         "packageName": "jest-environment-node",
         "hash": "sha512-DOSwCRqXirTOyheM+4d5YZOrWcdu0LNZ87ewUoywbcb2XR4wKgqiG8vNeYwhjFMbEkfju7wx2GYH0P2gevGvFw=="
-      }
-    },
-    "npm:jest-get-type@28.0.2": {
-      "type": "npm",
-      "name": "npm:jest-get-type@28.0.2",
-      "data": {
-        "version": "28.0.2",
-        "packageName": "jest-get-type",
-        "hash": "sha512-ioj2w9/DxSYHfOm5lJKCdcAmPJzQXmbM/Url3rhlghrPvT3tt+7a/+oXc9azkKmLvoiXjtV83bEWqi+vs5nlPA=="
       }
     },
     "npm:jest-get-type": {
@@ -8933,15 +8860,6 @@
         "hash": "sha512-kYA8IJcSYtST2BY9I+SMC32nDpBT3J2NvWJx8+JCuCdl/CR1I4EKUJROiP8XtCcxqgTTBGJNdbB1A8XRKbTetw=="
       }
     },
-    "npm:jest-matcher-utils@28.1.3": {
-      "type": "npm",
-      "name": "npm:jest-matcher-utils@28.1.3",
-      "data": {
-        "version": "28.1.3",
-        "packageName": "jest-matcher-utils",
-        "hash": "sha512-kQeJ7qHemKfbzKoGjHHrRKH6atgxMk8Enkk2iPQ3XwO6oE/KYD8lMYOziCkeSB9G4adPM4nR1DE8Tf5JeWH6Bw=="
-      }
-    },
     "npm:jest-matcher-utils": {
       "type": "npm",
       "name": "npm:jest-matcher-utils",
@@ -8958,15 +8876,6 @@
         "version": "29.7.0",
         "packageName": "jest-message-util",
         "hash": "sha512-GBEV4GRADeP+qtB2+6u61stea8mGcOT4mCtrYISZwfu9/ISHFJ/5zOMXYbpBE9RsS5+Gb63DW4FgmnKJ79Kf6w=="
-      }
-    },
-    "npm:jest-mock@27.5.1": {
-      "type": "npm",
-      "name": "npm:jest-mock@27.5.1",
-      "data": {
-        "version": "27.5.1",
-        "packageName": "jest-mock",
-        "hash": "sha512-K4jKbY1d4ENhbrG2zuPWaQBvDly+iZ2yAW+T1fATN78hc0sInwn7wZB8XtlNnvHug5RMwV897Xm4LqmPM4e2Og=="
       }
     },
     "npm:jest-mock": {
@@ -11264,15 +11173,6 @@
         "hash": "sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ=="
       }
     },
-    "npm:pretty-format@28.1.3": {
-      "type": "npm",
-      "name": "npm:pretty-format@28.1.3",
-      "data": {
-        "version": "28.1.3",
-        "packageName": "pretty-format",
-        "hash": "sha512-8gFb/To0OmxHR9+ZTb14Df2vNxdGCX8g1xWGUTqUw5TiZvcQf5sHKObd5UcPyLLyowNwDAMTF3XWOG1B6mxl1Q=="
-      }
-    },
     "npm:pretty-format": {
       "type": "npm",
       "name": "npm:pretty-format",
@@ -12177,9 +12077,9 @@
       "type": "npm",
       "name": "npm:sonner",
       "data": {
-        "version": "2.0.6",
+        "version": "2.0.7",
         "packageName": "sonner",
-        "hash": "sha512-yHFhk8T/DK3YxjFQXIrcHT1rGEeTLliVzWbO0xN8GberVun2RiBnxAjXAYpZrqwEVHBG9asI/Li8TAAhN9m59Q=="
+        "hash": "sha512-W6ZN4p58k8aDKA4XPcx2hpIQXBRAgyiWVkYhT7CvK6D3iAu7xjvVyhQHg2/iaKJZ1XVJ4r7XuwGL+WGEK37i9w=="
       }
     },
     "npm:source-map-js": {
@@ -13343,15 +13243,6 @@
         "hash": "sha512-cZn6NDFE7wdTpINgs++ZJ4N49W2vRp8LCKrn3Ob1kYNtOo21vfDoaV5GzBfLU4MovSAB8uNRm4jgzVQZ+mBzPQ=="
       }
     },
-    "npm:vite@7.0.6": {
-      "type": "npm",
-      "name": "npm:vite@7.0.6",
-      "data": {
-        "version": "7.0.6",
-        "packageName": "vite",
-        "hash": "sha512-MHFiOENNBd+Bd9uvc8GEsIzdkn1JxMmEeYX35tI3fv0sJBUTfW5tQsoaOwuY4KhBI09A3dUJ/DXf2yxPVPUceg=="
-      }
-    },
     "npm:wait-on": {
       "type": "npm",
       "name": "npm:wait-on",
@@ -13762,16 +13653,6 @@
     "shared": [
       {
         "source": "shared",
-        "target": "npm:tsup",
-        "type": "static"
-      },
-      {
-        "source": "shared",
-        "target": "npm:typescript",
-        "type": "static"
-      },
-      {
-        "source": "shared",
         "target": "types",
         "type": "static"
       },
@@ -13784,6 +13665,11 @@
         "source": "shared",
         "target": "npm:tailwind-merge",
         "type": "static"
+      },
+      {
+        "source": "shared",
+        "target": "npm:tsup",
+        "type": "static"
       }
     ],
     "types": [
@@ -13791,64 +13677,9 @@
         "source": "types",
         "target": "npm:tsup",
         "type": "static"
-      },
-      {
-        "source": "types",
-        "target": "npm:typescript",
-        "type": "static"
-      },
-      {
-        "source": "types",
-        "target": "npm:zod",
-        "type": "static"
       }
     ],
     "api": [
-      {
-        "source": "api",
-        "target": "npm:@types/express",
-        "type": "static"
-      },
-      {
-        "source": "api",
-        "target": "npm:@types/cors",
-        "type": "static"
-      },
-      {
-        "source": "api",
-        "target": "npm:@types/compression",
-        "type": "static"
-      },
-      {
-        "source": "api",
-        "target": "npm:@types/morgan",
-        "type": "static"
-      },
-      {
-        "source": "api",
-        "target": "npm:@types/bcrypt",
-        "type": "static"
-      },
-      {
-        "source": "api",
-        "target": "npm:@types/jsonwebtoken",
-        "type": "static"
-      },
-      {
-        "source": "api",
-        "target": "npm:prisma",
-        "type": "static"
-      },
-      {
-        "source": "api",
-        "target": "npm:tsx",
-        "type": "static"
-      },
-      {
-        "source": "api",
-        "target": "npm:typescript",
-        "type": "static"
-      },
       {
         "source": "api",
         "target": "shared",
@@ -13861,37 +13692,7 @@
       },
       {
         "source": "api",
-        "target": "npm:@trpc/server",
-        "type": "static"
-      },
-      {
-        "source": "api",
         "target": "npm:@prisma/client",
-        "type": "static"
-      },
-      {
-        "source": "api",
-        "target": "npm:express",
-        "type": "static"
-      },
-      {
-        "source": "api",
-        "target": "npm:cors",
-        "type": "static"
-      },
-      {
-        "source": "api",
-        "target": "npm:helmet",
-        "type": "static"
-      },
-      {
-        "source": "api",
-        "target": "npm:compression",
-        "type": "static"
-      },
-      {
-        "source": "api",
-        "target": "npm:morgan",
         "type": "static"
       },
       {
@@ -13906,12 +13707,12 @@
       },
       {
         "source": "api",
-        "target": "npm:bcrypt",
+        "target": "npm:@trpc/server",
         "type": "static"
       },
       {
         "source": "api",
-        "target": "npm:jsonwebtoken",
+        "target": "npm:express",
         "type": "static"
       },
       {
@@ -13921,16 +13722,6 @@
       }
     ],
     "web": [
-      {
-        "source": "web",
-        "target": "npm:vite@7.0.6",
-        "type": "static"
-      },
-      {
-        "source": "web",
-        "target": "npm:@storybook/react",
-        "type": "static"
-      },
       {
         "source": "web",
         "target": "npm:@types/react",
@@ -13948,12 +13739,117 @@
       },
       {
         "source": "web",
+        "target": "npm:@storybook/addon-essentials",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:@storybook/addon-interactions",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:@storybook/core-server",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:@storybook/react-vite",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:@storybook/test",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:eslint-plugin-react",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:eslint-plugin-react-hooks",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:eslint-plugin-react-refresh",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:postcss",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:storybook",
+        "type": "static"
+      },
+      {
+        "source": "web",
         "target": "npm:tw-animate-css",
         "type": "static"
       },
       {
         "source": "web",
         "target": "npm:vite",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:eslint",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:@eslint/js",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:@typescript-eslint/eslint-plugin",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:@typescript-eslint/parser",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:eslint-config-prettier",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:eslint-plugin-import",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:eslint-plugin-jsx-a11y",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:eslint-plugin-prettier",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:prettier",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:typescript",
+        "type": "static"
+      },
+      {
+        "source": "web",
+        "target": "npm:typescript-eslint",
         "type": "static"
       },
       {
@@ -16547,13 +16443,6 @@
         "type": "static"
       }
     ],
-    "npm:@jest/schemas@28.1.3": [
-      {
-        "source": "npm:@jest/schemas@28.1.3",
-        "target": "npm:@sinclair/typebox@0.24.51",
-        "type": "static"
-      }
-    ],
     "npm:@jest/schemas": [
       {
         "source": "npm:@jest/schemas",
@@ -16732,33 +16621,6 @@
       },
       {
         "source": "npm:@jest/types@30.0.5",
-        "target": "npm:chalk",
-        "type": "static"
-      }
-    ],
-    "npm:@jest/types@27.5.1": [
-      {
-        "source": "npm:@jest/types@27.5.1",
-        "target": "npm:@types/istanbul-lib-coverage",
-        "type": "static"
-      },
-      {
-        "source": "npm:@jest/types@27.5.1",
-        "target": "npm:@types/istanbul-reports",
-        "type": "static"
-      },
-      {
-        "source": "npm:@jest/types@27.5.1",
-        "target": "npm:@types/node",
-        "type": "static"
-      },
-      {
-        "source": "npm:@jest/types@27.5.1",
-        "target": "npm:@types/yargs@16.0.9",
-        "type": "static"
-      },
-      {
-        "source": "npm:@jest/types@27.5.1",
         "target": "npm:chalk",
         "type": "static"
       }
@@ -19092,13 +18954,6 @@
         "type": "static"
       }
     ],
-    "npm:@storybook/expect": [
-      {
-        "source": "npm:@storybook/expect",
-        "target": "npm:@types/jest",
-        "type": "static"
-      }
-    ],
     "npm:@storybook/instrumenter": [
       {
         "source": "npm:@storybook/instrumenter",
@@ -19107,29 +18962,7 @@
       },
       {
         "source": "npm:@storybook/instrumenter",
-        "target": "npm:@vitest/utils",
-        "type": "static"
-      }
-    ],
-    "npm:@storybook/jest": [
-      {
-        "source": "npm:@storybook/jest",
-        "target": "npm:@storybook/expect",
-        "type": "static"
-      },
-      {
-        "source": "npm:@storybook/jest",
-        "target": "npm:@testing-library/jest-dom",
-        "type": "static"
-      },
-      {
-        "source": "npm:@storybook/jest",
-        "target": "npm:@types/jest",
-        "type": "static"
-      },
-      {
-        "source": "npm:@storybook/jest",
-        "target": "npm:jest-mock@27.5.1",
+        "target": "npm:@vitest/utils@2.1.9",
         "type": "static"
       }
     ],
@@ -19327,7 +19160,7 @@
       },
       {
         "source": "npm:@storybook/test",
-        "target": "npm:@testing-library/jest-dom@6.5.0",
+        "target": "npm:@testing-library/jest-dom",
         "type": "static"
       },
       {
@@ -19823,43 +19656,6 @@
         "type": "static"
       }
     ],
-    "npm:@testing-library/jest-dom@6.5.0": [
-      {
-        "source": "npm:@testing-library/jest-dom@6.5.0",
-        "target": "npm:@adobe/css-tools",
-        "type": "static"
-      },
-      {
-        "source": "npm:@testing-library/jest-dom@6.5.0",
-        "target": "npm:aria-query",
-        "type": "static"
-      },
-      {
-        "source": "npm:@testing-library/jest-dom@6.5.0",
-        "target": "npm:chalk@3.0.0",
-        "type": "static"
-      },
-      {
-        "source": "npm:@testing-library/jest-dom@6.5.0",
-        "target": "npm:css.escape",
-        "type": "static"
-      },
-      {
-        "source": "npm:@testing-library/jest-dom@6.5.0",
-        "target": "npm:dom-accessibility-api@0.6.3",
-        "type": "static"
-      },
-      {
-        "source": "npm:@testing-library/jest-dom@6.5.0",
-        "target": "npm:lodash",
-        "type": "static"
-      },
-      {
-        "source": "npm:@testing-library/jest-dom@6.5.0",
-        "target": "npm:redent",
-        "type": "static"
-      }
-    ],
     "npm:@testing-library/jest-dom": [
       {
         "source": "npm:@testing-library/jest-dom",
@@ -19873,6 +19669,11 @@
       },
       {
         "source": "npm:@testing-library/jest-dom",
+        "target": "npm:chalk@3.0.0",
+        "type": "static"
+      },
+      {
+        "source": "npm:@testing-library/jest-dom",
         "target": "npm:css.escape",
         "type": "static"
       },
@@ -19884,11 +19685,6 @@
       {
         "source": "npm:@testing-library/jest-dom",
         "target": "npm:lodash",
-        "type": "static"
-      },
-      {
-        "source": "npm:@testing-library/jest-dom",
-        "target": "npm:picocolors",
         "type": "static"
       },
       {
@@ -20134,18 +19930,6 @@
         "type": "static"
       }
     ],
-    "npm:@types/jest": [
-      {
-        "source": "npm:@types/jest",
-        "target": "npm:jest-matcher-utils@28.1.3",
-        "type": "static"
-      },
-      {
-        "source": "npm:@types/jest",
-        "target": "npm:pretty-format@28.1.3",
-        "type": "static"
-      }
-    ],
     "npm:@types/jsonwebtoken": [
       {
         "source": "npm:@types/jsonwebtoken",
@@ -20219,13 +20003,6 @@
       {
         "source": "npm:@types/wait-on",
         "target": "npm:@types/node",
-        "type": "static"
-      }
-    ],
-    "npm:@types/yargs@16.0.9": [
-      {
-        "source": "npm:@types/yargs@16.0.9",
-        "target": "npm:@types/yargs-parser",
         "type": "static"
       }
     ],
@@ -20492,7 +20269,7 @@
       },
       {
         "source": "npm:@vitest/expect",
-        "target": "npm:@vitest/utils@2.0.5",
+        "target": "npm:@vitest/utils",
         "type": "static"
       },
       {
@@ -20506,16 +20283,16 @@
         "type": "static"
       }
     ],
-    "npm:@vitest/pretty-format@2.0.5": [
+    "npm:@vitest/pretty-format": [
       {
-        "source": "npm:@vitest/pretty-format@2.0.5",
+        "source": "npm:@vitest/pretty-format",
         "target": "npm:tinyrainbow",
         "type": "static"
       }
     ],
-    "npm:@vitest/pretty-format": [
+    "npm:@vitest/pretty-format@2.1.9": [
       {
-        "source": "npm:@vitest/pretty-format",
+        "source": "npm:@vitest/pretty-format@2.1.9",
         "target": "npm:tinyrainbow",
         "type": "static"
       }
@@ -20527,28 +20304,6 @@
         "type": "static"
       }
     ],
-    "npm:@vitest/utils@2.0.5": [
-      {
-        "source": "npm:@vitest/utils@2.0.5",
-        "target": "npm:@vitest/pretty-format@2.0.5",
-        "type": "static"
-      },
-      {
-        "source": "npm:@vitest/utils@2.0.5",
-        "target": "npm:estree-walker@3.0.3",
-        "type": "static"
-      },
-      {
-        "source": "npm:@vitest/utils@2.0.5",
-        "target": "npm:loupe",
-        "type": "static"
-      },
-      {
-        "source": "npm:@vitest/utils@2.0.5",
-        "target": "npm:tinyrainbow",
-        "type": "static"
-      }
-    ],
     "npm:@vitest/utils": [
       {
         "source": "npm:@vitest/utils",
@@ -20557,11 +20312,33 @@
       },
       {
         "source": "npm:@vitest/utils",
+        "target": "npm:estree-walker@3.0.3",
+        "type": "static"
+      },
+      {
+        "source": "npm:@vitest/utils",
         "target": "npm:loupe",
         "type": "static"
       },
       {
         "source": "npm:@vitest/utils",
+        "target": "npm:tinyrainbow",
+        "type": "static"
+      }
+    ],
+    "npm:@vitest/utils@2.1.9": [
+      {
+        "source": "npm:@vitest/utils@2.1.9",
+        "target": "npm:@vitest/pretty-format@2.1.9",
+        "type": "static"
+      },
+      {
+        "source": "npm:@vitest/utils@2.1.9",
+        "target": "npm:loupe",
+        "type": "static"
+      },
+      {
+        "source": "npm:@vitest/utils@2.1.9",
         "target": "npm:tinyrainbow",
         "type": "static"
       }
@@ -25379,28 +25156,6 @@
         "type": "static"
       }
     ],
-    "npm:jest-diff@28.1.3": [
-      {
-        "source": "npm:jest-diff@28.1.3",
-        "target": "npm:chalk",
-        "type": "static"
-      },
-      {
-        "source": "npm:jest-diff@28.1.3",
-        "target": "npm:diff-sequences@28.1.1",
-        "type": "static"
-      },
-      {
-        "source": "npm:jest-diff@28.1.3",
-        "target": "npm:jest-get-type@28.0.2",
-        "type": "static"
-      },
-      {
-        "source": "npm:jest-diff@28.1.3",
-        "target": "npm:pretty-format@28.1.3",
-        "type": "static"
-      }
-    ],
     "npm:jest-diff": [
       {
         "source": "npm:jest-diff",
@@ -25585,28 +25340,6 @@
         "type": "static"
       }
     ],
-    "npm:jest-matcher-utils@28.1.3": [
-      {
-        "source": "npm:jest-matcher-utils@28.1.3",
-        "target": "npm:chalk",
-        "type": "static"
-      },
-      {
-        "source": "npm:jest-matcher-utils@28.1.3",
-        "target": "npm:jest-diff@28.1.3",
-        "type": "static"
-      },
-      {
-        "source": "npm:jest-matcher-utils@28.1.3",
-        "target": "npm:jest-get-type@28.0.2",
-        "type": "static"
-      },
-      {
-        "source": "npm:jest-matcher-utils@28.1.3",
-        "target": "npm:pretty-format@28.1.3",
-        "type": "static"
-      }
-    ],
     "npm:jest-matcher-utils": [
       {
         "source": "npm:jest-matcher-utils",
@@ -25673,18 +25406,6 @@
       {
         "source": "npm:jest-message-util",
         "target": "npm:stack-utils",
-        "type": "static"
-      }
-    ],
-    "npm:jest-mock@27.5.1": [
-      {
-        "source": "npm:jest-mock@27.5.1",
-        "target": "npm:@jest/types@27.5.1",
-        "type": "static"
-      },
-      {
-        "source": "npm:jest-mock@27.5.1",
-        "target": "npm:@types/node",
         "type": "static"
       }
     ],
@@ -28960,28 +28681,6 @@
         "type": "static"
       }
     ],
-    "npm:pretty-format@28.1.3": [
-      {
-        "source": "npm:pretty-format@28.1.3",
-        "target": "npm:@jest/schemas@28.1.3",
-        "type": "static"
-      },
-      {
-        "source": "npm:pretty-format@28.1.3",
-        "target": "npm:ansi-regex",
-        "type": "static"
-      },
-      {
-        "source": "npm:pretty-format@28.1.3",
-        "target": "npm:ansi-styles@5.2.0",
-        "type": "static"
-      },
-      {
-        "source": "npm:pretty-format@28.1.3",
-        "target": "npm:react-is",
-        "type": "static"
-      }
-    ],
     "npm:pretty-format": [
       {
         "source": "npm:pretty-format",
@@ -31453,43 +31152,6 @@
         "type": "static"
       }
     ],
-    "npm:vite@7.0.6": [
-      {
-        "source": "npm:vite@7.0.6",
-        "target": "npm:esbuild",
-        "type": "static"
-      },
-      {
-        "source": "npm:vite@7.0.6",
-        "target": "npm:fdir",
-        "type": "static"
-      },
-      {
-        "source": "npm:vite@7.0.6",
-        "target": "npm:picomatch",
-        "type": "static"
-      },
-      {
-        "source": "npm:vite@7.0.6",
-        "target": "npm:postcss",
-        "type": "static"
-      },
-      {
-        "source": "npm:vite@7.0.6",
-        "target": "npm:rollup",
-        "type": "static"
-      },
-      {
-        "source": "npm:vite@7.0.6",
-        "target": "npm:tinyglobby",
-        "type": "static"
-      },
-      {
-        "source": "npm:vite@7.0.6",
-        "target": "npm:fsevents",
-        "type": "static"
-      }
-    ],
     "npm:wait-on": [
       {
         "source": "npm:wait-on",
@@ -31985,23 +31647,6 @@
     ]
   },
   "version": "6.0",
-  "errors": [
-    {
-      "stack": " - apps/web/.storybook/main.js: ReferenceError: require is not defined in ES module scope, you can use import instead\nThis file is being treated as an ES module because it has a '.js' file extension and '/Users/joao/dev/personal/trip-organiser/apps/web/package.json' contains \"type\": \"module\". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.\n    at file:///Users/joao/dev/personal/trip-organiser/apps/web/.storybook/main.js:1:25\n    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:507:37)\n    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:441:47)\n    at loadESMFromCJS (node:internal/modules/cjs/loader:1567:24)\n    at Module._compile (node:internal/modules/cjs/loader:1720:5)\n    at Object..js (node:internal/modules/cjs/loader:1871:10)\n    at Module.load (node:internal/modules/cjs/loader:1470:32)\n    at Module._load (node:internal/modules/cjs/loader:1290:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:238:24)",
-      "message": "An error occurred while processing files for the @nx/storybook/plugin plugin\n.\n  - apps/web/.storybook/main.js: require is not defined in ES module scope, you can use import instead\nThis file is being treated as an ES module because it has a '.js' file extension and '/Users/joao/dev/personal/trip-organiser/apps/web/package.json' contains \"type\": \"module\". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.",
-      "errors": [
-        [
-          "apps/web/.storybook/main.js",
-          {
-            "stack": "ReferenceError: require is not defined in ES module scope, you can use import instead\nThis file is being treated as an ES module because it has a '.js' file extension and '/Users/joao/dev/personal/trip-organiser/apps/web/package.json' contains \"type\": \"module\". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.\n    at file:///Users/joao/dev/personal/trip-organiser/apps/web/.storybook/main.js:1:25\n    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:507:37)\n    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:441:47)\n    at loadESMFromCJS (node:internal/modules/cjs/loader:1567:24)\n    at Module._compile (node:internal/modules/cjs/loader:1720:5)\n    at Object..js (node:internal/modules/cjs/loader:1871:10)\n    at Module.load (node:internal/modules/cjs/loader:1470:32)\n    at Module._load (node:internal/modules/cjs/loader:1290:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:238:24)",
-            "message": "require is not defined in ES module scope, you can use import instead\nThis file is being treated as an ES module because it has a '.js' file extension and '/Users/joao/dev/personal/trip-organiser/apps/web/package.json' contains \"type\": \"module\". To treat it as a CommonJS script, rename it to use the '.cjs' file extension."
-          }
-        ]
-      ],
-      "partialResults": [],
-      "name": "AggregateCreateNodesError",
-      "pluginIndex": 0
-    }
-  ],
-  "computedAt": 1754223276538
+  "errors": [],
+  "computedAt": 1754225022573
 }

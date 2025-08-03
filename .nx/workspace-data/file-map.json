@@ -16,185 +16,127 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": ".claude/agents/ladle-story-creator.md",
-        "hash": "196608715692776803"
-      },
-      {
-        "file": ".claude/agents/puppeteer-ui-tester.md",
-        "hash": "12395911058391178972"
-      },
-      {
-        "file": ".claude/agents/shadcn-component-importer.md",
-        "hash": "6512954990862712886"
-      },
-      {
-        "file": ".claude/settings.local.json",
-        "hash": "5444520557863072189"
-      },
-      {
-        "file": ".eslintrc.js",
-        "hash": "3643950328639693408"
-      },
-      {
         "file": ".github/workflows/deploy.yml",
         "hash": "1847677235897637487"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "8980021360909672484"
-      },
-      {
-        "file": ".husky/pre-commit",
-        "hash": "12722559883533187475"
-      },
-      {
-        "file": ".ladle/components.tsx",
-        "hash": "17226188482388533656"
-      },
-      {
-        "file": ".ladle/config.mjs",
-        "hash": "1865676563299823434"
-      },
-      {
-        "file": ".ladle/skeleton.css",
-        "hash": "2481307102338006068"
-      },
-      {
-        "file": ".prettierignore",
-        "hash": "3100077232754546725"
-      },
-      {
-        "file": ".prettierrc",
-        "hash": "11151191966163949737"
-      },
-      {
-        "file": ".turbo/cookies/1.cookie",
-        "hash": "3244421341483603138"
-      },
-      {
-        "file": ".turbo/cookies/2.cookie",
-        "hash": "3244421341483603138"
-      },
-      {
-        "file": ".turbo/cookies/3.cookie",
-        "hash": "3244421341483603138"
-      },
-      {
-        "file": ".turbo/daemon/c706f89091f8e400-turbo.log.2025-08-01",
-        "hash": "8908873773021654703"
       },
       {
         "file": ".turbo/preferences/tui.json",
         "hash": "10445677638450763447"
       },
       {
-        "file": "CLAUDE.md",
-        "hash": "7558559243200814869"
-      },
-      {
-        "file": "DEPLOYMENT.md",
-        "hash": "1186055202805865779"
-      },
-      {
-        "file": "README.md",
-        "hash": "17294502097946067124"
-      },
-      {
-        "file": "content/README.md",
-        "hash": "6637085216648179112"
-      },
-      {
-        "file": "content/destinations/rio-de-janeiro.md",
-        "hash": "12530683614609176328"
-      },
-      {
-        "file": "content/itinerary/sample-day.md",
-        "hash": "13319851790084133703"
-      },
-      {
-        "file": "dev.sh",
-        "hash": "10280367785826118910"
-      },
-      {
         "file": "docker-compose.yml",
         "hash": "13144926498511808283"
       },
       {
-        "file": "eslint.config.js",
-        "hash": "142212017292357276"
-      },
-      {
-        "file": "nginx.conf",
-        "hash": "5717261216995188123"
-      },
-      {
-        "file": "nx.json",
-        "hash": "11064830751098480771"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "13838324061435591404"
-      },
-      {
-        "file": "package.json",
-        "hash": "5792649511107135845"
-      },
-      {
-        "file": "scripts/health-check.sh",
-        "hash": "455013848404398995"
+        "file": ".claude/agents/ladle-story-creator.md",
+        "hash": "196608715692776803"
       },
       {
         "file": "scripts/test-deployment.sh",
         "hash": "13294798055760022809"
       },
       {
+        "file": ".turbo/cookies/1.cookie",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": ".prettierignore",
+        "hash": "3100077232754546725"
+      },
+      {
+        "file": "DEPLOYMENT.md",
+        "hash": "1186055202805865779"
+      },
+      {
+        "file": "scripts/health-check.sh",
+        "hash": "455013848404398995"
+      },
+      {
+        "file": "nginx.conf",
+        "hash": "5717261216995188123"
+      },
+      {
+        "file": ".prettierrc",
+        "hash": "11151191966163949737"
+      },
+      {
+        "file": "eslint.config.js",
+        "hash": "142212017292357276"
+      },
+      {
+        "file": ".turbo/daemon/c706f89091f8e400-turbo.log.2025-08-01",
+        "hash": "8908873773021654703"
+      },
+      {
         "file": "tsconfig.base.json",
         "hash": "16936441711144470533"
       },
       {
+        "file": ".eslintrc.js",
+        "hash": "3643950328639693408"
+      },
+      {
+        "file": "dev.sh",
+        "hash": "10280367785826118910"
+      },
+      {
+        "file": "content/destinations/rio-de-janeiro.md",
+        "hash": "12530683614609176328"
+      },
+      {
         "file": "yarn.lock",
-        "hash": "8268727909973895247"
+        "hash": "11658497912155427738"
+      },
+      {
+        "file": ".claude/agents/shadcn-component-importer.md",
+        "hash": "6512954990862712886"
+      },
+      {
+        "file": ".turbo/cookies/2.cookie",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "8980021360909672484"
+      },
+      {
+        "file": "package.json",
+        "hash": "10710571911343964456"
+      },
+      {
+        "file": ".turbo/cookies/3.cookie",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "content/README.md",
+        "hash": "6637085216648179112"
+      },
+      {
+        "file": ".claude/agents/puppeteer-ui-tester.md",
+        "hash": "12395911058391178972"
+      },
+      {
+        "file": "nx.json",
+        "hash": "11064830751098480771"
+      },
+      {
+        "file": "content/itinerary/sample-day.md",
+        "hash": "13319851790084133703"
+      },
+      {
+        "file": "README.md",
+        "hash": "1398640381691740847"
+      },
+      {
+        "file": "CLAUDE.md",
+        "hash": "15727037116197845669"
+      },
+      {
+        "file": ".husky/pre-commit",
+        "hash": "12722559883533187475"
       }
     ],
     "projectFileMap": {
-      "types": [
-        {
-          "file": "packages/types/package.json",
-          "hash": "15457510737155155777",
-          "deps": [
-            "npm:tsup",
-            "npm:typescript",
-            "npm:zod"
-          ]
-        },
-        {
-          "file": "packages/types/project.json",
-          "hash": "4580823688194547018"
-        },
-        {
-          "file": "packages/types/src/index.ts",
-          "hash": "3646753493871056774"
-        },
-        {
-          "file": "packages/types/src/itinerary.ts",
-          "hash": "6716843967815140162"
-        },
-        {
-          "file": "packages/types/src/trip.ts",
-          "hash": "1684249728745959943"
-        },
-        {
-          "file": "packages/types/tsconfig.json",
-          "hash": "9751019901663183814"
-        },
-        {
-          "file": "packages/types/tsup.config.ts",
-          "hash": "16820905800690594824",
-          "deps": [
-            "npm:tsup"
-          ]
-        }
-      ],
       "api": [
         {
           "file": "apps/api/.env.example",
@@ -210,31 +152,10 @@
         },
         {
           "file": "apps/api/package.json",
-          "hash": "3794656673696274390",
+          "hash": "4158675261589164764",
           "deps": [
-            "npm:@types/express",
-            "npm:@types/cors",
-            "npm:@types/compression",
-            "npm:@types/morgan",
-            "npm:@types/bcrypt",
-            "npm:@types/jsonwebtoken",
-            "npm:prisma",
-            "npm:tsx",
-            "npm:typescript",
             "shared",
-            "types",
-            "npm:@trpc/server",
-            "npm:@prisma/client",
-            "npm:express",
-            "npm:cors",
-            "npm:helmet",
-            "npm:compression",
-            "npm:morgan",
-            "npm:dotenv",
-            "npm:zod",
-            "npm:bcrypt",
-            "npm:jsonwebtoken",
-            "npm:rate-limiter-flexible"
+            "types"
           ]
         },
         {
@@ -269,15 +190,7 @@
         },
         {
           "file": "apps/api/src/index.ts",
-          "hash": "6352361453121629420",
-          "deps": [
-            "npm:express",
-            "npm:cors",
-            "npm:helmet",
-            "npm:compression",
-            "npm:morgan",
-            "npm:@trpc/server"
-          ]
+          "hash": "2950916221826675651"
         },
         {
           "file": "apps/api/src/middleware/context.ts",
@@ -340,25 +253,91 @@
           "hash": "8904581790859217315"
         }
       ],
+      "shared": [
+        {
+          "file": "packages/shared/package.json",
+          "hash": "10898034780008440372",
+          "deps": [
+            "types"
+          ]
+        },
+        {
+          "file": "packages/shared/project.json",
+          "hash": "14176143924600802907"
+        },
+        {
+          "file": "packages/shared/src/index.ts",
+          "hash": "13917356448624668712"
+        },
+        {
+          "file": "packages/shared/src/utils.ts",
+          "hash": "11516636435278812601",
+          "deps": [
+            "npm:clsx",
+            "npm:tailwind-merge"
+          ]
+        },
+        {
+          "file": "packages/shared/tsconfig.json",
+          "hash": "9751019901663183814"
+        },
+        {
+          "file": "packages/shared/tsup.config.ts",
+          "hash": "16820905800690594824",
+          "deps": [
+            "npm:tsup"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "file": "packages/types/package.json",
+          "hash": "4906348394656914148"
+        },
+        {
+          "file": "packages/types/project.json",
+          "hash": "4580823688194547018"
+        },
+        {
+          "file": "packages/types/src/index.ts",
+          "hash": "3646753493871056774"
+        },
+        {
+          "file": "packages/types/src/itinerary.ts",
+          "hash": "6716843967815140162"
+        },
+        {
+          "file": "packages/types/src/trip.ts",
+          "hash": "1684249728745959943"
+        },
+        {
+          "file": "packages/types/tsconfig.json",
+          "hash": "9751019901663183814"
+        },
+        {
+          "file": "packages/types/tsup.config.ts",
+          "hash": "16820905800690594824",
+          "deps": [
+            "npm:tsup"
+          ]
+        }
+      ],
       "web": [
         {
-          "file": "apps/web/.storybook/main.ts",
-          "hash": "7473507253352769469",
-          "deps": [
-            "npm:@storybook/react-vite",
-            "npm:vite@7.0.6"
-          ]
+          "file": "apps/web/.storybook/main.mjs",
+          "hash": "10414693205205388320"
+        },
+        {
+          "file": "apps/web/.storybook/preview.js",
+          "hash": "259762930414814926"
         },
         {
           "file": "apps/web/.storybook/preview.ts",
-          "hash": "13304276179931375840",
-          "deps": [
-            "npm:@storybook/react"
-          ]
+          "hash": "13554554932539240775"
         },
         {
           "file": "apps/web/components.json",
-          "hash": "6667888507023246556"
+          "hash": "13604633855525511138"
         },
         {
           "file": "apps/web/index.html",
@@ -366,13 +345,34 @@
         },
         {
           "file": "apps/web/package.json",
-          "hash": "12985308439080391040",
+          "hash": "16331863499306223702",
           "deps": [
             "npm:@types/react",
             "npm:@types/react-dom",
             "npm:@vitejs/plugin-react",
+            "npm:@storybook/addon-essentials",
+            "npm:@storybook/addon-interactions",
+            "npm:@storybook/core-server",
+            "npm:@storybook/react-vite",
+            "npm:@storybook/test",
+            "npm:eslint-plugin-react",
+            "npm:eslint-plugin-react-hooks",
+            "npm:eslint-plugin-react-refresh",
+            "npm:postcss",
+            "npm:storybook",
             "npm:tw-animate-css",
             "npm:vite",
+            "npm:eslint",
+            "npm:@eslint/js",
+            "npm:@typescript-eslint/eslint-plugin",
+            "npm:@typescript-eslint/parser",
+            "npm:eslint-config-prettier",
+            "npm:eslint-plugin-import",
+            "npm:eslint-plugin-jsx-a11y",
+            "npm:eslint-plugin-prettier",
+            "npm:prettier",
+            "npm:typescript",
+            "npm:typescript-eslint",
             "npm:@hookform/resolvers",
             "npm:@radix-ui/react-accordion",
             "npm:@radix-ui/react-avatar",
@@ -426,7 +426,7 @@
         },
         {
           "file": "apps/web/project.json",
-          "hash": "6734270285402640976"
+          "hash": "9624194692538212886"
         },
         {
           "file": "apps/web/public/vite.svg",
@@ -438,7 +438,11 @@
         },
         {
           "file": "apps/web/src/App.tsx",
-          "hash": "10406474521292115358",
+          "hash": "10106051900366025970"
+        },
+        {
+          "file": "apps/web/src/components/AppHeader.js",
+          "hash": "9080948041078983897",
           "deps": [
             "npm:react",
             "npm:lucide-react"
@@ -446,72 +450,61 @@
         },
         {
           "file": "apps/web/src/components/AppHeader.stories.tsx",
-          "hash": "9303054461024444840",
-          "deps": [
-            "npm:@storybook/react"
-          ]
+          "hash": "2415975033180664815"
         },
         {
           "file": "apps/web/src/components/AppHeader.tsx",
-          "hash": "6434482795379016289",
+          "hash": "2546345514945140138"
+        },
+        {
+          "file": "apps/web/src/components/AppSidebar.stories.js",
+          "hash": "10130791965196141035",
           "deps": [
-            "npm:lucide-react"
+            "npm:react"
           ]
         },
         {
           "file": "apps/web/src/components/AppSidebar.stories.tsx",
-          "hash": "6183973695181278529",
-          "deps": [
-            "npm:@storybook/react",
-            "npm:react"
-          ]
+          "hash": "10770033247161634419"
         },
         {
           "file": "apps/web/src/components/AppSidebar.tsx",
-          "hash": "15533605346159738052",
+          "hash": "11721734613187470663"
+        },
+        {
+          "file": "apps/web/src/components/Calendar.js",
+          "hash": "4505588051072585463",
           "deps": [
+            "npm:react",
             "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/Calendar.stories.js",
+          "hash": "873102491240437043",
+          "deps": [
+            "npm:react"
           ]
         },
         {
           "file": "apps/web/src/components/Calendar.stories.tsx",
-          "hash": "3655644698158072652",
-          "deps": [
-            "npm:@storybook/react",
-            "npm:react"
-          ]
+          "hash": "13001088564142543858"
         },
         {
           "file": "apps/web/src/components/Calendar.tsx",
-          "hash": "12472128834366765291",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react"
-          ]
+          "hash": "32610549222013750"
         },
         {
           "file": "apps/web/src/components/CategoryPage.tsx",
-          "hash": "16860602692177940152",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react"
-          ]
+          "hash": "9262006269050156768"
         },
         {
           "file": "apps/web/src/components/CategoryPageMinimal.tsx",
-          "hash": "858523660473685125",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react"
-          ]
+          "hash": "17480589657175211925"
         },
         {
           "file": "apps/web/src/components/CategoryPageSimple.tsx",
-          "hash": "10659311178342707150",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react"
-          ]
+          "hash": "3230180891938993533"
         },
         {
           "file": "apps/web/src/components/ContentViewer.tsx",
@@ -522,17 +515,24 @@
           ]
         },
         {
-          "file": "apps/web/src/components/Dashboard.stories.tsx",
-          "hash": "200651526092603805",
+          "file": "apps/web/src/components/Dashboard.stories.js",
+          "hash": "15066507877165479263",
           "deps": [
-            "npm:@storybook/react",
             "npm:react",
             "npm:lucide-react"
           ]
         },
         {
+          "file": "apps/web/src/components/Dashboard.stories.tsx",
+          "hash": "14588835381984680611"
+        },
+        {
           "file": "apps/web/src/components/Dashboard.tsx",
-          "hash": "10148683430632495449",
+          "hash": "7724808430497913993"
+        },
+        {
+          "file": "apps/web/src/components/EmptyTripsState.js",
+          "hash": "11659789979934958229",
           "deps": [
             "npm:react",
             "npm:lucide-react"
@@ -540,85 +540,61 @@
         },
         {
           "file": "apps/web/src/components/EmptyTripsState.stories.tsx",
-          "hash": "9593331221736070675",
-          "deps": [
-            "npm:@storybook/react"
-          ]
+          "hash": "12445682109996106094"
         },
         {
           "file": "apps/web/src/components/EmptyTripsState.tsx",
-          "hash": "3966695105874108786",
-          "deps": [
-            "npm:lucide-react"
-          ]
+          "hash": "10308674051964378172"
         },
         {
           "file": "apps/web/src/components/ErrorBoundary.tsx",
-          "hash": "6653347550855616459",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react"
-          ]
+          "hash": "10907962390955147363"
         },
         {
           "file": "apps/web/src/components/ErrorScreen.stories.tsx",
-          "hash": "8225220465516753711",
-          "deps": [
-            "npm:@storybook/react"
-          ]
+          "hash": "8069058755723662188"
         },
         {
           "file": "apps/web/src/components/ErrorScreen.tsx",
-          "hash": "17784970902963192700",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react"
-          ]
+          "hash": "15798152869496801098"
         },
         {
           "file": "apps/web/src/components/ItineraryView.stories.tsx",
-          "hash": "16260016745289478331",
-          "deps": [
-            "npm:@storybook/react"
-          ]
+          "hash": "11247824975445837500"
         },
         {
           "file": "apps/web/src/components/ItineraryView.tsx",
-          "hash": "14166697701066295976",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react"
-          ]
+          "hash": "6211933297742847889"
         },
         {
-          "file": "apps/web/src/components/NewTripCard.stories.tsx",
-          "hash": "8176994496503820770",
+          "file": "apps/web/src/components/NewTripCard.stories.js",
+          "hash": "10372098534585086330",
           "deps": [
-            "npm:@storybook/react"
-          ]
-        },
-        {
-          "file": "apps/web/src/components/NewTripCard.tsx",
-          "hash": "1605705445251617129",
-          "deps": [
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "apps/web/src/components/NewTripModal.stories.tsx",
-          "hash": "7425691768538040760",
-          "deps": [
-            "npm:@storybook/react",
             "npm:react"
           ]
         },
         {
-          "file": "apps/web/src/components/NewTripModal.tsx",
-          "hash": "5913394833427808622",
+          "file": "apps/web/src/components/NewTripCard.stories.tsx",
+          "hash": "15576800109536844973"
+        },
+        {
+          "file": "apps/web/src/components/NewTripCard.tsx",
+          "hash": "904780007633234539"
+        },
+        {
+          "file": "apps/web/src/components/NewTripModal.stories.js",
+          "hash": "11773179099314335001",
           "deps": [
-            "npm:react",
-            "npm:lucide-react"
+            "npm:react"
           ]
+        },
+        {
+          "file": "apps/web/src/components/NewTripModal.stories.tsx",
+          "hash": "2517898982115985715"
+        },
+        {
+          "file": "apps/web/src/components/NewTripModal.tsx",
+          "hash": "13890917523804507806"
         },
         {
           "file": "apps/web/src/components/ReadmeView.tsx",
@@ -632,63 +608,87 @@
         },
         {
           "file": "apps/web/src/components/StoryWrapper.tsx",
-          "hash": "17051321314788673709",
-          "deps": [
-            "npm:react"
-          ]
+          "hash": "2349680260578288491"
         },
         {
-          "file": "apps/web/src/components/TripCard.stories.tsx",
-          "hash": "9370634178240020049",
-          "deps": [
-            "npm:@storybook/react"
-          ]
-        },
-        {
-          "file": "apps/web/src/components/TripCard.tsx",
-          "hash": "15894189742595805390",
-          "deps": [
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "apps/web/src/components/TripCreationWizard.stories.tsx",
-          "hash": "13584831216652261601",
-          "deps": [
-            "npm:@storybook/react",
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/web/src/components/TripCreationWizard.tsx",
-          "hash": "3643401116514191033",
+          "file": "apps/web/src/components/TripCard.js",
+          "hash": "11491836332038354676",
           "deps": [
             "npm:react",
             "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/TripGrid.stories.tsx",
-          "hash": "16924477462759908457",
+          "file": "apps/web/src/components/TripCard.stories.js",
+          "hash": "10062226750462656021",
           "deps": [
-            "npm:@storybook/react"
-          ]
-        },
-        {
-          "file": "apps/web/src/components/TripGrid.tsx",
-          "hash": "1394835230669797901"
-        },
-        {
-          "file": "apps/web/src/components/TripManagement.stories.tsx",
-          "hash": "15121384798660968297",
-          "deps": [
-            "npm:@storybook/react",
             "npm:react"
           ]
         },
         {
+          "file": "apps/web/src/components/TripCard.stories.tsx",
+          "hash": "5315762161431236349"
+        },
+        {
+          "file": "apps/web/src/components/TripCard.tsx",
+          "hash": "9280183766966883686"
+        },
+        {
+          "file": "apps/web/src/components/TripCreationWizard.js",
+          "hash": "8296550070065312950",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/TripCreationWizard.stories.js",
+          "hash": "2763080378701957402",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/TripCreationWizard.stories.tsx",
+          "hash": "9984936689569814644"
+        },
+        {
+          "file": "apps/web/src/components/TripCreationWizard.tsx",
+          "hash": "7101327946811105304"
+        },
+        {
+          "file": "apps/web/src/components/TripGrid.js",
+          "hash": "18065807936863579953",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/TripGrid.stories.js",
+          "hash": "335461661464409479",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/TripGrid.stories.tsx",
+          "hash": "11069839630199675660"
+        },
+        {
+          "file": "apps/web/src/components/TripGrid.tsx",
+          "hash": "7625277799624337245"
+        },
+        {
+          "file": "apps/web/src/components/TripManagement.stories.tsx",
+          "hash": "5827271239656813317"
+        },
+        {
           "file": "apps/web/src/components/TripSelector.tsx",
-          "hash": "14510188477333468806",
+          "hash": "10123847648140833059"
+        },
+        {
+          "file": "apps/web/src/components/forms/TripFormBasicInfo.js",
+          "hash": "15964368043712867296",
           "deps": [
             "npm:react",
             "npm:lucide-react"
@@ -696,164 +696,192 @@
         },
         {
           "file": "apps/web/src/components/forms/TripFormBasicInfo.stories.tsx",
-          "hash": "2289397044330791502",
-          "deps": [
-            "npm:@storybook/react",
-            "npm:react"
-          ]
+          "hash": "8220673649310910396"
         },
         {
           "file": "apps/web/src/components/forms/TripFormBasicInfo.tsx",
-          "hash": "14315034870892145725",
+          "hash": "17655193063630817776"
+        },
+        {
+          "file": "apps/web/src/components/forms/TripFormDates.js",
+          "hash": "2887401160515188654",
           "deps": [
+            "npm:react",
             "npm:lucide-react"
           ]
         },
         {
           "file": "apps/web/src/components/forms/TripFormDates.stories.tsx",
-          "hash": "7114190103795992288",
-          "deps": [
-            "npm:@storybook/react",
-            "npm:react"
-          ]
+          "hash": "12930190033057689050"
         },
         {
           "file": "apps/web/src/components/forms/TripFormDates.tsx",
-          "hash": "12137790887554512799",
+          "hash": "377960789063249384"
+        },
+        {
+          "file": "apps/web/src/components/forms/TripFormDescription.js",
+          "hash": "12602033101625381416",
           "deps": [
-            "npm:lucide-react"
+            "npm:react"
           ]
         },
         {
           "file": "apps/web/src/components/forms/TripFormDescription.stories.tsx",
-          "hash": "1732552431848788841",
-          "deps": [
-            "npm:@storybook/react",
-            "npm:react"
-          ]
+          "hash": "13457696651644372525"
         },
         {
           "file": "apps/web/src/components/forms/TripFormDescription.tsx",
-          "hash": "7902084593618015232"
+          "hash": "15744504489941529920"
         },
         {
           "file": "apps/web/src/components/providers/TRPCProvider.tsx",
-          "hash": "460827988844812526",
-          "deps": [
-            "npm:@tanstack/react-query",
-            "npm:react"
-          ]
+          "hash": "6142636972890388612"
         },
         {
           "file": "apps/web/src/components/skeleton-card.tsx",
           "hash": "3244421341483603138"
         },
         {
-          "file": "apps/web/src/components/ui/.claude/agents/ladle-story-architect.md",
-          "hash": "17692769278524609122"
-        },
-        {
           "file": "apps/web/src/components/ui/accordion.stories.tsx",
-          "hash": "5934904819077969843"
+          "hash": "18275412138186401693"
         },
         {
           "file": "apps/web/src/components/ui/accordion.tsx",
-          "hash": "11809122693791108423",
+          "hash": "7108605438414240777"
+        },
+        {
+          "file": "apps/web/src/components/ui/alert.stories.js",
+          "hash": "14723071365444160353",
           "deps": [
             "npm:react",
-            "npm:@radix-ui/react-accordion",
             "npm:lucide-react"
           ]
         },
         {
           "file": "apps/web/src/components/ui/alert.stories.tsx",
-          "hash": "11116621337137051022",
-          "deps": [
-            "npm:@storybook/react",
-            "npm:lucide-react"
-          ]
+          "hash": "1057620903612801193"
         },
         {
           "file": "apps/web/src/components/ui/alert.tsx",
-          "hash": "7480384198647105618",
-          "deps": [
-            "npm:react",
-            "npm:class-variance-authority"
-          ]
+          "hash": "16926585327348125063"
         },
         {
-          "file": "apps/web/src/components/ui/avatar.stories.tsx",
-          "hash": "18236764497085264404",
-          "deps": [
-            "npm:@storybook/react"
-          ]
-        },
-        {
-          "file": "apps/web/src/components/ui/avatar.tsx",
-          "hash": "14751210977726479928",
+          "file": "apps/web/src/components/ui/avatar.js",
+          "hash": "15382874642369458213",
           "deps": [
             "npm:react",
             "npm:@radix-ui/react-avatar"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/badge.stories.tsx",
-          "hash": "3749250570319281870",
+          "file": "apps/web/src/components/ui/avatar.stories.js",
+          "hash": "17514440761080349755",
           "deps": [
-            "npm:@storybook/react",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/ui/avatar.stories.tsx",
+          "hash": "1005158826828649714"
+        },
+        {
+          "file": "apps/web/src/components/ui/avatar.tsx",
+          "hash": "9900473550880210272"
+        },
+        {
+          "file": "apps/web/src/components/ui/badge/badge-variants.js",
+          "hash": "16387349643777595877",
+          "deps": [
+            "npm:class-variance-authority"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/ui/badge/badge-variants.ts",
+          "hash": "9771224836109139096"
+        },
+        {
+          "file": "apps/web/src/components/ui/badge/badge.js",
+          "hash": "1108025083734500737",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-slot"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/ui/badge/badge.stories.js",
+          "hash": "13992218479192241639",
+          "deps": [
+            "npm:react",
             "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/badge.tsx",
-          "hash": "10963678808027697072",
+          "file": "apps/web/src/components/ui/badge/badge.stories.tsx",
+          "hash": "16616130793446240881"
+        },
+        {
+          "file": "apps/web/src/components/ui/badge/badge.tsx",
+          "hash": "2292202934185864522"
+        },
+        {
+          "file": "apps/web/src/components/ui/button/button.js",
+          "hash": "5474183925650440665",
           "deps": [
             "npm:react",
-            "npm:@radix-ui/react-slot",
+            "npm:@radix-ui/react-slot"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/ui/button/button.stories.js",
+          "hash": "10319690101226696568",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/ui/button/button.stories.tsx",
+          "hash": "15665081079476227100"
+        },
+        {
+          "file": "apps/web/src/components/ui/button/button.tsx",
+          "hash": "4135392548574958328"
+        },
+        {
+          "file": "apps/web/src/components/ui/button/variants.js",
+          "hash": "8626584818631952308",
+          "deps": [
             "npm:class-variance-authority"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/button.stories.tsx",
-          "hash": "128722869286817814",
+          "file": "apps/web/src/components/ui/button/variants.tsx",
+          "hash": "17225875792099387961"
+        },
+        {
+          "file": "apps/web/src/components/ui/card.js",
+          "hash": "12956487906827726638",
           "deps": [
-            "npm:@storybook/react"
+            "npm:react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/button.tsx",
-          "hash": "2554933331617908725",
+          "file": "apps/web/src/components/ui/card.stories.js",
+          "hash": "9680648903443279055",
           "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-slot",
-            "npm:class-variance-authority"
+            "npm:react"
           ]
         },
         {
           "file": "apps/web/src/components/ui/card.stories.tsx",
-          "hash": "1608146522551378055",
-          "deps": [
-            "npm:@storybook/react"
-          ]
+          "hash": "3979449964486459463"
         },
         {
           "file": "apps/web/src/components/ui/card.tsx",
-          "hash": "12626163197687957168",
-          "deps": [
-            "npm:react"
-          ]
+          "hash": "7582585060678953734"
         },
         {
-          "file": "apps/web/src/components/ui/checkbox.stories.tsx",
-          "hash": "12702926197329236965",
-          "deps": [
-            "npm:@storybook/react",
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/web/src/components/ui/checkbox.tsx",
-          "hash": "18192156865886341157",
+          "file": "apps/web/src/components/ui/checkbox.js",
+          "hash": "15616244632987013184",
           "deps": [
             "npm:react",
             "npm:@radix-ui/react-checkbox",
@@ -861,17 +889,23 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/command.stories.tsx",
-          "hash": "9808547828085492461",
+          "file": "apps/web/src/components/ui/checkbox.stories.js",
+          "hash": "4099781007704280680",
           "deps": [
-            "npm:@storybook/react",
-            "npm:react",
-            "npm:lucide-react"
+            "npm:react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/command.tsx",
-          "hash": "14463411919929973577",
+          "file": "apps/web/src/components/ui/checkbox.stories.tsx",
+          "hash": "16270068264113942039"
+        },
+        {
+          "file": "apps/web/src/components/ui/checkbox.tsx",
+          "hash": "10439585541672491722"
+        },
+        {
+          "file": "apps/web/src/components/ui/command.js",
+          "hash": "4015547490965363437",
           "deps": [
             "npm:react",
             "npm:cmdk",
@@ -879,17 +913,24 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/dialog.stories.tsx",
-          "hash": "11508937854440179726",
+          "file": "apps/web/src/components/ui/command.stories.js",
+          "hash": "13224416328284328586",
           "deps": [
-            "npm:@storybook/react",
             "npm:react",
             "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/dialog.tsx",
-          "hash": "3787619525081248836",
+          "file": "apps/web/src/components/ui/command.stories.tsx",
+          "hash": "10451818421937959286"
+        },
+        {
+          "file": "apps/web/src/components/ui/command.tsx",
+          "hash": "12099840527891890380"
+        },
+        {
+          "file": "apps/web/src/components/ui/dialog.js",
+          "hash": "12108141108426254644",
           "deps": [
             "npm:react",
             "npm:@radix-ui/react-dialog",
@@ -897,34 +938,48 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/drawer.stories.tsx",
-          "hash": "2897330791752488481",
+          "file": "apps/web/src/components/ui/dialog.stories.js",
+          "hash": "2738761602294167358",
           "deps": [
-            "npm:@storybook/react",
             "npm:react",
             "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/drawer.tsx",
-          "hash": "6340250294204870363",
+          "file": "apps/web/src/components/ui/dialog.stories.tsx",
+          "hash": "16539475398278117609"
+        },
+        {
+          "file": "apps/web/src/components/ui/dialog.tsx",
+          "hash": "1713287906680292393"
+        },
+        {
+          "file": "apps/web/src/components/ui/drawer.js",
+          "hash": "16581207209952414062",
           "deps": [
             "npm:react",
             "npm:vaul"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/dropdown-menu.stories.tsx",
-          "hash": "12110997239233493768",
+          "file": "apps/web/src/components/ui/drawer.stories.js",
+          "hash": "7430563290334541745",
           "deps": [
-            "npm:@storybook/react",
             "npm:react",
             "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/dropdown-menu.tsx",
-          "hash": "14323700809136055032",
+          "file": "apps/web/src/components/ui/drawer.stories.tsx",
+          "hash": "13107707581351334107"
+        },
+        {
+          "file": "apps/web/src/components/ui/drawer.tsx",
+          "hash": "6674232293531566173"
+        },
+        {
+          "file": "apps/web/src/components/ui/dropdown-menu.js",
+          "hash": "3538718598282492395",
           "deps": [
             "npm:react",
             "npm:@radix-ui/react-dropdown-menu",
@@ -932,84 +987,138 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/form.stories.tsx",
-          "hash": "470249512078593038",
+          "file": "apps/web/src/components/ui/dropdown-menu.stories.js",
+          "hash": "7464506683285249731",
           "deps": [
-            "npm:@storybook/react",
-            "npm:react-hook-form",
-            "npm:@hookform/resolvers",
-            "npm:zod@4.0.14",
+            "npm:react",
             "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/form.tsx",
-          "hash": "3200697611223940984",
+          "file": "apps/web/src/components/ui/dropdown-menu.stories.tsx",
+          "hash": "14633974835002284289"
+        },
+        {
+          "file": "apps/web/src/components/ui/dropdown-menu.tsx",
+          "hash": "10020182354958466433"
+        },
+        {
+          "file": "apps/web/src/components/ui/form/context.js",
+          "hash": "2050795425493240035",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/ui/form/context.tsx",
+          "hash": "16656194659370096458"
+        },
+        {
+          "file": "apps/web/src/components/ui/form/form.js",
+          "hash": "3704382483217444635",
           "deps": [
             "npm:react",
-            "npm:@radix-ui/react-label",
             "npm:@radix-ui/react-slot",
             "npm:react-hook-form"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/hover-card.stories.tsx",
-          "hash": "18245438839017738480",
+          "file": "apps/web/src/components/ui/form/form.stories.js",
+          "hash": "3963856117034599062",
           "deps": [
-            "npm:@storybook/react",
-            "npm:lucide-react"
+            "npm:react",
+            "npm:react-hook-form",
+            "npm:@hookform/resolvers",
+            "npm:zod@4.0.14"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/hover-card.tsx",
-          "hash": "4222917547134356225",
+          "file": "apps/web/src/components/ui/form/form.stories.tsx",
+          "hash": "3474855941664197062"
+        },
+        {
+          "file": "apps/web/src/components/ui/form/form.tsx",
+          "hash": "4047855224438724785"
+        },
+        {
+          "file": "apps/web/src/components/ui/form/useFormField.js",
+          "hash": "11074875952543620348",
+          "deps": [
+            "npm:react",
+            "npm:react-hook-form"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/ui/form/useFormField.tsx",
+          "hash": "7518645041655849431"
+        },
+        {
+          "file": "apps/web/src/components/ui/hover-card.js",
+          "hash": "8150168535558676847",
           "deps": [
             "npm:react",
             "npm:@radix-ui/react-hover-card"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/input.stories.tsx",
-          "hash": "17408489297226569761",
+          "file": "apps/web/src/components/ui/hover-card.stories.js",
+          "hash": "8322051749077421834",
           "deps": [
-            "npm:@storybook/react",
+            "npm:react",
             "npm:lucide-react"
           ]
+        },
+        {
+          "file": "apps/web/src/components/ui/hover-card.stories.tsx",
+          "hash": "17912851884994410472"
+        },
+        {
+          "file": "apps/web/src/components/ui/hover-card.tsx",
+          "hash": "1163405471543071281"
+        },
+        {
+          "file": "apps/web/src/components/ui/input.stories.js",
+          "hash": "8944947177244099751",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/ui/input.stories.tsx",
+          "hash": "4394352570848164373"
         },
         {
           "file": "apps/web/src/components/ui/input.tsx",
-          "hash": "5100320126020590845",
-          "deps": [
-            "npm:react"
-          ]
+          "hash": "1366136234240729569"
         },
         {
-          "file": "apps/web/src/components/ui/label.stories.tsx",
-          "hash": "4576497163058808972",
-          "deps": [
-            "npm:@storybook/react",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "apps/web/src/components/ui/label.tsx",
-          "hash": "4362919960382970735",
+          "file": "apps/web/src/components/ui/label.js",
+          "hash": "10387351702759126802",
           "deps": [
             "npm:react",
             "npm:@radix-ui/react-label"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/menubar.stories.tsx",
-          "hash": "12644787457392343763",
+          "file": "apps/web/src/components/ui/label.stories.js",
+          "hash": "3741419196800638687",
           "deps": [
-            "npm:@storybook/react",
-            "npm:react"
+            "npm:react",
+            "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/menubar.tsx",
-          "hash": "940464810916543419",
+          "file": "apps/web/src/components/ui/label.stories.tsx",
+          "hash": "10212595804109354687"
+        },
+        {
+          "file": "apps/web/src/components/ui/label.tsx",
+          "hash": "7486278390905073708"
+        },
+        {
+          "file": "apps/web/src/components/ui/menubar.js",
+          "hash": "3426536247676400984",
           "deps": [
             "npm:react",
             "npm:@radix-ui/react-menubar",
@@ -1017,68 +1126,77 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/navigation-menu.stories.tsx",
-          "hash": "11832406643054717906",
-          "deps": [
-            "npm:@storybook/react",
-            "npm:lucide-react"
-          ]
+          "file": "apps/web/src/components/ui/menubar.stories.tsx",
+          "hash": "11822418861265401231"
         },
         {
-          "file": "apps/web/src/components/ui/navigation-menu.tsx",
-          "hash": "1463801237709690436",
+          "file": "apps/web/src/components/ui/menubar.tsx",
+          "hash": "17575330445429069435"
+        },
+        {
+          "file": "apps/web/src/components/ui/navigation-menu-trigger-style.tsx",
+          "hash": "11898106007362930751"
+        },
+        {
+          "file": "apps/web/src/components/ui/navigation-menu.js",
+          "hash": "5986102367464540741",
           "deps": [
             "npm:react",
             "npm:@radix-ui/react-navigation-menu",
-            "npm:class-variance-authority",
             "npm:lucide-react"
           ]
+        },
+        {
+          "file": "apps/web/src/components/ui/navigation-menu.stories.js",
+          "hash": "1824980131923822821",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/ui/navigation-menu.stories.tsx",
+          "hash": "18173075723896013899"
+        },
+        {
+          "file": "apps/web/src/components/ui/navigation-menu.tsx",
+          "hash": "700252473582483181"
         },
         {
           "file": "apps/web/src/components/ui/pagination.tsx",
-          "hash": "1221162818688540102",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react"
-          ]
+          "hash": "6954801182932924670"
         },
         {
           "file": "apps/web/src/components/ui/popover.tsx",
-          "hash": "2123900949476297986",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-popover"
-          ]
+          "hash": "2985681319792421552"
         },
         {
-          "file": "apps/web/src/components/ui/progress.stories.tsx",
-          "hash": "9385123261325544476",
-          "deps": [
-            "npm:@storybook/react",
-            "npm:react",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "apps/web/src/components/ui/progress.tsx",
-          "hash": "11845427145659035377",
+          "file": "apps/web/src/components/ui/progress.js",
+          "hash": "2989259440379062319",
           "deps": [
             "npm:react",
             "npm:@radix-ui/react-progress"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/radio-group.stories.tsx",
-          "hash": "15081877623495499122",
+          "file": "apps/web/src/components/ui/progress.stories.js",
+          "hash": "8346102265867063862",
           "deps": [
-            "npm:@storybook/react",
             "npm:react",
             "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/radio-group.tsx",
-          "hash": "9122487715209743435",
+          "file": "apps/web/src/components/ui/progress.stories.tsx",
+          "hash": "1881152193738815060"
+        },
+        {
+          "file": "apps/web/src/components/ui/progress.tsx",
+          "hash": "5739314200892315080"
+        },
+        {
+          "file": "apps/web/src/components/ui/radio-group.js",
+          "hash": "1647393496450777787",
           "deps": [
             "npm:react",
             "npm:@radix-ui/react-radio-group",
@@ -1086,24 +1204,28 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/scroll-area.tsx",
-          "hash": "4331523341645098951",
+          "file": "apps/web/src/components/ui/radio-group.stories.js",
+          "hash": "14865249110556806550",
           "deps": [
             "npm:react",
-            "npm:@radix-ui/react-scroll-area"
-          ]
-        },
-        {
-          "file": "apps/web/src/components/ui/select.stories.tsx",
-          "hash": "9412168326979715931",
-          "deps": [
-            "npm:@storybook/react",
             "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/select.tsx",
-          "hash": "11533529443122368476",
+          "file": "apps/web/src/components/ui/radio-group.stories.tsx",
+          "hash": "14773836156427934481"
+        },
+        {
+          "file": "apps/web/src/components/ui/radio-group.tsx",
+          "hash": "14575011413025308875"
+        },
+        {
+          "file": "apps/web/src/components/ui/scroll-area.tsx",
+          "hash": "6354415338121263034"
+        },
+        {
+          "file": "apps/web/src/components/ui/select.js",
+          "hash": "4948756353493356537",
           "deps": [
             "npm:react",
             "npm:@radix-ui/react-select",
@@ -1111,24 +1233,40 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/separator.stories.tsx",
-          "hash": "4022930815877626369",
+          "file": "apps/web/src/components/ui/select.stories.js",
+          "hash": "14261714320507094603",
           "deps": [
-            "npm:@storybook/react",
+            "npm:react",
             "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/separator.tsx",
-          "hash": "17968105264491771283",
+          "file": "apps/web/src/components/ui/select.stories.tsx",
+          "hash": "10318739755738486337"
+        },
+        {
+          "file": "apps/web/src/components/ui/select.tsx",
+          "hash": "5605273725600123572"
+        },
+        {
+          "file": "apps/web/src/components/ui/separator.stories.js",
+          "hash": "7534943230876261736",
           "deps": [
             "npm:react",
-            "npm:@radix-ui/react-separator"
+            "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/sheet.tsx",
-          "hash": "12163869745913107582",
+          "file": "apps/web/src/components/ui/separator.stories.tsx",
+          "hash": "4209809742425114483"
+        },
+        {
+          "file": "apps/web/src/components/ui/separator.tsx",
+          "hash": "436191591185782160"
+        },
+        {
+          "file": "apps/web/src/components/ui/sheet.js",
+          "hash": "7613427862387776056",
           "deps": [
             "npm:react",
             "npm:@radix-ui/react-dialog",
@@ -1136,162 +1274,208 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/sidebar.tsx",
-          "hash": "17229672715048543622",
+          "file": "apps/web/src/components/ui/sheet.tsx",
+          "hash": "10130400599755247502"
+        },
+        {
+          "file": "apps/web/src/components/ui/sidebar/constants.js",
+          "hash": "9034370840765192580",
           "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-slot",
-            "npm:class-variance-authority",
-            "npm:lucide-react"
+            "npm:class-variance-authority"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/ui/sidebar/constants.tsx",
+          "hash": "2733064893829820221"
+        },
+        {
+          "file": "apps/web/src/components/ui/sidebar/context.js",
+          "hash": "13982361496641639105",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/ui/sidebar/context.tsx",
+          "hash": "6763825796641275317"
+        },
+        {
+          "file": "apps/web/src/components/ui/sidebar/sidebar.tsx",
+          "hash": "5501324197011429961"
+        },
+        {
+          "file": "apps/web/src/components/ui/sidebar/useSidebar.js",
+          "hash": "1383252120870964632",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/ui/sidebar/useSidebar.tsx",
+          "hash": "7909457944959250517"
+        },
+        {
+          "file": "apps/web/src/components/ui/skeleton.js",
+          "hash": "737693112170189415",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/ui/skeleton.stories.js",
+          "hash": "18173603180185453313",
+          "deps": [
+            "npm:react"
           ]
         },
         {
           "file": "apps/web/src/components/ui/skeleton.stories.tsx",
-          "hash": "3199629193167922977",
-          "deps": [
-            "npm:@storybook/react"
-          ]
+          "hash": "7754146496999172375"
         },
         {
           "file": "apps/web/src/components/ui/skeleton.tsx",
-          "hash": "16154753499545468595"
+          "hash": "6622423519576444207"
         },
         {
           "file": "apps/web/src/components/ui/slider.tsx",
-          "hash": "14523236345534185617",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-slider"
-          ]
+          "hash": "1156808082134654180"
         },
         {
           "file": "apps/web/src/components/ui/sonner.tsx",
-          "hash": "661852242583144370",
-          "deps": [
-            "npm:next-themes",
-            "npm:sonner"
-          ]
+          "hash": "13362847926193094598"
         },
         {
-          "file": "apps/web/src/components/ui/switch.stories.tsx",
-          "hash": "9294951457949301230",
-          "deps": [
-            "npm:@storybook/react",
-            "npm:react",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "apps/web/src/components/ui/switch.tsx",
-          "hash": "1593497887276823321",
+          "file": "apps/web/src/components/ui/switch.js",
+          "hash": "16802329605907771098",
           "deps": [
             "npm:react",
             "npm:@radix-ui/react-switch"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/table.tsx",
-          "hash": "14344641960083497310",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/web/src/components/ui/tabs.tsx",
-          "hash": "14375166271492042760",
+          "file": "apps/web/src/components/ui/switch.stories.js",
+          "hash": "14379975004795481093",
           "deps": [
             "npm:react",
-            "npm:@radix-ui/react-tabs"
-          ]
-        },
-        {
-          "file": "apps/web/src/components/ui/textarea.stories.tsx",
-          "hash": "6607342549700660958",
-          "deps": [
-            "npm:@storybook/react",
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/web/src/components/ui/textarea.tsx",
-          "hash": "3895507706129911610",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/web/src/components/ui/toggle-group.tsx",
-          "hash": "1281893485647507744",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-toggle-group",
-            "npm:class-variance-authority"
-          ]
-        },
-        {
-          "file": "apps/web/src/components/ui/toggle.tsx",
-          "hash": "8693739005475279689",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-toggle",
-            "npm:class-variance-authority"
-          ]
-        },
-        {
-          "file": "apps/web/src/components/ui/tooltip.stories.tsx",
-          "hash": "4752916946115634698",
-          "deps": [
-            "npm:@storybook/react",
             "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/tooltip.tsx",
-          "hash": "6287152514570869404",
+          "file": "apps/web/src/components/ui/switch.stories.tsx",
+          "hash": "13215121012420929016"
+        },
+        {
+          "file": "apps/web/src/components/ui/switch.tsx",
+          "hash": "17275170364640258558"
+        },
+        {
+          "file": "apps/web/src/components/ui/table.tsx",
+          "hash": "11302014588067057422"
+        },
+        {
+          "file": "apps/web/src/components/ui/tabs.tsx",
+          "hash": "12390376402947050388"
+        },
+        {
+          "file": "apps/web/src/components/ui/textarea.js",
+          "hash": "7334975904126390618",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/ui/textarea.stories.tsx",
+          "hash": "13238377581458601098"
+        },
+        {
+          "file": "apps/web/src/components/ui/textarea.tsx",
+          "hash": "16221182896566412761"
+        },
+        {
+          "file": "apps/web/src/components/ui/toggle-group.tsx",
+          "hash": "6695360504671902327"
+        },
+        {
+          "file": "apps/web/src/components/ui/toggle.tsx",
+          "hash": "15225357065574232751"
+        },
+        {
+          "file": "apps/web/src/components/ui/toggleVariants.tsx",
+          "hash": "8916284115386118126"
+        },
+        {
+          "file": "apps/web/src/components/ui/tooltip.js",
+          "hash": "12850217655945070874",
           "deps": [
             "npm:react",
             "npm:@radix-ui/react-tooltip"
           ]
         },
         {
-          "file": "apps/web/src/contexts/TripContext.tsx",
-          "hash": "13437116353419329173",
+          "file": "apps/web/src/components/ui/tooltip.stories.js",
+          "hash": "12917374091622914615",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "apps/web/src/components/ui/tooltip.stories.tsx",
+          "hash": "4054255644916311656"
+        },
+        {
+          "file": "apps/web/src/components/ui/tooltip.tsx",
+          "hash": "292254389186308033"
+        },
+        {
+          "file": "apps/web/src/components/ui/use_sidebar.js",
+          "hash": "9738402886065413857",
           "deps": [
             "npm:react"
           ]
         },
         {
+          "file": "apps/web/src/components/ui/use_sidebar.tsx",
+          "hash": "13652252755228273659"
+        },
+        {
+          "file": "apps/web/src/contexts/TripContext.tsx",
+          "hash": "15415187622674952307"
+        },
+        {
           "file": "apps/web/src/contexts/TripContextDefinition.ts",
-          "hash": "3306357875946991911",
+          "hash": "9135882836206266065"
+        },
+        {
+          "file": "apps/web/src/hooks/use-mobile.js",
+          "hash": "10538381189365140310",
           "deps": [
             "npm:react"
           ]
         },
         {
           "file": "apps/web/src/hooks/use-mobile.ts",
-          "hash": "14900138732519213047",
-          "deps": [
-            "npm:react"
-          ]
+          "hash": "11808312049290393370"
         },
         {
           "file": "apps/web/src/hooks/useTripContext.ts",
-          "hash": "15763353178394496517",
-          "deps": [
-            "npm:react"
-          ]
+          "hash": "1893482928546029360"
         },
         {
           "file": "apps/web/src/index.css",
-          "hash": "14631836541761035088"
+          "hash": "2137905113824861711"
         },
         {
-          "file": "apps/web/src/lib/utils.ts",
-          "hash": "6483145186850064023",
+          "file": "apps/web/src/lib/utils.js",
+          "hash": "5575228651076674701",
           "deps": [
             "npm:clsx",
             "npm:tailwind-merge"
           ]
+        },
+        {
+          "file": "apps/web/src/lib/utils.ts",
+          "hash": "9541062503082763861"
         },
         {
           "file": "apps/web/src/main.tsx",
@@ -1306,36 +1490,52 @@
           "hash": "11154271098881765586"
         },
         {
+          "file": "apps/web/src/services/itineraryService.js",
+          "hash": "1626937335885828137"
+        },
+        {
           "file": "apps/web/src/services/itineraryService.ts",
           "hash": "6186709425438717681"
         },
         {
           "file": "apps/web/src/services/tripService.ts",
-          "hash": "2313377866159426125"
+          "hash": "1244921836295919468"
         },
         {
           "file": "apps/web/src/styles/animations.css",
-          "hash": "7139734418697768454"
+          "hash": "2575020573716682449"
         },
         {
           "file": "apps/web/src/styles/story-fonts.css",
-          "hash": "8700025576656018779"
+          "hash": "2177898260932121145"
+        },
+        {
+          "file": "apps/web/src/types/itinerary.js",
+          "hash": "650420260285201077"
         },
         {
           "file": "apps/web/src/types/itinerary.ts",
           "hash": "10602865236543616008"
         },
         {
+          "file": "apps/web/src/types/trip.js",
+          "hash": "10533815908077531553"
+        },
+        {
           "file": "apps/web/src/types/trip.ts",
-          "hash": "15483750327511856211"
+          "hash": "14782345465751209953"
         },
         {
           "file": "apps/web/src/utils/storage.ts",
-          "hash": "1064462464815074075"
+          "hash": "13995268304327581806"
+        },
+        {
+          "file": "apps/web/src/utils/trpc.js",
+          "hash": "8947996822276579996"
         },
         {
           "file": "apps/web/src/utils/trpc.ts",
-          "hash": "14078668063278238015"
+          "hash": "6682079013409745836"
         },
         {
           "file": "apps/web/src/vite-env.d.ts",
@@ -1351,7 +1551,7 @@
         },
         {
           "file": "apps/web/tsconfig.json",
-          "hash": "9264211064690512805"
+          "hash": "12533934631554452503"
         },
         {
           "file": "apps/web/tsconfig.node.json",
@@ -1362,53 +1562,12 @@
           "hash": "6735201758105622607"
         },
         {
+          "file": "apps/web/tsconfig.storybook.tsbuildinfo",
+          "hash": "9048131313270234209"
+        },
+        {
           "file": "apps/web/vite.config.ts",
-          "hash": "11753468815553727272",
-          "deps": [
-            "npm:vite",
-            "npm:@vitejs/plugin-react",
-            "npm:@tailwindcss/vite"
-          ]
-        }
-      ],
-      "shared": [
-        {
-          "file": "packages/shared/package.json",
-          "hash": "12670195146463190566",
-          "deps": [
-            "npm:tsup",
-            "npm:typescript",
-            "types",
-            "npm:clsx",
-            "npm:tailwind-merge"
-          ]
-        },
-        {
-          "file": "packages/shared/project.json",
-          "hash": "14176143924600802907"
-        },
-        {
-          "file": "packages/shared/src/index.ts",
-          "hash": "13917356448624668712"
-        },
-        {
-          "file": "packages/shared/src/utils.ts",
-          "hash": "11516636435278812601",
-          "deps": [
-            "npm:clsx",
-            "npm:tailwind-merge"
-          ]
-        },
-        {
-          "file": "packages/shared/tsconfig.json",
-          "hash": "9751019901663183814"
-        },
-        {
-          "file": "packages/shared/tsup.config.ts",
-          "hash": "16820905800690594824",
-          "deps": [
-            "npm:tsup"
-          ]
+          "hash": "9141854498127749938"
         }
       ]
     }
