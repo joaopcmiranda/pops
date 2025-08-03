@@ -2,6 +2,13 @@ import { RateLimiterMemory } from 'rate-limiter-flexible'
 import type { Request, Response, NextFunction } from 'express'
 import { config } from '@/config/env'
 
+// Type for rate limiter rejection response
+interface RateLimiterRejection {
+  msBeforeNext: number
+  remainingHits?: number
+  totalHits?: number
+}
+
 // Create rate limiter instance
 const rateLimiter = new RateLimiterMemory({
   points: config.RATE_LIMIT_MAX_REQUESTS, // Number of requests
@@ -13,8 +20,9 @@ export const rateLimiterMiddleware = async (req: Request, res: Response, next: N
   try {
     await rateLimiter.consume(req.ip || 'unknown')
     next()
-  } catch (rejRes: any) {
-    const secs = Math.round(rejRes.msBeforeNext / 1000) || 1
+  } catch (rejRes: unknown) {
+    const rejection = rejRes as RateLimiterRejection
+    const secs = Math.round(rejection.msBeforeNext / 1000) || 1
     
     res.set('Retry-After', String(secs))
     res.status(429).json({

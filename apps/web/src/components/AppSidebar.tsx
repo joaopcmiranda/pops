@@ -13,18 +13,31 @@ import {
   BookOpen,
 } from 'lucide-react'
 
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/components/ui/sidebar/sidebar.tsx'
+
 interface AppSidebarProps {
-  isOpen?: boolean
   activeCategory?: string
   onCategorySelect?: (category: string) => void
 }
 
-export function AppSidebar({
-  isOpen = true,
-  activeCategory = 'dashboard',
-  onCategorySelect,
-}: AppSidebarProps) {
-  const categories = [
+export function AppSidebar({ activeCategory = 'dashboard', onCategorySelect }: AppSidebarProps) {
+  const overviewItems = [
+    { id: 'dashboard', name: 'Dashboard', icon: Home },
+    { id: 'calendar', name: 'Calendar', icon: CalendarDays },
+    { id: 'analytics', name: 'Analytics', icon: BarChart3 },
+  ]
+
+  const planningItems = [
     { id: 'destinations', name: 'Destinations', icon: MapPin },
     { id: 'itinerary', name: 'Itinerary', icon: Calendar },
     { id: 'transport', name: 'Transport', icon: Plane },
@@ -34,83 +47,85 @@ export function AppSidebar({
     { id: 'documents', name: 'Documents', icon: FileText },
   ]
 
+  const settingsItems = [
+    { id: 'readme', name: 'Documentation', icon: BookOpen },
+    { id: 'settings', name: 'Settings', icon: Settings },
+  ]
+
   const handleCategoryClick = (categoryId: string) => {
     onCategorySelect?.(categoryId)
   }
 
   return (
-    <aside className={`app-sidebar ${isOpen ? 'open' : ''} animate-slide-in-left`}>
-      <div className='sidebar-header'>
-        <a href='#' className='sidebar-brand'>
-          ✈️
-          <span>Trip Organizer</span>
-        </a>
-      </div>
-
-      <nav className='sidebar-nav'>
-        <div className='nav-section-title'>Overview</div>
+    <Sidebar>
+      <SidebarHeader>
         <button
-          className={`nav-item nav-item-hover focus-ring ${activeCategory === 'dashboard' ? 'active' : ''}`}
+          className='flex items-center gap-2 px-2 py-1 text-left w-full hover:bg-accent rounded-md transition-colors'
           onClick={() => handleCategoryClick('dashboard')}
         >
-          <Home className='nav-item-icon' />
-          Dashboard
+          <span className='text-xl'>✈️</span>
+          <span className='font-semibold'>Trip Organizer</span>
         </button>
+      </SidebarHeader>
 
-        <button
-          className={`nav-item nav-item-hover focus-ring ${activeCategory === 'calendar' ? 'active' : ''}`}
-          onClick={() => handleCategoryClick('calendar')}
-        >
-          <CalendarDays className='nav-item-icon' />
-          Calendar
-        </button>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Overview</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {overviewItems.map(item => (
+                <SidebarMenuItem key={item.id}>
+                  <SidebarMenuButton
+                    isActive={activeCategory === item.id}
+                    onClick={() => handleCategoryClick(item.id)}
+                  >
+                    <item.icon />
+                    <span>{item.name}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
-        <button
-          className={`nav-item nav-item-hover focus-ring ${activeCategory === 'analytics' ? 'active' : ''}`}
-          onClick={() => handleCategoryClick('analytics')}
-        >
-          <BarChart3 className='nav-item-icon' />
-          Analytics
-        </button>
+        <SidebarGroup>
+          <SidebarGroupLabel>Trip Planning</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {planningItems.map(item => (
+                <SidebarMenuItem key={item.id}>
+                  <SidebarMenuButton
+                    isActive={activeCategory === item.id}
+                    onClick={() => handleCategoryClick(item.id)}
+                  >
+                    <item.icon />
+                    <span>{item.name}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
-        <div className='nav-section-title' style={{ marginTop: '2rem' }}>
-          Trip Planning
-        </div>
-
-        {categories.map(category => {
-          const IconComponent = category.icon
-          return (
-            <button
-              key={category.id}
-              className={`nav-item nav-item-hover focus-ring ${activeCategory === category.id ? 'active' : ''}`}
-              onClick={() => handleCategoryClick(category.id)}
-            >
-              <IconComponent className='nav-item-icon' />
-              {category.name}
-            </button>
-          )
-        })}
-
-        <div className='nav-section-title' style={{ marginTop: '2rem' }}>
-          Settings
-        </div>
-
-        <button
-          className={`nav-item nav-item-hover focus-ring ${activeCategory === 'readme' ? 'active' : ''}`}
-          onClick={() => handleCategoryClick('readme')}
-        >
-          <BookOpen className='nav-item-icon' />
-          Documentation
-        </button>
-
-        <button
-          className={`nav-item nav-item-hover focus-ring ${activeCategory === 'settings' ? 'active' : ''}`}
-          onClick={() => handleCategoryClick('settings')}
-        >
-          <Settings className='nav-item-icon' />
-          Settings
-        </button>
-      </nav>
-    </aside>
+        <SidebarGroup>
+          <SidebarGroupLabel>Settings</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {settingsItems.map(item => (
+                <SidebarMenuItem key={item.id}>
+                  <SidebarMenuButton
+                    isActive={activeCategory === item.id}
+                    onClick={() => handleCategoryClick(item.id)}
+                  >
+                    <item.icon />
+                    <span>{item.name}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
   )
 }

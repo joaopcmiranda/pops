@@ -58,7 +58,7 @@ content/
 ### CSS Architecture
 
 - **Hybrid approach**: Custom CSS classes + shadcn/ui components
-- **Tailwind v4 compatibility**: Using `@tailwindcss/postcss` plugin
+- **Tailwind v4**
 - **CSS Variables**: Full shadcn/ui design system implemented
 - **Grid**: Custom `.app-grid` class for responsive layout
 
@@ -109,7 +109,7 @@ npm run lint
 
 ## 💡 Development Notes
 
-- Use **custom CSS classes** for complex layouts (Tailwind v4 compatibility)
 - **shadcn/ui components** for consistent UI elements
-- **Content-first approach** - markdown files drive the data structure
-- **Mobile-first responsive** design principles
+- use Tailwind classes
+- **Desktop-first with responsive layout** design principles
+- Nothing is finished until lint, build, format and test pass with no errors

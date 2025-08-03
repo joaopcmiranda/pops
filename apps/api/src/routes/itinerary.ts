@@ -1,6 +1,59 @@
 import { z } from 'zod'
 import { router, protectedProcedure } from '@/config/trpc'
 
+// Type interfaces for better type safety
+interface ItineraryWhereInput {
+  tripId: string
+  startDate?: {
+    gte?: Date
+    lte?: Date
+  }
+  type?: {
+    in: string[]
+  }
+  status?: {
+    in: string[]
+  }
+}
+
+interface ItineraryQueryOptions {
+  where: ItineraryWhereInput
+  include: {
+    location: boolean
+    attendees: boolean
+  }
+  orderBy: { startDate: 'asc' }
+  take?: number
+  skip?: number
+}
+
+
+interface ItineraryCreateData {
+  [key: string]: unknown
+  title: string
+  type: string
+  tripId: string
+  startDate: Date
+  endDate: Date | null
+  userId: string
+  tags: string | null
+  typeData: string | null
+  attendees: {
+    connect: Array<{ id: string }>
+  }
+}
+
+interface ItineraryUpdateData {
+  [key: string]: unknown
+  startDate?: Date
+  endDate?: Date | null
+  tags?: string | null
+  typeData?: string | null
+  attendees?: {
+    set: Array<{ id: string }>
+  }
+}
+
 // Validation schemas
 const itemTypeSchema = z.enum([
   'accommodation',
@@ -63,7 +116,7 @@ export const itineraryRouter = router({
         throw new Error('Trip not found or access denied')
       }
 
-      const where: any = { tripId: input.tripId }
+      const where: ItineraryWhereInput = { tripId: input.tripId }
       
       if (input.startDate || input.endDate) {
         where.startDate = {}
@@ -79,7 +132,7 @@ export const itineraryRouter = router({
         where.status = { in: input.status }
       }
 
-      const queryOptions: any = {
+      const queryOptions: ItineraryQueryOptions = {
         where,
         include: {
           location: true,
@@ -158,10 +211,13 @@ export const itineraryRouter = router({
       const { attendeeIds, tags, typeData, ...itemData } = input
 
       // Filter out undefined values and convert them appropriately
-      const createData: any = {
+      const createData: ItineraryCreateData = {
         ...Object.fromEntries(
-          Object.entries(itemData).filter(([_, value]) => value !== undefined)
+          Object.entries(itemData).filter(([, value]) => value !== undefined)
         ),
+        title: input.title,
+        type: input.type,
+        tripId: input.tripId,
         startDate: new Date(input.startDate),
         endDate: input.endDate ? new Date(input.endDate) : null,
         userId: ctx.userId,
@@ -211,9 +267,9 @@ export const itineraryRouter = router({
       }
 
       // Filter out undefined values and build update data
-      const updateData: any = {
+      const updateData: ItineraryUpdateData = {
         ...Object.fromEntries(
-          Object.entries(updates).filter(([_, value]) => value !== undefined)
+          Object.entries(updates).filter(([, value]) => value !== undefined)
         ),
       }
       

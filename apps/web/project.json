@@ -15,10 +15,7 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "tsc -b",
-          "vite build"
-        ],
+        "commands": ["tsc -b", "vite build"],
         "cwd": "apps/web",
         "parallel": false
       },

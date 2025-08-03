@@ -44,6 +44,66 @@ The vibrant city known for its beaches, culture, and iconic landmarks.
 - Book Christ the Redeemer tickets in advance
 - Be aware of safety in certain areas, especially at night`,
     },
+    {
+      id: 'tokyo-japan',
+      title: 'Tokyo, Japan',
+      slug: 'tokyo-japan',
+      category: 'destinations',
+      content: `# Tokyo, Japan
+
+## Overview
+A fascinating blend of ultra-modern and traditional, Tokyo offers endless discoveries.
+
+## Must-See Districts
+- **Shibuya** - Famous crossing and trendy shopping
+- **Asakusa** - Traditional Tokyo with Senso-ji Temple
+- **Harajuku** - Youth culture and fashion
+- **Ginza** - Upscale shopping and dining
+- **Akihabara** - Electronics and anime culture
+
+## Transportation
+- **Getting There**: Narita (NRT) or Haneda (HND)
+- **Getting Around**: JR Pass, metro, trains
+
+## Best Time to Visit
+- **Spring**: March-May (cherry blossoms)
+- **Fall**: September-November (comfortable weather)
+
+## Tips
+- Learn basic Japanese phrases
+- Carry cash - many places don't accept cards
+- Bow when greeting people`,
+    },
+    {
+      id: 'london-uk',
+      title: 'London, UK',
+      slug: 'london-uk',
+      category: 'destinations',
+      content: `# London, UK
+
+## Overview
+Historic capital with world-class museums, royal palaces, and diverse neighborhoods.
+
+## Must-See Attractions
+- **Tower of London** - Historic fortress and Crown Jewels
+- **British Museum** - World's artifacts and treasures
+- **Big Ben & Parliament** - Iconic landmarks
+- **Buckingham Palace** - Royal residence
+- **London Eye** - Giant observation wheel
+
+## Transportation
+- **Getting There**: Heathrow, Gatwick, or Eurostar
+- **Getting Around**: Underground (Tube), buses, walking
+
+## Best Time to Visit
+- **Late Spring/Summer**: May-September
+- **Shoulder Season**: April, October (fewer crowds)
+
+## Tips
+- Get an Oyster Card for transport
+- Many museums are free
+- Pack an umbrella!`,
+    },
   ],
   itinerary: [
     {
@@ -81,11 +141,176 @@ The vibrant city known for its beaches, culture, and iconic landmarks.
 - Have local currency ready for small purchases`,
     },
   ],
-  transport: [],
-  accommodation: [],
-  activities: [],
-  budget: [],
-  documents: [],
+  transport: [
+    {
+      id: 'flight-rio',
+      title: 'Flight to Rio de Janeiro',
+      slug: 'flight-rio',
+      category: 'transport',
+      content: `# Flight to Rio de Janeiro
+
+## Flight Details
+- **Airline**: TAM Airlines
+- **Flight**: JJ8070
+- **Departure**: March 15, 2024 - 14:30
+- **Arrival**: March 15, 2024 - 22:45
+- **Duration**: 8h 15m
+
+## Confirmation
+- **Confirmation Code**: ABC123
+- **Seat**: 12A (Window)
+- **Gate**: Will be announced 2 hours before
+
+## Notes
+- Check-in online 24 hours before
+- Arrive at airport 3 hours early for international flights
+- Bring passport and boarding pass`,
+    },
+  ],
+  accommodation: [
+    {
+      id: 'copacabana-hotel',
+      title: 'Copacabana Palace Hotel',
+      slug: 'copacabana-hotel',
+      category: 'accommodation',
+      content: `# Copacabana Palace Hotel
+
+## Hotel Details
+- **Address**: Av. Atlântica, 1702, Copacabana
+- **Check-in**: March 15, 2024 - 15:00
+- **Check-out**: March 22, 2024 - 12:00
+- **Room**: Ocean View Suite
+
+## Confirmation
+- **Confirmation**: CPH789456
+- **Total**: $1,200 for 7 nights
+- **Includes**: Breakfast, WiFi, Pool access
+
+## Amenities
+- Beachfront location
+- Outdoor pool
+- Spa and fitness center
+- Multiple restaurants
+- Concierge service
+
+## Notes
+- Late check-in available
+- Request early check-in if flight arrives early`,
+    },
+  ],
+  activities: [
+    {
+      id: 'christ-redeemer-tour',
+      title: 'Christ the Redeemer Tour',
+      slug: 'christ-redeemer-tour',
+      category: 'activities',
+      content: `# Christ the Redeemer Tour
+
+## Tour Details
+- **Date**: March 17, 2024
+- **Time**: 09:00 - 14:00
+- **Duration**: 5 hours
+- **Group**: Small group (max 8 people)
+
+## Includes
+- Transportation to/from hotel
+- Train ticket to Corcovado
+- Professional guide
+- Entrance fees
+
+## What to Bring
+- Comfortable walking shoes
+- Camera
+- Sun protection
+- Light jacket (cooler at the top)
+
+## Confirmation
+- **Booking Reference**: CTR2024789
+- **Cost**: $85 per person
+- **Meeting Point**: Hotel lobby at 8:45 AM
+
+## Notes
+- Tour runs rain or shine
+- Alternative date available if weather is severe`,
+    },
+  ],
+  budget: [
+    {
+      id: 'rio-budget-breakdown',
+      title: 'Rio Trip Budget Breakdown',
+      slug: 'rio-budget-breakdown',
+      category: 'budget',
+      content: `# Rio Trip Budget Breakdown
+
+## Accommodation
+- **Hotel**: $1,200 (7 nights)
+- **Resort fees**: $50
+
+## Transportation
+- **Flights**: $850 (roundtrip)
+- **Airport transfers**: $60
+- **Local transport**: $100
+
+## Activities & Tours
+- **Christ the Redeemer**: $85
+- **Sugarloaf Mountain**: $75
+- **City tour**: $60
+- **Beach activities**: $150
+
+## Food & Dining
+- **Meals**: $500 (estimated)
+- **Drinks/nightlife**: $200
+
+## Shopping & Miscellaneous
+- **Souvenirs**: $100
+- **Emergency fund**: $200
+
+## Total Estimated Cost
+**$3,430** (per person)
+
+## Tips for Saving
+- Book tours in advance for discounts
+- Use metro instead of taxis when possible
+- Try local restaurants instead of hotel dining`,
+    },
+  ],
+  documents: [
+    {
+      id: 'travel-checklist',
+      title: 'Travel Document Checklist',
+      slug: 'travel-checklist',
+      category: 'documents',
+      content: `# Travel Document Checklist
+
+## Essential Documents
+- ✅ **Passport** (valid for 6+ months)
+- ✅ **Flight tickets** (printed and digital)
+- ✅ **Hotel confirmations**
+- ✅ **Travel insurance**
+- ✅ **Driver's license**
+
+## Financial
+- ✅ **Travel credit cards**
+- ✅ **Cash** (local currency)
+- ✅ **Bank notification** (travel notice)
+
+## Health & Safety
+- ✅ **Vaccination records**
+- ✅ **Prescription medications**
+- ✅ **Emergency contacts**
+- ✅ **Travel advisor registrations**
+
+## Digital Copies
+- Store copies in cloud storage
+- Email copies to yourself
+- Share with trusted family member
+
+## Emergency Information
+- **Embassy**: +55 11 5186-7000
+- **Emergency Services**: 190 (police), 192 (medical)
+- **Travel Insurance**: 1-800-555-0123`,
+    },
+  ],
 }
 
 export class ContentService {

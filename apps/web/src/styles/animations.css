@@ -279,10 +279,6 @@
   }
 }
 
-.notification-enter {
-  animation: slideInRight 0.3s ease-out;
-}
-
 /* Focus animations for accessibility */
 .focus-ring {
   transition: box-shadow 0.15s ease-in-out;
@@ -310,24 +306,4 @@
 /* Utility spacing classes */
 .space-y-3 > * + * {
   margin-top: 0.75rem;
-}
-
-/* Toast notification animations */
-.notification-enter {
-  animation: slideInRight 0.3s ease-out;
-}
-
-.notification-exit {
-  animation: slideOutRight 0.3s ease-in;
-}
-
-@keyframes slideOutRight {
-  from {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(100px);
-  }
 }

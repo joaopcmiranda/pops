@@ -1,13 +1,21 @@
 import { useState } from 'react'
-import { X, MapPin, Calendar, Users, DollarSign } from 'lucide-react'
-import { Card, CardContent } from './ui/card'
-import { Button } from './ui/button'
+import { MapPin, Calendar } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog'
+import { Button } from './ui/button/button.tsx'
+import { Input } from './ui/input'
+import { Label } from './ui/label'
+import { Textarea } from './ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import { trpc } from '@/utils/trpc'
+import { Alert, AlertDescription } from './ui/alert'
+
+// Type interface for Trip
+import type { Trip } from '@/types/trip'
 
 interface NewTripModalProps {
   isOpen: boolean
   onClose: () => void
-  onTripCreated: (trip: any) => void
+  onTripCreated: (trip: Trip) => void
 }
 
 export function NewTripModal({ isOpen, onClose, onTripCreated }: NewTripModalProps) {
@@ -29,7 +37,7 @@ export function NewTripModal({ isOpen, onClose, onTripCreated }: NewTripModalPro
         food: 0,
         shopping: 0,
         other: 0,
-      }
+      },
     },
     settings: {
       timezone: 'UTC',
@@ -41,11 +49,12 @@ export function NewTripModal({ isOpen, onClose, onTripCreated }: NewTripModalPro
         reminders: true,
       },
       privacy: 'private' as const,
-    }
+    },
   })
+  const [validationError, setValidationError] = useState<string | null>(null)
 
   const createTripMutation = trpc.trip.create.useMutation({
-    onSuccess: (trip) => {
+    onSuccess: trip => {
       onTripCreated(trip)
       onClose()
       // Reset form
@@ -67,7 +76,7 @@ export function NewTripModal({ isOpen, onClose, onTripCreated }: NewTripModalPro
             food: 0,
             shopping: 0,
             other: 0,
-          }
+          },
         },
         settings: {
           timezone: 'UTC',
@@ -79,330 +88,186 @@ export function NewTripModal({ isOpen, onClose, onTripCreated }: NewTripModalPro
             reminders: true,
           },
           privacy: 'private',
-        }
+        },
       })
+      setValidationError(null)
     },
-    onError: (error) => {
-      console.error('Failed to create trip:', error)
-    }
+    onError: error => {
+      setValidationError(error.message || 'Failed to create trip')
+    },
   })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    createTripMutation.mutate({
-      ...formData,
-      startDate: new Date(formData.startDate).toISOString(),
-      endDate: new Date(formData.endDate).toISOString(),
-    })
+    setValidationError(null)
+
+    // Basic validation
+    if (!formData.title.trim()) {
+      setValidationError('Please enter a trip title')
+      return
+    }
+    if (!formData.destination.trim()) {
+      setValidationError('Please enter a destination')
+      return
+    }
+    if (!formData.startDate) {
+      setValidationError('Please select a start date')
+      return
+    }
+    if (!formData.endDate) {
+      setValidationError('Please select an end date')
+      return
+    }
+    if (new Date(formData.startDate) > new Date(formData.endDate)) {
+      setValidationError('End date must be after start date')
+      return
+    }
+
+    createTripMutation.mutate(formData)
   }
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string | number) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }))
   }
 
-  if (!isOpen) return null
-
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000,
-      padding: '1rem'
-    }}>
-      <Card style={{ 
-        width: '100%', 
-        maxWidth: '600px', 
-        maxHeight: '90vh', 
-        overflow: 'auto',
-        animation: 'fadeIn 0.2s ease-out'
-      }}>
-        <CardContent style={{ padding: '2rem' }}>
-          {/* Header */}
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'space-between', 
-            marginBottom: '2rem' 
-          }}>
-            <h2 style={{ 
-              fontSize: '1.5rem', 
-              fontWeight: '700', 
-              color: '#0f172a',
-              margin: 0
-            }}>
-              Create New Trip
-            </h2>
-            <button
-              onClick={onClose}
-              style={{
-                padding: '0.5rem',
-                borderRadius: '6px',
-                border: 'none',
-                backgroundColor: 'transparent',
-                color: '#64748b',
-                cursor: 'pointer'
-              }}
-            >
-              <X style={{ width: '20px', height: '20px' }} />
-            </button>
+    <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
+      <DialogContent className='sm:max-w-[600px] max-h-[90vh] overflow-y-auto'>
+        <DialogHeader>
+          <DialogTitle>Create New Trip</DialogTitle>
+          <DialogDescription>
+            Start planning your next adventure by filling in the basic details.
+          </DialogDescription>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit} className='space-y-6 mt-4'>
+          {validationError && (
+            <Alert variant='destructive'>
+              <AlertDescription>{validationError}</AlertDescription>
+            </Alert>
+          )}
+
+          {/* Basic Info */}
+          <div className='space-y-4'>
+            <div className='flex items-center gap-2 text-lg font-semibold'>
+              <MapPin className='h-5 w-5' />
+              Trip Details
+            </div>
+
+            <div className='grid gap-4'>
+              <div className='grid gap-2'>
+                <Label htmlFor='title'>Trip Title *</Label>
+                <Input
+                  id='title'
+                  value={formData.title}
+                  onChange={e => handleChange('title', e.target.value)}
+                  placeholder='Summer in Japan'
+                  required
+                />
+              </div>
+
+              <div className='grid gap-2'>
+                <Label htmlFor='description'>Description</Label>
+                <Textarea
+                  id='description'
+                  value={formData.description}
+                  onChange={e => handleChange('description', e.target.value)}
+                  placeholder='A two-week adventure exploring Tokyo, Kyoto, and Osaka...'
+                  rows={3}
+                />
+              </div>
+
+              <div className='grid grid-cols-2 gap-4'>
+                <div className='grid gap-2'>
+                  <Label htmlFor='destination'>Destination *</Label>
+                  <Input
+                    id='destination'
+                    value={formData.destination}
+                    onChange={e => handleChange('destination', e.target.value)}
+                    placeholder='Tokyo'
+                    required
+                  />
+                </div>
+
+                <div className='grid gap-2'>
+                  <Label htmlFor='country'>Country</Label>
+                  <Input
+                    id='country'
+                    value={formData.country}
+                    onChange={e => handleChange('country', e.target.value)}
+                    placeholder='Japan'
+                  />
+                </div>
+              </div>
+
+              <div className='grid gap-2'>
+                <Label htmlFor='type'>Trip Type</Label>
+                <Select value={formData.type} onValueChange={value => handleChange('type', value)}>
+                  <SelectTrigger id='type'>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value='leisure'>Leisure</SelectItem>
+                    <SelectItem value='business'>Business</SelectItem>
+                    <SelectItem value='adventure'>Adventure</SelectItem>
+                    <SelectItem value='cultural'>Cultural</SelectItem>
+                    <SelectItem value='family'>Family</SelectItem>
+                    <SelectItem value='honeymoon'>Honeymoon</SelectItem>
+                    <SelectItem value='backpacking'>Backpacking</SelectItem>
+                    <SelectItem value='roadtrip'>Road Trip</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </div>
 
-          <form onSubmit={handleSubmit}>
-            {/* Basic Info */}
-            <div style={{ marginBottom: '2rem' }}>
-              <h3 style={{ 
-                fontSize: '1.125rem', 
-                fontWeight: '600', 
-                color: '#0f172a', 
-                marginBottom: '1rem',
-                display: 'flex',
-                alignItems: 'center'
-              }}>
-                <MapPin style={{ width: '20px', height: '20px', marginRight: '0.5rem' }} />
-                Trip Details
-              </h3>
-              
-              <div style={{ display: 'grid', gap: '1rem' }}>
-                <div>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '0.875rem', 
-                    fontWeight: '500', 
-                    color: '#374151', 
-                    marginBottom: '0.5rem' 
-                  }}>
-                    Trip Title *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.title}
-                    onChange={(e) => handleChange('title', e.target.value)}
-                    placeholder="e.g., Summer in Europe"
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      fontSize: '0.875rem'
-                    }}
-                  />
-                </div>
+          {/* Dates */}
+          <div className='space-y-4'>
+            <div className='flex items-center gap-2 text-lg font-semibold'>
+              <Calendar className='h-5 w-5' />
+              Travel Dates
+            </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                  <div>
-                    <label style={{ 
-                      display: 'block', 
-                      fontSize: '0.875rem', 
-                      fontWeight: '500', 
-                      color: '#374151', 
-                      marginBottom: '0.5rem' 
-                    }}>
-                      Destination *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.destination}
-                      onChange={(e) => handleChange('destination', e.target.value)}
-                      placeholder="e.g., Paris"
-                      style={{
-                        width: '100%',
-                        padding: '0.75rem',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '6px',
-                        fontSize: '0.875rem'
-                      }}
-                    />
-                  </div>
+            <div className='grid grid-cols-2 gap-4'>
+              <div className='grid gap-2'>
+                <Label htmlFor='startDate'>Start Date *</Label>
+                <Input
+                  id='startDate'
+                  type='date'
+                  value={formData.startDate}
+                  onChange={e => handleChange('startDate', e.target.value)}
+                  required
+                />
+              </div>
 
-                  <div>
-                    <label style={{ 
-                      display: 'block', 
-                      fontSize: '0.875rem', 
-                      fontWeight: '500', 
-                      color: '#374151', 
-                      marginBottom: '0.5rem' 
-                    }}>
-                      Country *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.country}
-                      onChange={(e) => handleChange('country', e.target.value)}
-                      placeholder="e.g., France"
-                      style={{
-                        width: '100%',
-                        padding: '0.75rem',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '6px',
-                        fontSize: '0.875rem'
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '0.875rem', 
-                    fontWeight: '500', 
-                    color: '#374151', 
-                    marginBottom: '0.5rem' 
-                  }}>
-                    Trip Type
-                  </label>
-                  <select
-                    value={formData.type}
-                    onChange={(e) => handleChange('type', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      fontSize: '0.875rem'
-                    }}
-                  >
-                    <option value="leisure">Leisure</option>
-                    <option value="business">Business</option>
-                    <option value="family">Family</option>
-                    <option value="adventure">Adventure</option>
-                    <option value="honeymoon">Honeymoon</option>
-                    <option value="solo">Solo</option>
-                    <option value="group">Group</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
+              <div className='grid gap-2'>
+                <Label htmlFor='endDate'>End Date *</Label>
+                <Input
+                  id='endDate'
+                  type='date'
+                  value={formData.endDate}
+                  onChange={e => handleChange('endDate', e.target.value)}
+                  min={formData.startDate}
+                  required
+                />
               </div>
             </div>
+          </div>
 
-            {/* Dates */}
-            <div style={{ marginBottom: '2rem' }}>
-              <h3 style={{ 
-                fontSize: '1.125rem', 
-                fontWeight: '600', 
-                color: '#0f172a', 
-                marginBottom: '1rem',
-                display: 'flex',
-                alignItems: 'center'
-              }}>
-                <Calendar style={{ width: '20px', height: '20px', marginRight: '0.5rem' }} />
-                Travel Dates
-              </h3>
-              
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '0.875rem', 
-                    fontWeight: '500', 
-                    color: '#374151', 
-                    marginBottom: '0.5rem' 
-                  }}>
-                    Start Date *
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={formData.startDate}
-                    onChange={(e) => handleChange('startDate', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      fontSize: '0.875rem'
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '0.875rem', 
-                    fontWeight: '500', 
-                    color: '#374151', 
-                    marginBottom: '0.5rem' 
-                  }}>
-                    End Date *
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={formData.endDate}
-                    onChange={(e) => handleChange('endDate', e.target.value)}
-                    min={formData.startDate}
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      fontSize: '0.875rem'
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Description */}
-            <div style={{ marginBottom: '2rem' }}>
-              <label style={{ 
-                display: 'block', 
-                fontSize: '0.875rem', 
-                fontWeight: '500', 
-                color: '#374151', 
-                marginBottom: '0.5rem' 
-              }}>
-                Description (Optional)
-              </label>
-              <textarea
-                value={formData.description}
-                onChange={(e) => handleChange('description', e.target.value)}
-                placeholder="Tell us about your trip plans..."
-                rows={3}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '0.875rem',
-                  resize: 'vertical'
-                }}
-              />
-            </div>
-
-            {/* Actions */}
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'flex-end', 
-              gap: '1rem',
-              paddingTop: '1rem',
-              borderTop: '1px solid #e2e8f0'
-            }}>
-              <Button type="button" variant="outline" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button 
-                type="submit" 
-                disabled={createTripMutation.isLoading}
-              >
-                {createTripMutation.isLoading ? 'Creating...' : 'Create Trip'}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+          {/* Action Buttons */}
+          <div className='flex justify-end gap-3 pt-4'>
+            <Button type='button' variant='outline' onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type='submit' disabled={createTripMutation.isLoading}>
+              {createTripMutation.isLoading ? 'Creating...' : 'Create Trip'}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }

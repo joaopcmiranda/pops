@@ -1,9 +1,10 @@
-import express from 'express'
+import express, { type Express } from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import compression from 'compression'
 import morgan from 'morgan'
 import { createExpressMiddleware } from '@trpc/server/adapters/express'
+import type { Request } from 'express'
 import { config } from '@/config/env'
 import { appRouter } from '@/routes'
 
@@ -11,13 +12,23 @@ import { appRouter } from '@/routes'
 export type { AppRouter } from '@/routes'
 import { createContext } from '@/middleware/context'
 import { errorHandler } from '@/middleware/errorHandler'
-import { rateLimiter } from '@/middleware/rateLimiter'
+import { rateLimiterMiddleware } from '@/middleware/rateLimiter'
 
-const app = express()
+// Type for tRPC error handler parameters
+interface TRPCErrorHandlerParams {
+  error: Error
+  type: 'query' | 'mutation' | 'subscription' | 'unknown'
+  path: string | undefined
+  input: unknown
+  ctx: unknown
+  req: Request
+}
+
+const app: Express = express()
 
 // Security middleware
 app.use(helmet())
-app.use(compression() as any)
+app.use(compression() as unknown as express.RequestHandler)
 
 // CORS configuration
 app.use(cors({
@@ -29,7 +40,7 @@ app.use(cors({
 app.use(morgan(config.NODE_ENV === 'production' ? 'combined' : 'dev'))
 
 // Rate limiting
-app.use(rateLimiter)
+app.use(rateLimiterMiddleware)
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -45,7 +56,7 @@ app.get('/health', (req, res) => {
 app.use('/trpc', createExpressMiddleware({
   router: appRouter,
   createContext,
-  onError: ({ error, type, path, input, ctx, req }) => {
+  onError: ({ error, type, path, input, ctx }: Omit<TRPCErrorHandlerParams, 'req'>) => {
     console.error(`❌ tRPC Error on ${type} at ${path}:`, error)
     if (config.NODE_ENV === 'development') {
       console.error('Input:', input)

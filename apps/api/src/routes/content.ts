@@ -1,6 +1,47 @@
 import { z } from 'zod'
 import { router, protectedProcedure } from '@/config/trpc'
 import { slugify } from '@trip-organizer/shared'
+import type { Prisma } from '@prisma/client'
+
+// Type interfaces for better type safety
+interface ContentWhereInput {
+  tripId: string
+  category?: string
+  OR?: Array<{
+    title?: { contains: string; mode: 'insensitive' }
+    content?: { contains: string; mode: 'insensitive' }
+  }>
+}
+
+interface ContentQueryOptions {
+  where: ContentWhereInput | Prisma.ContentItemWhereInput
+  orderBy: { updatedAt: 'desc' }
+  take?: number
+  skip?: number
+}
+
+interface ContentItemWhereInput {
+  id?: string
+  slug?: string
+  trip: {
+    OR: Array<{
+      userId: string
+    } | {
+      collaborators: {
+        some: {
+          userId: string
+          role?: {
+            in: string[]
+          }
+        }
+      }
+    }>
+  }
+}
+
+interface UpdateDataFilter {
+  [key: string]: unknown
+}
 
 const createContentSchema = z.object({
   tripId: z.string(),
@@ -41,7 +82,7 @@ export const contentRouter = router({
         throw new Error('Trip not found or access denied')
       }
 
-      const where: any = { tripId: input.tripId }
+      const where: ContentWhereInput = { tripId: input.tripId }
       
       if (input.category) {
         where.category = input.category
@@ -54,7 +95,7 @@ export const contentRouter = router({
         ]
       }
 
-      const queryOptions: any = {
+      const queryOptions: ContentQueryOptions = {
         where,
         orderBy: { updatedAt: 'desc' },
       }
@@ -86,7 +127,7 @@ export const contentRouter = router({
         throw new Error('Either id or slug must be provided')
       }
 
-      const where: any = {
+      const where: ContentItemWhereInput = {
         trip: {
           OR: [
             { userId: ctx.userId },
@@ -199,8 +240,8 @@ export const contentRouter = router({
         where: { id },
         data: {
           ...Object.fromEntries(
-            Object.entries(updates).filter(([_, value]) => value !== undefined)
-          ),
+            Object.entries(updates).filter(([, value]) => value !== undefined)
+          ) as UpdateDataFilter,
           slug: newSlug,
           ...(tags !== undefined && { tags: tags ? JSON.stringify(tags) : null }),
         },

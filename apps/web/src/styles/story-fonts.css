@@ -1,0 +1,157 @@
+/* Import Google Fonts directly into stories */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+/* Apply fonts to all elements with maximum specificity */
+html,
+body,
+* {
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* Headings specifically use Poppins */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.story-title {
+  font-family:
+    'Poppins',
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+}
+
+/* Override any existing font declarations */
+.ladle-main,
+.ladle-aside,
+.ladle-main *,
+.ladle-aside * {
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif !important;
+}
+
+/* Story-specific font assignments */
+.story-wrapper,
+.story-wrapper * {
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif !important;
+}
+
+.story-title {
+  font-family:
+    'Poppins',
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif !important;
+}
+
+/* Ensure button fonts are correct */
+button,
+input,
+textarea,
+select {
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif !important;
+}
+
+/* Force the app components to use correct fonts */
+.app-header,
+.app-sidebar,
+.app-content,
+.category-card {
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif !important;
+}
+
+.app-header *,
+.app-sidebar *,
+.app-content *,
+.category-card * {
+  font-family: inherit !important;
+}
+
+/* Navigation items */
+.nav-item,
+.sidebar-brand {
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif !important;
+}
+
+/* Header title uses Poppins */
+.header-title,
+.sidebar-brand {
+  font-family:
+    'Poppins',
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif !important;
+}
+
+/* Wait for fonts to load before showing content */
+.story-wrapper {
+  font-display: swap;
+}

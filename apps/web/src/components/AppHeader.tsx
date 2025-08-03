@@ -1,5 +1,7 @@
-import { Search, Bell, User, Menu, ChevronDown, MapPin } from 'lucide-react'
-import { Button } from './ui/button'
+import { Search, Bell, User, ChevronDown, MapPin } from 'lucide-react'
+import { Button } from './ui/button/button.tsx'
+import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
+import { SidebarTrigger } from './ui/sidebar/sidebar.tsx'
 
 interface Trip {
   id: string
@@ -12,58 +14,90 @@ interface Trip {
 }
 
 interface AppHeaderProps {
-  onMenuClick?: () => void
   currentTrip?: Trip | null
   onTripSwitch?: () => void
 }
 
-export function AppHeader({ onMenuClick, currentTrip, onTripSwitch }: AppHeaderProps) {
+export function AppHeader({ currentTrip, onTripSwitch }: AppHeaderProps) {
   return (
     <header className='app-header'>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
-        <Button
-          variant='ghost'
-          onClick={onMenuClick}
-          className='md:hidden'
-          style={{ padding: '0.5rem' }}
-        >
-          <Menu style={{ width: '20px', height: '20px' }} />
-        </Button>
-        
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1, minWidth: 0 }}>
+        <SidebarTrigger className='md:hidden' />
+
         {currentTrip ? (
-          <div 
+          <div
             onClick={onTripSwitch}
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.75rem',
-              padding: '0.5rem 1rem',
+              gap: '0.5rem',
+              padding: '0.5rem 0.75rem',
               backgroundColor: '#f8fafc',
               borderRadius: '8px',
               cursor: 'pointer',
               border: '1px solid #e2e8f0',
-              transition: 'all 0.2s ease'
+              transition: 'all 0.2s ease',
+              minWidth: 0,
+              flex: '0 1 auto',
+              touchAction: 'manipulation',
             }}
-            className="trip-selector-header"
+            className='trip-selector-header'
+            role='button'
+            tabIndex={0}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                onTripSwitch?.()
+              }
+            }}
           >
-            <MapPin style={{ width: '16px', height: '16px', color: '#3b82f6' }} />
-            <div>
-              <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#0f172a' }}>
+            <MapPin style={{ width: '16px', height: '16px', color: '#3b82f6', flexShrink: 0 }} />
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div
+                style={{
+                  fontSize: '0.875rem',
+                  fontWeight: '600',
+                  color: '#0f172a',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
                 {currentTrip.title}
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+              <div
+                style={{
+                  fontSize: '0.75rem',
+                  color: '#64748b',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
                 {currentTrip.destination}
               </div>
             </div>
-            <ChevronDown style={{ width: '16px', height: '16px', color: '#64748b' }} />
+            <ChevronDown
+              style={{ width: '16px', height: '16px', color: '#64748b', flexShrink: 0 }}
+            />
           </div>
         ) : (
-          <h1 className='header-title'>Trip Organizer</h1>
+          <h1
+            className='header-title'
+            style={{
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Trip Organizer
+          </h1>
         )}
       </div>
 
       <div className='header-actions'>
-        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+        <div className='hidden sm:flex' style={{ position: 'relative', alignItems: 'center' }}>
           <Search
             style={{
               position: 'absolute',
@@ -87,17 +121,54 @@ export function AppHeader({ onMenuClick, currentTrip, onTripSwitch }: AppHeaderP
               fontSize: '0.875rem',
               width: '240px',
               outline: 'none',
+              transition: 'width 0.2s ease',
+            }}
+            onFocus={e => {
+              if (window.innerWidth <= 768) {
+                e.target.style.width = '200px'
+              }
+            }}
+            onBlur={e => {
+              if (window.innerWidth <= 768) {
+                e.target.style.width = '160px'
+              }
             }}
           />
         </div>
 
-        <Button variant='ghost' style={{ padding: '0.5rem' }}>
+        <Button
+          variant='ghost'
+          className='sm:hidden'
+          style={{
+            padding: '0.5rem',
+            minHeight: '40px',
+            minWidth: '40px',
+            touchAction: 'manipulation',
+          }}
+          aria-label='Search'
+        >
+          <Search style={{ width: '18px', height: '18px' }} />
+        </Button>
+
+        <Button
+          variant='ghost'
+          style={{
+            padding: '0.5rem',
+            minHeight: '40px',
+            minWidth: '40px',
+            touchAction: 'manipulation',
+          }}
+          aria-label='Notifications'
+        >
           <Bell style={{ width: '20px', height: '20px' }} />
         </Button>
 
-        <Button variant='ghost' style={{ padding: '0.5rem' }}>
-          <User style={{ width: '20px', height: '20px' }} />
-        </Button>
+        <Avatar className='h-8 w-8 cursor-pointer'>
+          <AvatarImage src='/api/placeholder/32/32' alt='User' />
+          <AvatarFallback>
+            <User className='h-4 w-4' />
+          </AvatarFallback>
+        </Avatar>
       </div>
     </header>
   )

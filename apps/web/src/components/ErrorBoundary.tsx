@@ -1,8 +1,8 @@
-import { Component } from 'react'
 import type { ReactNode, ErrorInfo } from 'react'
+import { Component } from 'react'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 import { Card, CardContent } from './ui/card'
-import { Button } from './ui/button'
+import { Button } from './ui/button/button.tsx'
 
 interface Props {
   children: ReactNode
@@ -117,8 +117,8 @@ export class ErrorBoundary extends Component<Props, State> {
                   lineHeight: '1.6',
                 }}
               >
-                We encountered an unexpected error while loading this part of your trip
-                planner. Don't worry - your data is safe.
+                We encountered an unexpected error while loading this part of your trip planner.
+                Don't worry - your data is safe.
               </p>
 
               {/* Error details (only in development) */}

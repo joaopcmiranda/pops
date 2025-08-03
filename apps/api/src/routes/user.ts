@@ -1,6 +1,12 @@
 import { z } from 'zod'
 import { router, publicProcedure, protectedProcedure } from '@/config/trpc'
 
+// Type interface for user update data
+interface UserUpdateData {
+  name?: string
+  avatar?: string | null
+}
+
 export const userRouter = router({
   // Get current user
   me: protectedProcedure
@@ -68,7 +74,7 @@ export const userRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       // Filter out undefined values and convert avatar appropriately
-      const updateData: any = {}
+      const updateData: UserUpdateData = {}
       
       if (input.name !== undefined) {
         updateData.name = input.name

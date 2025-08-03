@@ -16,71 +16,75 @@ import { Calendar } from '@/components/Calendar'
 import { CategoryPageMinimal } from '@/components/CategoryPageMinimal'
 import { ReadmeView } from '@/components/ReadmeView'
 import { TripSelector } from '@/components/TripSelector'
-import { NewTripModal } from '@/components/NewTripModal'
+import { TripCreationWizard } from '@/components/TripCreationWizard'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
-import { ToastProvider } from '@/components/Toast'
-import { TripProvider, useTripContext } from '@/contexts/TripContext'
-import { trpc } from '@/utils/trpc'
+import { TripProvider } from '@/contexts/TripContext'
+import { useTripContext } from '@/hooks/useTripContext'
+import { TripService } from '@/services/tripService'
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar/sidebar.tsx'
 import '@/styles/animations.css'
 
+// Type interfaces
+import type { Trip } from '@/types/trip'
+
 function AppContent() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [activeCategory, setActiveCategory] = useState('dashboard')
   const [currentView, setCurrentView] = useState('dashboard')
-  const [showNewTripModal, setShowNewTripModal] = useState(false)
-  const { currentTrip, setCurrentTrip, isSelectingTrip, setIsSelectingTrip } = useTripContext()
+  const {
+    currentTrip,
+    setCurrentTrip,
+    isSelectingTrip,
+    setIsSelectingTrip,
+    setShowNewTripModal,
+    showNewTripModal,
+  } = useTripContext()
 
   // Fetch trip details when a trip is selected
-  const tripQuery = trpc.trip.getById.useQuery(
-    { id: currentTrip?.id || '' },
-    { enabled: !!currentTrip?.id }
-  )
+  // const _tripQuery = trpc.trip.getById.useQuery(
+  //   { id: currentTrip?.id || '' },
+  //   { enabled: !!currentTrip?.id }
+  // )
 
   const handleCategorySelect = (category: string) => {
     console.log('Category selected:', category)
     setActiveCategory(category)
     setCurrentView(category)
-    setSidebarOpen(false)
   }
 
   const handleTripSelect = (tripId: string) => {
-    // This will be called from TripSelector
-    // We'll fetch the trip details and set it as current trip
-    // For now, create a temporary trip object
-    const tempTrip = {
-      id: tripId,
-      title: 'Selected Trip',
-      destination: 'Unknown',
-      startDate: new Date().toISOString(),
-      endDate: new Date().toISOString(),
-      type: 'leisure',
-      status: 'planning'
+    // Fetch the actual trip data from the service
+    const trip = TripService.getTripById(tripId)
+    if (trip) {
+      setCurrentTrip(trip)
+    } else {
+      console.error('Trip not found:', tripId)
     }
-    setCurrentTrip(tempTrip)
   }
 
   const handleNewTrip = () => {
     setShowNewTripModal(true)
   }
 
-  const handleTripCreated = (trip: any) => {
+  const handleTripCreated = (trip: Trip) => {
     setCurrentTrip(trip)
     setShowNewTripModal(false)
+  }
+
+  // Show wizard if user wants to create new trip
+  if (showNewTripModal) {
+    return (
+      <TripCreationWizard
+        onClose={() => setShowNewTripModal(false)}
+        onTripCreated={handleTripCreated}
+      />
+    )
   }
 
   // Show trip selector if no trip is selected
   if (isSelectingTrip || !currentTrip) {
     return (
       <>
-        <TripSelector 
-          onTripSelect={handleTripSelect}
-          onNewTrip={handleNewTrip}
-        />
-        <NewTripModal
-          isOpen={showNewTripModal}
-          onClose={() => setShowNewTripModal(false)}
-          onTripCreated={handleTripCreated}
-        />
+        <TripSelector onTripSelect={handleTripSelect} onNewTrip={handleNewTrip} />
       </>
     )
   }
@@ -111,7 +115,7 @@ function AppContent() {
             console.log('Event clicked:', event)
             // Could open event details modal here
           }}
-          onAddEvent={date => {
+          onAddEvent={(date: Date) => {
             console.log('Add event for date:', date)
             // Could open add event modal here
           }}
@@ -159,7 +163,7 @@ function AppContent() {
 
   // Main app layout when trip is selected
   return (
-    <div className='app-layout'>
+    <SidebarProvider>
       <ErrorBoundary
         fallback={
           <div style={{ padding: '1rem', backgroundColor: '#fee2e2', color: '#dc2626' }}>
@@ -167,14 +171,10 @@ function AppContent() {
           </div>
         }
       >
-        <AppSidebar
-          isOpen={sidebarOpen}
-          activeCategory={activeCategory}
-          onCategorySelect={handleCategorySelect}
-        />
+        <AppSidebar activeCategory={activeCategory} onCategorySelect={handleCategorySelect} />
       </ErrorBoundary>
 
-      <div className='app-main'>
+      <SidebarInset>
         <ErrorBoundary
           fallback={
             <div style={{ padding: '1rem', backgroundColor: '#fee2e2', color: '#dc2626' }}>
@@ -182,57 +182,27 @@ function AppContent() {
             </div>
           }
         >
-          <AppHeader 
-            onMenuClick={() => setSidebarOpen(!sidebarOpen)}
-            currentTrip={currentTrip}
-            onTripSwitch={() => setIsSelectingTrip(true)}
-          />
+          <AppHeader currentTrip={currentTrip} onTripSwitch={() => setIsSelectingTrip(true)} />
         </ErrorBoundary>
 
         <ErrorBoundary>{renderCurrentView()}</ErrorBoundary>
-      </div>
-
-      <NewTripModal
-        isOpen={showNewTripModal}
-        onClose={() => setShowNewTripModal(false)}
-        onTripCreated={handleTripCreated}
-      />
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }
 
 function App() {
   return (
-    <ToastProvider>
-      <TripProvider>
-        <ErrorBoundary
-          onError={(error, errorInfo) => {
-            console.error('App Error Boundary:', error, errorInfo)
-            // In production, you would send this to your error reporting service
-          }}
-        >
-          <AppContent />
-          <ModalRenderer />
-        </ErrorBoundary>
-      </TripProvider>
-    </ToastProvider>
-  )
-}
-
-function ModalRenderer() {
-  const { showNewTripModal, setShowNewTripModal, setCurrentTrip } = useTripContext()
-
-  const handleTripCreated = (trip: any) => {
-    setCurrentTrip(trip)
-    setShowNewTripModal(false)
-  }
-
-  return (
-    <NewTripModal
-      isOpen={showNewTripModal}
-      onClose={() => setShowNewTripModal(false)}
-      onTripCreated={handleTripCreated}
-    />
+    <TripProvider>
+      <ErrorBoundary
+        onError={(error: Error, errorInfo: React.ErrorInfo) => {
+          console.error('App Error Boundary:', error, errorInfo)
+          // In production, you would send this to your error reporting service
+        }}
+      >
+        <AppContent />
+      </ErrorBoundary>
+    </TripProvider>
   )
 }
 

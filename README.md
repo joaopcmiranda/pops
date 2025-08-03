@@ -11,6 +11,7 @@ A comprehensive trip planning application built with React, TypeScript, and Vite
 - **New Trip Creation** - Professional form with validation for title, destination, dates, and type
 - **Trip-Aware Navigation** - Header shows current trip with switching capability
 - **Database Integration** - Persistent trip storage with user management
+- **Trip Management** - Create, read, update, and delete trips with full CRUD operations
 
 ### 🔧 **Full-Stack Architecture**
 
@@ -19,6 +20,7 @@ A comprehensive trip planning application built with React, TypeScript, and Vite
 - **Database Schema** - Trip, User, and Collaborator models with SQLite
 - **Development User** - Mock authentication for seamless development experience
 - **Health Monitoring** - Connection status indicators and error handling
+- **API Endpoints** - Complete trip, user, itinerary, and content management endpoints
 
 ### 🎨 **Modern UI & Developer Experience**
 
@@ -27,42 +29,42 @@ A comprehensive trip planning application built with React, TypeScript, and Vite
 - **Form Validation** - Client-side validation with user feedback
 - **Error Boundaries** - Comprehensive error handling throughout the app
 - **TypeScript** - Full type safety with strict ESLint rules (no `any` types!)
-- **Code Quality** - ESLint + Prettier + Husky pre-commit hooks
+- **Code Quality** - ESLint + Prettier + TypeScript checks all passing
+- **Component Library** - Full shadcn/ui integration with custom components
+- **Storybook Integration** - Ladle stories for all UI components
+- **Responsive Layout** - Sidebar navigation with collapsible design
 
 ## 🚧 In Progress & Todo
 
-### 🔧 **Next Up**
+### 🔧 **Immediate Priorities**
 
+- [ ] **Fix Category Pages** - Debug content loading and display issues in category pages
 - [ ] **Content Editing System** - Rich editor for creating/editing trip content
-- [ ] **Mobile Responsive Design** - Make app work beautifully on phones/tablets
+- [ ] **Mobile Responsive Design** - Optimize for phones/tablets (sidebar, cards, forms)
 - [ ] **Budget Calculator** - Add expense tracking and budget management
-- [ ] **Content Display Enhancement** - Show Rio de Janeiro and sample content in category pages
+- [ ] **Calendar Integration** - Connect calendar view with actual trip dates
 
-### 🚀 **Backend & Production**
+### 🚀 **Backend Enhancements**
 
-- [ ] **Backend API Development** - Node.js/Express or Python/FastAPI backend
-  - Database design (PostgreSQL/MongoDB)
-  - User authentication & authorization
-  - Trip data persistence (itineraries, content, budget)
-  - RESTful API endpoints
-  - Data validation & security
-- [ ] **Multi-user Support** - User accounts, trip sharing, collaboration
-- [ ] **Database Integration** - Replace in-memory storage with persistent DB
-- [ ] **Authentication System** - Login, registration, JWT tokens
-- [ ] **API Client Integration** - Replace services with API calls
+- [ ] **Real Authentication** - Replace mock user with proper JWT authentication
+- [ ] **Multi-user Support** - User accounts, trip sharing, collaboration features
+- [ ] **PostgreSQL Migration** - Move from SQLite to PostgreSQL for production
+- [ ] **File Upload** - Support for images and documents in trips
+- [ ] **API Rate Limiting** - Implement proper rate limiting for production
 - [ ] **Deployment Setup** - Docker, CI/CD, hosting (Vercel + Railway/Supabase)
 
 ### 🎯 **Future Enhancements**
 
-- [ ] **Hover Animations** - Add micro-interactions for polished UI
-- [ ] **Loading States** - Skeleton components and loading indicators
-- [ ] **Search & Filtering** - Find content and itinerary items quickly
-- [ ] **Image Upload** - Add photos to destinations and activities (requires backend)
-- [ ] **Interactive Maps** - Integration for location visualization
-- [ ] **Export to PDF** - Generate trip documents
-- [ ] **Offline Support** - Work without internet connection
+- [ ] **AI Trip Assistant** - AI-powered suggestions for activities and itineraries
+- [ ] **Interactive Maps** - Map integration for location visualization
+- [ ] **Export to PDF** - Generate printable trip documents
+- [ ] **Offline Support** - Work without internet connection via service workers
 - [ ] **Real-time Collaboration** - Live updates when multiple users edit
-- [ ] **Trip Templates** - Pre-built templates for different destinations worldwide
+- [ ] **Trip Templates** - Pre-built templates for popular destinations
+- [ ] **Weather Integration** - Show weather forecasts for trip dates
+- [ ] **Currency Converter** - Real-time currency conversion for budgets
+- [ ] **Travel Checklist** - Customizable packing and preparation lists
+- [ ] **Trip Sharing** - Share read-only trip views with friends/family
 
 ## Tech Stack
 
@@ -72,7 +74,7 @@ A comprehensive trip planning application built with React, TypeScript, and Vite
 - **Database**: SQLite with Prisma client generation
 - **Shared Packages**: Types and utilities (packages/types, packages/shared)
 - **Build Tools**: Vite 7 (frontend), tsx (backend), tsup (packages)
-- **Styling**: Tailwind CSS v4 with PostCSS
+- **Styling**: Tailwind CSS v4
 - **UI Components**: shadcn/ui
 - **Icons**: Lucide React
 - **State Management**: React Query + tRPC + Context API
@@ -151,53 +153,66 @@ Simply add markdown files to these directories and the app will automatically lo
 - `yarn lint` - Run ESLint across all projects
 - `yarn lint:fix` - Auto-fix ESLint issues
 - `yarn format` - Format code with Prettier
+- `yarn format:check` - Check code formatting
 - `yarn type-check` - Run TypeScript type checking
 - `yarn nx run api:dev` - Start API server only
 - `yarn nx run web:dev` - Start web app only
+- `yarn nx run web:storybook` - Start Ladle for component development
 - `yarn nx run api:db:generate` - Generate Prisma client
 - `yarn nx run api:db:push` - Push database schema changes
 
 ### Project Structure
 
 ```
-src/
-├── components/
-│   ├── ui/              # shadcn/ui components (Card, Button, etc.)
-│   ├── AppSidebar.tsx   # Main navigation sidebar
-│   ├── AppHeader.tsx    # Top navigation header
-│   ├── Dashboard.tsx    # Main dashboard with overview
-│   ├── ItineraryView.tsx # Timeline view for trip planning
-│   ├── CategoryPage.tsx # Content category displays (needs debugging)
-│   └── ContentViewer.tsx # Markdown content renderer
-├── services/
-│   ├── contentService.ts    # Content CRUD operations
-│   └── itineraryService.ts  # Itinerary management with sample data
-├── types/
-│   └── itinerary.ts    # TypeScript interfaces for trip data
-├── lib/
-│   └── utils.ts        # Utility functions (cn, etc.)
-└── App.tsx             # Main application component
-
-content/                # Markdown content files
-├── destinations/       # Rio de Janeiro sample content
-├── itinerary/         # Sample day planning
-├── transport/         # (empty, ready for content)
-├── accommodation/     # (empty, ready for content)
-├── activities/        # (empty, ready for content)
-├── budget/           # (empty, ready for content)
-└── documents/        # (empty, ready for content)
+trip-organizer/
+├── apps/
+│   ├── api/                    # Backend API server
+│   │   ├── src/
+│   │   │   ├── config/         # Database, env, tRPC configuration
+│   │   │   ├── middleware/     # Auth, error handling, rate limiting
+│   │   │   ├── routes/         # tRPC routers (trip, user, content)
+│   │   │   └── index.ts        # Express server entry point
+│   │   └── prisma/
+│   │       └── schema.prisma   # Database schema
+│   └── web/                    # Frontend React app
+│       ├── src/
+│       │   ├── components/
+│       │   │   ├── ui/         # shadcn/ui components library
+│       │   │   ├── forms/      # Trip form components
+│       │   │   └── *.tsx       # App components (Header, Sidebar, etc.)
+│       │   ├── contexts/       # React contexts (TripContext)
+│       │   ├── hooks/          # Custom React hooks
+│       │   ├── services/       # API services (tRPC integration)
+│       │   └── types/          # TypeScript type definitions
+│       └── .storybook/         # Ladle configuration
+├── packages/
+│   ├── shared/                 # Shared utilities
+│   └── types/                  # Shared TypeScript types
+├── content/                    # Markdown content files
+│   ├── destinations/           # Travel destination guides
+│   ├── itinerary/             # Daily schedules
+│   └── ...                    # Other content categories
+└── nx.json                    # Nx workspace configuration
 ```
+
+## 🚨 Known Issues
+
+1. **Category Pages** - Content display not working properly, needs debugging
+2. **Node Version** - Must use Node v24.5.0+ for Vite 7 compatibility
+3. **Type Casting** - Compression middleware requires type casting due to version mismatch
 
 ## 🤖 Development Notes
 
 **For Claude Code Assistant:**
 
-- Always read this README before starting work
+- Always read this README and CLAUDE.md before starting work
 - Update the "In Progress & Todo" section when completing tasks
 - Move completed items from Todo to "Current Features"
 - Add new features discovered during development to the appropriate sections
 - Keep the project structure updated as new files are added
 - Update available scripts when new npm scripts are added
+- Run `yarn lint`, `yarn type-check`, and `yarn format:check` before committing
+- All code quality checks must pass before pushing
 
 ## License
 

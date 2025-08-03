@@ -10,9 +10,8 @@ import {
   Plus,
 } from 'lucide-react'
 import { Card, CardContent } from './ui/card'
-import { Button } from './ui/button'
+import { Button } from './ui/button/button.tsx'
 import { ItineraryService } from '@/services/itineraryService'
-import { useToast } from '@/components/Toast'
 import type { ItineraryItem, ItemType } from '@/types/itinerary'
 
 interface CalendarProps {
@@ -51,7 +50,6 @@ export function Calendar({ onEventClick, onAddEvent }: CalendarProps) {
   const [events, setEvents] = useState<ItineraryItem[]>([])
   const [filteredTypes, setFilteredTypes] = useState<ItemType[]>([])
   const [loading, setLoading] = useState(true)
-  const { showError } = useToast()
 
   // Load events from service
   useEffect(() => {
@@ -61,11 +59,12 @@ export function Calendar({ onEventClick, onAddEvent }: CalendarProps) {
       setEvents(allEvents)
     } catch (error) {
       console.error('Error loading calendar events:', error)
-      showError('Calendar Error', 'Unable to load your itinerary events')
+      // TODO: Replace with Sonner toast
+      console.error('Calendar Error: Unable to load your itinerary events')
     } finally {
       setLoading(false)
     }
-  }, [showError])
+  }, [])
 
   // Generate calendar days for current month view
   const calendarDays = useMemo(() => {

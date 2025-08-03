@@ -3,7 +3,7 @@ import { Plus, FileText, Eye, ArrowLeft } from 'lucide-react'
 import { ContentService, type ContentItem } from '@/services/contentService'
 import { ContentViewer } from '@/components/ContentViewer'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
-import { Button } from './ui/button'
+import { Button } from './ui/button/button.tsx'
 import { SkeletonCard } from './ui/skeleton'
 
 interface CategoryPageProps {

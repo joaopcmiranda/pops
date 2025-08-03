@@ -1,6 +1,81 @@
 import { z } from 'zod'
 import { router, protectedProcedure, publicProcedure } from '@/config/trpc'
 
+// Type interfaces for better type safety
+interface TripWhereInput {
+  OR?: Array<{
+    userId: string
+  } | {
+    collaborators: {
+      some: {
+        userId: string
+        role?: {
+          in: string[]
+        }
+      }
+    }
+  }>
+  status?: {
+    in: string[]
+  }
+  type?: {
+    in: string[]
+  }
+  destination?: {
+    contains: string
+    mode: 'insensitive'
+  }
+  country?: {
+    contains: string
+    mode: 'insensitive'
+  }
+  startDate?: {
+    gte: Date
+    lte: Date
+  }
+  collaborators?: {
+    some: {
+      userId: string
+    }
+  }
+}
+
+interface TripOrderBy {
+  [key: string]: 'asc' | 'desc'
+}
+
+interface TripCreateData {
+  [key: string]: unknown
+  title: string
+  destination: string
+  country: string
+  type: string
+  startDate: Date
+  endDate: Date
+  userId: string
+  budget: string | null
+  settings: string
+  tags: string | null
+}
+
+interface TripUpdateData {
+  [key: string]: unknown
+  startDate?: Date
+  endDate?: Date
+  budget?: string | null
+  settings?: string
+  tags?: string | null
+}
+
+interface TemplateWhereInput {
+  isPublic: boolean
+  type?: string
+  destination?: {
+    contains: string
+    mode: 'insensitive'
+  }
+}
+
 // Validation schemas
 const tripTypeSchema = z.enum(['leisure', 'business', 'family', 'adventure', 'honeymoon', 'solo', 'group', 'other'])
 const tripStatusSchema = z.enum(['planning', 'upcoming', 'active', 'completed', 'cancelled'])
@@ -78,7 +153,7 @@ export const tripRouter = router({
     .query(async ({ ctx, input }) => {
       const { filters, sortBy = 'startDate', sortOrder = 'asc', limit, offset } = input
       
-      const where: any = {
+      const where: TripWhereInput = {
         OR: [
           { userId: ctx.userId },
           { collaborators: { some: { userId: ctx.userId } } }
@@ -113,7 +188,7 @@ export const tripRouter = router({
         delete where.OR // Only show collaborative trips
       }
 
-      const orderBy: any = {}
+      const orderBy: TripOrderBy = {}
       orderBy[sortBy] = sortOrder
 
       const trips = await ctx.prisma.trip.findMany({
@@ -240,10 +315,14 @@ export const tripRouter = router({
       }
 
       // Filter out undefined values and convert them appropriately
-      const createData: any = {
+      const createData: TripCreateData = {
         ...Object.fromEntries(
-          Object.entries(tripData).filter(([_, value]) => value !== undefined)
+          Object.entries(tripData).filter(([, value]) => value !== undefined)
         ),
+        title: input.title,
+        destination: input.destination,
+        country: input.country,
+        type: input.type,
         startDate: new Date(input.startDate),
         endDate: new Date(input.endDate),
         userId: ctx.userId,
@@ -295,9 +374,9 @@ export const tripRouter = router({
       }
 
       // Filter out undefined values and build update data
-      const updateData: any = {
+      const updateData: TripUpdateData = {
         ...Object.fromEntries(
-          Object.entries(updates).filter(([_, value]) => value !== undefined)
+          Object.entries(updates).filter(([, value]) => value !== undefined)
         ),
       }
       
@@ -370,7 +449,7 @@ export const tripRouter = router({
       limit: z.number().min(1).max(50).optional(),
     }))
     .query(async ({ ctx, input }) => {
-      const where: any = { isPublic: true }
+      const where: TemplateWhereInput = { isPublic: true }
       
       if (input.type) {
         where.type = input.type

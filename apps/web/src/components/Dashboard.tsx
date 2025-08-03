@@ -10,11 +10,10 @@ import {
   Plus,
 } from 'lucide-react'
 import { Card, CardContent } from './ui/card'
-import { Button } from './ui/button'
+import { Button } from './ui/button/button.tsx'
 import { SkeletonCard } from './ui/skeleton'
 import { ContentService } from '@/services/contentService'
 import { ItineraryService } from '@/services/itineraryService'
-import { useToast } from '@/components/Toast'
 import { ErrorScreen } from '@/components/ErrorScreen'
 import { trpc } from '@/utils/trpc'
 import type { ItineraryItem } from '@/types/itinerary'
@@ -28,7 +27,6 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
   const [error, setError] = useState<string | null>(null)
   const [categoryMetadata, setCategoryMetadata] = useState<Record<string, number>>({})
   const [upcomingItems, setUpcomingItems] = useState<ItineraryItem[]>([])
-  const { showError, showSuccess } = useToast()
 
   // Test tRPC connection
   const healthQuery = trpc.health.check.useQuery()
@@ -54,14 +52,15 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
       console.error('Error loading dashboard data:', error)
       setError('Failed to load dashboard data')
       setLoading(false)
-      showError('Loading Error', 'Unable to load your trip data. Please try refreshing the page.')
+      // TODO: Replace with Sonner toast
+      console.error('Loading Error: Unable to load your trip data. Please try refreshing the page.')
     }
   }
 
   useEffect(() => {
     // Simulate loading delay for demonstration
     setTimeout(loadDashboardData, 200)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleRetry = () => {
     loadDashboardData()
@@ -111,12 +110,13 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
   ]
 
   return (
-    <main className='app-content animate-fade-in'>
+    <main className='app-content animate-fade-in mobile-scroll'>
       {/* Welcome Section */}
       <div style={{ marginBottom: '2rem' }} className='animate-fade-in-up'>
         <h1
+          className='mobile-title'
           style={{
-            fontSize: '2rem',
+            fontSize: 'clamp(1.5rem, 5vw, 2rem)',
             fontWeight: '700',
             color: '#0f172a',
             marginBottom: '0.5rem',
@@ -125,11 +125,24 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
         >
           Welcome back! ✈️
         </h1>
-        
+
         {/* tRPC Connection Status */}
-        <div style={{ fontSize: '0.875rem', color: healthQuery.isLoading ? '#f59e0b' : healthQuery.error ? '#ef4444' : '#10b981', marginBottom: '1rem' }}>
-          API Status: {healthQuery.isLoading ? 'Connecting...' : healthQuery.error ? 'Disconnected' : 'Connected ✓'}
-          {healthQuery.data && <span style={{ marginLeft: '0.5rem', opacity: 0.7 }}>({healthQuery.data.status})</span>}
+        <div
+          style={{
+            fontSize: '0.875rem',
+            color: healthQuery.isLoading ? '#f59e0b' : healthQuery.error ? '#ef4444' : '#10b981',
+            marginBottom: '1rem',
+          }}
+        >
+          API Status:{' '}
+          {healthQuery.isLoading
+            ? 'Connecting...'
+            : healthQuery.error
+              ? 'Disconnected'
+              : 'Connected ✓'}
+          {healthQuery.data && (
+            <span style={{ marginLeft: '0.5rem', opacity: 0.7 }}>({healthQuery.data.status})</span>
+          )}
         </div>
         <p style={{ color: '#64748b', fontSize: '1rem' }}>
           Your adventure is taking shape. Here's your trip overview.
@@ -138,10 +151,11 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
 
       {/* Quick Stats */}
       <div
+        className='app-grid'
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '1rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+          gap: 'clamp(0.75rem, 2vw, 1rem)',
           marginBottom: '2rem',
         }}
       >
@@ -198,10 +212,11 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: '2fr 1fr',
-          gap: '2rem',
+          gridTemplateColumns: '1fr',
+          gap: 'clamp(1rem, 3vw, 2rem)',
           marginBottom: '2rem',
         }}
+        className='lg:!grid-cols-[2fr_1fr]'
       >
         {/* Upcoming Items */}
         <div>
@@ -232,18 +247,6 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
               >
                 <Calendar style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
                 View Itinerary
-              </Button>
-
-              {/* Demo notification button (remove in production) */}
-              <Button
-                variant='secondary'
-                className='button-hover button-entrance'
-                onClick={() =>
-                  showSuccess('Trip Updated!', 'Your itinerary has been saved successfully.')
-                }
-                style={{ fontSize: '0.75rem', padding: '0.5rem' }}
-              >
-                Test Toast
               </Button>
             </div>
           </div>

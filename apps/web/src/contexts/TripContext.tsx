@@ -1,34 +1,6 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-
-interface Trip {
-  id: string
-  title: string
-  destination: string
-  startDate: string
-  endDate: string
-  type: string
-  status: string
-  coverImage?: string
-}
-
-interface TripContextType {
-  currentTrip: Trip | null
-  setCurrentTrip: (trip: Trip | null) => void
-  isSelectingTrip: boolean
-  setIsSelectingTrip: (selecting: boolean) => void
-  showNewTripModal: boolean
-  setShowNewTripModal: (show: boolean) => void
-}
-
-const TripContext = createContext<TripContextType | undefined>(undefined)
-
-export function useTripContext() {
-  const context = useContext(TripContext)
-  if (context === undefined) {
-    throw new Error('useTripContext must be used within a TripProvider')
-  }
-  return context
-}
+import { useState, useEffect, type ReactNode } from 'react'
+import type { Trip } from '@/types/trip'
+import { TripContext } from './TripContextDefinition'
 
 interface TripProviderProps {
   children: ReactNode
@@ -68,9 +40,5 @@ export function TripProvider({ children }: TripProviderProps) {
     setShowNewTripModal,
   }
 
-  return (
-    <TripContext.Provider value={value}>
-      {children}
-    </TripContext.Provider>
-  )
+  return <TripContext.Provider value={value}>{children}</TripContext.Provider>
 }

@@ -334,6 +334,18 @@
       "apps/web/package.json",
       "nx/core/package-json"
     ],
+    "metadata.targetGroups.NPM Scripts": [
+      "apps/web/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.targetGroups.NPM Scripts.0": [
+      "apps/web/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.targetGroups.NPM Scripts.1": [
+      "apps/web/package.json",
+      "nx/core/package-json"
+    ],
     "metadata.js": [
       "apps/web/package.json",
       "nx/core/package-json"
@@ -347,6 +359,62 @@
       "nx/core/package-json"
     ],
     "targets": [
+      "apps/web/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.storybook": [
+      "apps/web/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.storybook.executor": [
+      "apps/web/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.storybook.options": [
+      "apps/web/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.storybook.metadata": [
+      "apps/web/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.storybook.options.script": [
+      "apps/web/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.storybook.metadata.scriptContent": [
+      "apps/web/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.storybook.metadata.runCommand": [
+      "apps/web/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.build-storybook": [
+      "apps/web/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.build-storybook.executor": [
+      "apps/web/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.build-storybook.options": [
+      "apps/web/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.build-storybook.metadata": [
+      "apps/web/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.build-storybook.options.script": [
+      "apps/web/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.build-storybook.metadata.scriptContent": [
+      "apps/web/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.build-storybook.metadata.runCommand": [
       "apps/web/package.json",
       "nx/core/package-json"
     ],
