@@ -1,16 +1,16 @@
-import type { StoryDefault, Story } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useEditor, EditorContent } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import Typography from '@tiptap/extension-typography'
-import Link from '@tiptap/extension-link'
-import Image from '@tiptap/extension-image'
-import Table from '@tiptap/extension-table'
-import TaskList from '@tiptap/extension-task-list'
-import TaskItem from '@tiptap/extension-task-item'
-import { ContentToolbar } from './index'
+import { StarterKit } from '@tiptap/starter-kit'
+import { Typography } from '@tiptap/extension-typography'
+import { Link } from '@tiptap/extension-link'
+import { Image } from '@tiptap/extension-image'
+import { Table, TableRow, TableCell, TableHeader } from '@tiptap/extension-table'
+import { TaskList } from '@tiptap/extension-task-list'
+import { TaskItem } from '@tiptap/extension-task-item'
+import ContentToolbar from './ContentToolbar'
 import type { ContentToolbarProps } from './types'
 
-const meta: StoryDefault<ContentToolbarProps> = {
+const meta: Meta<typeof ContentToolbar> = {
   title: 'Editor/ContentToolbar',
   component: ContentToolbar,
   parameters: {
@@ -49,6 +49,7 @@ const meta: StoryDefault<ContentToolbarProps> = {
 }
 
 export default meta
+type Story = StoryObj<typeof meta>
 
 // Demo editor component that includes the toolbar
 const DemoEditor: React.FC<Omit<ContentToolbarProps, 'editor'> & { initialContent?: string }> = ({
@@ -75,6 +76,9 @@ const DemoEditor: React.FC<Omit<ContentToolbarProps, 'editor'> & { initialConten
       Table.configure({
         resizable: true,
       }),
+      TableRow,
+      TableHeader,
+      TableCell,
       TaskList,
       TaskItem.configure({
         nested: true,
@@ -104,8 +108,8 @@ const DemoEditor: React.FC<Omit<ContentToolbarProps, 'editor'> & { initialConten
   )
 }
 
-export const Default: Story<ContentToolbarProps & { initialContent?: string }> = {
-  render: args => <DemoEditor {...args} />,
+export const Default: Story = {
+  render: (args: ContentToolbarProps & { initialContent?: string }) => <DemoEditor {...args} />,
   args: {
     variant: 'fixed',
     showAdvanced: true,
@@ -123,8 +127,8 @@ export const Default: Story<ContentToolbarProps & { initialContent?: string }> =
   },
 }
 
-export const BubbleVariant: Story<ContentToolbarProps & { initialContent?: string }> = {
-  render: args => <DemoEditor {...args} />,
+export const BubbleVariant: Story = {
+  render: (args: ContentToolbarProps & { initialContent?: string }) => <DemoEditor {...args} />,
   args: {
     variant: 'bubble',
     showAdvanced: false,
@@ -144,8 +148,8 @@ BubbleVariant.parameters = {
   },
 }
 
-export const MinimalToolbar: Story<ContentToolbarProps & { initialContent?: string }> = {
-  render: args => <DemoEditor {...args} />,
+export const MinimalToolbar: Story = {
+  render: (args: ContentToolbarProps & { initialContent?: string }) => <DemoEditor {...args} />,
   args: {
     variant: 'fixed',
     showAdvanced: false,
@@ -165,8 +169,8 @@ MinimalToolbar.parameters = {
   },
 }
 
-export const ItineraryToolbar: Story<ContentToolbarProps & { initialContent?: string }> = {
-  render: args => <DemoEditor {...args} />,
+export const ItineraryToolbar: Story = {
+  render: (args: ContentToolbarProps & { initialContent?: string }) => <DemoEditor {...args} />,
   args: {
     variant: 'fixed',
     showAdvanced: true,
@@ -201,8 +205,8 @@ ItineraryToolbar.parameters = {
   },
 }
 
-export const EmptyEditor: Story<ContentToolbarProps & { initialContent?: string }> = {
-  render: args => <DemoEditor {...args} />,
+export const EmptyEditor: Story = {
+  render: (args: ContentToolbarProps & { initialContent?: string }) => <DemoEditor {...args} />,
   args: {
     variant: 'fixed',
     showAdvanced: true,
@@ -219,8 +223,8 @@ EmptyEditor.parameters = {
   },
 }
 
-export const AllFormattingOptions: Story<ContentToolbarProps & { initialContent?: string }> = {
-  render: args => <DemoEditor {...args} />,
+export const AllFormattingOptions: Story = {
+  render: (args: ContentToolbarProps & { initialContent?: string }) => <DemoEditor {...args} />,
   args: {
     variant: 'fixed',
     showAdvanced: true,

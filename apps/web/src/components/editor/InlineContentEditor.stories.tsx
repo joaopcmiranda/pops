@@ -1,5 +1,5 @@
-import type { StoryDefault, Story } from '@storybook/react-vite'
-import { InlineContentEditor } from './index'
+import type { Meta, StoryObj } from '@storybook/react-vite'
+import InlineContentEditor from './InlineContentEditor'
 import type { ContentItem } from '../../services/contentService'
 
 interface InlineContentEditorProps {
@@ -12,7 +12,7 @@ interface InlineContentEditorProps {
   placeholder?: string
 }
 
-const meta: StoryDefault<InlineContentEditorProps> = {
+const meta: Meta<typeof InlineContentEditor> = {
   title: 'Editor/InlineContentEditor',
   component: InlineContentEditor,
   parameters: {
@@ -45,6 +45,7 @@ const meta: StoryDefault<InlineContentEditorProps> = {
 }
 
 export default meta
+type Story = StoryObj<typeof meta>
 
 const sampleContentItem: ContentItem = {
   id: 'quick-note',
@@ -81,7 +82,8 @@ const emptyContentItem: ContentItem = {
   lastModified: new Date(),
 }
 
-export const Default: Story<InlineContentEditorProps> = {
+export const Default: Story = {
+  render: (args: InlineContentEditorProps) => <InlineContentEditor {...args} />,
   args: {
     contentItem: sampleContentItem,
     category: 'destinations',
@@ -90,7 +92,8 @@ export const Default: Story<InlineContentEditorProps> = {
   },
 }
 
-export const WithoutToolbar: Story<InlineContentEditorProps> = {
+export const WithoutToolbar: Story = {
+  render: (args: InlineContentEditorProps) => <InlineContentEditor {...args} />,
   args: {
     contentItem: sampleContentItem,
     category: 'destinations',
@@ -106,7 +109,8 @@ WithoutToolbar.parameters = {
   },
 }
 
-export const ShortContent: Story<InlineContentEditorProps> = {
+export const ShortContent: Story = {
+  render: (args: InlineContentEditorProps) => <InlineContentEditor {...args} />,
   args: {
     contentItem: shortContentItem,
     category: 'destinations',
@@ -122,7 +126,8 @@ ShortContent.parameters = {
   },
 }
 
-export const EmptyContent: Story<InlineContentEditorProps> = {
+export const EmptyContent: Story = {
+  render: (args: InlineContentEditorProps) => <InlineContentEditor {...args} />,
   args: {
     contentItem: emptyContentItem,
     category: 'destinations',
@@ -138,7 +143,8 @@ EmptyContent.parameters = {
   },
 }
 
-export const ItineraryNote: Story<InlineContentEditorProps> = {
+export const ItineraryNote: Story = {
+  render: (args: InlineContentEditorProps) => <InlineContentEditor {...args} />,
   args: {
     contentItem: {
       id: 'itinerary-note',
@@ -168,7 +174,8 @@ ItineraryNote.parameters = {
   },
 }
 
-export const BudgetNote: Story<InlineContentEditorProps> = {
+export const BudgetNote: Story = {
+  render: (args: InlineContentEditorProps) => <InlineContentEditor {...args} />,
   args: {
     contentItem: {
       id: 'budget-note',

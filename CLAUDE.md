@@ -115,3 +115,9 @@ pnpm run type-check
 - use Tailwind classes
 - **Desktop-first with responsive layout** design principles
 - Nothing is finished until lint, build, format and test pass with no errors
+
+## 💡 Coding Guidelines
+
+- use @ aliases whenever you can
+- **Imports**: Whenever available, use destructured imports like { Banana } from "banana". Avoid defaults and * 
+- Always export each export individually and avoid using defaults. so use "export function Banana = ..." instead of export default Banana; or adding export at the end of the file,dont do that

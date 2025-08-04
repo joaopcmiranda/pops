@@ -12,12 +12,13 @@ export function useContentEditorContext(): ContentEditorContextValue {
 }
 
 export function useRegisterEditor(editor: Editor | null) {
-  const context = useContext(ContentEditorContext) as ContentEditorContextValue & {
-    registerEditor: (editor: Editor | null) => void
+  const context = useContext(ContentEditorContext)
+  if (!context) {
+    throw new Error('useRegisterEditor must be used within a ContentEditorProvider')
   }
 
   useEffect(() => {
-    if (context?.registerEditor) {
+    if (context.registerEditor) {
       context.registerEditor(editor)
     }
   }, [editor, context])

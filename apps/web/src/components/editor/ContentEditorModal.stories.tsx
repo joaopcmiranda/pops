@@ -1,11 +1,11 @@
-import type { StoryDefault, Story } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
-import { ContentEditorModal } from './index'
+import ContentEditorModal from './ContentEditorModal'
 import { Button } from '../ui/button/button'
 import type { ContentEditorModalProps } from './types'
 import type { ContentItem } from '../../services/contentService'
 
-const meta: StoryDefault<ContentEditorModalProps> = {
+const meta: Meta<typeof ContentEditorModal> = {
   title: 'Editor/ContentEditorModal',
   component: ContentEditorModal,
   parameters: {
@@ -51,6 +51,7 @@ const meta: StoryDefault<ContentEditorModalProps> = {
 }
 
 export default meta
+type Story = StoryObj<typeof meta>
 
 const sampleContentItem: ContentItem = {
   id: 'rio-de-janeiro',
@@ -78,139 +79,170 @@ const sampleContentItem: ContentItem = {
   lastModified: new Date(),
 }
 
-// Interactive template that manages modal state
-const InteractiveTemplate: Story<Omit<ContentEditorModalProps, 'isOpen' | 'onClose'>> = args => {
-  const [isOpen, setIsOpen] = useState(false)
-
-  return (
-    <div className='p-8'>
-      <Button onClick={() => setIsOpen(true)}>Open Content Editor</Button>
-
-      <ContentEditorModal {...args} isOpen={isOpen} onClose={() => setIsOpen(false)} />
-    </div>
-  )
-}
-
-export const EditExistingContent: Story<Omit<ContentEditorModalProps, 'isOpen' | 'onClose'>> =
-  InteractiveTemplate.bind({})
-EditExistingContent.args = {
-  contentItem: sampleContentItem,
-  category: 'destinations',
-  slug: 'rio-de-janeiro',
-  title: 'Rio de Janeiro',
-}
-EditExistingContent.parameters = {
-  docs: {
-    description: {
-      story: 'Modal editor for editing existing content with pre-filled title and content.',
+export const EditExistingContent: Story = {
+  render: (args: ContentEditorModalProps) => {
+    const [isOpen, setIsOpen] = useState(false)
+    return (
+      <div className='p-8'>
+        <Button onClick={() => setIsOpen(true)}>Open Content Editor</Button>
+        <ContentEditorModal {...args} isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      </div>
+    )
+  },
+  args: {
+    contentItem: sampleContentItem,
+    category: 'destinations',
+    slug: 'rio-de-janeiro',
+    title: 'Rio de Janeiro',
+    isOpen: false,
+    onClose: () => {},
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Modal editor for editing existing content with pre-filled title and content.',
+      },
     },
   },
 }
 
-export const CreateNewContent: Story<Omit<ContentEditorModalProps, 'isOpen' | 'onClose'>> =
-  InteractiveTemplate.bind({})
-CreateNewContent.args = {
-  contentItem: null,
-  category: 'destinations',
-  slug: 'new-destination',
-  title: 'New Destination',
-}
-CreateNewContent.parameters = {
-  docs: {
-    description: {
-      story: 'Modal editor for creating new content from scratch.',
+export const CreateNewContent: Story = {
+  render: (args: ContentEditorModalProps) => {
+    const [isOpen, setIsOpen] = useState(false)
+    return (
+      <div className='p-8'>
+        <Button onClick={() => setIsOpen(true)}>Open Content Editor</Button>
+        <ContentEditorModal {...args} isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      </div>
+    )
+  },
+  args: {
+    contentItem: null,
+    category: 'destinations',
+    slug: 'new-destination',
+    title: 'New Destination',
+    isOpen: false,
+    onClose: () => {},
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Modal editor for creating new content from scratch.',
+      },
     },
   },
 }
 
-export const ItineraryContent: Story<Omit<ContentEditorModalProps, 'isOpen' | 'onClose'>> =
-  InteractiveTemplate.bind({})
-ItineraryContent.args = {
-  contentItem: {
-    id: 'day-1-rio',
-    title: 'Day 1 - Arrival in Rio',
-    slug: 'day-1-rio',
+export const ItineraryContent: Story = {
+  render: (args: ContentEditorModalProps) => {
+    const [isOpen, setIsOpen] = useState(false)
+    return (
+      <div className='p-8'>
+        <Button onClick={() => setIsOpen(true)}>Open Content Editor</Button>
+        <ContentEditorModal {...args} isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      </div>
+    )
+  },
+  args: {
+    contentItem: {
+      id: 'day-1-rio',
+      title: 'Day 1 - Arrival in Rio',
+      slug: 'day-1-rio',
+      category: 'itinerary',
+      content: `
+        <h1>Day 1 - Arrival in Rio de Janeiro</h1>
+        <h2>Morning</h2>
+        <ul class="task-list">
+          <li><input type="checkbox" checked> <strong>9:00 AM</strong> - Land at Galeão International Airport</li>
+          <li><input type="checkbox"> <strong>10:30 AM</strong> - Take taxi/Uber to hotel in Copacabana</li>
+          <li><input type="checkbox"> <strong>12:00 PM</strong> - Light lunch at local café</li>
+        </ul>
+        <h2>Afternoon</h2>
+        <ul class="task-list">
+          <li><input type="checkbox"> <strong>2:00 PM</strong> - Walk along Copacabana Beach</li>
+          <li><input type="checkbox"> <strong>3:30 PM</strong> - Visit Forte de Copacabana</li>
+          <li><input type="checkbox"> <strong>5:00 PM</strong> - Explore local shops</li>
+        </ul>
+      `,
+      lastModified: new Date(),
+    },
     category: 'itinerary',
-    content: `
-      <h1>Day 1 - Arrival in Rio de Janeiro</h1>
-      <h2>Morning</h2>
-      <ul class="task-list">
-        <li><input type="checkbox" checked> <strong>9:00 AM</strong> - Land at Galeão International Airport</li>
-        <li><input type="checkbox"> <strong>10:30 AM</strong> - Take taxi/Uber to hotel in Copacabana</li>
-        <li><input type="checkbox"> <strong>12:00 PM</strong> - Light lunch at local café</li>
-      </ul>
-      <h2>Afternoon</h2>
-      <ul class="task-list">
-        <li><input type="checkbox"> <strong>2:00 PM</strong> - Walk along Copacabana Beach</li>
-        <li><input type="checkbox"> <strong>3:30 PM</strong> - Visit Forte de Copacabana</li>
-        <li><input type="checkbox"> <strong>5:00 PM</strong> - Explore local shops</li>
-      </ul>
-    `,
-    lastModified: new Date(),
+    slug: 'day-1-rio',
+    title: 'Itinerary Planning',
+    isOpen: false,
+    onClose: () => {},
   },
-  category: 'itinerary',
-  slug: 'day-1-rio',
-  title: 'Itinerary Planning',
-}
-ItineraryContent.parameters = {
-  docs: {
-    description: {
-      story: 'Modal editor configured for itinerary content with task lists and scheduling.',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Modal editor configured for itinerary content with task lists and scheduling.',
+      },
     },
   },
 }
 
-export const BudgetContent: Story<Omit<ContentEditorModalProps, 'isOpen' | 'onClose'>> =
-  InteractiveTemplate.bind({})
-BudgetContent.args = {
-  contentItem: {
-    id: 'rio-budget',
-    title: 'Rio Trip Budget',
-    slug: 'rio-budget',
+export const BudgetContent: Story = {
+  render: (args: ContentEditorModalProps) => {
+    const [isOpen, setIsOpen] = useState(false)
+    return (
+      <div className='p-8'>
+        <Button onClick={() => setIsOpen(true)}>Open Content Editor</Button>
+        <ContentEditorModal {...args} isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      </div>
+    )
+  },
+  args: {
+    contentItem: {
+      id: 'rio-budget',
+      title: 'Rio Trip Budget',
+      slug: 'rio-budget',
+      category: 'budget',
+      content: `
+        <h1>Rio Trip Budget Breakdown</h1>
+        <h2>Accommodation</h2>
+        <table>
+          <thead>
+            <tr><th>Item</th><th>Cost</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Hotel (7 nights)</td><td>$1,200</td><td>Copacabana Palace</td></tr>
+            <tr><td>Resort fees</td><td>$50</td><td>-</td></tr>
+          </tbody>
+        </table>
+        <h2>Transportation</h2>
+        <table>
+          <thead>
+            <tr><th>Item</th><th>Cost</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Flights (roundtrip)</td><td>$850</td><td>Economy class</td></tr>
+            <tr><td>Airport transfers</td><td>$60</td><td>Taxi/Uber</td></tr>
+            <tr><td>Local transport</td><td>$100</td><td>Metro, buses</td></tr>
+          </tbody>
+        </table>
+        <blockquote>
+          <p><strong>Total Estimated Cost: $2,260</strong></p>
+        </blockquote>
+      `,
+      lastModified: new Date(),
+    },
     category: 'budget',
-    content: `
-      <h1>Rio Trip Budget Breakdown</h1>
-      <h2>Accommodation</h2>
-      <table>
-        <thead>
-          <tr><th>Item</th><th>Cost</th><th>Notes</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Hotel (7 nights)</td><td>$1,200</td><td>Copacabana Palace</td></tr>
-          <tr><td>Resort fees</td><td>$50</td><td>-</td></tr>
-        </tbody>
-      </table>
-      <h2>Transportation</h2>
-      <table>
-        <thead>
-          <tr><th>Item</th><th>Cost</th><th>Notes</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Flights (roundtrip)</td><td>$850</td><td>Economy class</td></tr>
-          <tr><td>Airport transfers</td><td>$60</td><td>Taxi/Uber</td></tr>
-          <tr><td>Local transport</td><td>$100</td><td>Metro, buses</td></tr>
-        </tbody>
-      </table>
-      <blockquote>
-        <p><strong>Total Estimated Cost: $2,260</strong></p>
-      </blockquote>
-    `,
-    lastModified: new Date(),
+    slug: 'rio-budget',
+    title: 'Budget Planning',
+    isOpen: false,
+    onClose: () => {},
   },
-  category: 'budget',
-  slug: 'rio-budget',
-  title: 'Budget Planning',
-}
-BudgetContent.parameters = {
-  docs: {
-    description: {
-      story: 'Modal editor for budget content with tables and financial calculations.',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Modal editor for budget content with tables and financial calculations.',
+      },
     },
   },
 }
 
-// Static version for simpler demo
-export const StaticDemo: Story<ContentEditorModalProps> = {
+export const StaticDemo: Story = {
+  render: (args: ContentEditorModalProps) => <ContentEditorModal {...args} />,
   args: {
     isOpen: true,
     contentItem: sampleContentItem,
@@ -220,11 +252,11 @@ export const StaticDemo: Story<ContentEditorModalProps> = {
     onClose: () => {},
     onSave: async () => {},
   },
-}
-StaticDemo.parameters = {
-  docs: {
-    description: {
-      story: 'Static demo showing the modal editor interface (always open for demonstration).',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Static demo showing the modal editor interface (always open for demonstration).',
+      },
     },
   },
 }
