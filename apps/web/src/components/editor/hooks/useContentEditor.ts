@@ -2,7 +2,6 @@ import React from 'react'
 import { useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Typography from '@tiptap/extension-typography'
-import Link from '@tiptap/extension-link'
 import Image from '@tiptap/extension-image'
 import Table from '@tiptap/extension-table'
 import TableRow from '@tiptap/extension-table-row'
@@ -43,23 +42,23 @@ export const useContentEditor = (options: UseContentEditorOptions = {}) => {
           keepAttributes: false,
         },
         table: false, // We'll use the separate table extension
+        link: {
+          openOnClick: false,
+          autolink: true,
+          defaultProtocol: 'https',
+        },
       }),
       Typography,
-      Link.configure({
-        openOnClick: false,
-        autolink: true,
-        defaultProtocol: 'https',
-      }),
       Image.configure({
         inline: false,
         allowBase64: true,
       }),
-      Table.configure({
-        resizable: true,
-      }),
       TableRow,
       TableHeader,
       TableCell,
+      Table.configure({
+        resizable: true,
+      }),
       TaskList,
       TaskItem.configure({
         nested: true,

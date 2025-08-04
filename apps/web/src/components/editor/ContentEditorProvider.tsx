@@ -115,25 +115,6 @@ export const ContentEditorProvider: React.FC<ContentEditorProviderProps> = ({
     }
   }, [initialContent, category, slug, onError])
 
-  // Auto-save functionality
-  useEffect(() => {
-    if (autoSave && state.isDirty && !state.isSaving && state.content) {
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current)
-      }
-
-      autoSaveTimeoutRef.current = setTimeout(async () => {
-        await save()
-      }, autoSaveDelay)
-    }
-
-    return () => {
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current)
-      }
-    }
-  }, [state.isDirty, state.isSaving, state.content, autoSave, autoSaveDelay, save])
-
   const save = useCallback(async () => {
     if (!state.content || state.isSaving) return
 
@@ -170,6 +151,25 @@ export const ContentEditorProvider: React.FC<ContentEditorProviderProps> = ({
     }
   }, [state.content, state.isSaving, editor, category, onSave, onError])
 
+  // Auto-save functionality
+  useEffect(() => {
+    if (autoSave && state.isDirty && !state.isSaving && state.content) {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current)
+      }
+
+      autoSaveTimeoutRef.current = setTimeout(async () => {
+        await save()
+      }, autoSaveDelay)
+    }
+
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current)
+      }
+    }
+  }, [state.isDirty, state.isSaving, state.content, autoSave, autoSaveDelay, save])
+
   const discard = useCallback(() => {
     if (state.content) {
       // Reset editor content to original
@@ -189,9 +189,7 @@ export const ContentEditorProvider: React.FC<ContentEditorProviderProps> = ({
     dispatch({ type: 'UPDATE_CONTENT', payload: updates })
   }, [])
 
-  const contextValue: ContentEditorContextValue & {
-    registerEditor: (editor: Editor | null) => void
-  } = {
+  const contextValue: ContentEditorContextValue = {
     editor,
     content: state.content,
     isLoading: state.isLoading,

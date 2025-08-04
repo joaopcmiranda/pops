@@ -23,7 +23,12 @@ import { Separator } from '../ui/separator'
 import { cn } from '../../lib/utils'
 import type { ContentToolbarProps, EditorCommand, EditorToolbarGroup } from './types'
 
-const ContentToolbar: React.FC<ContentToolbarProps> = ({ editor, variant = 'fixed' }) => {
+const ContentToolbar: React.FC<ContentToolbarProps> = ({ 
+  editor, 
+  variant = 'fixed', 
+  contentType = 'destinations',
+  showAdvanced = false 
+}) => {
   if (!editor) return null
 
   const basicCommands: EditorCommand[] = [
@@ -177,14 +182,72 @@ const ContentToolbar: React.FC<ContentToolbarProps> = ({ editor, variant = 'fixe
     },
   ]
 
-  const toolbarGroups: EditorToolbarGroup[] = [
-    { name: 'history', commands: historyCommands },
-    { name: 'basic', commands: basicCommands },
-    { name: 'headings', commands: headingCommands },
-    { name: 'lists', commands: listCommands },
-    { name: 'format', commands: formatCommands },
-    { name: 'insert', commands: insertCommands },
-  ]
+  // Content-type specific toolbar configurations
+  const getToolbarGroupsForContentType = (contentType: string): EditorToolbarGroup[] => {
+    const baseGroups = [
+      { name: 'history', commands: historyCommands },
+      { name: 'basic', commands: basicCommands },
+    ]
+
+    switch (contentType) {
+      case 'itinerary':
+        return [
+          ...baseGroups,
+          { name: 'headings', commands: headingCommands },
+          { name: 'lists', commands: listCommands },
+          { name: 'insert', commands: insertCommands }, // Tables for schedules
+          { name: 'format', commands: formatCommands },
+        ]
+      
+      case 'budget':
+        return [
+          ...baseGroups,
+          { name: 'headings', commands: headingCommands.slice(0, 2) }, // Only H1, H2
+          { name: 'insert', commands: insertCommands }, // Tables for budget breakdowns
+          { name: 'lists', commands: listCommands.slice(0, 2) }, // No task lists
+        ]
+      
+      case 'destinations':
+        return [
+          ...baseGroups,
+          { name: 'headings', commands: headingCommands },
+          { name: 'format', commands: formatCommands },
+          { name: 'lists', commands: listCommands.slice(0, 2) }, // No task lists
+          { name: 'insert', commands: insertCommands.filter(cmd => cmd.name !== 'table') }, // No tables
+        ]
+      
+      case 'activities':
+        return [
+          ...baseGroups,
+          { name: 'headings', commands: headingCommands.slice(0, 2) },
+          { name: 'lists', commands: listCommands }, // Include task lists for activity planning
+          { name: 'insert', commands: insertCommands.filter(cmd => cmd.name !== 'table') },
+          { name: 'format', commands: formatCommands },
+        ]
+      
+      case 'transport':
+      case 'accommodation':
+      case 'documents':
+        return [
+          ...baseGroups,
+          { name: 'headings', commands: headingCommands.slice(0, 2) },
+          { name: 'lists', commands: listCommands.slice(0, 2) },
+          { name: 'insert', commands: insertCommands.filter(cmd => cmd.name === 'link') }, // Only links
+          { name: 'format', commands: formatCommands },
+        ]
+      
+      default:
+        return [
+          ...baseGroups,
+          { name: 'headings', commands: headingCommands },
+          { name: 'lists', commands: listCommands },
+          { name: 'format', commands: formatCommands },
+          { name: 'insert', commands: insertCommands },
+        ]
+    }
+  }
+
+  const toolbarGroups = getToolbarGroupsForContentType(contentType)
 
   const renderToolbarButton = (command: EditorCommand) => {
     const Icon = command.icon
@@ -207,14 +270,37 @@ const ContentToolbar: React.FC<ContentToolbarProps> = ({ editor, variant = 'fixe
   }
 
   const toolbarClasses = cn(
-    'flex items-center gap-1 p-2 bg-white border border-gray-200 rounded-lg shadow-sm',
-    variant === 'floating' && 'fixed z-50',
-    variant === 'bubble' && 'inline-flex',
-    variant === 'fixed' && 'sticky top-0 z-10 mb-4'
+    'flex items-center gap-1 p-2 bg-white border border-gray-200 shadow-sm',
+    'rounded-t-md border-b-0', // Integrate with editor styling
+    variant === 'floating' && 'fixed z-50 rounded-lg border-b',
+    variant === 'bubble' && 'inline-flex rounded-lg border-b',
+    variant === 'fixed' && 'sticky top-0 z-10'
   )
 
+  const getContentTypeLabel = (type: string) => {
+    const labels = {
+      destinations: 'Destinations',
+      itinerary: 'Itinerary',
+      transport: 'Transport', 
+      accommodation: 'Accommodation',
+      activities: 'Activities',
+      budget: 'Budget',
+      documents: 'Documents'
+    }
+    return labels[type as keyof typeof labels] || 'Content'
+  }
+
   return (
-    <div className={toolbarClasses}>
+    <div className={toolbarClasses} role="toolbar">
+      {/* Content Type Indicator */}
+      <div className='flex items-center gap-2 mr-2'>
+        <span className='text-xs font-medium text-gray-600 px-2 py-1 bg-gray-100 rounded'>
+          {getContentTypeLabel(contentType)}
+        </span>
+        <Separator orientation='vertical' className='h-6' />
+      </div>
+      
+      {/* Toolbar Groups */}
       {toolbarGroups.map((group, index) => (
         <React.Fragment key={group.name}>
           <div className='flex items-center gap-1'>{group.commands.map(renderToolbarButton)}</div>

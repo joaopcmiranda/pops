@@ -72,7 +72,7 @@ const EditorWrapper: React.FC<EditorWrapperProps> = ({
   }
 
   return (
-    <div className='relative'>
+    <div className='relative' data-testid="inline-content-editor">
       {/* Toolbar */}
       {showToolbar && (
         <div className='mb-2'>
