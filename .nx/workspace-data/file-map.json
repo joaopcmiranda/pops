@@ -16,68 +16,56 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": ".gitignore",
-        "hash": "8980021360909672484"
+        "file": "CLAUDE.md",
+        "hash": "7964967181017787333"
       },
       {
-        "file": ".husky/pre-commit",
-        "hash": "12020404616778424502"
-      },
-      {
-        "file": ".turbo/cookies/1.cookie",
-        "hash": "3244421341483603138"
-      },
-      {
-        "file": ".turbo/daemon/c706f89091f8e400-turbo.log.2025-08-01",
-        "hash": "8908873773021654703"
-      },
-      {
-        "file": ".claude/agents/ladle-story-creator.md",
-        "hash": "196608715692776803"
-      },
-      {
-        "file": "eslint.config.js",
-        "hash": "5073897489696094453"
-      },
-      {
-        "file": ".eslintrc.js",
-        "hash": "3643950328639693408"
-      },
-      {
-        "file": ".prettierrc",
-        "hash": "11151191966163949737"
-      },
-      {
-        "file": "docker-compose.yml",
-        "hash": "13144926498511808283"
-      },
-      {
-        "file": ".claude/agents/puppeteer-ui-tester.md",
-        "hash": "12395911058391178972"
-      },
-      {
-        "file": "README.md",
-        "hash": "9209626185029515895"
-      },
-      {
-        "file": ".turbo/preferences/tui.json",
-        "hash": "10445677638450763447"
-      },
-      {
-        "file": "migrations.json",
-        "hash": "17530419296529070050"
+        "file": "DEPLOYMENT.md",
+        "hash": "1186055202805865779"
       },
       {
         "file": "package.json",
         "hash": "18035695551633877343"
       },
       {
-        "file": "pnpm-lock.yaml",
-        "hash": "15283502045694345268"
+        "file": ".claude/agents/shadcn-component-importer.md",
+        "hash": "6512954990862712886"
       },
       {
-        "file": "DEPLOYMENT.md",
-        "hash": "1186055202805865779"
+        "file": ".turbo/cookies/1.cookie",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": ".eslintrc.js",
+        "hash": "3643950328639693408"
+      },
+      {
+        "file": "scripts/health-check.sh",
+        "hash": "455013848404398995"
+      },
+      {
+        "file": "dev.sh",
+        "hash": "10280367785826118910"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "16936441711144470533"
+      },
+      {
+        "file": ".turbo/preferences/tui.json",
+        "hash": "10445677638450763447"
+      },
+      {
+        "file": "scripts/test-deployment.sh",
+        "hash": "14136134206686723724"
+      },
+      {
+        "file": "docker-compose.yml",
+        "hash": "13144926498511808283"
+      },
+      {
+        "file": "migrations.json",
+        "hash": "17530419296529070050"
       },
       {
         "file": "nx.json",
@@ -88,67 +76,332 @@
         "hash": "12530683614609176328"
       },
       {
-        "file": "nginx.conf",
-        "hash": "5717261216995188123"
-      },
-      {
-        "file": "content/README.md",
-        "hash": "6637085216648179112"
-      },
-      {
-        "file": ".turbo/cookies/2.cookie",
-        "hash": "3244421341483603138"
-      },
-      {
-        "file": ".turbo/cookies/3.cookie",
-        "hash": "3244421341483603138"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "16936441711144470533"
-      },
-      {
-        "file": "dev.sh",
-        "hash": "10280367785826118910"
-      },
-      {
-        "file": "pnpm-workspace.yaml",
-        "hash": "2534718733797859458"
-      },
-      {
         "file": ".github/workflows/deploy.yml",
         "hash": "1133255494208202781"
       },
       {
-        "file": "CLAUDE.md",
-        "hash": "3310685565617146023"
+        "file": ".gitignore",
+        "hash": "8980021360909672484"
+      },
+      {
+        "file": "pnpm-lock.yaml",
+        "hash": "9814858294386844054"
+      },
+      {
+        "file": ".turbo/daemon/c706f89091f8e400-turbo.log.2025-08-01",
+        "hash": "8908873773021654703"
+      },
+      {
+        "file": "eslint.config.js",
+        "hash": "5073897489696094453"
+      },
+      {
+        "file": "README.md",
+        "hash": "9209626185029515895"
+      },
+      {
+        "file": "content/itinerary/sample-day.md",
+        "hash": "13319851790084133703"
       },
       {
         "file": ".npmrc",
         "hash": "3964332830813929635"
       },
       {
+        "file": "pnpm-workspace.yaml",
+        "hash": "2534718733797859458"
+      },
+      {
+        "file": ".turbo/cookies/2.cookie",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": ".husky/pre-commit",
+        "hash": "12020404616778424502"
+      },
+      {
         "file": ".prettierignore",
         "hash": "3100077232754546725"
       },
       {
-        "file": "scripts/health-check.sh",
-        "hash": "455013848404398995"
+        "file": ".claude/agents/ladle-story-creator.md",
+        "hash": "196608715692776803"
       },
       {
-        "file": "scripts/test-deployment.sh",
-        "hash": "14136134206686723724"
+        "file": ".turbo/cookies/3.cookie",
+        "hash": "3244421341483603138"
       },
       {
-        "file": ".claude/agents/shadcn-component-importer.md",
-        "hash": "6512954990862712886"
+        "file": "content/README.md",
+        "hash": "6637085216648179112"
       },
       {
-        "file": "content/itinerary/sample-day.md",
-        "hash": "13319851790084133703"
+        "file": "nginx.conf",
+        "hash": "5717261216995188123"
+      },
+      {
+        "file": ".prettierrc",
+        "hash": "11151191966163949737"
       }
     ],
     "projectFileMap": {
+      "api": [
+        {
+          "file": "apps/api/.env.example",
+          "hash": "11716238173531123481"
+        },
+        {
+          "file": "apps/api/Dockerfile",
+          "hash": "2796980735363687855"
+        },
+        {
+          "file": "apps/api/Dockerfile.dev",
+          "hash": "9196737813724394347"
+        },
+        {
+          "file": "apps/api/package.json",
+          "hash": "3689644976956847564",
+          "deps": [
+            "npm:@eslint/js",
+            "npm:@swc-node/register",
+            "npm:@swc/core",
+            "npm:@swc/helpers",
+            "npm:@swc/types",
+            "npm:@types/bcrypt",
+            "npm:@types/compression",
+            "npm:@types/cors",
+            "npm:@types/express",
+            "npm:@types/jsonwebtoken",
+            "npm:@types/morgan",
+            "npm:@types/node",
+            "npm:@typescript-eslint/eslint-plugin",
+            "npm:@typescript-eslint/parser",
+            "npm:eslint",
+            "npm:eslint-config-prettier",
+            "npm:eslint-plugin-import",
+            "npm:eslint-plugin-prettier",
+            "npm:prettier",
+            "npm:prisma",
+            "npm:ts-node",
+            "npm:tslib",
+            "npm:tsx",
+            "npm:typescript",
+            "npm:typescript-eslint",
+            "npm:@prisma/client",
+            "shared",
+            "types",
+            "npm:@trpc/server",
+            "npm:bcrypt",
+            "npm:compression",
+            "npm:cors",
+            "npm:dotenv@16.6.1",
+            "npm:express",
+            "npm:helmet",
+            "npm:jsonwebtoken",
+            "npm:morgan",
+            "npm:rate-limiter-flexible",
+            "npm:zod@3.25.76"
+          ]
+        },
+        {
+          "file": "apps/api/prisma/schema.prisma",
+          "hash": "4617266364368895029"
+        },
+        {
+          "file": "apps/api/project.json",
+          "hash": "15952023368656964064"
+        },
+        {
+          "file": "apps/api/src/config/database.ts",
+          "hash": "4806229519376075619",
+          "deps": [
+            "npm:@prisma/client"
+          ]
+        },
+        {
+          "file": "apps/api/src/config/env.ts",
+          "hash": "6441757943036223204",
+          "deps": [
+            "npm:dotenv@16.6.1",
+            "npm:zod@3.25.76"
+          ]
+        },
+        {
+          "file": "apps/api/src/config/trpc.ts",
+          "hash": "6657950358839484684",
+          "deps": [
+            "npm:@trpc/server"
+          ]
+        },
+        {
+          "file": "apps/api/src/index.ts",
+          "hash": "2950916221826675651",
+          "deps": [
+            "npm:express",
+            "npm:cors",
+            "npm:helmet",
+            "npm:compression",
+            "npm:morgan",
+            "npm:@trpc/server"
+          ]
+        },
+        {
+          "file": "apps/api/src/middleware/context.ts",
+          "hash": "4233420030332859879",
+          "deps": [
+            "npm:@trpc/server"
+          ]
+        },
+        {
+          "file": "apps/api/src/middleware/errorHandler.ts",
+          "hash": "15504005234817305684",
+          "deps": [
+            "npm:express"
+          ]
+        },
+        {
+          "file": "apps/api/src/middleware/rateLimiter.ts",
+          "hash": "679354096308509990",
+          "deps": [
+            "npm:rate-limiter-flexible",
+            "npm:express"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/content.ts",
+          "hash": "5989064959522814419",
+          "deps": [
+            "npm:zod@3.25.76",
+            "shared",
+            "npm:@prisma/client"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/index.ts",
+          "hash": "15177655764928715957"
+        },
+        {
+          "file": "apps/api/src/routes/itinerary.ts",
+          "hash": "3520173825356792779",
+          "deps": [
+            "npm:zod@3.25.76"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/trip.ts",
+          "hash": "8522949809171540073",
+          "deps": [
+            "npm:zod@3.25.76"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/user.ts",
+          "hash": "8004492862547218870",
+          "deps": [
+            "npm:zod@3.25.76"
+          ]
+        },
+        {
+          "file": "apps/api/tsconfig.json",
+          "hash": "8904581790859217315"
+        }
+      ],
+      "shared": [
+        {
+          "file": "packages/shared/package.json",
+          "hash": "14604728484159020550",
+          "deps": [
+            "npm:@eslint/js",
+            "npm:@typescript-eslint/eslint-plugin",
+            "npm:@typescript-eslint/parser",
+            "npm:eslint",
+            "npm:eslint-config-prettier",
+            "npm:eslint-plugin-import",
+            "npm:eslint-plugin-prettier",
+            "npm:prettier",
+            "npm:tsup",
+            "npm:typescript",
+            "npm:typescript-eslint",
+            "types",
+            "npm:clsx",
+            "npm:tailwind-merge"
+          ]
+        },
+        {
+          "file": "packages/shared/project.json",
+          "hash": "14176143924600802907"
+        },
+        {
+          "file": "packages/shared/src/index.ts",
+          "hash": "13917356448624668712"
+        },
+        {
+          "file": "packages/shared/src/utils.ts",
+          "hash": "11516636435278812601",
+          "deps": [
+            "npm:clsx",
+            "npm:tailwind-merge"
+          ]
+        },
+        {
+          "file": "packages/shared/tsconfig.json",
+          "hash": "10010801335794085366"
+        },
+        {
+          "file": "packages/shared/tsup.config.ts",
+          "hash": "16820905800690594824",
+          "deps": [
+            "npm:tsup"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "file": "packages/types/package.json",
+          "hash": "18046299449354917912",
+          "deps": [
+            "npm:@eslint/js",
+            "npm:@typescript-eslint/eslint-plugin",
+            "npm:@typescript-eslint/parser",
+            "npm:eslint",
+            "npm:eslint-config-prettier",
+            "npm:eslint-plugin-import",
+            "npm:eslint-plugin-prettier",
+            "npm:prettier",
+            "npm:tsup",
+            "npm:typescript",
+            "npm:typescript-eslint",
+            "npm:zod@3.25.76"
+          ]
+        },
+        {
+          "file": "packages/types/project.json",
+          "hash": "4580823688194547018"
+        },
+        {
+          "file": "packages/types/src/index.ts",
+          "hash": "3646753493871056774"
+        },
+        {
+          "file": "packages/types/src/itinerary.ts",
+          "hash": "6716843967815140162"
+        },
+        {
+          "file": "packages/types/src/trip.ts",
+          "hash": "1684249728745959943"
+        },
+        {
+          "file": "packages/types/tsconfig.json",
+          "hash": "9751019901663183814"
+        },
+        {
+          "file": "packages/types/tsup.config.ts",
+          "hash": "16820905800690594824",
+          "deps": [
+            "npm:tsup"
+          ]
+        }
+      ],
       "web": [
         {
           "file": "apps/web/.storybook/main.ts",
@@ -172,7 +425,7 @@
         },
         {
           "file": "apps/web/package.json",
-          "hash": "10402176708999263985",
+          "hash": "2905671491650978131",
           "deps": [
             "npm:@eslint/js",
             "npm:@storybook/addon-docs",
@@ -191,11 +444,11 @@
             "npm:eslint-plugin-react-hooks",
             "npm:eslint-plugin-react-refresh",
             "npm:eslint-plugin-storybook",
-            "npm:postcss@8.5.6",
+            "npm:postcss",
             "npm:prettier",
             "npm:storybook",
             "npm:tw-animate-css",
-            "npm:typescript",
+            "npm:typescript@5.9.2",
             "npm:typescript-eslint",
             "npm:vite",
             "npm:@hookform/resolvers",
@@ -226,6 +479,7 @@
             "npm:@tanstack/react-query-devtools",
             "npm:@tanstack/react-table",
             "npm:@tiptap/extension-bubble-menu",
+            "npm:@tiptap/extension-character-count",
             "npm:@tiptap/extension-code-block-lowlight",
             "npm:@tiptap/extension-floating-menu",
             "npm:@tiptap/extension-focus",
@@ -246,7 +500,7 @@
             "npm:@trpc/client",
             "npm:@trpc/next",
             "npm:@trpc/react-query",
-            "npm:@trpc/server",
+            "npm:@trpc/server@11.4.3",
             "npm:autoprefixer",
             "npm:class-variance-authority",
             "npm:clsx",
@@ -290,14 +544,14 @@
         },
         {
           "file": "apps/web/src/components/AppHeader.stories.tsx",
-          "hash": "8471715998212444584",
+          "hash": "16781455188525646537",
           "deps": [
             "npm:@storybook/react-vite"
           ]
         },
         {
           "file": "apps/web/src/components/AppHeader.tsx",
-          "hash": "17803252734868510864",
+          "hash": "10892360040412622843",
           "deps": [
             "npm:lucide-react"
           ]
@@ -496,10 +750,11 @@
         },
         {
           "file": "apps/web/src/components/TripCreationWizard.stories.tsx",
-          "hash": "8570881097064459619",
+          "hash": "14770702077563788991",
           "deps": [
             "npm:@storybook/react-vite",
-            "npm:react"
+            "npm:react",
+            "npm:lucide-react"
           ]
         },
         {
@@ -539,31 +794,34 @@
         },
         {
           "file": "apps/web/src/components/editor/ContentEditor.stories.tsx",
-          "hash": "4212392257223753930",
+          "hash": "8810802319693867868",
           "deps": [
             "npm:@storybook/react-vite"
           ]
         },
         {
           "file": "apps/web/src/components/editor/ContentEditor.tsx",
-          "hash": "8080802063704019862",
+          "hash": "17092049040180761802",
           "deps": [
             "npm:react",
             "npm:@tiptap/react",
             "npm:@tiptap/starter-kit",
             "npm:@tiptap/extension-typography",
-            "npm:@tiptap/extension-link",
             "npm:@tiptap/extension-image",
             "npm:@tiptap/extension-table",
+            "npm:@tiptap/extension-table-row",
+            "npm:@tiptap/extension-table-header",
+            "npm:@tiptap/extension-table-cell",
             "npm:@tiptap/extension-task-list",
             "npm:@tiptap/extension-task-item",
             "npm:@tiptap/extension-placeholder",
-            "npm:@tiptap/extension-focus"
+            "npm:@tiptap/extension-focus",
+            "npm:@tiptap/extension-character-count"
           ]
         },
         {
           "file": "apps/web/src/components/editor/ContentEditorModal.stories.tsx",
-          "hash": "17311853641486283039",
+          "hash": "11772976133559448189",
           "deps": [
             "npm:@storybook/react-vite",
             "npm:react"
@@ -571,7 +829,7 @@
         },
         {
           "file": "apps/web/src/components/editor/ContentEditorModal.tsx",
-          "hash": "7683305593498611807",
+          "hash": "14445063897904800396",
           "deps": [
             "npm:react",
             "npm:@tiptap/react",
@@ -580,7 +838,7 @@
         },
         {
           "file": "apps/web/src/components/editor/ContentEditorProvider.tsx",
-          "hash": "17986472856465661912",
+          "hash": "10637601379312604721",
           "deps": [
             "npm:react",
             "npm:@tiptap/react"
@@ -588,7 +846,7 @@
         },
         {
           "file": "apps/web/src/components/editor/ContentToolbar.stories.tsx",
-          "hash": "6804785900959234123",
+          "hash": "13370004431027437842",
           "deps": [
             "npm:@storybook/react-vite",
             "npm:@tiptap/react",
@@ -603,7 +861,7 @@
         },
         {
           "file": "apps/web/src/components/editor/ContentToolbar.tsx",
-          "hash": "16337282728669481928",
+          "hash": "6502563176253585076",
           "deps": [
             "npm:react",
             "npm:lucide-react"
@@ -611,14 +869,14 @@
         },
         {
           "file": "apps/web/src/components/editor/InlineContentEditor.stories.tsx",
-          "hash": "10346142530334206482",
+          "hash": "6844664481539958905",
           "deps": [
             "npm:@storybook/react-vite"
           ]
         },
         {
           "file": "apps/web/src/components/editor/InlineContentEditor.tsx",
-          "hash": "16004228835219094861",
+          "hash": "8930185824800768369",
           "deps": [
             "npm:react",
             "npm:@tiptap/react",
@@ -627,14 +885,14 @@
         },
         {
           "file": "apps/web/src/components/editor/context.ts",
-          "hash": "7555514364174867124",
+          "hash": "17621068256536999590",
           "deps": [
             "npm:react"
           ]
         },
         {
           "file": "apps/web/src/components/editor/hooks/index.ts",
-          "hash": "959644797237877635",
+          "hash": "1936171571901916292",
           "deps": [
             "npm:react",
             "npm:@tiptap/react"
@@ -642,13 +900,12 @@
         },
         {
           "file": "apps/web/src/components/editor/hooks/useContentEditor.ts",
-          "hash": "8305729688512507673",
+          "hash": "7084751527420577379",
           "deps": [
             "npm:react",
             "npm:@tiptap/react",
             "npm:@tiptap/starter-kit",
             "npm:@tiptap/extension-typography",
-            "npm:@tiptap/extension-link",
             "npm:@tiptap/extension-image",
             "npm:@tiptap/extension-table",
             "npm:@tiptap/extension-table-row",
@@ -662,11 +919,11 @@
         },
         {
           "file": "apps/web/src/components/editor/index.ts",
-          "hash": "8366546476100224013"
+          "hash": "2925100104873030425"
         },
         {
           "file": "apps/web/src/components/editor/types.ts",
-          "hash": "4967324026063601593",
+          "hash": "16707706759396442705",
           "deps": [
             "npm:@tiptap/react"
           ]
@@ -1162,7 +1419,7 @@
         },
         {
           "file": "apps/web/src/components/ui/sidebar/sidebar.tsx",
-          "hash": "14543127581105607319",
+          "hash": "6341302280787518863",
           "deps": [
             "npm:react",
             "npm:@radix-ui/react-slot",
@@ -1419,263 +1676,6 @@
             "npm:@vitejs/plugin-react",
             "npm:@tailwindcss/vite"
           ]
-        }
-      ],
-      "types": [
-        {
-          "file": "packages/types/package.json",
-          "hash": "18046299449354917912",
-          "deps": [
-            "npm:@eslint/js",
-            "npm:@typescript-eslint/eslint-plugin",
-            "npm:@typescript-eslint/parser",
-            "npm:eslint",
-            "npm:eslint-config-prettier",
-            "npm:eslint-plugin-import",
-            "npm:eslint-plugin-prettier",
-            "npm:prettier",
-            "npm:tsup",
-            "npm:typescript",
-            "npm:typescript-eslint",
-            "npm:zod@3.25.76"
-          ]
-        },
-        {
-          "file": "packages/types/project.json",
-          "hash": "4580823688194547018"
-        },
-        {
-          "file": "packages/types/src/index.ts",
-          "hash": "3646753493871056774"
-        },
-        {
-          "file": "packages/types/src/itinerary.ts",
-          "hash": "6716843967815140162"
-        },
-        {
-          "file": "packages/types/src/trip.ts",
-          "hash": "1684249728745959943"
-        },
-        {
-          "file": "packages/types/tsconfig.json",
-          "hash": "9751019901663183814"
-        },
-        {
-          "file": "packages/types/tsup.config.ts",
-          "hash": "16820905800690594824",
-          "deps": [
-            "npm:tsup"
-          ]
-        }
-      ],
-      "shared": [
-        {
-          "file": "packages/shared/package.json",
-          "hash": "14604728484159020550",
-          "deps": [
-            "npm:@eslint/js",
-            "npm:@typescript-eslint/eslint-plugin",
-            "npm:@typescript-eslint/parser",
-            "npm:eslint",
-            "npm:eslint-config-prettier",
-            "npm:eslint-plugin-import",
-            "npm:eslint-plugin-prettier",
-            "npm:prettier",
-            "npm:tsup",
-            "npm:typescript",
-            "npm:typescript-eslint",
-            "types",
-            "npm:clsx",
-            "npm:tailwind-merge"
-          ]
-        },
-        {
-          "file": "packages/shared/project.json",
-          "hash": "14176143924600802907"
-        },
-        {
-          "file": "packages/shared/src/index.ts",
-          "hash": "13917356448624668712"
-        },
-        {
-          "file": "packages/shared/src/utils.ts",
-          "hash": "11516636435278812601",
-          "deps": [
-            "npm:clsx",
-            "npm:tailwind-merge"
-          ]
-        },
-        {
-          "file": "packages/shared/tsconfig.json",
-          "hash": "10010801335794085366"
-        },
-        {
-          "file": "packages/shared/tsup.config.ts",
-          "hash": "16820905800690594824",
-          "deps": [
-            "npm:tsup"
-          ]
-        }
-      ],
-      "api": [
-        {
-          "file": "apps/api/.env.example",
-          "hash": "11716238173531123481"
-        },
-        {
-          "file": "apps/api/Dockerfile",
-          "hash": "2796980735363687855"
-        },
-        {
-          "file": "apps/api/Dockerfile.dev",
-          "hash": "9196737813724394347"
-        },
-        {
-          "file": "apps/api/package.json",
-          "hash": "3689644976956847564",
-          "deps": [
-            "npm:@eslint/js",
-            "npm:@swc-node/register",
-            "npm:@swc/core",
-            "npm:@swc/helpers",
-            "npm:@swc/types",
-            "npm:@types/bcrypt",
-            "npm:@types/compression",
-            "npm:@types/cors",
-            "npm:@types/express",
-            "npm:@types/jsonwebtoken",
-            "npm:@types/morgan",
-            "npm:@types/node",
-            "npm:@typescript-eslint/eslint-plugin",
-            "npm:@typescript-eslint/parser",
-            "npm:eslint",
-            "npm:eslint-config-prettier",
-            "npm:eslint-plugin-import",
-            "npm:eslint-plugin-prettier",
-            "npm:prettier",
-            "npm:prisma",
-            "npm:ts-node",
-            "npm:tslib",
-            "npm:tsx",
-            "npm:typescript",
-            "npm:typescript-eslint",
-            "npm:@prisma/client",
-            "shared",
-            "types",
-            "npm:@trpc/server",
-            "npm:bcrypt",
-            "npm:compression",
-            "npm:cors",
-            "npm:dotenv@16.6.1",
-            "npm:express",
-            "npm:helmet",
-            "npm:jsonwebtoken",
-            "npm:morgan",
-            "npm:rate-limiter-flexible",
-            "npm:zod@3.25.76"
-          ]
-        },
-        {
-          "file": "apps/api/prisma/schema.prisma",
-          "hash": "4617266364368895029"
-        },
-        {
-          "file": "apps/api/project.json",
-          "hash": "15952023368656964064"
-        },
-        {
-          "file": "apps/api/src/config/database.ts",
-          "hash": "4806229519376075619",
-          "deps": [
-            "npm:@prisma/client"
-          ]
-        },
-        {
-          "file": "apps/api/src/config/env.ts",
-          "hash": "6441757943036223204",
-          "deps": [
-            "npm:dotenv@16.6.1",
-            "npm:zod@3.25.76"
-          ]
-        },
-        {
-          "file": "apps/api/src/config/trpc.ts",
-          "hash": "6657950358839484684",
-          "deps": [
-            "npm:@trpc/server"
-          ]
-        },
-        {
-          "file": "apps/api/src/index.ts",
-          "hash": "2950916221826675651",
-          "deps": [
-            "npm:express",
-            "npm:cors",
-            "npm:helmet",
-            "npm:compression",
-            "npm:morgan",
-            "npm:@trpc/server"
-          ]
-        },
-        {
-          "file": "apps/api/src/middleware/context.ts",
-          "hash": "4233420030332859879",
-          "deps": [
-            "npm:@trpc/server"
-          ]
-        },
-        {
-          "file": "apps/api/src/middleware/errorHandler.ts",
-          "hash": "15504005234817305684",
-          "deps": [
-            "npm:express"
-          ]
-        },
-        {
-          "file": "apps/api/src/middleware/rateLimiter.ts",
-          "hash": "679354096308509990",
-          "deps": [
-            "npm:rate-limiter-flexible",
-            "npm:express"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/content.ts",
-          "hash": "5989064959522814419",
-          "deps": [
-            "npm:zod@3.25.76",
-            "shared",
-            "npm:@prisma/client"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/index.ts",
-          "hash": "15177655764928715957"
-        },
-        {
-          "file": "apps/api/src/routes/itinerary.ts",
-          "hash": "3520173825356792779",
-          "deps": [
-            "npm:zod@3.25.76"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/trip.ts",
-          "hash": "8522949809171540073",
-          "deps": [
-            "npm:zod@3.25.76"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/user.ts",
-          "hash": "8004492862547218870",
-          "deps": [
-            "npm:zod@3.25.76"
-          ]
-        },
-        {
-          "file": "apps/api/tsconfig.json",
-          "hash": "8904581790859217315"
         }
       ]
     }
