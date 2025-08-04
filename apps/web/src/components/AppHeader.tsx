@@ -164,7 +164,6 @@ export function AppHeader({ currentTrip, onTripSwitch }: AppHeaderProps) {
         </Button>
 
         <Avatar className='h-8 w-8 cursor-pointer'>
-          <AvatarImage src='/api/placeholder/32/32' alt='User' />
           <AvatarFallback>
             <User className='h-4 w-4' />
           </AvatarFallback>

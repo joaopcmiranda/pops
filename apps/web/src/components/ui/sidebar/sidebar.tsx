@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
-import { useSidebar } from '@/components/ui/sidebar/useSidebar'
+import { useSidebar } from '@/components/ui/use_sidebar'
 import {
   sidebarMenuButtonVariants,
   SIDEBAR_WIDTH_MOBILE,
@@ -28,8 +28,7 @@ import {
   SIDEBAR_WIDTH_ICON,
 } from '@/components/ui/sidebar/constants'
 import { useIsMobile } from '@/hooks/use-mobile.ts'
-import { SidebarContext as SidebarContext1 } from '@/components/ui/use_sidebar'
-import type { SidebarContextProps } from '@/components/ui/sidebar/context'
+import { SidebarContext, type SidebarContextProps } from '@/components/ui/use_sidebar'
 
 export function Sidebar({
   side = 'left',
@@ -604,7 +603,7 @@ export function SidebarProvider({
   )
 
   return (
-    <SidebarContext1 value={contextValue}>
+    <SidebarContext.Provider value={contextValue}>
       <TooltipProvider delayDuration={0}>
         <div
           data-slot='sidebar-wrapper'
@@ -624,6 +623,6 @@ export function SidebarProvider({
           {children}
         </div>
       </TooltipProvider>
-    </SidebarContext1>
+    </SidebarContext.Provider>
   )
 }

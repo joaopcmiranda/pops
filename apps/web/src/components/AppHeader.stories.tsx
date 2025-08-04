@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { AppHeader } from './AppHeader'
 import { ComponentStory } from './StoryWrapper'
+import { SidebarProvider } from './ui/sidebar/sidebar'
 
 const meta: Meta<typeof AppHeader> = {
   title: 'Components/AppHeader',
@@ -54,7 +55,9 @@ export const Default: Story = {
     >
       <div className='space-y-8'>
         <div className='bg-white rounded-2xl shadow-xl overflow-hidden'>
-          <AppHeader currentTrip={mockTrip} onTripSwitch={() => alert('🔄 Trip switch clicked!')} />
+          <SidebarProvider>
+            <AppHeader currentTrip={mockTrip} onTripSwitch={() => alert('🔄 Trip switch clicked!')} />
+          </SidebarProvider>
         </div>
 
         <div className='bg-blue-50 rounded-xl p-6 border border-blue-100'>
@@ -91,7 +94,9 @@ export const WithoutTrip: Story = {
     >
       <div className='space-y-8'>
         <div className='bg-white rounded-2xl shadow-xl overflow-hidden'>
-          <AppHeader onTripSwitch={() => alert('🔄 No trip selected')} />
+          <SidebarProvider>
+            <AppHeader onTripSwitch={() => alert('🔄 No trip selected')} />
+          </SidebarProvider>
         </div>
 
         <div className='bg-purple-50 rounded-xl p-6 border border-purple-100'>
@@ -116,10 +121,12 @@ export const DifferentTrips: Story = {
 
         {mockTrips.map(trip => (
           <div key={trip.id} className='bg-white rounded-2xl shadow-lg overflow-hidden'>
-            <AppHeader
-              currentTrip={trip}
-              onTripSwitch={() => alert(`🔄 Switch from ${trip.title}`)}
-            />
+            <SidebarProvider>
+              <AppHeader
+                currentTrip={trip}
+                onTripSwitch={() => alert(`🔄 Switch from ${trip.title}`)}
+              />
+            </SidebarProvider>
             <div className='p-4 bg-gray-50 border-t'>
               <div className='text-sm text-gray-600'>
                 <strong>Trip Type:</strong> {trip.type} • <strong>Status:</strong> {trip.status}
@@ -153,7 +160,9 @@ export const Interactive: Story = {
           </div>
 
           <div className='bg-white rounded-2xl shadow-xl overflow-hidden'>
-            <AppHeader currentTrip={mockTrip} onTripSwitch={switchTrip} />
+            <SidebarProvider>
+              <AppHeader currentTrip={mockTrip} onTripSwitch={switchTrip} />
+            </SidebarProvider>
           </div>
 
           <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
@@ -203,10 +212,12 @@ export const ResponsiveDemo: Story = {
         <div className='space-y-4'>
           <h3 className='text-lg font-semibold text-gray-700'>Desktop View</h3>
           <div className='bg-white rounded-2xl shadow-lg overflow-hidden'>
-            <AppHeader
-              currentTrip={mockTrip}
-              onTripSwitch={() => alert('🔄 Trip switch (desktop)')}
-            />
+            <SidebarProvider>
+              <AppHeader
+                currentTrip={mockTrip}
+                onTripSwitch={() => alert('🔄 Trip switch (desktop)')}
+              />
+            </SidebarProvider>
           </div>
         </div>
 
@@ -214,10 +225,12 @@ export const ResponsiveDemo: Story = {
         <div className='space-y-4'>
           <h3 className='text-lg font-semibold text-gray-700'>Mobile Simulation</h3>
           <div className='max-w-sm mx-auto bg-white rounded-2xl shadow-lg overflow-hidden'>
-            <AppHeader
-              currentTrip={mockTrip}
-              onTripSwitch={() => alert('🔄 Trip switch (mobile)')}
-            />
+            <SidebarProvider>
+              <AppHeader
+                currentTrip={mockTrip}
+                onTripSwitch={() => alert('🔄 Trip switch (mobile)')}
+              />
+            </SidebarProvider>
           </div>
         </div>
 
@@ -265,10 +278,12 @@ export const LongTripNames: Story = {
           },
         ].map(trip => (
           <div key={trip.id} className='bg-white rounded-2xl shadow-lg overflow-hidden'>
-            <AppHeader
-              currentTrip={trip}
-              onTripSwitch={() => alert(`🔄 Switch from ${trip.title}`)}
-            />
+            <SidebarProvider>
+              <AppHeader
+                currentTrip={trip}
+                onTripSwitch={() => alert(`🔄 Switch from ${trip.title}`)}
+              />
+            </SidebarProvider>
           </div>
         ))}
 
