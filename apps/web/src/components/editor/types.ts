@@ -10,6 +10,7 @@ export interface ContentEditorProps {
   onUpdate?: (content: string) => void
   onSave?: (content: string) => void
   contentType?: ContentType
+  autosave?: number // Display-only prop for status indicator
 }
 
 export interface ContentEditorProviderProps {
@@ -33,6 +34,7 @@ export interface ContentEditorContextValue {
   save: () => Promise<void>
   discard: () => void
   updateContent: (updates: Partial<ContentItem>) => void
+  registerEditor: (editor: Editor | null) => void
 }
 
 export interface ContentToolbarProps {

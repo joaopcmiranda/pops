@@ -1,15 +1,20 @@
 import React from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import Typography from '@tiptap/extension-typography'
-import Link from '@tiptap/extension-link'
-import Image from '@tiptap/extension-image'
-import Table from '@tiptap/extension-table'
-import TaskList from '@tiptap/extension-task-list'
-import TaskItem from '@tiptap/extension-task-item'
-import Placeholder from '@tiptap/extension-placeholder'
-import Focus from '@tiptap/extension-focus'
-import { cn } from '../../lib/utils'
+import { StarterKit } from '@tiptap/starter-kit'
+import { Typography } from '@tiptap/extension-typography'
+import { Image } from '@tiptap/extension-image'
+import { Table } from '@tiptap/extension-table'
+import TableRow from '@tiptap/extension-table-row'
+import TableHeader from '@tiptap/extension-table-header' 
+import TableCell from '@tiptap/extension-table-cell'
+import { TaskList } from '@tiptap/extension-task-list'
+import { TaskItem } from '@tiptap/extension-task-item'
+import { Placeholder } from '@tiptap/extension-placeholder'
+import { Focus } from '@tiptap/extension-focus'
+import { CharacterCount } from '@tiptap/extension-character-count'
+import { cn } from '@/lib/utils.ts'
+import ContentToolbar from './ContentToolbar'
+import { useContentEditorContext } from './hooks'
 import type { ContentEditorProps } from './types'
 
 const ContentEditor: React.FC<ContentEditorProps> = ({
@@ -18,9 +23,13 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
   editable = true,
   autoFocus = false,
   className,
+  contentType = 'destinations',
   onUpdate,
   onSave,
+  autosave,
 }) => {
+  const context = useContentEditorContext()
+  
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -35,23 +44,31 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
           keepMarks: true,
           keepAttributes: false,
         },
+        link: {
+          openOnClick: false,
+          autolink: true,
+          defaultProtocol: 'https',
+        },
+        table: false, // Use separate table extension
       }),
       Typography,
-      Link.configure({
-        openOnClick: false,
-        autolink: true,
-        defaultProtocol: 'https',
-      }),
       Image.configure({
         inline: false,
         allowBase64: true,
       }),
+      // Table extensions in correct order
+      TableRow,
+      TableHeader,
+      TableCell,
       Table.configure({
         resizable: true,
       }),
       TaskList,
       TaskItem.configure({
         nested: true,
+      }),
+      CharacterCount.configure({
+        limit: 10000,
       }),
       Placeholder.configure({
         placeholder: ({ node }) => {
@@ -72,6 +89,12 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
     onUpdate: ({ editor }) => {
       const html = editor.getHTML()
       onUpdate?.(html)
+      
+      // Update context if available
+      if (context?.updateContent && context?.content) {
+        context.updateContent({ content: html })
+      }
+      
     },
     editorProps: {
       attributes: {
@@ -87,13 +110,20 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
           'prose-hr:border-gray-300',
           'prose-ul:list-disc prose-ol:list-decimal',
           'prose-li:text-gray-700',
-          'prose-table:table-auto prose-th:text-left prose-th:font-semibold',
-          'min-h-[200px] px-4 py-3 bg-white rounded-md border border-gray-200',
-          'focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500'
+          'prose-table:table-auto prose-th:text-left prose-th:font-semibold prose-td:border prose-td:border-gray-300 prose-td:px-3 prose-td:py-2',
+          'min-h-[300px] px-4 py-3 bg-white rounded-b-md border-l border-r border-b border-gray-200',
+          'focus-within:border-blue-500'
         ),
       },
     },
   })
+
+  // Register editor with context
+  React.useEffect(() => {
+    if (context?.registerEditor) {
+      context.registerEditor(editor)
+    }
+  }, [editor, context])
 
   // Handle keyboard shortcuts
   React.useEffect(() => {
@@ -113,25 +143,57 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
 
   if (!editor) {
     return (
-      <div
-        className={cn(
-          'min-h-[200px] px-4 py-3 bg-gray-50 rounded-md border border-gray-200 animate-pulse',
-          className
-        )}
-      >
-        <div className='h-4 bg-gray-200 rounded w-3/4 mb-2'></div>
-        <div className='h-4 bg-gray-200 rounded w-1/2'></div>
+      <div className={cn('w-full', className)}>
+        {/* Toolbar skeleton */}
+        <div className='h-12 bg-gray-100 rounded-t-md border border-gray-200 animate-pulse flex items-center px-4 gap-2'>
+          <div className='h-6 w-6 bg-gray-200 rounded'></div>
+          <div className='h-6 w-6 bg-gray-200 rounded'></div>
+          <div className='h-6 w-6 bg-gray-200 rounded'></div>
+        </div>
+        {/* Editor skeleton */}
+        <div className='min-h-[300px] px-4 py-3 bg-gray-50 rounded-b-md border-l border-r border-b border-gray-200 animate-pulse'>
+          <div className='h-4 bg-gray-200 rounded w-3/4 mb-2'></div>
+          <div className='h-4 bg-gray-200 rounded w-1/2'></div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className={cn('relative', className)}>
+    <div className={cn('w-full', className)} data-testid="content-editor">
+      {/* Integrated Toolbar */}
+      <ContentToolbar 
+        editor={editor} 
+        variant="fixed" 
+        contentType={contentType}
+        showAdvanced={contentType === 'itinerary' || contentType === 'budget'}
+      />
+      
+      {/* Editor Content */}
       <EditorContent editor={editor} className='content-editor' />
 
-      {/* Character count */}
-      <div className='absolute bottom-2 right-2 text-xs text-gray-400'>
-        {editor.storage.characterCount?.characters() || 0} characters
+      {/* Status Bar */}
+      <div className='flex justify-between items-center px-3 py-2 bg-gray-50 border-l border-r border-b border-gray-200 rounded-b-md text-xs text-gray-500'>
+        <div className='flex items-center gap-4'>
+          <span>
+            {editor.storage.characterCount?.characters() || 0} characters
+          </span>
+          <span>
+            {editor.storage.characterCount?.words() || 0} words
+          </span>
+          {context?.isDirty && (
+            <span className='text-amber-600 flex items-center gap-1'>
+              <div className='w-2 h-2 bg-amber-400 rounded-full'></div>
+              Unsaved changes
+            </span>
+          )}
+          {context?.isSaving && (
+            <span className='text-blue-600'>Saving...</span>
+          )}
+        </div>
+        <div className='text-gray-400'>
+          {autosave ? `Auto-save: ${autosave}s` : 'Press Ctrl+S to save'}
+        </div>
       </div>
     </div>
   )
