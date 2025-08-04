@@ -22,6 +22,17 @@ A comprehensive trip planning application built with React, TypeScript, and Vite
 - **Health Monitoring** - Connection status indicators and error handling
 - **API Endpoints** - Complete trip, user, itinerary, and content management endpoints
 
+### 📝 **Rich Content Editing System**
+
+- **TipTap WYSIWYG Editor** - Professional rich text editing with markdown support
+- **Auto-save Functionality** - Automatic saving after user stops typing (configurable delay)
+- **Content-Type-Specific Toolbars** - Different tools for itinerary, budget, destinations, etc.
+- **Multiple Editor Variants** - Full editor, inline editor, and modal editor components
+- **Character & Word Counting** - Real-time text statistics and content limits
+- **Advanced Features** - Tables, task lists, links, images, headings, and rich formatting
+- **Provider System** - Comprehensive state management with dirty tracking and error handling
+- **Keyboard Shortcuts** - Ctrl+S manual save, formatting shortcuts, and accessibility
+
 ### 🎨 **Modern UI & Developer Experience**
 
 - **Professional Design** - shadcn/ui components with consistent styling
@@ -31,18 +42,19 @@ A comprehensive trip planning application built with React, TypeScript, and Vite
 - **TypeScript** - Full type safety with strict ESLint rules (no `any` types!)
 - **Code Quality** - ESLint + Prettier + TypeScript checks all passing
 - **Component Library** - Full shadcn/ui integration with custom components
-- **Storybook Integration** - Ladle stories for all UI components
+- **Storybook Integration** - Comprehensive stories for all UI components with variants
 - **Responsive Layout** - Sidebar navigation with collapsible design
 
 ## 🚧 In Progress & Todo
 
 ### 🔧 **Immediate Priorities**
 
-- [x] **Storybook Integration** - Complete Ladle stories for all UI components with comprehensive variants and controls
-- [ ] **Content Editing System** - Rich editor for creating/editing trip content
+- [x] **Storybook Integration** - Complete stories for all UI components with comprehensive variants and controls
+- [x] **Content Editing System** - Rich TipTap editor with auto-save and content-type-specific toolbars
 - [ ] **Mobile Responsive Design** - Optimize for phones/tablets (sidebar, cards, forms)
 - [ ] **Budget Calculator** - Add expense tracking and budget management
 - [ ] **Calendar Integration** - Connect calendar view with actual trip dates
+- [ ] **Content Routing** - Connect editor to category pages and content display
 
 ### 🚀 **Backend Enhancements**
 
@@ -74,10 +86,12 @@ A comprehensive trip planning application built with React, TypeScript, and Vite
 - **Frontend**: React 19 with TypeScript (apps/web)
 - **Backend**: tRPC with Express.js and Prisma ORM (apps/api)
 - **Database**: SQLite with Prisma client generation
+- **Rich Text Editor**: TipTap with extensions (CharacterCount, Focus, Image, Table, TaskList, etc.)
 - **Shared Packages**: Types and utilities (packages/types, packages/shared)
 - **Build Tools**: Vite 7 (frontend), tsx (backend), tsup (packages)
 - **Styling**: Tailwind CSS v4
 - **UI Components**: shadcn/ui
+- **Component Documentation**: Storybook with comprehensive stories
 - **Icons**: Lucide React
 - **State Management**: React Query + tRPC + Context API
 - **Code Quality**: ESLint + Prettier + Husky
@@ -129,8 +143,9 @@ pnpm nx run web:dev
 ```
 
 6. Open the application:
-   - **Frontend**: [http://localhost:5173](http://localhost:5173)
+   - **Frontend**: [http://localhost:5174](http://localhost:5174)
    - **API Health**: [http://localhost:3001/health](http://localhost:3001/health)
+   - **Storybook**: [http://localhost:6006](http://localhost:6006) (run `pnpm run storybook` in apps/web)
 
 ## Content Management
 
@@ -159,7 +174,8 @@ Simply add markdown files to these directories and the app will automatically lo
 - `pnpm run type-check` - Run TypeScript type checking
 - `pnpm nx run api:dev` - Start API server only
 - `pnpm nx run web:dev` - Start web app only
-- `pnpm nx run web:storybook` - Start Ladle for component development
+- `pnpm run storybook` - Start Storybook for component development (from apps/web)
+- `pnpm run build-storybook` - Build Storybook for deployment (from apps/web)
 - `pnpm nx run api:db:generate` - Generate Prisma client
 - `pnpm nx run api:db:push` - Push database schema changes
 
@@ -180,13 +196,14 @@ trip-organizer/
 │       ├── src/
 │       │   ├── components/
 │       │   │   ├── ui/         # shadcn/ui components library
+│       │   │   ├── editor/     # TipTap content editing system
 │       │   │   ├── forms/      # Trip form components
 │       │   │   └── *.tsx       # App components (Header, Sidebar, etc.)
 │       │   ├── contexts/       # React contexts (TripContext)
 │       │   ├── hooks/          # Custom React hooks
 │       │   ├── services/       # API services (tRPC integration)
 │       │   └── types/          # TypeScript type definitions
-│       └── .storybook/         # Ladle configuration
+│       └── .storybook/         # Storybook configuration
 ├── packages/
 │   ├── shared/                 # Shared utilities
 │   └── types/                  # Shared TypeScript types
@@ -199,9 +216,10 @@ trip-organizer/
 
 ## 🚨 Known Issues
 
-1. **Category Pages** - Content display not working properly, needs debugging
+1. **Category Pages** - Content display not connected to editor system yet
 2. **Node Version** - Must use Node v24.5.0+ for Vite 7 compatibility
 3. **Type Casting** - Compression middleware requires type casting due to version mismatch
+4. **API Type Errors** - Backend has unresolved Prisma type issues (doesn't affect frontend development)
 
 ## 🤖 Development Notes
 
