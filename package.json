@@ -15,6 +15,7 @@
     "format": "nx run-many -t format",
     "format:check": "nx run-many -t format:check",
     "type-check": "nx run-many -t type-check",
+    "check": "nx run-many -t type-check,lint,format,format:check",
     "test": "nx run-many -t test",
     "clean": "nx reset",
     "prepare": "husky",

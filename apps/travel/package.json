@@ -62,6 +62,7 @@
     "@tiptap/starter-kit": "^3.0.9",
     "@pops/shared": "workspace:*",
     "@pops/types": "workspace:*",
+    "@pops/ui": "workspace:*",
     "@trpc/client": "^11.4.3",
     "@trpc/next": "^11.4.3",
     "@trpc/react-query": "^11.4.3",
