@@ -103,6 +103,10 @@ temp/
 .out
 .storybook-out
 
+# Compiled JavaScript files in source directories (should not be committed)
+**/src/**/*.js
+**/src/**/*.js.map
+
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*

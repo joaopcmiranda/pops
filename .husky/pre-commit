@@ -1,5 +1,2 @@
-# Run type checking first
-pnpm run type-check
-
-# Then run lint-staged for linting and formatting
-pnpm exec lint-staged
+# Run comprehensive checks (type-check, lint, format:check)
+pnpm run check
