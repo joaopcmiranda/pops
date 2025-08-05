@@ -9,8 +9,7 @@ import {
   Filter,
   Plus,
 } from 'lucide-react'
-import { Card, CardContent } from './ui/card'
-import { Button } from './ui/button/button'
+import { Card, CardContent, Button } from '@pops/ui'
 import { ItineraryService } from '@/services/itineraryService'
 import type { ItineraryItem, ItemType } from '@/types/itinerary'
 

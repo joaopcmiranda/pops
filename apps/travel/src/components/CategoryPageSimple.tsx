@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Plus, FileText } from 'lucide-react'
 import { ContentService, type ContentItem } from '@/services/contentService'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
-import { Button } from './ui/button/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button } from '@pops/ui'
 
 interface CategoryPageProps {
   category: string

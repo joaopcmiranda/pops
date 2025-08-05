@@ -9,8 +9,7 @@ import {
   Check,
   X,
 } from 'lucide-react'
-import { Button } from './ui/button/button'
-import { Card, CardContent } from './ui/card'
+import { Button, Card, CardContent } from '@pops/ui'
 import { trpc } from '@/utils/trpc'
 import type { Trip } from '@/types/trip'
 

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { AppSidebar } from './AppSidebar'
 import { AppLayoutStory } from './StoryWrapper'
 
-import { SidebarProvider } from '@/components/ui/sidebar/sidebar'
+import { SidebarProvider } from '@pops/ui'
 
 const meta: Meta<typeof AppSidebar> = {
   title: 'Components/AppSidebar',

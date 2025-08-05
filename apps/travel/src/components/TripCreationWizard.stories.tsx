@@ -273,8 +273,8 @@ export const MobileOptimized: Story = {
   ),
 }
 
-// Individual Step Stories
-
+// Individual Step Stories (commented out - unused utility component)
+/*
 const StepWrapper = ({ children, currentStep }: { children: React.ReactNode; currentStep: number }) => {
   const [formData, setFormData] = useState({
     title: 'Tokyo Adventure',
@@ -304,6 +304,7 @@ const StepWrapper = ({ children, currentStep }: { children: React.ReactNode; cur
     </div>
   )
 }
+*/
 
 export const Step1_Where: Story = {
   render: () => (
@@ -316,14 +317,24 @@ export const Step1_Where: Story = {
         <div className='bg-blue-50 rounded-lg p-6 border border-blue-100'>
           <h3 className='text-lg font-semibold text-blue-900 mb-4'>Step 1 Features:</h3>
           <ul className='text-sm text-blue-800 space-y-2'>
-            <li>• <strong>Large MapPin Icon:</strong> Clear visual indicator for location step</li>
-            <li>• <strong>Destination Input:</strong> City selection with placeholder examples</li>
-            <li>• <strong>Country Input:</strong> Country selection with validation</li>
-            <li>• <strong>Required Fields:</strong> Both destination and country must be filled</li>
-            <li>• <strong>Modern Design:</strong> Large inputs with hover/focus effects</li>
+            <li>
+              • <strong>Large MapPin Icon:</strong> Clear visual indicator for location step
+            </li>
+            <li>
+              • <strong>Destination Input:</strong> City selection with placeholder examples
+            </li>
+            <li>
+              • <strong>Country Input:</strong> Country selection with validation
+            </li>
+            <li>
+              • <strong>Required Fields:</strong> Both destination and country must be filled
+            </li>
+            <li>
+              • <strong>Modern Design:</strong> Large inputs with hover/focus effects
+            </li>
           </ul>
         </div>
-        
+
         <div className='min-h-screen bg-gradient-to-br from-slate-50 to-blue-50'>
           <div className='max-w-4xl mx-auto px-6 py-12'>
             <div className='bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden'>
@@ -351,7 +362,9 @@ export const Step1_Where: Story = {
                     </div>
 
                     <div>
-                      <label className='block text-lg font-semibold text-gray-700 mb-3'>Country *</label>
+                      <label className='block text-lg font-semibold text-gray-700 mb-3'>
+                        Country *
+                      </label>
                       <input
                         type='text'
                         defaultValue=''
@@ -381,14 +394,24 @@ export const Step2_When: Story = {
         <div className='bg-green-50 rounded-lg p-6 border border-green-100'>
           <h3 className='text-lg font-semibold text-green-900 mb-4'>Step 2 Features:</h3>
           <ul className='text-sm text-green-800 space-y-2'>
-            <li>• <strong>Calendar Icon:</strong> Clear visual indicator for date step</li>
-            <li>• <strong>Start & End Dates:</strong> Two date pickers with validation</li>
-            <li>• <strong>Duration Calculation:</strong> Automatic trip length display</li>
-            <li>• <strong>Date Validation:</strong> End date must be after start date</li>
-            <li>• <strong>Visual Feedback:</strong> Gradient box showing trip duration</li>
+            <li>
+              • <strong>Calendar Icon:</strong> Clear visual indicator for date step
+            </li>
+            <li>
+              • <strong>Start & End Dates:</strong> Two date pickers with validation
+            </li>
+            <li>
+              • <strong>Duration Calculation:</strong> Automatic trip length display
+            </li>
+            <li>
+              • <strong>Date Validation:</strong> End date must be after start date
+            </li>
+            <li>
+              • <strong>Visual Feedback:</strong> Gradient box showing trip duration
+            </li>
           </ul>
         </div>
-        
+
         <div className='min-h-screen bg-gradient-to-br from-slate-50 to-blue-50'>
           <div className='max-w-4xl mx-auto px-6 py-12'>
             <div className='bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden'>
@@ -428,9 +451,7 @@ export const Step2_When: Story = {
                     </div>
 
                     <div className='bg-gradient-to-r from-blue-50 to-green-50 rounded-xl p-6 text-center mt-8 border border-blue-100'>
-                      <p className='text-lg font-semibold text-blue-800'>
-                        Trip duration: 7 days
-                      </p>
+                      <p className='text-lg font-semibold text-blue-800'>Trip duration: 7 days</p>
                     </div>
                   </div>
                 </div>
@@ -454,14 +475,24 @@ export const Step3_Who: Story = {
         <div className='bg-purple-50 rounded-lg p-6 border border-purple-100'>
           <h3 className='text-lg font-semibold text-purple-900 mb-4'>Step 3 Features:</h3>
           <ul className='text-sm text-purple-800 space-y-2'>
-            <li>• <strong>Users Icon:</strong> Clear visual indicator for traveler step</li>
-            <li>• <strong>8 Trip Types:</strong> Visual grid with emojis and labels</li>
-            <li>• <strong>Interactive Selection:</strong> Cards with hover and selected states</li>
-            <li>• <strong>Traveler Count:</strong> Number input with validation (1-20)</li>
-            <li>• <strong>Visual Feedback:</strong> Selected trip type highlighted with scale effect</li>
+            <li>
+              • <strong>Users Icon:</strong> Clear visual indicator for traveler step
+            </li>
+            <li>
+              • <strong>8 Trip Types:</strong> Visual grid with emojis and labels
+            </li>
+            <li>
+              • <strong>Interactive Selection:</strong> Cards with hover and selected states
+            </li>
+            <li>
+              • <strong>Traveler Count:</strong> Number input with validation (1-20)
+            </li>
+            <li>
+              • <strong>Visual Feedback:</strong> Selected trip type highlighted with scale effect
+            </li>
           </ul>
         </div>
-        
+
         <div className='min-h-screen bg-gradient-to-br from-slate-50 to-blue-50'>
           <div className='max-w-4xl mx-auto px-6 py-12'>
             <div className='bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden'>
@@ -540,15 +571,27 @@ export const Step4_Details: Story = {
         <div className='bg-orange-50 rounded-lg p-6 border border-orange-100'>
           <h3 className='text-lg font-semibold text-orange-900 mb-4'>Step 4 Features:</h3>
           <ul className='text-sm text-orange-800 space-y-2'>
-            <li>• <strong>FileText Icon:</strong> Clear visual indicator for details step</li>
-            <li>• <strong>Optional Fields:</strong> All fields in this step are optional</li>
-            <li>• <strong>Trip Title:</strong> Custom title with smart placeholder</li>
-            <li>• <strong>Description:</strong> Multi-line text area for trip details</li>
-            <li>• <strong>Budget & Currency:</strong> Number input with currency selector</li>
-            <li>• <strong>6 Currencies:</strong> USD, EUR, GBP, JPY, CAD, AUD support</li>
+            <li>
+              • <strong>FileText Icon:</strong> Clear visual indicator for details step
+            </li>
+            <li>
+              • <strong>Optional Fields:</strong> All fields in this step are optional
+            </li>
+            <li>
+              • <strong>Trip Title:</strong> Custom title with smart placeholder
+            </li>
+            <li>
+              • <strong>Description:</strong> Multi-line text area for trip details
+            </li>
+            <li>
+              • <strong>Budget & Currency:</strong> Number input with currency selector
+            </li>
+            <li>
+              • <strong>6 Currencies:</strong> USD, EUR, GBP, JPY, CAD, AUD support
+            </li>
           </ul>
         </div>
-        
+
         <div className='min-h-screen bg-gradient-to-br from-slate-50 to-blue-50'>
           <div className='max-w-4xl mx-auto px-6 py-12'>
             <div className='bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden'>
@@ -562,7 +605,9 @@ export const Step4_Details: Story = {
 
                   <div className='space-y-4'>
                     <div>
-                      <label className='block text-sm font-medium text-gray-700 mb-2'>Trip Title</label>
+                      <label className='block text-sm font-medium text-gray-700 mb-2'>
+                        Trip Title
+                      </label>
                       <input
                         type='text'
                         defaultValue='Tokyo Adventure'
@@ -572,7 +617,9 @@ export const Step4_Details: Story = {
                     </div>
 
                     <div>
-                      <label className='block text-sm font-medium text-gray-700 mb-2'>Description</label>
+                      <label className='block text-sm font-medium text-gray-700 mb-2'>
+                        Description
+                      </label>
                       <textarea
                         defaultValue="An amazing cultural trip to explore Tokyo's rich heritage and modern attractions."
                         placeholder='Tell us about your trip plans...'
@@ -583,7 +630,9 @@ export const Step4_Details: Story = {
 
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                       <div>
-                        <label className='block text-sm font-medium text-gray-700 mb-2'>Budget</label>
+                        <label className='block text-sm font-medium text-gray-700 mb-2'>
+                          Budget
+                        </label>
                         <input
                           type='number'
                           min='0'
@@ -594,7 +643,9 @@ export const Step4_Details: Story = {
                       </div>
 
                       <div>
-                        <label className='block text-sm font-medium text-gray-700 mb-2'>Currency</label>
+                        <label className='block text-sm font-medium text-gray-700 mb-2'>
+                          Currency
+                        </label>
                         <select
                           defaultValue='USD'
                           className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg'
@@ -630,14 +681,24 @@ export const Step5_Review: Story = {
         <div className='bg-green-50 rounded-lg p-6 border border-green-100'>
           <h3 className='text-lg font-semibold text-green-900 mb-4'>Step 5 Features:</h3>
           <ul className='text-sm text-green-800 space-y-2'>
-            <li>• <strong>Check Icon:</strong> Clear visual indicator for completion step</li>
-            <li>• <strong>Complete Summary:</strong> All entered information displayed in cards</li>
-            <li>• <strong>Final Title Input:</strong> Required field for trip name</li>
-            <li>• <strong>Conditional Display:</strong> Only shows filled optional fields</li>
-            <li>• <strong>Create Trip Action:</strong> Final button to submit the form</li>
+            <li>
+              • <strong>Check Icon:</strong> Clear visual indicator for completion step
+            </li>
+            <li>
+              • <strong>Complete Summary:</strong> All entered information displayed in cards
+            </li>
+            <li>
+              • <strong>Final Title Input:</strong> Required field for trip name
+            </li>
+            <li>
+              • <strong>Conditional Display:</strong> Only shows filled optional fields
+            </li>
+            <li>
+              • <strong>Create Trip Action:</strong> Final button to submit the form
+            </li>
           </ul>
         </div>
-        
+
         <div className='min-h-screen bg-gradient-to-br from-slate-50 to-blue-50'>
           <div className='max-w-4xl mx-auto px-6 py-12'>
             <div className='bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden'>
@@ -680,7 +741,10 @@ export const Step5_Review: Story = {
 
                       <div>
                         <h3 className='font-semibold text-gray-900 mb-2'>Description</h3>
-                        <p className='text-gray-600'>An amazing cultural trip to explore Tokyo's rich heritage and modern attractions.</p>
+                        <p className='text-gray-600'>
+                          An amazing cultural trip to explore Tokyo's rich heritage and modern
+                          attractions.
+                        </p>
                       </div>
 
                       <div>
@@ -691,7 +755,9 @@ export const Step5_Review: Story = {
                   </Card>
 
                   <div>
-                    <label className='block text-sm font-medium text-gray-700 mb-2'>Trip Title *</label>
+                    <label className='block text-sm font-medium text-gray-700 mb-2'>
+                      Trip Title *
+                    </label>
                     <input
                       type='text'
                       defaultValue='Tokyo Adventure'

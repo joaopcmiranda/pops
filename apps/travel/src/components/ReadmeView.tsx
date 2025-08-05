@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { BookOpen } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { SkeletonContent } from '@/components/ui/skeleton'
+import { SkeletonContent } from '@pops/ui'
 
 export function ReadmeView() {
   const [readmeContent, setReadmeContent] = useState<string>('')

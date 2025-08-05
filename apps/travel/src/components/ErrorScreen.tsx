@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 import { AlertTriangle, RefreshCw, Home, Wifi, Search } from 'lucide-react'
-import { Card, CardContent } from './ui/card'
-import { Button } from './ui/button/button'
+import { Card, CardContent, Button } from '@pops/ui'
 
 export type ErrorType = 'network' | 'notFound' | 'generic' | 'loading' | 'permission'
 

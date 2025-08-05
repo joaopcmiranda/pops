@@ -9,9 +9,7 @@ import {
   ArrowRight,
   Plus,
 } from 'lucide-react'
-import { Card, CardContent } from './ui/card'
-import { Button } from './ui/button/button'
-import { SkeletonCard } from './ui/skeleton'
+import { Card, CardContent, Button, SkeletonCard } from '@pops/ui'
 import { ContentService } from '@/services/contentService'
 import { ItineraryService } from '@/services/itineraryService'
 import { ErrorScreen } from '@/components/ErrorScreen'

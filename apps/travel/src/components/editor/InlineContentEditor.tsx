@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { EditorContent } from '@tiptap/react'
-import { Button } from '../ui/button/button'
+import { Button } from '@pops/ui'
 import { Edit3, Save, X, Loader2 } from 'lucide-react'
 import { ContentEditorProvider } from './ContentEditorProvider'
 import { useContentEditor } from './hooks/useContentEditor'
@@ -72,7 +72,7 @@ const EditorWrapper: React.FC<EditorWrapperProps> = ({
   }
 
   return (
-    <div className='relative' data-testid="inline-content-editor">
+    <div className='relative' data-testid='inline-content-editor'>
       {/* Toolbar */}
       {showToolbar && (
         <div className='mb-2'>

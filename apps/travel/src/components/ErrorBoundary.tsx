@@ -1,8 +1,7 @@
 import type { ReactNode, ErrorInfo } from 'react'
 import { Component } from 'react'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
-import { Card, CardContent } from './ui/card'
-import { Button } from './ui/button/button'
+import { Card, CardContent, Button } from '@pops/ui'
 
 interface Props {
   children: ReactNode

@@ -79,7 +79,7 @@ export const WithAutoSave: Story = {
       slug='autosave-demo'
       autoSave={true}
       autoSaveDelay={(args.autosave || 3) * 1000}
-      onSave={async (content) => {
+      onSave={async content => {
         console.log('Auto-saved content:', content)
         // Simulate API call delay
         return new Promise(resolve => setTimeout(resolve, 200))
@@ -89,8 +89,9 @@ export const WithAutoSave: Story = {
         <div className='mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg'>
           <h3 className='text-lg font-semibold text-blue-800 mb-2'>Auto-save Demo</h3>
           <p className='text-blue-700'>
-            This editor will automatically save your changes every {args.autosave || 3} seconds after you stop typing.
-            Check the browser console to see save events, or watch the status indicator in the bottom-right corner.
+            This editor will automatically save your changes every {args.autosave || 3} seconds
+            after you stop typing. Check the browser console to see save events, or watch the status
+            indicator in the bottom-right corner.
           </p>
         </div>
         <ContentEditor {...args} />
@@ -105,7 +106,7 @@ export const WithAutoSave: Story = {
   parameters: {
     docs: {
       description: {
-        story: 
+        story:
           'Demonstrates the auto-save feature that saves content automatically after a specified delay when the user stops typing.',
       },
     },
@@ -297,7 +298,10 @@ export const ItineraryType: Story = {
       <div className='max-w-5xl mx-auto p-6'>
         <div className='mb-4'>
           <h2 className='text-2xl font-bold text-gray-800 mb-2'>Itinerary Editor</h2>
-          <p className='text-gray-600'>Rich editor with task lists, tables, and scheduling tools specifically designed for daily itinerary planning.</p>
+          <p className='text-gray-600'>
+            Rich editor with task lists, tables, and scheduling tools specifically designed for
+            daily itinerary planning.
+          </p>
         </div>
         <ContentEditor {...args} />
       </div>
@@ -426,7 +430,9 @@ export const BudgetType: Story = {
       <div className='max-w-5xl mx-auto p-6'>
         <div className='mb-4'>
           <h2 className='text-2xl font-bold text-gray-800 mb-2'>Budget Planner</h2>
-          <p className='text-gray-600'>Specialized editor for budget planning with table tools and financial formatting.</p>
+          <p className='text-gray-600'>
+            Specialized editor for budget planning with table tools and financial formatting.
+          </p>
         </div>
         <ContentEditor {...args} />
       </div>
@@ -487,7 +493,10 @@ export const DestinationType: Story = {
       <div className='max-w-4xl mx-auto p-6'>
         <div className='mb-4'>
           <h2 className='text-2xl font-bold text-gray-800 mb-2'>Destination Guide Editor</h2>
-          <p className='text-gray-600'>Rich text editor optimized for travel guides with emphasis on formatting and readability.</p>
+          <p className='text-gray-600'>
+            Rich text editor optimized for travel guides with emphasis on formatting and
+            readability.
+          </p>
         </div>
         <ContentEditor {...args} />
       </div>

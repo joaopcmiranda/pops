@@ -23,7 +23,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar/sidebar'
+} from '@pops/ui'
 
 interface AppSidebarProps {
   activeCategory?: string

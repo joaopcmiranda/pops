@@ -5,14 +5,14 @@ import { Typography } from '@tiptap/extension-typography'
 import { Image } from '@tiptap/extension-image'
 import { Table } from '@tiptap/extension-table'
 import TableRow from '@tiptap/extension-table-row'
-import TableHeader from '@tiptap/extension-table-header' 
+import TableHeader from '@tiptap/extension-table-header'
 import TableCell from '@tiptap/extension-table-cell'
 import { TaskList } from '@tiptap/extension-task-list'
 import { TaskItem } from '@tiptap/extension-task-item'
 import { Placeholder } from '@tiptap/extension-placeholder'
 import { Focus } from '@tiptap/extension-focus'
 import { CharacterCount } from '@tiptap/extension-character-count'
-import { cn } from '@/lib/utils.ts'
+import { cn } from '@pops/ui'
 import ContentToolbar from './ContentToolbar'
 import { useContentEditorContext } from './hooks'
 import type { ContentEditorProps } from './types'
@@ -29,7 +29,7 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
   autosave,
 }) => {
   const context = useContentEditorContext()
-  
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -49,7 +49,7 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
           autolink: true,
           defaultProtocol: 'https',
         },
-        table: false, // Use separate table extension
+        // table: false, // Use separate table extension - remove this line as table is not a valid StarterKit option
       }),
       Typography,
       Image.configure({
@@ -89,12 +89,11 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
     onUpdate: ({ editor }) => {
       const html = editor.getHTML()
       onUpdate?.(html)
-      
+
       // Update context if available
       if (context?.updateContent && context?.content) {
         context.updateContent({ content: html })
       }
-      
     },
     editorProps: {
       attributes: {
@@ -160,36 +159,30 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
   }
 
   return (
-    <div className={cn('w-full', className)} data-testid="content-editor">
+    <div className={cn('w-full', className)} data-testid='content-editor'>
       {/* Integrated Toolbar */}
-      <ContentToolbar 
-        editor={editor} 
-        variant="fixed" 
+      <ContentToolbar
+        editor={editor}
+        variant='fixed'
         contentType={contentType}
         showAdvanced={contentType === 'itinerary' || contentType === 'budget'}
       />
-      
+
       {/* Editor Content */}
       <EditorContent editor={editor} className='content-editor' />
 
       {/* Status Bar */}
       <div className='flex justify-between items-center px-3 py-2 bg-gray-50 border-l border-r border-b border-gray-200 rounded-b-md text-xs text-gray-500'>
         <div className='flex items-center gap-4'>
-          <span>
-            {editor.storage.characterCount?.characters() || 0} characters
-          </span>
-          <span>
-            {editor.storage.characterCount?.words() || 0} words
-          </span>
+          <span>{editor.storage.characterCount?.characters() || 0} characters</span>
+          <span>{editor.storage.characterCount?.words() || 0} words</span>
           {context?.isDirty && (
             <span className='text-amber-600 flex items-center gap-1'>
               <div className='w-2 h-2 bg-amber-400 rounded-full'></div>
               Unsaved changes
             </span>
           )}
-          {context?.isSaving && (
-            <span className='text-blue-600'>Saving...</span>
-          )}
+          {context?.isSaving && <span className='text-blue-600'>Saving...</span>}
         </div>
         <div className='text-gray-400'>
           {autosave ? `Auto-save: ${autosave}s` : 'Press Ctrl+S to save'}

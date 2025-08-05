@@ -3,7 +3,7 @@ import { useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Typography from '@tiptap/extension-typography'
 import Image from '@tiptap/extension-image'
-import Table from '@tiptap/extension-table'
+import { Table } from '@tiptap/extension-table'
 import TableRow from '@tiptap/extension-table-row'
 import TableCell from '@tiptap/extension-table-cell'
 import TableHeader from '@tiptap/extension-table-header'
@@ -41,7 +41,7 @@ export const useContentEditor = (options: UseContentEditorOptions = {}) => {
           keepMarks: true,
           keepAttributes: false,
         },
-        table: false, // We'll use the separate table extension
+        // table: false, // We'll use the separate table extension - not a valid StarterKit option
         link: {
           openOnClick: false,
           autolink: true,
@@ -118,6 +118,9 @@ export const useContentEditor = (options: UseContentEditorOptions = {}) => {
 
   return {
     editor,
-    ...context,
+    content: context.content,
+    updateContent: context.updateContent,
+    activeContent: context.activeContent,
+    setActiveContent: context.setActiveContent,
   }
 }

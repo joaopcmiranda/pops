@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { AppHeader } from './AppHeader'
 import { ComponentStory } from './StoryWrapper'
-import { SidebarProvider } from './ui/sidebar/sidebar'
+import { SidebarProvider } from '@pops/ui'
 
 const meta: Meta<typeof AppHeader> = {
   title: 'Components/AppHeader',
@@ -56,7 +56,10 @@ export const Default: Story = {
       <div className='space-y-8'>
         <div className='bg-white rounded-2xl shadow-xl overflow-hidden'>
           <SidebarProvider>
-            <AppHeader currentTrip={mockTrip} onTripSwitch={() => alert('🔄 Trip switch clicked!')} />
+            <AppHeader
+              currentTrip={mockTrip}
+              onTripSwitch={() => alert('🔄 Trip switch clicked!')}
+            />
           </SidebarProvider>
         </div>
 

@@ -18,17 +18,20 @@ import {
   Undo,
   Redo,
 } from 'lucide-react'
-import { Button } from '../ui/button/button'
-import { Separator } from '../ui/separator'
-import { cn } from '@/lib/utils.ts'
+import { Button, Separator } from '@pops/ui'
+import { cn } from '@pops/ui'
 import type { ContentToolbarProps, EditorCommand, EditorToolbarGroup } from './types'
 
-const ContentToolbar: React.FC<ContentToolbarProps> = ({ 
-  editor, 
-  variant = 'fixed', 
+const ContentToolbar: React.FC<ContentToolbarProps> = ({
+  editor,
+  variant = 'fixed',
   contentType = 'destinations',
-  showAdvanced = false 
+  showAdvanced = false,
 }) => {
+  // Use showAdvanced parameter (currently unused but part of the interface)
+  if (showAdvanced) {
+    // Future implementation for advanced toolbar features
+  }
   if (!editor) return null
 
   const basicCommands: EditorCommand[] = [
@@ -198,7 +201,7 @@ const ContentToolbar: React.FC<ContentToolbarProps> = ({
           { name: 'insert', commands: insertCommands }, // Tables for schedules
           { name: 'format', commands: formatCommands },
         ]
-      
+
       case 'budget':
         return [
           ...baseGroups,
@@ -206,7 +209,7 @@ const ContentToolbar: React.FC<ContentToolbarProps> = ({
           { name: 'insert', commands: insertCommands }, // Tables for budget breakdowns
           { name: 'lists', commands: listCommands.slice(0, 2) }, // No task lists
         ]
-      
+
       case 'destinations':
         return [
           ...baseGroups,
@@ -215,7 +218,7 @@ const ContentToolbar: React.FC<ContentToolbarProps> = ({
           { name: 'lists', commands: listCommands.slice(0, 2) }, // No task lists
           { name: 'insert', commands: insertCommands.filter(cmd => cmd.name !== 'table') }, // No tables
         ]
-      
+
       case 'activities':
         return [
           ...baseGroups,
@@ -224,7 +227,7 @@ const ContentToolbar: React.FC<ContentToolbarProps> = ({
           { name: 'insert', commands: insertCommands.filter(cmd => cmd.name !== 'table') },
           { name: 'format', commands: formatCommands },
         ]
-      
+
       case 'transport':
       case 'accommodation':
       case 'documents':
@@ -235,7 +238,7 @@ const ContentToolbar: React.FC<ContentToolbarProps> = ({
           { name: 'insert', commands: insertCommands.filter(cmd => cmd.name === 'link') }, // Only links
           { name: 'format', commands: formatCommands },
         ]
-      
+
       default:
         return [
           ...baseGroups,
@@ -281,17 +284,17 @@ const ContentToolbar: React.FC<ContentToolbarProps> = ({
     const labels = {
       destinations: 'Destinations',
       itinerary: 'Itinerary',
-      transport: 'Transport', 
+      transport: 'Transport',
       accommodation: 'Accommodation',
       activities: 'Activities',
       budget: 'Budget',
-      documents: 'Documents'
+      documents: 'Documents',
     }
     return labels[type as keyof typeof labels] || 'Content'
   }
 
   return (
-    <div className={toolbarClasses} role="toolbar">
+    <div className={toolbarClasses} role='toolbar'>
       {/* Content Type Indicator */}
       <div className='flex items-center gap-2 mr-2'>
         <span className='text-xs font-medium text-gray-600 px-2 py-1 bg-gray-100 rounded'>
@@ -299,7 +302,7 @@ const ContentToolbar: React.FC<ContentToolbarProps> = ({
         </span>
         <Separator orientation='vertical' className='h-6' />
       </div>
-      
+
       {/* Toolbar Groups */}
       {toolbarGroups.map((group, index) => (
         <React.Fragment key={group.name}>

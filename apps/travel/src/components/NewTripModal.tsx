@@ -1,13 +1,24 @@
 import { useState } from 'react'
 import { MapPin, Calendar } from 'lucide-react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog'
-import { Button } from './ui/button/button'
-import { Input } from './ui/input'
-import { Label } from './ui/label'
-import { Textarea } from './ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  Button,
+  Input,
+  Label,
+  Textarea,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Alert,
+  AlertDescription,
+} from '@pops/ui'
 import { trpc } from '@/utils/trpc'
-import { Alert, AlertDescription } from './ui/alert'
 
 // Type interface for Trip
 import type { Trip } from '@/types/trip'

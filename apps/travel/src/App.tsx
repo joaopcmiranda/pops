@@ -21,7 +21,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { TripProvider } from '@/contexts/TripContext'
 import { useTripContext } from '@/hooks/useTripContext'
 import { TripService } from '@/services/tripService'
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar/sidebar'
+import { SidebarInset, SidebarProvider } from '@pops/ui'
 import '@/styles/animations.css'
 
 // Type interfaces
