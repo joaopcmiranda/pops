@@ -23,7 +23,7 @@ export const rateLimiterMiddleware = async (req: Request, res: Response, next: N
   } catch (rejRes: unknown) {
     const rejection = rejRes as RateLimiterRejection
     const secs = Math.round(rejection.msBeforeNext / 1000) || 1
-    
+
     res.set('Retry-After', String(secs))
     res.status(429).json({
       success: false,

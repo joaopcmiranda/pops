@@ -31,10 +31,12 @@ app.use(helmet())
 app.use(compression() as unknown as express.RequestHandler)
 
 // CORS configuration
-app.use(cors({
-  origin: config.CORS_ORIGIN,
-  credentials: true,
-}))
+app.use(
+  cors({
+    origin: config.CORS_ORIGIN,
+    credentials: true,
+  })
+)
 
 // Logging
 app.use(morgan(config.NODE_ENV === 'production' ? 'combined' : 'dev'))
@@ -53,17 +55,20 @@ app.get('/health', (req, res) => {
 })
 
 // tRPC middleware
-app.use('/trpc', createExpressMiddleware({
-  router: appRouter,
-  createContext,
-  onError: ({ error, type, path, input, ctx }: Omit<TRPCErrorHandlerParams, 'req'>) => {
-    console.error(`❌ tRPC Error on ${type} at ${path}:`, error)
-    if (config.NODE_ENV === 'development') {
-      console.error('Input:', input)
-      console.error('Context:', ctx)
-    }
-  },
-}))
+app.use(
+  '/trpc',
+  createExpressMiddleware({
+    router: appRouter,
+    createContext,
+    onError: ({ error, type, path, input, ctx }: Omit<TRPCErrorHandlerParams, 'req'>) => {
+      console.error(`❌ tRPC Error on ${type} at ${path}:`, error)
+      if (config.NODE_ENV === 'development') {
+        console.error('Input:', input)
+        console.error('Context:', ctx)
+      }
+    },
+  })
+)
 
 // Error handling middleware
 app.use(errorHandler)
@@ -102,7 +107,6 @@ const startServer = async () => {
         process.exit(0)
       })
     })
-
   } catch (error) {
     console.error('❌ Failed to start server:', error)
     process.exit(1)

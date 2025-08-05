@@ -6,14 +6,13 @@ import { tripRouter } from './trip'
 
 // Health check procedure
 const healthRouter = router({
-  check: publicProcedure
-    .query(async () => {
-      return {
-        status: 'healthy',
-        timestamp: new Date().toISOString(),
-        uptime: process.uptime(),
-      }
-    }),
+  check: publicProcedure.query(async () => {
+    return {
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+    }
+  }),
 })
 
 // Main app router

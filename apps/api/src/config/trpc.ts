@@ -24,7 +24,7 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
   if (!ctx.userId) {
     throw new Error('Unauthorized - User ID required in headers')
   }
-  
+
   return next({
     ctx: {
       ...ctx,

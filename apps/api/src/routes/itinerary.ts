@@ -27,7 +27,6 @@ interface ItineraryQueryOptions {
   skip?: number
 }
 
-
 interface ItineraryCreateData {
   [key: string]: unknown
   title: string
@@ -57,11 +56,11 @@ interface ItineraryUpdateData {
 // Validation schemas
 const itemTypeSchema = z.enum([
   'accommodation',
-  'event', 
+  'event',
   'work',
   'activity',
   'transport',
-  'overarching-event'
+  'overarching-event',
 ])
 
 const statusSchema = z.enum(['planned', 'confirmed', 'completed', 'cancelled'])
@@ -91,24 +90,23 @@ const updateItineraryItemSchema = createItineraryItemSchema.partial().extend({
 export const itineraryRouter = router({
   // Get all itinerary items for trip
   list: protectedProcedure
-    .input(z.object({
-      tripId: z.string(),
-      startDate: z.string().datetime().optional(),
-      endDate: z.string().datetime().optional(),
-      types: z.array(itemTypeSchema).optional(),
-      status: z.array(statusSchema).optional(),
-      limit: z.number().min(1).max(100).optional(),
-      offset: z.number().min(0).optional(),
-    }))
+    .input(
+      z.object({
+        tripId: z.string(),
+        startDate: z.string().datetime().optional(),
+        endDate: z.string().datetime().optional(),
+        types: z.array(itemTypeSchema).optional(),
+        status: z.array(statusSchema).optional(),
+        limit: z.number().min(1).max(100).optional(),
+        offset: z.number().min(0).optional(),
+      })
+    )
     .query(async ({ ctx, input }) => {
       // Verify trip access
       const trip = await ctx.prisma.trip.findFirst({
         where: {
           id: input.tripId,
-          OR: [
-            { userId: ctx.userId },
-            { collaborators: { some: { userId: ctx.userId } } }
-          ]
+          OR: [{ userId: ctx.userId }, { collaborators: { some: { userId: ctx.userId } } }],
         },
       })
 
@@ -117,17 +115,17 @@ export const itineraryRouter = router({
       }
 
       const where: ItineraryWhereInput = { tripId: input.tripId }
-      
+
       if (input.startDate || input.endDate) {
         where.startDate = {}
         if (input.startDate) where.startDate.gte = new Date(input.startDate)
         if (input.endDate) where.startDate.lte = new Date(input.endDate)
       }
-      
+
       if (input.types && input.types.length > 0) {
         where.type = { in: input.types }
       }
-      
+
       if (input.status && input.status.length > 0) {
         where.status = { in: input.status }
       }
@@ -140,11 +138,11 @@ export const itineraryRouter = router({
         },
         orderBy: { startDate: 'asc' },
       }
-      
+
       if (input.limit !== undefined) {
         queryOptions.take = input.limit
       }
-      
+
       if (input.offset !== undefined) {
         queryOptions.skip = input.offset
       }
@@ -159,157 +157,144 @@ export const itineraryRouter = router({
     }),
 
   // Get single itinerary item
-  get: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const item = await ctx.prisma.itineraryItem.findFirst({
-        where: { 
-          id: input.id,
-          trip: {
-            OR: [
-              { userId: ctx.userId },
-              { collaborators: { some: { userId: ctx.userId } } }
-            ]
-          }
+  get: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    const item = await ctx.prisma.itineraryItem.findFirst({
+      where: {
+        id: input.id,
+        trip: {
+          OR: [{ userId: ctx.userId }, { collaborators: { some: { userId: ctx.userId } } }],
         },
-        include: {
-          location: true,
-          attendees: true,
-        },
-      })
+      },
+      include: {
+        location: true,
+        attendees: true,
+      },
+    })
 
-      if (!item) {
-        throw new Error('Itinerary item not found')
-      }
+    if (!item) {
+      throw new Error('Itinerary item not found')
+    }
 
-      return {
-        ...item,
-        tags: item.tags ? JSON.parse(item.tags) : [],
-        typeData: item.typeData ? JSON.parse(item.typeData) : {},
-      }
-    }),
+    return {
+      ...item,
+      tags: item.tags ? JSON.parse(item.tags) : [],
+      typeData: item.typeData ? JSON.parse(item.typeData) : {},
+    }
+  }),
 
   // Create itinerary item
-  create: protectedProcedure
-    .input(createItineraryItemSchema)
-    .mutation(async ({ ctx, input }) => {
-      // Verify trip access and edit permissions
-      const trip = await ctx.prisma.trip.findFirst({
-        where: {
-          id: input.tripId,
-          OR: [
-            { userId: ctx.userId },
-            { collaborators: { some: { userId: ctx.userId, role: { in: ['admin', 'editor'] } } } }
-          ]
-        },
-      })
+  create: protectedProcedure.input(createItineraryItemSchema).mutation(async ({ ctx, input }) => {
+    // Verify trip access and edit permissions
+    const trip = await ctx.prisma.trip.findFirst({
+      where: {
+        id: input.tripId,
+        OR: [
+          { userId: ctx.userId },
+          { collaborators: { some: { userId: ctx.userId, role: { in: ['admin', 'editor'] } } } },
+        ],
+      },
+    })
 
-      if (!trip) {
-        throw new Error('Trip not found or insufficient permissions')
-      }
+    if (!trip) {
+      throw new Error('Trip not found or insufficient permissions')
+    }
 
-      const { attendeeIds, tags, typeData, ...itemData } = input
+    const { attendeeIds, tags, typeData, ...itemData } = input
 
-      // Filter out undefined values and convert them appropriately
-      const createData: ItineraryCreateData = {
-        ...Object.fromEntries(
-          Object.entries(itemData).filter(([, value]) => value !== undefined)
-        ),
-        title: input.title,
-        type: input.type,
-        tripId: input.tripId,
-        startDate: new Date(input.startDate),
-        endDate: input.endDate ? new Date(input.endDate) : null,
-        userId: ctx.userId,
-        tags: tags ? JSON.stringify(tags) : null,
-        typeData: typeData ? JSON.stringify(typeData) : null,
-        attendees: {
-          connect: attendeeIds.map(id => ({ id })),
-        },
-      }
+    // Filter out undefined values and convert them appropriately
+    const createData: ItineraryCreateData = {
+      ...Object.fromEntries(Object.entries(itemData).filter(([, value]) => value !== undefined)),
+      title: input.title,
+      type: input.type,
+      tripId: input.tripId,
+      startDate: new Date(input.startDate),
+      endDate: input.endDate ? new Date(input.endDate) : null,
+      userId: ctx.userId,
+      tags: tags ? JSON.stringify(tags) : null,
+      typeData: typeData ? JSON.stringify(typeData) : null,
+      attendees: {
+        connect: attendeeIds.map(id => ({ id })),
+      },
+    }
 
-      const item = await ctx.prisma.itineraryItem.create({
-        data: createData,
-        include: {
-          location: true,
-          attendees: true,
-        },
-      })
+    const item = await ctx.prisma.itineraryItem.create({
+      data: createData,
+      include: {
+        location: true,
+        attendees: true,
+      },
+    })
 
-      return {
-        ...item,
-        tags: item.tags ? JSON.parse(item.tags) : [],
-        typeData: item.typeData ? JSON.parse(item.typeData) : {},
-      }
-    }),
+    return {
+      ...item,
+      tags: item.tags ? JSON.parse(item.tags) : [],
+      typeData: item.typeData ? JSON.parse(item.typeData) : {},
+    }
+  }),
 
   // Update itinerary item
-  update: protectedProcedure
-    .input(updateItineraryItemSchema)
-    .mutation(async ({ ctx, input }) => {
-      const { id, attendeeIds, tags, typeData, ...updates } = input
+  update: protectedProcedure.input(updateItineraryItemSchema).mutation(async ({ ctx, input }) => {
+    const { id, attendeeIds, tags, typeData, ...updates } = input
 
-      // Verify trip access and edit permissions
-      const existingItem = await ctx.prisma.itineraryItem.findFirst({
-        where: { 
-          id,
-          trip: {
-            OR: [
-              { userId: ctx.userId },
-              { collaborators: { some: { userId: ctx.userId, role: { in: ['admin', 'editor'] } } } }
-            ]
-          }
+    // Verify trip access and edit permissions
+    const existingItem = await ctx.prisma.itineraryItem.findFirst({
+      where: {
+        id,
+        trip: {
+          OR: [
+            { userId: ctx.userId },
+            { collaborators: { some: { userId: ctx.userId, role: { in: ['admin', 'editor'] } } } },
+          ],
         },
-      })
+      },
+    })
 
-      if (!existingItem) {
-        throw new Error('Itinerary item not found or insufficient permissions')
-      }
+    if (!existingItem) {
+      throw new Error('Itinerary item not found or insufficient permissions')
+    }
 
-      // Filter out undefined values and build update data
-      const updateData: ItineraryUpdateData = {
-        ...Object.fromEntries(
-          Object.entries(updates).filter(([, value]) => value !== undefined)
-        ),
-      }
-      
-      if (input.startDate !== undefined) {
-        updateData.startDate = new Date(input.startDate)
-      }
-      
-      if (input.endDate !== undefined) {
-        updateData.endDate = input.endDate ? new Date(input.endDate) : null
-      }
-      
-      if (tags !== undefined) {
-        updateData.tags = tags ? JSON.stringify(tags) : null
-      }
-      
-      if (typeData !== undefined) {
-        updateData.typeData = typeData ? JSON.stringify(typeData) : null
-      }
-      
-      if (attendeeIds !== undefined) {
-        updateData.attendees = {
-          set: attendeeIds.map(id => ({ id })),
-        }
-      }
+    // Filter out undefined values and build update data
+    const updateData: ItineraryUpdateData = {
+      ...Object.fromEntries(Object.entries(updates).filter(([, value]) => value !== undefined)),
+    }
 
-      const item = await ctx.prisma.itineraryItem.update({
-        where: { id },
-        data: updateData,
-        include: {
-          location: true,
-          attendees: true,
-        },
-      })
+    if (input.startDate !== undefined) {
+      updateData.startDate = new Date(input.startDate)
+    }
 
-      return {
-        ...item,
-        tags: item.tags ? JSON.parse(item.tags) : [],
-        typeData: item.typeData ? JSON.parse(item.typeData) : {},
+    if (input.endDate !== undefined) {
+      updateData.endDate = input.endDate ? new Date(input.endDate) : null
+    }
+
+    if (tags !== undefined) {
+      updateData.tags = tags ? JSON.stringify(tags) : null
+    }
+
+    if (typeData !== undefined) {
+      updateData.typeData = typeData ? JSON.stringify(typeData) : null
+    }
+
+    if (attendeeIds !== undefined) {
+      updateData.attendees = {
+        set: attendeeIds.map(id => ({ id })),
       }
-    }),
+    }
+
+    const item = await ctx.prisma.itineraryItem.update({
+      where: { id },
+      data: updateData,
+      include: {
+        location: true,
+        attendees: true,
+      },
+    })
+
+    return {
+      ...item,
+      tags: item.tags ? JSON.parse(item.tags) : [],
+      typeData: item.typeData ? JSON.parse(item.typeData) : {},
+    }
+  }),
 
   // Delete itinerary item
   delete: protectedProcedure
@@ -317,14 +302,16 @@ export const itineraryRouter = router({
     .mutation(async ({ ctx, input }) => {
       // Verify trip access and edit permissions
       const existingItem = await ctx.prisma.itineraryItem.findFirst({
-        where: { 
+        where: {
           id: input.id,
           trip: {
             OR: [
               { userId: ctx.userId },
-              { collaborators: { some: { userId: ctx.userId, role: { in: ['admin', 'editor'] } } } }
-            ]
-          }
+              {
+                collaborators: { some: { userId: ctx.userId, role: { in: ['admin', 'editor'] } } },
+              },
+            ],
+          },
         },
       })
 
@@ -347,10 +334,7 @@ export const itineraryRouter = router({
       const trip = await ctx.prisma.trip.findFirst({
         where: {
           id: input.tripId,
-          OR: [
-            { userId: ctx.userId },
-            { collaborators: { some: { userId: ctx.userId } } }
-          ]
+          OR: [{ userId: ctx.userId }, { collaborators: { some: { userId: ctx.userId } } }],
         },
       })
 
@@ -363,24 +347,37 @@ export const itineraryRouter = router({
         select: { type: true, status: true, startDate: true },
       })
 
-      const byType = items.reduce((acc, item) => {
-        acc[item.type] = (acc[item.type] || 0) + 1
-        return acc
-      }, {} as Record<string, number>)
+      const byType = items.reduce(
+        (acc, item) => {
+          acc[item.type] = (acc[item.type] || 0) + 1
+          return acc
+        },
+        {} as Record<string, number>
+      )
 
-      const byStatus = items.reduce((acc, item) => {
-        acc[item.status] = (acc[item.status] || 0) + 1
-        return acc
-      }, {} as Record<string, number>)
+      const byStatus = items.reduce(
+        (acc, item) => {
+          acc[item.status] = (acc[item.status] || 0) + 1
+          return acc
+        },
+        {} as Record<string, number>
+      )
 
       const dates = items.map(item => item.startDate).sort()
-      const timeSpan = dates.length > 0 ? {
-        start: dates[0]!,
-        end: dates[dates.length - 1]!,
-        totalDays: dates.length > 0 ? 
-          Math.ceil((dates[dates.length - 1]!.getTime() - dates[0]!.getTime()) / (1000 * 60 * 60 * 24)) + 1 : 
-          0,
-      } : null
+      const timeSpan =
+        dates.length > 0
+          ? {
+              start: dates[0]!,
+              end: dates[dates.length - 1]!,
+              totalDays:
+                dates.length > 0
+                  ? Math.ceil(
+                      (dates[dates.length - 1]!.getTime() - dates[0]!.getTime()) /
+                        (1000 * 60 * 60 * 24)
+                    ) + 1
+                  : 0,
+            }
+          : null
 
       return {
         totalItems: items.length,

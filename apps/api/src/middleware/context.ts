@@ -6,27 +6,32 @@ export interface Context {
   req: CreateExpressContextOptions['req']
   res: CreateExpressContextOptions['res']
   userId: string | undefined
-  user: {
-    id: string
-    name: string
-    email: string
-  } | undefined
+  user:
+    | {
+        id: string
+        name: string
+        email: string
+      }
+    | undefined
 }
 
-export const createContext = async ({ req, res }: CreateExpressContextOptions): Promise<Context> => {
+export const createContext = async ({
+  req,
+  res,
+}: CreateExpressContextOptions): Promise<Context> => {
   // TODO: Add authentication logic here
   // For now, we'll use a mock user for development
   const userId = req.headers['x-user-id'] as string
-  
+
   let user = undefined
   if (userId) {
     try {
       // Try to find existing user
       let userData = await prisma.user.findUnique({
         where: { id: userId },
-        select: { id: true, name: true, email: true }
+        select: { id: true, name: true, email: true },
       })
-      
+
       // If user doesn't exist and this is development, create a mock user
       if (!userData && userId === 'dev-user-123') {
         userData = await prisma.user.upsert({
@@ -37,10 +42,10 @@ export const createContext = async ({ req, res }: CreateExpressContextOptions): 
             name: 'Development User',
             email: 'dev@example.com',
           },
-          select: { id: true, name: true, email: true }
+          select: { id: true, name: true, email: true },
         })
       }
-      
+
       if (userData) {
         user = userData
       }

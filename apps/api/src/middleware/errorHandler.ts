@@ -6,12 +6,7 @@ export interface AppError extends Error {
   code?: string
 }
 
-export const errorHandler = (
-  error: AppError,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const errorHandler = (error: AppError, req: Request, res: Response, next: NextFunction) => {
   // If response was already sent, delegate to default Express error handler
   if (res.headersSent) {
     return next(error)
@@ -19,7 +14,7 @@ export const errorHandler = (
 
   const statusCode = error.statusCode || 500
   const message = error.message || 'Internal Server Error'
-  
+
   // Log error details
   console.error(`❌ Error ${statusCode}:`, {
     message: error.message,
@@ -41,7 +36,7 @@ export const errorHandler = (
       details: {
         url: req.url,
         method: req.method,
-      }
+      },
     }),
   })
 }
@@ -50,7 +45,7 @@ export const errorHandler = (
 export class ValidationError extends Error {
   statusCode = 400
   code = 'VALIDATION_ERROR'
-  
+
   constructor(message: string) {
     super(message)
     this.name = 'ValidationError'
@@ -60,7 +55,7 @@ export class ValidationError extends Error {
 export class NotFoundError extends Error {
   statusCode = 404
   code = 'NOT_FOUND'
-  
+
   constructor(message: string = 'Resource not found') {
     super(message)
     this.name = 'NotFoundError'
@@ -70,7 +65,7 @@ export class NotFoundError extends Error {
 export class UnauthorizedError extends Error {
   statusCode = 401
   code = 'UNAUTHORIZED'
-  
+
   constructor(message: string = 'Unauthorized') {
     super(message)
     this.name = 'UnauthorizedError'
@@ -80,7 +75,7 @@ export class UnauthorizedError extends Error {
 export class ForbiddenError extends Error {
   statusCode = 403
   code = 'FORBIDDEN'
-  
+
   constructor(message: string = 'Forbidden') {
     super(message)
     this.name = 'ForbiddenError'
@@ -90,7 +85,7 @@ export class ForbiddenError extends Error {
 export class ConflictError extends Error {
   statusCode = 409
   code = 'CONFLICT'
-  
+
   constructor(message: string) {
     super(message)
     this.name = 'ConflictError'

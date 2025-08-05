@@ -2,7 +2,15 @@
 
 export type TripStatus = 'planning' | 'upcoming' | 'active' | 'completed' | 'cancelled'
 
-export type TripType = 'leisure' | 'business' | 'family' | 'adventure' | 'honeymoon' | 'solo' | 'group' | 'other'
+export type TripType =
+  | 'leisure'
+  | 'business'
+  | 'family'
+  | 'adventure'
+  | 'honeymoon'
+  | 'solo'
+  | 'group'
+  | 'other'
 
 export interface TripBudget {
   total?: number
@@ -39,29 +47,29 @@ export interface Trip {
   country: string
   type: TripType
   status: TripStatus
-  
+
   // Dates
   startDate: Date
   endDate: Date
-  
+
   // Budget and settings
   budget?: TripBudget
   settings: TripSettings
-  
+
   // Metadata
   coverImage?: string
   tags?: string[]
   isTemplate?: boolean
   templateId?: string // If created from template
-  
+
   // Ownership and collaboration
   userId: string // Owner
   collaborators?: TripCollaborator[]
-  
+
   // Timestamps
   createdAt: Date
   updatedAt: Date
-  
+
   // Statistics (computed)
   stats?: TripStats
 }
@@ -100,17 +108,17 @@ export interface TripTemplate {
   type: TripType
   duration: number // days
   tags: string[]
-  
+
   // Template data
   itineraryTemplate: string // JSON
   contentTemplate: string // JSON
-  
+
   // Metadata
   createdBy: string
   isPublic: boolean
   usageCount: number
   rating?: number
-  
+
   createdAt: Date
   updatedAt: Date
 }
