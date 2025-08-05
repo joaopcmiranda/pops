@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import { Button } from '../ui/button/button'
 import { Separator } from '../ui/separator'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils.ts'
 import type { ContentToolbarProps, EditorCommand, EditorToolbarGroup } from './types'
 
 const ContentToolbar: React.FC<ContentToolbarProps> = ({ 

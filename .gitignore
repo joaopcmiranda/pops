@@ -109,3 +109,6 @@ vite.config.ts.timestamp-*
 
 
 storybook-static
+.nx/cache
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md

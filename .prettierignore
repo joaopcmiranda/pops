@@ -11,3 +11,5 @@ coverage
 *.log
 package-lock.json
 yarn.lock
+/.nx/cache
+/.nx/workspace-data

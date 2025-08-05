@@ -16,132 +16,132 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "CLAUDE.md",
-        "hash": "7964967181017787333"
-      },
-      {
-        "file": "DEPLOYMENT.md",
-        "hash": "1186055202805865779"
-      },
-      {
-        "file": "package.json",
-        "hash": "18035695551633877343"
+        "file": ".claude/agents/ladle-story-creator.md",
+        "hash": "196608715692776803"
       },
       {
         "file": ".claude/agents/shadcn-component-importer.md",
         "hash": "6512954990862712886"
       },
       {
-        "file": ".turbo/cookies/1.cookie",
-        "hash": "3244421341483603138"
-      },
-      {
         "file": ".eslintrc.js",
         "hash": "3643950328639693408"
       },
       {
-        "file": "scripts/health-check.sh",
-        "hash": "455013848404398995"
-      },
-      {
-        "file": "dev.sh",
-        "hash": "10280367785826118910"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "16936441711144470533"
-      },
-      {
-        "file": ".turbo/preferences/tui.json",
-        "hash": "10445677638450763447"
-      },
-      {
-        "file": "scripts/test-deployment.sh",
-        "hash": "14136134206686723724"
-      },
-      {
-        "file": "docker-compose.yml",
-        "hash": "13144926498511808283"
-      },
-      {
-        "file": "migrations.json",
-        "hash": "17530419296529070050"
-      },
-      {
-        "file": "nx.json",
-        "hash": "7988766637426106183"
-      },
-      {
-        "file": "content/destinations/rio-de-janeiro.md",
-        "hash": "12530683614609176328"
-      },
-      {
         "file": ".github/workflows/deploy.yml",
-        "hash": "1133255494208202781"
+        "hash": "17606231764699828663"
       },
       {
         "file": ".gitignore",
-        "hash": "8980021360909672484"
-      },
-      {
-        "file": "pnpm-lock.yaml",
-        "hash": "9814858294386844054"
-      },
-      {
-        "file": ".turbo/daemon/c706f89091f8e400-turbo.log.2025-08-01",
-        "hash": "8908873773021654703"
-      },
-      {
-        "file": "eslint.config.js",
-        "hash": "5073897489696094453"
-      },
-      {
-        "file": "README.md",
-        "hash": "9209626185029515895"
-      },
-      {
-        "file": "content/itinerary/sample-day.md",
-        "hash": "13319851790084133703"
-      },
-      {
-        "file": ".npmrc",
-        "hash": "3964332830813929635"
-      },
-      {
-        "file": "pnpm-workspace.yaml",
-        "hash": "2534718733797859458"
-      },
-      {
-        "file": ".turbo/cookies/2.cookie",
-        "hash": "3244421341483603138"
+        "hash": "956691298600159954"
       },
       {
         "file": ".husky/pre-commit",
         "hash": "12020404616778424502"
       },
       {
-        "file": ".prettierignore",
-        "hash": "3100077232754546725"
+        "file": ".npmrc",
+        "hash": "3964332830813929635"
       },
       {
-        "file": ".claude/agents/ladle-story-creator.md",
-        "hash": "196608715692776803"
+        "file": ".prettierignore",
+        "hash": "1201333889436317236"
+      },
+      {
+        "file": ".prettierrc",
+        "hash": "11151191966163949737"
+      },
+      {
+        "file": ".turbo/cookies/1.cookie",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": ".turbo/cookies/2.cookie",
+        "hash": "3244421341483603138"
       },
       {
         "file": ".turbo/cookies/3.cookie",
         "hash": "3244421341483603138"
       },
       {
+        "file": ".turbo/daemon/c706f89091f8e400-turbo.log.2025-08-01",
+        "hash": "8908873773021654703"
+      },
+      {
+        "file": ".turbo/preferences/tui.json",
+        "hash": "7259804189977827125"
+      },
+      {
+        "file": "CLAUDE.md",
+        "hash": "7964967181017787333"
+      },
+      {
+        "file": "DEPLOYMENT.md",
+        "hash": "2084636524405886873"
+      },
+      {
+        "file": "README.md",
+        "hash": "8007396411061004380"
+      },
+      {
         "file": "content/README.md",
         "hash": "6637085216648179112"
       },
       {
-        "file": "nginx.conf",
-        "hash": "5717261216995188123"
+        "file": "content/destinations/rio-de-janeiro.md",
+        "hash": "12530683614609176328"
       },
       {
-        "file": ".prettierrc",
-        "hash": "11151191966163949737"
+        "file": "content/itinerary/sample-day.md",
+        "hash": "13319851790084133703"
+      },
+      {
+        "file": "dev.sh",
+        "hash": "10280367785826118910"
+      },
+      {
+        "file": "docker-compose.yml",
+        "hash": "5977053079670398965"
+      },
+      {
+        "file": "eslint.config.js",
+        "hash": "5073897489696094453"
+      },
+      {
+        "file": "migrations.json",
+        "hash": "17530419296529070050"
+      },
+      {
+        "file": "nginx.conf",
+        "hash": "12619592894337965113"
+      },
+      {
+        "file": "nx.json",
+        "hash": "9346776981767107383"
+      },
+      {
+        "file": "package.json",
+        "hash": "11946574888702143100"
+      },
+      {
+        "file": "pnpm-lock.yaml",
+        "hash": "1616872819708989856"
+      },
+      {
+        "file": "pnpm-workspace.yaml",
+        "hash": "2534718733797859458"
+      },
+      {
+        "file": "scripts/health-check.sh",
+        "hash": "455013848404398995"
+      },
+      {
+        "file": "scripts/test-deployment.sh",
+        "hash": "14136134206686723724"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "16936441711144470533"
       }
     ],
     "projectFileMap": {
@@ -152,7 +152,7 @@
         },
         {
           "file": "apps/api/Dockerfile",
-          "hash": "2796980735363687855"
+          "hash": "6286126464633636544"
         },
         {
           "file": "apps/api/Dockerfile.dev",
@@ -160,7 +160,7 @@
         },
         {
           "file": "apps/api/package.json",
-          "hash": "3689644976956847564",
+          "hash": "1762071281073905067",
           "deps": [
             "npm:@eslint/js",
             "npm:@swc-node/register",
@@ -194,13 +194,13 @@
             "npm:bcrypt",
             "npm:compression",
             "npm:cors",
-            "npm:dotenv@16.6.1",
+            "npm:dotenv",
             "npm:express",
             "npm:helmet",
             "npm:jsonwebtoken",
             "npm:morgan",
             "npm:rate-limiter-flexible",
-            "npm:zod@3.25.76"
+            "npm:zod"
           ]
         },
         {
@@ -222,8 +222,8 @@
           "file": "apps/api/src/config/env.ts",
           "hash": "6441757943036223204",
           "deps": [
-            "npm:dotenv@16.6.1",
-            "npm:zod@3.25.76"
+            "npm:dotenv",
+            "npm:zod"
           ]
         },
         {
@@ -269,9 +269,9 @@
         },
         {
           "file": "apps/api/src/routes/content.ts",
-          "hash": "5989064959522814419",
+          "hash": "11460642361406805606",
           "deps": [
-            "npm:zod@3.25.76",
+            "npm:zod",
             "shared",
             "npm:@prisma/client"
           ]
@@ -284,21 +284,21 @@
           "file": "apps/api/src/routes/itinerary.ts",
           "hash": "3520173825356792779",
           "deps": [
-            "npm:zod@3.25.76"
+            "npm:zod"
           ]
         },
         {
           "file": "apps/api/src/routes/trip.ts",
           "hash": "8522949809171540073",
           "deps": [
-            "npm:zod@3.25.76"
+            "npm:zod"
           ]
         },
         {
           "file": "apps/api/src/routes/user.ts",
           "hash": "8004492862547218870",
           "deps": [
-            "npm:zod@3.25.76"
+            "npm:zod"
           ]
         },
         {
@@ -306,59 +306,10 @@
           "hash": "8904581790859217315"
         }
       ],
-      "shared": [
-        {
-          "file": "packages/shared/package.json",
-          "hash": "14604728484159020550",
-          "deps": [
-            "npm:@eslint/js",
-            "npm:@typescript-eslint/eslint-plugin",
-            "npm:@typescript-eslint/parser",
-            "npm:eslint",
-            "npm:eslint-config-prettier",
-            "npm:eslint-plugin-import",
-            "npm:eslint-plugin-prettier",
-            "npm:prettier",
-            "npm:tsup",
-            "npm:typescript",
-            "npm:typescript-eslint",
-            "types",
-            "npm:clsx",
-            "npm:tailwind-merge"
-          ]
-        },
-        {
-          "file": "packages/shared/project.json",
-          "hash": "14176143924600802907"
-        },
-        {
-          "file": "packages/shared/src/index.ts",
-          "hash": "13917356448624668712"
-        },
-        {
-          "file": "packages/shared/src/utils.ts",
-          "hash": "11516636435278812601",
-          "deps": [
-            "npm:clsx",
-            "npm:tailwind-merge"
-          ]
-        },
-        {
-          "file": "packages/shared/tsconfig.json",
-          "hash": "10010801335794085366"
-        },
-        {
-          "file": "packages/shared/tsup.config.ts",
-          "hash": "16820905800690594824",
-          "deps": [
-            "npm:tsup"
-          ]
-        }
-      ],
       "types": [
         {
           "file": "packages/types/package.json",
-          "hash": "18046299449354917912",
+          "hash": "14993793075840054557",
           "deps": [
             "npm:@eslint/js",
             "npm:@typescript-eslint/eslint-plugin",
@@ -371,7 +322,7 @@
             "npm:tsup",
             "npm:typescript",
             "npm:typescript-eslint",
-            "npm:zod@3.25.76"
+            "npm:zod"
           ]
         },
         {
@@ -402,9 +353,9 @@
           ]
         }
       ],
-      "web": [
+      "travel": [
         {
-          "file": "apps/web/.storybook/main.ts",
+          "file": "apps/travel/.storybook/main.ts",
           "hash": "15765946273942619400",
           "deps": [
             "npm:@storybook/react-vite",
@@ -412,20 +363,20 @@
           ]
         },
         {
-          "file": "apps/web/.storybook/preview.js",
+          "file": "apps/travel/.storybook/preview.js",
           "hash": "1474541314783245110"
         },
         {
-          "file": "apps/web/components.json",
+          "file": "apps/travel/components.json",
           "hash": "13604633855525511138"
         },
         {
-          "file": "apps/web/index.html",
+          "file": "apps/travel/index.html",
           "hash": "221488095821355837"
         },
         {
-          "file": "apps/web/package.json",
-          "hash": "2905671491650978131",
+          "file": "apps/travel/package.json",
+          "hash": "4581278617449843638",
           "deps": [
             "npm:@eslint/js",
             "npm:@storybook/addon-docs",
@@ -523,19 +474,19 @@
           ]
         },
         {
-          "file": "apps/web/project.json",
-          "hash": "9624194692538212886"
+          "file": "apps/travel/project.json",
+          "hash": "471478880635955135"
         },
         {
-          "file": "apps/web/public/vite.svg",
+          "file": "apps/travel/public/vite.svg",
           "hash": "16046085400642193116"
         },
         {
-          "file": "apps/web/src/App.css",
+          "file": "apps/travel/src/App.css",
           "hash": "3739391659270974612"
         },
         {
-          "file": "apps/web/src/App.tsx",
+          "file": "apps/travel/src/App.tsx",
           "hash": "14765372031622896296",
           "deps": [
             "npm:react",
@@ -543,21 +494,21 @@
           ]
         },
         {
-          "file": "apps/web/src/components/AppHeader.stories.tsx",
+          "file": "apps/travel/src/components/AppHeader.stories.tsx",
           "hash": "16781455188525646537",
           "deps": [
             "npm:@storybook/react-vite"
           ]
         },
         {
-          "file": "apps/web/src/components/AppHeader.tsx",
+          "file": "apps/travel/src/components/AppHeader.tsx",
           "hash": "10892360040412622843",
           "deps": [
             "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/AppSidebar.stories.tsx",
+          "file": "apps/travel/src/components/AppSidebar.stories.tsx",
           "hash": "503239891354769876",
           "deps": [
             "npm:@storybook/react-vite",
@@ -565,14 +516,14 @@
           ]
         },
         {
-          "file": "apps/web/src/components/AppSidebar.tsx",
+          "file": "apps/travel/src/components/AppSidebar.tsx",
           "hash": "5375322107938738994",
           "deps": [
             "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/Calendar.stories.tsx",
+          "file": "apps/travel/src/components/Calendar.stories.tsx",
           "hash": "17326797189252349801",
           "deps": [
             "npm:@storybook/react-vite",
@@ -580,7 +531,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/Calendar.tsx",
+          "file": "apps/travel/src/components/Calendar.tsx",
           "hash": "16198112769525816180",
           "deps": [
             "npm:react",
@@ -588,7 +539,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/CategoryPage.tsx",
+          "file": "apps/travel/src/components/CategoryPage.tsx",
           "hash": "7457372002863299258",
           "deps": [
             "npm:react",
@@ -596,7 +547,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/CategoryPageMinimal.tsx",
+          "file": "apps/travel/src/components/CategoryPageMinimal.tsx",
           "hash": "7025131790442370874",
           "deps": [
             "npm:react",
@@ -604,7 +555,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/CategoryPageSimple.tsx",
+          "file": "apps/travel/src/components/CategoryPageSimple.tsx",
           "hash": "13905219196399976836",
           "deps": [
             "npm:react",
@@ -612,7 +563,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ContentViewer.tsx",
+          "file": "apps/travel/src/components/ContentViewer.tsx",
           "hash": "17380202900740411294",
           "deps": [
             "npm:react-markdown",
@@ -620,7 +571,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/Dashboard.stories.tsx",
+          "file": "apps/travel/src/components/Dashboard.stories.tsx",
           "hash": "692291590557262474",
           "deps": [
             "npm:@storybook/react-vite",
@@ -628,7 +579,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/Dashboard.tsx",
+          "file": "apps/travel/src/components/Dashboard.tsx",
           "hash": "12387214081614906286",
           "deps": [
             "npm:react",
@@ -636,21 +587,21 @@
           ]
         },
         {
-          "file": "apps/web/src/components/EmptyTripsState.stories.tsx",
+          "file": "apps/travel/src/components/EmptyTripsState.stories.tsx",
           "hash": "11388922132621646607",
           "deps": [
             "npm:@storybook/react-vite"
           ]
         },
         {
-          "file": "apps/web/src/components/EmptyTripsState.tsx",
+          "file": "apps/travel/src/components/EmptyTripsState.tsx",
           "hash": "12201728266429750153",
           "deps": [
             "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/ErrorBoundary.tsx",
+          "file": "apps/travel/src/components/ErrorBoundary.tsx",
           "hash": "11251033398998266709",
           "deps": [
             "npm:react",
@@ -658,14 +609,14 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ErrorScreen.stories.tsx",
+          "file": "apps/travel/src/components/ErrorScreen.stories.tsx",
           "hash": "9561118921398484524",
           "deps": [
             "npm:@storybook/react-vite"
           ]
         },
         {
-          "file": "apps/web/src/components/ErrorScreen.tsx",
+          "file": "apps/travel/src/components/ErrorScreen.tsx",
           "hash": "6632550057377054512",
           "deps": [
             "npm:react",
@@ -673,14 +624,14 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ItineraryView.stories.tsx",
+          "file": "apps/travel/src/components/ItineraryView.stories.tsx",
           "hash": "9292888490493098665",
           "deps": [
             "npm:@storybook/react-vite"
           ]
         },
         {
-          "file": "apps/web/src/components/ItineraryView.tsx",
+          "file": "apps/travel/src/components/ItineraryView.tsx",
           "hash": "14255458373661676426",
           "deps": [
             "npm:react",
@@ -688,21 +639,21 @@
           ]
         },
         {
-          "file": "apps/web/src/components/NewTripCard.stories.tsx",
+          "file": "apps/travel/src/components/NewTripCard.stories.tsx",
           "hash": "9595171850948360696",
           "deps": [
             "npm:@storybook/react-vite"
           ]
         },
         {
-          "file": "apps/web/src/components/NewTripCard.tsx",
+          "file": "apps/travel/src/components/NewTripCard.tsx",
           "hash": "904780007633234539",
           "deps": [
             "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/NewTripModal.stories.tsx",
+          "file": "apps/travel/src/components/NewTripModal.stories.tsx",
           "hash": "1356204320363488706",
           "deps": [
             "npm:@storybook/react-vite",
@@ -710,7 +661,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/NewTripModal.tsx",
+          "file": "apps/travel/src/components/NewTripModal.tsx",
           "hash": "3456761945162498222",
           "deps": [
             "npm:react",
@@ -718,7 +669,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ReadmeView.tsx",
+          "file": "apps/travel/src/components/ReadmeView.tsx",
           "hash": "17338664129145714618",
           "deps": [
             "npm:react",
@@ -728,28 +679,28 @@
           ]
         },
         {
-          "file": "apps/web/src/components/StoryWrapper.tsx",
+          "file": "apps/travel/src/components/StoryWrapper.tsx",
           "hash": "2349680260578288491",
           "deps": [
             "npm:react"
           ]
         },
         {
-          "file": "apps/web/src/components/TripCard.stories.tsx",
+          "file": "apps/travel/src/components/TripCard.stories.tsx",
           "hash": "5042692167595285828",
           "deps": [
             "npm:@storybook/react-vite"
           ]
         },
         {
-          "file": "apps/web/src/components/TripCard.tsx",
+          "file": "apps/travel/src/components/TripCard.tsx",
           "hash": "6007745213397201594",
           "deps": [
             "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/TripCreationWizard.stories.tsx",
+          "file": "apps/travel/src/components/TripCreationWizard.stories.tsx",
           "hash": "14770702077563788991",
           "deps": [
             "npm:@storybook/react-vite",
@@ -758,7 +709,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/TripCreationWizard.tsx",
+          "file": "apps/travel/src/components/TripCreationWizard.tsx",
           "hash": "5492549326194836699",
           "deps": [
             "npm:react",
@@ -766,18 +717,18 @@
           ]
         },
         {
-          "file": "apps/web/src/components/TripGrid.stories.tsx",
+          "file": "apps/travel/src/components/TripGrid.stories.tsx",
           "hash": "7631072502614983344",
           "deps": [
             "npm:@storybook/react-vite"
           ]
         },
         {
-          "file": "apps/web/src/components/TripGrid.tsx",
+          "file": "apps/travel/src/components/TripGrid.tsx",
           "hash": "7625277799624337245"
         },
         {
-          "file": "apps/web/src/components/TripManagement.stories.tsx",
+          "file": "apps/travel/src/components/TripManagement.stories.tsx",
           "hash": "5725920507427428122",
           "deps": [
             "npm:@storybook/react-vite",
@@ -785,7 +736,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/TripSelector.tsx",
+          "file": "apps/travel/src/components/TripSelector.tsx",
           "hash": "11545370895183639970",
           "deps": [
             "npm:react",
@@ -793,14 +744,14 @@
           ]
         },
         {
-          "file": "apps/web/src/components/editor/ContentEditor.stories.tsx",
+          "file": "apps/travel/src/components/editor/ContentEditor.stories.tsx",
           "hash": "8810802319693867868",
           "deps": [
             "npm:@storybook/react-vite"
           ]
         },
         {
-          "file": "apps/web/src/components/editor/ContentEditor.tsx",
+          "file": "apps/travel/src/components/editor/ContentEditor.tsx",
           "hash": "17092049040180761802",
           "deps": [
             "npm:react",
@@ -820,7 +771,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/editor/ContentEditorModal.stories.tsx",
+          "file": "apps/travel/src/components/editor/ContentEditorModal.stories.tsx",
           "hash": "11772976133559448189",
           "deps": [
             "npm:@storybook/react-vite",
@@ -828,7 +779,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/editor/ContentEditorModal.tsx",
+          "file": "apps/travel/src/components/editor/ContentEditorModal.tsx",
           "hash": "14445063897904800396",
           "deps": [
             "npm:react",
@@ -837,7 +788,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/editor/ContentEditorProvider.tsx",
+          "file": "apps/travel/src/components/editor/ContentEditorProvider.tsx",
           "hash": "10637601379312604721",
           "deps": [
             "npm:react",
@@ -845,7 +796,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/editor/ContentToolbar.stories.tsx",
+          "file": "apps/travel/src/components/editor/ContentToolbar.stories.tsx",
           "hash": "13370004431027437842",
           "deps": [
             "npm:@storybook/react-vite",
@@ -860,7 +811,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/editor/ContentToolbar.tsx",
+          "file": "apps/travel/src/components/editor/ContentToolbar.tsx",
           "hash": "6502563176253585076",
           "deps": [
             "npm:react",
@@ -868,14 +819,14 @@
           ]
         },
         {
-          "file": "apps/web/src/components/editor/InlineContentEditor.stories.tsx",
+          "file": "apps/travel/src/components/editor/InlineContentEditor.stories.tsx",
           "hash": "6844664481539958905",
           "deps": [
             "npm:@storybook/react-vite"
           ]
         },
         {
-          "file": "apps/web/src/components/editor/InlineContentEditor.tsx",
+          "file": "apps/travel/src/components/editor/InlineContentEditor.tsx",
           "hash": "8930185824800768369",
           "deps": [
             "npm:react",
@@ -884,14 +835,14 @@
           ]
         },
         {
-          "file": "apps/web/src/components/editor/context.ts",
+          "file": "apps/travel/src/components/editor/context.ts",
           "hash": "17621068256536999590",
           "deps": [
             "npm:react"
           ]
         },
         {
-          "file": "apps/web/src/components/editor/hooks/index.ts",
+          "file": "apps/travel/src/components/editor/hooks/index.ts",
           "hash": "1936171571901916292",
           "deps": [
             "npm:react",
@@ -899,7 +850,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/editor/hooks/useContentEditor.ts",
+          "file": "apps/travel/src/components/editor/hooks/useContentEditor.ts",
           "hash": "7084751527420577379",
           "deps": [
             "npm:react",
@@ -918,18 +869,18 @@
           ]
         },
         {
-          "file": "apps/web/src/components/editor/index.ts",
+          "file": "apps/travel/src/components/editor/index.ts",
           "hash": "2925100104873030425"
         },
         {
-          "file": "apps/web/src/components/editor/types.ts",
+          "file": "apps/travel/src/components/editor/types.ts",
           "hash": "16707706759396442705",
           "deps": [
             "npm:@tiptap/react"
           ]
         },
         {
-          "file": "apps/web/src/components/forms/TripFormBasicInfo.stories.tsx",
+          "file": "apps/travel/src/components/forms/TripFormBasicInfo.stories.tsx",
           "hash": "13884824998335102082",
           "deps": [
             "npm:@storybook/react-vite",
@@ -937,14 +888,14 @@
           ]
         },
         {
-          "file": "apps/web/src/components/forms/TripFormBasicInfo.tsx",
+          "file": "apps/travel/src/components/forms/TripFormBasicInfo.tsx",
           "hash": "17655193063630817776",
           "deps": [
             "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/forms/TripFormDates.stories.tsx",
+          "file": "apps/travel/src/components/forms/TripFormDates.stories.tsx",
           "hash": "9706787307388726085",
           "deps": [
             "npm:@storybook/react-vite",
@@ -952,14 +903,14 @@
           ]
         },
         {
-          "file": "apps/web/src/components/forms/TripFormDates.tsx",
+          "file": "apps/travel/src/components/forms/TripFormDates.tsx",
           "hash": "377960789063249384",
           "deps": [
             "npm:lucide-react"
           ]
         },
         {
-          "file": "apps/web/src/components/forms/TripFormDescription.stories.tsx",
+          "file": "apps/travel/src/components/forms/TripFormDescription.stories.tsx",
           "hash": "6230155192055962921",
           "deps": [
             "npm:@storybook/react-vite",
@@ -967,11 +918,11 @@
           ]
         },
         {
-          "file": "apps/web/src/components/forms/TripFormDescription.tsx",
+          "file": "apps/travel/src/components/forms/TripFormDescription.tsx",
           "hash": "15744504489941529920"
         },
         {
-          "file": "apps/web/src/components/providers/TRPCProvider.tsx",
+          "file": "apps/travel/src/components/providers/TRPCProvider.tsx",
           "hash": "6142636972890388612",
           "deps": [
             "npm:@tanstack/react-query",
@@ -979,18 +930,18 @@
           ]
         },
         {
-          "file": "apps/web/src/components/skeleton-card.tsx",
+          "file": "apps/travel/src/components/skeleton-card.tsx",
           "hash": "3244421341483603138"
         },
         {
-          "file": "apps/web/src/components/ui/accordion.stories.tsx",
+          "file": "apps/travel/src/components/ui/accordion.stories.tsx",
           "hash": "7180246426909127385",
           "deps": [
             "npm:@storybook/react-vite"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/accordion.tsx",
+          "file": "apps/travel/src/components/ui/accordion.tsx",
           "hash": "7108605438414240777",
           "deps": [
             "npm:react",
@@ -999,7 +950,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/alert.stories.tsx",
+          "file": "apps/travel/src/components/ui/alert.stories.tsx",
           "hash": "6008864288549864755",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1007,7 +958,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/alert.tsx",
+          "file": "apps/travel/src/components/ui/alert.tsx",
           "hash": "16926585327348125063",
           "deps": [
             "npm:react",
@@ -1015,14 +966,14 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/avatar.stories.tsx",
+          "file": "apps/travel/src/components/ui/avatar.stories.tsx",
           "hash": "8105478571541543198",
           "deps": [
             "npm:@storybook/react-vite"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/avatar.tsx",
+          "file": "apps/travel/src/components/ui/avatar.tsx",
           "hash": "9900473550880210272",
           "deps": [
             "npm:react",
@@ -1030,14 +981,14 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/badge/badge-variants.ts",
+          "file": "apps/travel/src/components/ui/badge/badge-variants.ts",
           "hash": "9771224836109139096",
           "deps": [
             "npm:class-variance-authority"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/badge/badge.stories.tsx",
+          "file": "apps/travel/src/components/ui/badge/badge.stories.tsx",
           "hash": "6436684081246807949",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1045,7 +996,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/badge/badge.tsx",
+          "file": "apps/travel/src/components/ui/badge/badge.tsx",
           "hash": "2292202934185864522",
           "deps": [
             "npm:react",
@@ -1054,14 +1005,14 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/button/button.stories.tsx",
+          "file": "apps/travel/src/components/ui/button/button.stories.tsx",
           "hash": "6698411320425491396",
           "deps": [
             "npm:@storybook/react-vite"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/button/button.tsx",
+          "file": "apps/travel/src/components/ui/button/button.tsx",
           "hash": "1805419120946290977",
           "deps": [
             "npm:react",
@@ -1070,28 +1021,28 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/button/variants.tsx",
+          "file": "apps/travel/src/components/ui/button/variants.tsx",
           "hash": "17225875792099387961",
           "deps": [
             "npm:class-variance-authority"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/card.stories.tsx",
+          "file": "apps/travel/src/components/ui/card.stories.tsx",
           "hash": "6744702986230792798",
           "deps": [
             "npm:@storybook/react-vite"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/card.tsx",
+          "file": "apps/travel/src/components/ui/card.tsx",
           "hash": "7582585060678953734",
           "deps": [
             "npm:react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/checkbox.stories.tsx",
+          "file": "apps/travel/src/components/ui/checkbox.stories.tsx",
           "hash": "465393439308837365",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1099,7 +1050,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/checkbox.tsx",
+          "file": "apps/travel/src/components/ui/checkbox.tsx",
           "hash": "10439585541672491722",
           "deps": [
             "npm:react",
@@ -1108,7 +1059,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/command.stories.tsx",
+          "file": "apps/travel/src/components/ui/command.stories.tsx",
           "hash": "12617931810824889402",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1117,7 +1068,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/command.tsx",
+          "file": "apps/travel/src/components/ui/command.tsx",
           "hash": "12099840527891890380",
           "deps": [
             "npm:react",
@@ -1126,7 +1077,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/dialog.stories.tsx",
+          "file": "apps/travel/src/components/ui/dialog.stories.tsx",
           "hash": "3094550469481414231",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1135,7 +1086,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/dialog.tsx",
+          "file": "apps/travel/src/components/ui/dialog.tsx",
           "hash": "1713287906680292393",
           "deps": [
             "npm:react",
@@ -1144,7 +1095,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/drawer.stories.tsx",
+          "file": "apps/travel/src/components/ui/drawer.stories.tsx",
           "hash": "16871343499395605025",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1153,7 +1104,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/drawer.tsx",
+          "file": "apps/travel/src/components/ui/drawer.tsx",
           "hash": "6674232293531566173",
           "deps": [
             "npm:react",
@@ -1161,7 +1112,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/dropdown-menu.stories.tsx",
+          "file": "apps/travel/src/components/ui/dropdown-menu.stories.tsx",
           "hash": "14479857871289508118",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1170,7 +1121,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/dropdown-menu.tsx",
+          "file": "apps/travel/src/components/ui/dropdown-menu.tsx",
           "hash": "10020182354958466433",
           "deps": [
             "npm:react",
@@ -1179,7 +1130,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/form/context.tsx",
+          "file": "apps/travel/src/components/ui/form/context.tsx",
           "hash": "16656194659370096458",
           "deps": [
             "npm:react-hook-form",
@@ -1187,7 +1138,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/form/form.stories.tsx",
+          "file": "apps/travel/src/components/ui/form/form.stories.tsx",
           "hash": "7205983918858372472",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1197,7 +1148,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/form/form.tsx",
+          "file": "apps/travel/src/components/ui/form/form.tsx",
           "hash": "7370752502310772871",
           "deps": [
             "npm:react",
@@ -1207,7 +1158,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/form/useFormField.tsx",
+          "file": "apps/travel/src/components/ui/form/useFormField.tsx",
           "hash": "7518645041655849431",
           "deps": [
             "npm:react",
@@ -1215,7 +1166,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/hover-card.stories.tsx",
+          "file": "apps/travel/src/components/ui/hover-card.stories.tsx",
           "hash": "15085901856720317067",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1223,7 +1174,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/hover-card.tsx",
+          "file": "apps/travel/src/components/ui/hover-card.tsx",
           "hash": "1163405471543071281",
           "deps": [
             "npm:react",
@@ -1231,7 +1182,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/input.stories.tsx",
+          "file": "apps/travel/src/components/ui/input.stories.tsx",
           "hash": "283696932578893862",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1239,14 +1190,14 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/input.tsx",
+          "file": "apps/travel/src/components/ui/input.tsx",
           "hash": "1366136234240729569",
           "deps": [
             "npm:react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/label.stories.tsx",
+          "file": "apps/travel/src/components/ui/label.stories.tsx",
           "hash": "9548309583896271410",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1254,7 +1205,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/label.tsx",
+          "file": "apps/travel/src/components/ui/label.tsx",
           "hash": "7486278390905073708",
           "deps": [
             "npm:react",
@@ -1262,7 +1213,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/menubar.stories.tsx",
+          "file": "apps/travel/src/components/ui/menubar.stories.tsx",
           "hash": "14854636243368686343",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1270,7 +1221,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/menubar.tsx",
+          "file": "apps/travel/src/components/ui/menubar.tsx",
           "hash": "17575330445429069435",
           "deps": [
             "npm:react",
@@ -1279,14 +1230,14 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/navigation-menu-trigger-style.tsx",
+          "file": "apps/travel/src/components/ui/navigation-menu-trigger-style.tsx",
           "hash": "11898106007362930751",
           "deps": [
             "npm:class-variance-authority"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/navigation-menu.stories.tsx",
+          "file": "apps/travel/src/components/ui/navigation-menu.stories.tsx",
           "hash": "8347017992351198688",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1294,7 +1245,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/navigation-menu.tsx",
+          "file": "apps/travel/src/components/ui/navigation-menu.tsx",
           "hash": "9743705376227685817",
           "deps": [
             "npm:react",
@@ -1303,7 +1254,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/pagination.tsx",
+          "file": "apps/travel/src/components/ui/pagination.tsx",
           "hash": "12879168353824780234",
           "deps": [
             "npm:react",
@@ -1311,7 +1262,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/popover.tsx",
+          "file": "apps/travel/src/components/ui/popover.tsx",
           "hash": "2985681319792421552",
           "deps": [
             "npm:react",
@@ -1319,7 +1270,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/progress.stories.tsx",
+          "file": "apps/travel/src/components/ui/progress.stories.tsx",
           "hash": "11239537284652528153",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1328,7 +1279,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/progress.tsx",
+          "file": "apps/travel/src/components/ui/progress.tsx",
           "hash": "5739314200892315080",
           "deps": [
             "npm:react",
@@ -1336,7 +1287,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/radio-group.stories.tsx",
+          "file": "apps/travel/src/components/ui/radio-group.stories.tsx",
           "hash": "18404665615512470713",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1345,7 +1296,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/radio-group.tsx",
+          "file": "apps/travel/src/components/ui/radio-group.tsx",
           "hash": "14575011413025308875",
           "deps": [
             "npm:react",
@@ -1354,7 +1305,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/scroll-area.tsx",
+          "file": "apps/travel/src/components/ui/scroll-area.tsx",
           "hash": "6354415338121263034",
           "deps": [
             "npm:react",
@@ -1362,7 +1313,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/select.stories.tsx",
+          "file": "apps/travel/src/components/ui/select.stories.tsx",
           "hash": "6504357694961487633",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1370,7 +1321,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/select.tsx",
+          "file": "apps/travel/src/components/ui/select.tsx",
           "hash": "5605273725600123572",
           "deps": [
             "npm:react",
@@ -1379,7 +1330,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/separator.stories.tsx",
+          "file": "apps/travel/src/components/ui/separator.stories.tsx",
           "hash": "16826179529163241448",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1387,7 +1338,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/separator.tsx",
+          "file": "apps/travel/src/components/ui/separator.tsx",
           "hash": "436191591185782160",
           "deps": [
             "npm:react",
@@ -1395,7 +1346,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/sheet.tsx",
+          "file": "apps/travel/src/components/ui/sheet.tsx",
           "hash": "10130400599755247502",
           "deps": [
             "npm:react",
@@ -1404,21 +1355,21 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/sidebar/constants.tsx",
+          "file": "apps/travel/src/components/ui/sidebar/constants.tsx",
           "hash": "2733064893829820221",
           "deps": [
             "npm:class-variance-authority"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/sidebar/context.tsx",
+          "file": "apps/travel/src/components/ui/sidebar/context.tsx",
           "hash": "6763825796641275317",
           "deps": [
             "npm:react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/sidebar/sidebar.tsx",
+          "file": "apps/travel/src/components/ui/sidebar/sidebar.tsx",
           "hash": "6341302280787518863",
           "deps": [
             "npm:react",
@@ -1428,25 +1379,25 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/sidebar/useSidebar.tsx",
+          "file": "apps/travel/src/components/ui/sidebar/useSidebar.tsx",
           "hash": "5836133312650534247",
           "deps": [
             "npm:react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/skeleton.stories.tsx",
+          "file": "apps/travel/src/components/ui/skeleton.stories.tsx",
           "hash": "9112347850298281121",
           "deps": [
             "npm:@storybook/react-vite"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/skeleton.tsx",
+          "file": "apps/travel/src/components/ui/skeleton.tsx",
           "hash": "6622423519576444207"
         },
         {
-          "file": "apps/web/src/components/ui/slider.tsx",
+          "file": "apps/travel/src/components/ui/slider.tsx",
           "hash": "1156808082134654180",
           "deps": [
             "npm:react",
@@ -1454,7 +1405,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/sonner.tsx",
+          "file": "apps/travel/src/components/ui/sonner.tsx",
           "hash": "13362847926193094598",
           "deps": [
             "npm:next-themes",
@@ -1462,7 +1413,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/switch.stories.tsx",
+          "file": "apps/travel/src/components/ui/switch.stories.tsx",
           "hash": "2629755695230944195",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1471,7 +1422,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/switch.tsx",
+          "file": "apps/travel/src/components/ui/switch.tsx",
           "hash": "17275170364640258558",
           "deps": [
             "npm:react",
@@ -1479,14 +1430,14 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/table.tsx",
+          "file": "apps/travel/src/components/ui/table.tsx",
           "hash": "11302014588067057422",
           "deps": [
             "npm:react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/tabs.tsx",
+          "file": "apps/travel/src/components/ui/tabs.tsx",
           "hash": "12390376402947050388",
           "deps": [
             "npm:react",
@@ -1494,7 +1445,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/textarea.stories.tsx",
+          "file": "apps/travel/src/components/ui/textarea.stories.tsx",
           "hash": "10042898156879970514",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1502,14 +1453,14 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/textarea.tsx",
+          "file": "apps/travel/src/components/ui/textarea.tsx",
           "hash": "16221182896566412761",
           "deps": [
             "npm:react"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/toggle-group.tsx",
+          "file": "apps/travel/src/components/ui/toggle-group.tsx",
           "hash": "4284444897584967264",
           "deps": [
             "npm:react",
@@ -1518,7 +1469,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/toggle.tsx",
+          "file": "apps/travel/src/components/ui/toggle.tsx",
           "hash": "9467879695714173028",
           "deps": [
             "npm:react",
@@ -1527,14 +1478,14 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/toggleVariants.tsx",
+          "file": "apps/travel/src/components/ui/toggleVariants.tsx",
           "hash": "8916284115386118126",
           "deps": [
             "npm:class-variance-authority"
           ]
         },
         {
-          "file": "apps/web/src/components/ui/tooltip.stories.tsx",
+          "file": "apps/travel/src/components/ui/tooltip.stories.tsx",
           "hash": "3561763462528662372",
           "deps": [
             "npm:@storybook/react-vite",
@@ -1542,7 +1493,7 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/tooltip.tsx",
+          "file": "apps/travel/src/components/ui/tooltip.tsx",
           "hash": "292254389186308033",
           "deps": [
             "npm:react",
@@ -1550,46 +1501,46 @@
           ]
         },
         {
-          "file": "apps/web/src/components/ui/use_sidebar.tsx",
+          "file": "apps/travel/src/components/ui/use_sidebar.tsx",
           "hash": "13652252755228273659",
           "deps": [
             "npm:react"
           ]
         },
         {
-          "file": "apps/web/src/contexts/TripContext.tsx",
+          "file": "apps/travel/src/contexts/TripContext.tsx",
           "hash": "15415187622674952307",
           "deps": [
             "npm:react"
           ]
         },
         {
-          "file": "apps/web/src/contexts/TripContextDefinition.ts",
+          "file": "apps/travel/src/contexts/TripContextDefinition.ts",
           "hash": "9135882836206266065",
           "deps": [
             "npm:react"
           ]
         },
         {
-          "file": "apps/web/src/hooks/use-mobile.ts",
+          "file": "apps/travel/src/hooks/use-mobile.ts",
           "hash": "11808312049290393370",
           "deps": [
             "npm:react"
           ]
         },
         {
-          "file": "apps/web/src/hooks/useTripContext.ts",
+          "file": "apps/travel/src/hooks/useTripContext.ts",
           "hash": "1893482928546029360",
           "deps": [
             "npm:react"
           ]
         },
         {
-          "file": "apps/web/src/index.css",
+          "file": "apps/travel/src/index.css",
           "hash": "2137905113824861711"
         },
         {
-          "file": "apps/web/src/lib/utils.ts",
+          "file": "apps/travel/src/lib/utils.ts",
           "hash": "9541062503082763861",
           "deps": [
             "npm:clsx",
@@ -1597,7 +1548,7 @@
           ]
         },
         {
-          "file": "apps/web/src/main.tsx",
+          "file": "apps/travel/src/main.tsx",
           "hash": "17163312299994437273",
           "deps": [
             "npm:react",
@@ -1605,76 +1556,125 @@
           ]
         },
         {
-          "file": "apps/web/src/services/contentService.ts",
+          "file": "apps/travel/src/services/contentService.ts",
           "hash": "11154271098881765586"
         },
         {
-          "file": "apps/web/src/services/itineraryService.ts",
+          "file": "apps/travel/src/services/itineraryService.ts",
           "hash": "6186709425438717681"
         },
         {
-          "file": "apps/web/src/services/tripService.ts",
+          "file": "apps/travel/src/services/tripService.ts",
           "hash": "1244921836295919468"
         },
         {
-          "file": "apps/web/src/styles/animations.css",
+          "file": "apps/travel/src/styles/animations.css",
           "hash": "2575020573716682449"
         },
         {
-          "file": "apps/web/src/styles/story-fonts.css",
+          "file": "apps/travel/src/styles/story-fonts.css",
           "hash": "2177898260932121145"
         },
         {
-          "file": "apps/web/src/types/itinerary.ts",
+          "file": "apps/travel/src/types/itinerary.ts",
           "hash": "10602865236543616008"
         },
         {
-          "file": "apps/web/src/types/trip.ts",
+          "file": "apps/travel/src/types/trip.ts",
           "hash": "14782345465751209953"
         },
         {
-          "file": "apps/web/src/utils/storage.ts",
+          "file": "apps/travel/src/utils/storage.ts",
           "hash": "13995268304327581806"
         },
         {
-          "file": "apps/web/src/utils/trpc.ts",
+          "file": "apps/travel/src/utils/trpc.ts",
           "hash": "6682079013409745836"
         },
         {
-          "file": "apps/web/src/vite-env.d.ts",
+          "file": "apps/travel/src/vite-env.d.ts",
           "hash": "12946363841406869089"
         },
         {
-          "file": "apps/web/tailwind.config.js",
+          "file": "apps/travel/tailwind.config.js",
           "hash": "6713814346938133235"
         },
         {
-          "file": "apps/web/tsconfig.app.json",
+          "file": "apps/travel/tsconfig.app.json",
           "hash": "9317994952919100038"
         },
         {
-          "file": "apps/web/tsconfig.json",
+          "file": "apps/travel/tsconfig.json",
           "hash": "12533934631554452503"
         },
         {
-          "file": "apps/web/tsconfig.node.json",
+          "file": "apps/travel/tsconfig.node.json",
           "hash": "12526670948656573966"
         },
         {
-          "file": "apps/web/tsconfig.storybook.json",
+          "file": "apps/travel/tsconfig.storybook.json",
           "hash": "6735201758105622607"
         },
         {
-          "file": "apps/web/tsconfig.storybook.tsbuildinfo",
+          "file": "apps/travel/tsconfig.storybook.tsbuildinfo",
           "hash": "9048131313270234209"
         },
         {
-          "file": "apps/web/vite.config.ts",
+          "file": "apps/travel/vite.config.ts",
           "hash": "9141854498127749938",
           "deps": [
             "npm:vite",
             "npm:@vitejs/plugin-react",
             "npm:@tailwindcss/vite"
+          ]
+        }
+      ],
+      "shared": [
+        {
+          "file": "packages/shared/package.json",
+          "hash": "5782048445155443017",
+          "deps": [
+            "npm:@eslint/js",
+            "npm:@typescript-eslint/eslint-plugin",
+            "npm:@typescript-eslint/parser",
+            "npm:eslint",
+            "npm:eslint-config-prettier",
+            "npm:eslint-plugin-import",
+            "npm:eslint-plugin-prettier",
+            "npm:prettier",
+            "npm:tsup",
+            "npm:typescript",
+            "npm:typescript-eslint",
+            "types",
+            "npm:clsx",
+            "npm:tailwind-merge"
+          ]
+        },
+        {
+          "file": "packages/shared/project.json",
+          "hash": "14176143924600802907"
+        },
+        {
+          "file": "packages/shared/src/index.ts",
+          "hash": "13917356448624668712"
+        },
+        {
+          "file": "packages/shared/src/utils.ts",
+          "hash": "11516636435278812601",
+          "deps": [
+            "npm:clsx",
+            "npm:tailwind-merge"
+          ]
+        },
+        {
+          "file": "packages/shared/tsconfig.json",
+          "hash": "10010801335794085366"
+        },
+        {
+          "file": "packages/shared/tsup.config.ts",
+          "hash": "16820905800690594824",
+          "deps": [
+            "npm:tsup"
           ]
         }
       ]

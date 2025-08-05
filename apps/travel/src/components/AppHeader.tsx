@@ -1,6 +1,6 @@
 import { Search, Bell, User, ChevronDown, MapPin } from 'lucide-react'
 import { Button } from './ui/button/button'
-import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
+import { Avatar, AvatarFallback } from './ui/avatar'
 import { SidebarTrigger } from './ui/sidebar/sidebar'
 
 interface Trip {
