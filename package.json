@@ -19,8 +19,15 @@
     "test": "nx run-many -t test",
     "clean": "nx reset",
     "prepare": "husky",
+    "services:dev": "./scripts/dev-start-nx.sh",
+    "services:stop": "./scripts/dev-stop-nx.sh", 
+    "services:health": "./scripts/health-check-nx.sh",
+    "services:build": "nx run-many -t build --projects=trip-service,itinerary-service,user-service,api-gateway",
+    "services:start": "nx run-many -t start --projects=trip-service,itinerary-service,user-service,api-gateway --parallel",
+    "services:dev:raw": "nx run-many -t dev --projects=trip-service,itinerary-service,user-service,api-gateway --parallel",
+    "services:health:raw": "nx run-many -t health --projects=trip-service,itinerary-service,user-service,api-gateway",
     "deploy:test": "./scripts/test-deployment.sh",
-    "deploy:health": "./scripts/health-check.sh"
+    "deploy:health": "./scripts/health-check-nx.sh"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
