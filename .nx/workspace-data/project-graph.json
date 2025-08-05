@@ -10,7 +10,12 @@
           "npm:private"
         ],
         "metadata": {
-          "targetGroups": {},
+          "targetGroups": {
+            "NPM Scripts": [
+              "format",
+              "format:check"
+            ]
+          },
           "js": {
             "packageName": "@pops/shared",
             "packageExports": {
@@ -25,6 +30,30 @@
           }
         },
         "targets": {
+          "format": {
+            "executor": "nx:run-script",
+            "options": {
+              "script": "format"
+            },
+            "metadata": {
+              "scriptContent": "prettier --write .",
+              "runCommand": "pnpm run format"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "format:check": {
+            "executor": "nx:run-script",
+            "options": {
+              "script": "format:check"
+            },
+            "metadata": {
+              "scriptContent": "prettier --check .",
+              "runCommand": "pnpm run format:check"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "nx:run-commands",
             "options": {
@@ -108,7 +137,12 @@
           "npm:private"
         ],
         "metadata": {
-          "targetGroups": {},
+          "targetGroups": {
+            "NPM Scripts": [
+              "format",
+              "format:check"
+            ]
+          },
           "js": {
             "packageName": "@pops/types",
             "packageExports": {
@@ -123,6 +157,30 @@
           }
         },
         "targets": {
+          "format": {
+            "executor": "nx:run-script",
+            "options": {
+              "script": "format"
+            },
+            "metadata": {
+              "scriptContent": "prettier --write .",
+              "runCommand": "pnpm run format"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "format:check": {
+            "executor": "nx:run-script",
+            "options": {
+              "script": "format:check"
+            },
+            "metadata": {
+              "scriptContent": "prettier --check .",
+              "runCommand": "pnpm run format:check"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "nx:run-commands",
             "options": {
@@ -359,6 +417,171 @@
         "implicitDependencies": []
       }
     },
+    "ui": {
+      "name": "ui",
+      "type": "lib",
+      "data": {
+        "root": "packages/ui",
+        "targets": {
+          "build-storybook": {
+            "executor": "nx:run-script",
+            "options": {
+              "script": "build-storybook"
+            },
+            "metadata": {
+              "scriptContent": "storybook build",
+              "runCommand": "pnpm run build-storybook"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "storybook": {
+            "executor": "nx:run-commands",
+            "options": {
+              "command": "pnpm storybook",
+              "cwd": "packages/ui"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "static-storybook": {
+            "dependsOn": [
+              "build-storybook"
+            ],
+            "continuous": true,
+            "executor": "@nx/web:file-server",
+            "options": {
+              "buildTarget": "build-storybook",
+              "staticFilePath": "packages/ui/storybook-static"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "lint:fix": {
+            "executor": "nx:run-script",
+            "options": {
+              "script": "lint:fix"
+            },
+            "metadata": {
+              "scriptContent": "eslint . --fix",
+              "runCommand": "pnpm run lint:fix"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "format": {
+            "executor": "nx:run-script",
+            "options": {
+              "script": "format"
+            },
+            "metadata": {
+              "scriptContent": "prettier --write .",
+              "runCommand": "pnpm run format"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "format:check": {
+            "executor": "nx:run-script",
+            "options": {
+              "script": "format:check"
+            },
+            "metadata": {
+              "scriptContent": "prettier --check .",
+              "runCommand": "pnpm run format:check"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "build": {
+            "executor": "nx:run-commands",
+            "options": {
+              "command": "pnpm build",
+              "cwd": "packages/ui"
+            },
+            "configurations": {},
+            "parallelism": true,
+            "dependsOn": [
+              "^build"
+            ],
+            "inputs": [
+              "production",
+              "^production"
+            ],
+            "cache": true
+          },
+          "dev": {
+            "executor": "nx:run-commands",
+            "options": {
+              "command": "pnpm dev",
+              "cwd": "packages/ui"
+            },
+            "configurations": {},
+            "parallelism": true,
+            "cache": false,
+            "persistent": true
+          },
+          "lint": {
+            "executor": "nx:run-commands",
+            "options": {
+              "command": "pnpm lint",
+              "cwd": "packages/ui"
+            },
+            "configurations": {},
+            "parallelism": true,
+            "inputs": [
+              "default",
+              "{workspaceRoot}/.eslintrc.json",
+              "{workspaceRoot}/eslint.config.js"
+            ],
+            "cache": true
+          },
+          "type-check": {
+            "executor": "nx:run-commands",
+            "options": {
+              "command": "pnpm type-check",
+              "cwd": "packages/ui"
+            },
+            "configurations": {},
+            "parallelism": true,
+            "dependsOn": [
+              "^build"
+            ],
+            "cache": true
+          }
+        },
+        "name": "ui",
+        "tags": [
+          "npm:private"
+        ],
+        "metadata": {
+          "targetGroups": {
+            "NPM Scripts": [
+              "lint:fix",
+              "format",
+              "format:check",
+              "build-storybook"
+            ]
+          },
+          "js": {
+            "packageName": "@pops/ui",
+            "packageExports": {
+              ".": {
+                "types": "./dist/index.d.ts",
+                "import": "./dist/index.mjs",
+                "require": "./dist/index.js"
+              },
+              "./styles.css": "./dist/styles.css"
+            },
+            "packageMain": "./dist/index.js",
+            "isInPackageManagerWorkspaces": true
+          }
+        },
+        "sourceRoot": "packages/ui/src",
+        "projectType": "library",
+        "implicitDependencies": []
+      }
+    },
     "api": {
       "name": "api",
       "type": "app",
@@ -369,7 +592,12 @@
           "npm:private"
         ],
         "metadata": {
-          "targetGroups": {},
+          "targetGroups": {
+            "NPM Scripts": [
+              "format",
+              "format:check"
+            ]
+          },
           "js": {
             "packageName": "@pops/api",
             "packageExports": {
@@ -384,6 +612,30 @@
           }
         },
         "targets": {
+          "format": {
+            "executor": "nx:run-script",
+            "options": {
+              "script": "format"
+            },
+            "metadata": {
+              "scriptContent": "prettier --write .",
+              "runCommand": "pnpm run format"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "format:check": {
+            "executor": "nx:run-script",
+            "options": {
+              "script": "format:check"
+            },
+            "metadata": {
+              "scriptContent": "prettier --check .",
+              "runCommand": "pnpm run format:check"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
           "dev": {
             "executor": "nx:run-commands",
             "options": {
@@ -2556,6 +2808,15 @@
         "hash": "sha512-l3W5D54emV2ues7jjeG1xcyN7S3jnK3zE2zHqgn0CmMsy9lNJwmgcrmaxS+7ipw15FAivzKNzH3d5EcGoFKw0A=="
       }
     },
+    "npm:@radix-ui/react-alert-dialog": {
+      "type": "npm",
+      "name": "npm:@radix-ui/react-alert-dialog",
+      "data": {
+        "version": "1.1.14",
+        "packageName": "@radix-ui/react-alert-dialog",
+        "hash": "sha512-IOZfZ3nPvN6lXpJTBCunFQPRSvK8MDgSc1FB85xnIpUKOw9en0dJj8JmCAxV7BiZdtYlUpmrQjoTFkVYtdoWzQ=="
+      }
+    },
     "npm:@radix-ui/react-arrow": {
       "type": "npm",
       "name": "npm:@radix-ui/react-arrow",
@@ -2563,6 +2824,15 @@
         "version": "1.1.7",
         "packageName": "@radix-ui/react-arrow",
         "hash": "sha512-F+M1tLhO+mlQaOWspE8Wstg+z6PwxwRd8oQ8IXceWz92kfAmalTRf0EjrouQeo7QssEPfCn05B4Ihs1K9WQ/7w=="
+      }
+    },
+    "npm:@radix-ui/react-aspect-ratio": {
+      "type": "npm",
+      "name": "npm:@radix-ui/react-aspect-ratio",
+      "data": {
+        "version": "1.1.7",
+        "packageName": "@radix-ui/react-aspect-ratio",
+        "hash": "sha512-Yq6lvO9HQyPwev1onK1daHCHqXVLzPhSVjmsNjCa2Zcxy2f7uJD2itDtxknv6FzAKCwD1qQkeVDmX/cev13n/g=="
       }
     },
     "npm:@radix-ui/react-avatar": {
@@ -2608,6 +2878,15 @@
         "version": "1.1.2",
         "packageName": "@radix-ui/react-compose-refs",
         "hash": "sha512-z4eqJvfiNnFMHIIvXP3CY57y2WJs5g2v3X0zm9mEJkrkNv4rDxu+sg9Jh8EkXyeqBkB7SOcboo9dMVqhyrACIg=="
+      }
+    },
+    "npm:@radix-ui/react-context-menu": {
+      "type": "npm",
+      "name": "npm:@radix-ui/react-context-menu",
+      "data": {
+        "version": "2.2.15",
+        "packageName": "@radix-ui/react-context-menu",
+        "hash": "sha512-UsQUMjcYTsBjTSXw0P3GO0werEQvUY2plgRQuKoCTtkNr45q1DiL51j4m7gxhABzZ0BadoXNsIbg7F3KwiUBbw=="
       }
     },
     "npm:@radix-ui/react-context": {
@@ -2860,6 +3139,15 @@
         "version": "1.1.12",
         "packageName": "@radix-ui/react-tabs",
         "hash": "sha512-GTVAlRVrQrSw3cEARM0nAx73ixrWDPNZAruETn3oHCNP6SbZ/hNxdxp+u7VkIEv3/sFoLq1PfcHrl7Pnp0CDpw=="
+      }
+    },
+    "npm:@radix-ui/react-toast": {
+      "type": "npm",
+      "name": "npm:@radix-ui/react-toast",
+      "data": {
+        "version": "1.2.14",
+        "packageName": "@radix-ui/react-toast",
+        "hash": "sha512-nAP5FBxBJGQ/YfUB+r+O6USFVkWq3gAInkxyEnmvEV5jtSbfDhfa4hwX8CraCnbjMLsE7XSf/K75l9xXY7joWg=="
       }
     },
     "npm:@radix-ui/react-toggle-group": {
@@ -12244,12 +12532,12 @@
     "travel": [
       {
         "source": "travel",
-        "target": "npm:@storybook/react-vite",
+        "target": "npm:vite",
         "type": "static"
       },
       {
         "source": "travel",
-        "target": "npm:vite",
+        "target": "npm:@storybook/react-vite",
         "type": "static"
       },
       {
@@ -12594,6 +12882,11 @@
       },
       {
         "source": "travel",
+        "target": "ui",
+        "type": "static"
+      },
+      {
+        "source": "travel",
         "target": "npm:@trpc/client",
         "type": "static"
       },
@@ -12705,6 +12998,328 @@
       {
         "source": "travel",
         "target": "npm:zod@4.0.14",
+        "type": "static"
+      }
+    ],
+    "ui": [
+      {
+        "source": "ui",
+        "target": "npm:@storybook/react-vite",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@storybook/react",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:react",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:react-dom",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@eslint/js",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@types/react",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@types/react-dom",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@typescript-eslint/eslint-plugin",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@typescript-eslint/parser",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@vitejs/plugin-react",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:autoprefixer",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:eslint",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:eslint-config-prettier",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:eslint-plugin-import",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:eslint-plugin-prettier",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:eslint-plugin-react",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:eslint-plugin-react-hooks",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:eslint-plugin-storybook",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:postcss",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:prettier",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:storybook",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:tailwindcss",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:tsup",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:typescript",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:typescript-eslint",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:vite",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "shared",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-accordion",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-alert-dialog",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-aspect-ratio",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-avatar",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-checkbox",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-collapsible",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-context-menu",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-dialog",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-dropdown-menu",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-hover-card",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-label",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-menubar",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-navigation-menu",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-popover",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-progress",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-radio-group",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-scroll-area",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-select",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-separator",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-slider",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-slot",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-switch",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-tabs",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-toast",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-toggle",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-toggle-group",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:@radix-ui/react-tooltip",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:class-variance-authority",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:clsx",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:cmdk",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:lucide-react",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:react-day-picker",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:sonner",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:tailwind-merge",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:vaul",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:react-hook-form",
+        "type": "static"
+      },
+      {
+        "source": "ui",
+        "target": "npm:next-themes",
         "type": "static"
       }
     ],
@@ -15208,6 +15823,11 @@
       },
       {
         "source": "npm:@joshwooding/vite-plugin-react-docgen-typescript",
+        "target": "npm:typescript",
+        "type": "static"
+      },
+      {
+        "source": "npm:@joshwooding/vite-plugin-react-docgen-typescript",
         "target": "npm:typescript@5.9.2",
         "type": "static"
       }
@@ -15874,6 +16494,58 @@
         "type": "static"
       }
     ],
+    "npm:@radix-ui/react-alert-dialog": [
+      {
+        "source": "npm:@radix-ui/react-alert-dialog",
+        "target": "npm:@radix-ui/primitive",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-alert-dialog",
+        "target": "npm:@radix-ui/react-compose-refs",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-alert-dialog",
+        "target": "npm:@radix-ui/react-context",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-alert-dialog",
+        "target": "npm:@radix-ui/react-dialog",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-alert-dialog",
+        "target": "npm:@radix-ui/react-primitive",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-alert-dialog",
+        "target": "npm:@radix-ui/react-slot",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-alert-dialog",
+        "target": "npm:react",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-alert-dialog",
+        "target": "npm:react-dom",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-alert-dialog",
+        "target": "npm:@types/react",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-alert-dialog",
+        "target": "npm:@types/react-dom",
+        "type": "static"
+      }
+    ],
     "npm:@radix-ui/react-arrow": [
       {
         "source": "npm:@radix-ui/react-arrow",
@@ -15897,6 +16569,33 @@
       },
       {
         "source": "npm:@radix-ui/react-arrow",
+        "target": "npm:@types/react-dom",
+        "type": "static"
+      }
+    ],
+    "npm:@radix-ui/react-aspect-ratio": [
+      {
+        "source": "npm:@radix-ui/react-aspect-ratio",
+        "target": "npm:@radix-ui/react-primitive",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-aspect-ratio",
+        "target": "npm:react",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-aspect-ratio",
+        "target": "npm:react-dom",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-aspect-ratio",
+        "target": "npm:@types/react",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-aspect-ratio",
         "target": "npm:@types/react-dom",
         "type": "static"
       }
@@ -16123,6 +16822,58 @@
       {
         "source": "npm:@radix-ui/react-compose-refs",
         "target": "npm:@types/react",
+        "type": "static"
+      }
+    ],
+    "npm:@radix-ui/react-context-menu": [
+      {
+        "source": "npm:@radix-ui/react-context-menu",
+        "target": "npm:@radix-ui/primitive",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-context-menu",
+        "target": "npm:@radix-ui/react-context",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-context-menu",
+        "target": "npm:@radix-ui/react-menu",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-context-menu",
+        "target": "npm:@radix-ui/react-primitive",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-context-menu",
+        "target": "npm:@radix-ui/react-use-callback-ref",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-context-menu",
+        "target": "npm:@radix-ui/react-use-controllable-state",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-context-menu",
+        "target": "npm:react",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-context-menu",
+        "target": "npm:react-dom",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-context-menu",
+        "target": "npm:@types/react",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-context-menu",
+        "target": "npm:@types/react-dom",
         "type": "static"
       }
     ],
@@ -17647,6 +18398,88 @@
         "type": "static"
       }
     ],
+    "npm:@radix-ui/react-toast": [
+      {
+        "source": "npm:@radix-ui/react-toast",
+        "target": "npm:@radix-ui/primitive",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-toast",
+        "target": "npm:@radix-ui/react-collection",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-toast",
+        "target": "npm:@radix-ui/react-compose-refs",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-toast",
+        "target": "npm:@radix-ui/react-context",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-toast",
+        "target": "npm:@radix-ui/react-dismissable-layer",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-toast",
+        "target": "npm:@radix-ui/react-portal",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-toast",
+        "target": "npm:@radix-ui/react-presence",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-toast",
+        "target": "npm:@radix-ui/react-primitive",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-toast",
+        "target": "npm:@radix-ui/react-use-callback-ref",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-toast",
+        "target": "npm:@radix-ui/react-use-controllable-state",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-toast",
+        "target": "npm:@radix-ui/react-use-layout-effect",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-toast",
+        "target": "npm:@radix-ui/react-visually-hidden",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-toast",
+        "target": "npm:react",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-toast",
+        "target": "npm:react-dom",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-toast",
+        "target": "npm:@types/react",
+        "type": "static"
+      },
+      {
+        "source": "npm:@radix-ui/react-toast",
+        "target": "npm:@types/react-dom",
+        "type": "static"
+      }
+    ],
     "npm:@radix-ui/react-toggle-group": [
       {
         "source": "npm:@radix-ui/react-toggle-group",
@@ -18211,6 +19044,11 @@
       {
         "source": "npm:@storybook/react",
         "target": "npm:storybook",
+        "type": "static"
+      },
+      {
+        "source": "npm:@storybook/react",
+        "target": "npm:typescript",
         "type": "static"
       },
       {
@@ -26676,6 +27514,11 @@
     "npm:react-docgen-typescript": [
       {
         "source": "npm:react-docgen-typescript",
+        "target": "npm:typescript",
+        "type": "static"
+      },
+      {
+        "source": "npm:react-docgen-typescript",
         "target": "npm:typescript@5.9.2",
         "type": "static"
       }
@@ -29546,5 +30389,5 @@
   },
   "version": "6.0",
   "errors": [],
-  "computedAt": 1754353288280
+  "computedAt": 1754361562043
 }

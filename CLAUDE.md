@@ -121,3 +121,7 @@ pnpm run type-check
 - use @ aliases whenever you can
 - **Imports**: Whenever available, use destructured imports like { Banana } from "banana". Avoid defaults and * 
 - Always export each export individually and avoid using defaults. so use "export function Banana = ..." instead of export default Banana; or adding export at the end of the file,dont do that
+
+## 💡 Project Principles
+
+- NO TASK IS FINISHED UNTIL ALL ERRORS HAVE BEEN RESOLVED
