@@ -98,13 +98,21 @@ content/
 # Ensure Node.js v24.5.0+
 nvm use stable
 
-# Start development server
+# Frontend development
 pnpm run dev         # http://localhost:5174
 
-# Build for production
-pnpm run build
+# Backend services (NX-powered)
+pnpm services:dev    # Start all backend services with orchestration
+pnpm services:stop   # Stop all backend services  
+pnpm services:health # Check health of all services
+pnpm services:build  # Build all backend services
 
-# Type checking and linting
+# Raw NX commands (no orchestration)
+pnpm services:dev:raw    # Start services in parallel (no startup order)
+pnpm services:health:raw # Run NX health targets directly
+
+# Build and quality checks
+pnpm run build
 pnpm run lint
 pnpm run type-check
 ```
