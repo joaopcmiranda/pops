@@ -24,3 +24,6 @@ export * from './switch'
 export * from './toaster'
 export * from './toggle'
 export * from './tooltip'
+
+// Editor components
+export * from './editor'
