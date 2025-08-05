@@ -1,5 +1,5 @@
 {
-  "name": "@trip-organizer/web",
+  "name": "@pops/travel",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -60,8 +60,8 @@
     "@tiptap/extension-typography": "^3.0.9",
     "@tiptap/react": "^3.0.9",
     "@tiptap/starter-kit": "^3.0.9",
-    "@trip-organizer/shared": "workspace:*",
-    "@trip-organizer/types": "workspace:*",
+    "@pops/shared": "workspace:*",
+    "@pops/types": "workspace:*",
     "@trpc/client": "^11.4.3",
     "@trpc/next": "^11.4.3",
     "@trpc/react-query": "^11.4.3",

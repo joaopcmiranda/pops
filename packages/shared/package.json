@@ -1,5 +1,5 @@
 {
-  "name": "@trip-organizer/shared",
+  "name": "@pops/shared",
   "version": "1.0.0",
   "private": true,
   "main": "./dist/index.js",
@@ -13,7 +13,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@trip-organizer/types": "workspace:*",
+    "@pops/types": "workspace:*",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.3.1"
   },

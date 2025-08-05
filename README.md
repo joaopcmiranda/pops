@@ -110,8 +110,8 @@ A comprehensive trip planning application built with React, TypeScript, and Vite
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/joaopcmiranda/trip-organizer.git
-cd trip-organizer
+git clone https://github.com/joaopcmiranda/pops.git
+cd pops
 ```
 
 2. Use the correct Node.js version:
@@ -138,14 +138,14 @@ pnpm run dev
 # Terminal 1: API Server
 pnpm nx run api:dev
 
-# Terminal 2: Web App
-pnpm nx run web:dev
+# Terminal 2: Travel App
+pnpm nx run travel:dev
 ```
 
 6. Open the application:
    - **Frontend**: [http://localhost:5174](http://localhost:5174)
    - **API Health**: [http://localhost:3001/health](http://localhost:3001/health)
-   - **Storybook**: [http://localhost:6006](http://localhost:6006) (run `pnpm run storybook` in apps/web)
+   - **Storybook**: [http://localhost:6006](http://localhost:6006) (run `pnpm run storybook` in apps/travel)
 
 ## Content Management
 
@@ -173,16 +173,16 @@ Simply add markdown files to these directories and the app will automatically lo
 - `pnpm run format:check` - Check code formatting
 - `pnpm run type-check` - Run TypeScript type checking
 - `pnpm nx run api:dev` - Start API server only
-- `pnpm nx run web:dev` - Start web app only
-- `pnpm run storybook` - Start Storybook for component development (from apps/web)
-- `pnpm run build-storybook` - Build Storybook for deployment (from apps/web)
+- `pnpm nx run travel:dev` - Start travel app only
+- `pnpm run storybook` - Start Storybook for component development (from apps/travel)
+- `pnpm run build-storybook` - Build Storybook for deployment (from apps/travel)
 - `pnpm nx run api:db:generate` - Generate Prisma client
 - `pnpm nx run api:db:push` - Push database schema changes
 
 ### Project Structure
 
 ```
-trip-organizer/
+pops/
 ├── apps/
 │   ├── api/                    # Backend API server
 │   │   ├── src/
@@ -192,7 +192,7 @@ trip-organizer/
 │   │   │   └── index.ts        # Express server entry point
 │   │   └── prisma/
 │   │       └── schema.prisma   # Database schema
-│   └── web/                    # Frontend React app
+│   └── travel/                    # Frontend React app
 │       ├── src/
 │       │   ├── components/
 │       │   │   ├── ui/         # shadcn/ui components library

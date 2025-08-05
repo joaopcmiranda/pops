@@ -51,15 +51,15 @@ importers:
 
   apps/api:
     dependencies:
+      '@pops/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      '@pops/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@prisma/client':
         specifier: ^5.17.0
         version: 5.22.0(prisma@5.22.0)
-      '@trip-organizer/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
-      '@trip-organizer/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       '@trpc/server':
         specifier: ^10.45.2
         version: 10.45.2
@@ -170,11 +170,17 @@ importers:
         specifier: ^8.35.1
         version: 8.38.0(eslint@9.32.0(jiti@2.5.1))(typescript@5.8.3)
 
-  apps/web:
+  apps/travel:
     dependencies:
       '@hookform/resolvers':
         specifier: ^5.2.1
         version: 5.2.1(react-hook-form@7.62.0(react@19.1.1))
+      '@pops/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      '@pops/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@radix-ui/react-accordion':
         specifier: ^1.2.11
         version: 1.2.11(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -304,12 +310,6 @@ importers:
       '@tiptap/starter-kit':
         specifier: ^3.0.9
         version: 3.0.9
-      '@trip-organizer/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
-      '@trip-organizer/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       '@trpc/client':
         specifier: ^11.4.3
         version: 11.4.3(@trpc/server@11.4.3(typescript@5.9.2))(typescript@5.9.2)
@@ -455,7 +455,7 @@ importers:
 
   packages/shared:
     dependencies:
-      '@trip-organizer/types':
+      '@pops/types':
         specifier: workspace:*
         version: link:../types
       clsx:

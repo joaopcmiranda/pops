@@ -1,6 +1,6 @@
 # Deployment Guide
 
-This document describes how to set up automated deployment for the Brazil Trip Organizer to your Debian server.
+This document describes how to set up automated deployment for the Pops app to your Debian server.
 
 ## Prerequisites
 
@@ -27,12 +27,12 @@ sudo systemctl enable nginx
 
 ```bash
 # Create application directory
-sudo mkdir -p /var/www/brazil-trip-organizer
-sudo mkdir -p /var/backups/brazil-trip-organizer
+sudo mkdir -p /var/www/pops
+sudo mkdir -p /var/backups/pops
 
 # Set proper ownership
-sudo chown -R www-data:www-data /var/www/brazil-trip-organizer
-sudo chown -R www-data:www-data /var/backups/brazil-trip-organizer
+sudo chown -R www-data:www-data /var/www/pops
+sudo chown -R www-data:www-data /var/backups/pops
 ```
 
 ### 3. Nginx Configuration
@@ -41,10 +41,10 @@ Copy the provided `nginx.conf` to your server:
 
 ```bash
 # Copy the nginx configuration
-sudo cp nginx.conf /etc/nginx/sites-available/brazil-trip-organizer
+sudo cp nginx.conf /etc/nginx/sites-available/pops
 
 # Enable the site
-sudo ln -s /etc/nginx/sites-available/brazil-trip-organizer /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/pops /etc/nginx/sites-enabled/
 
 # Remove default site (optional)
 sudo rm -f /etc/nginx/sites-enabled/default
@@ -138,8 +138,8 @@ scp deployment.tar.gz your-username@capivara.local:/tmp/
 
 # Deploy on server
 ssh your-username@capivara.local << 'EOF'
-sudo rm -rf /var/www/brazil-trip-organizer/*
-cd /var/www/brazil-trip-organizer
+sudo rm -rf /var/www/pops/*
+cd /var/www/pops
 sudo tar -xzf /tmp/deployment.tar.gz
 sudo chown -R www-data:www-data .
 sudo chmod -R 755 .
@@ -160,8 +160,8 @@ curl -I http://capivara.local
 sudo systemctl status nginx
 
 # View Nginx logs
-sudo tail -f /var/log/nginx/brazil-trip-organizer.access.log
-sudo tail -f /var/log/nginx/brazil-trip-organizer.error.log
+sudo tail -f /var/log/nginx/pops.access.log
+sudo tail -f /var/log/nginx/pops.error.log
 ```
 
 ### Rollback
@@ -170,12 +170,12 @@ If deployment fails, you can rollback:
 
 ```bash
 # List available backups
-sudo ls -la /var/backups/brazil-trip-organizer/
+sudo ls -la /var/backups/pops/
 
 # Rollback to previous version
-sudo rm -rf /var/www/brazil-trip-organizer/*
-cd /var/www/brazil-trip-organizer
-sudo tar -xzf /var/backups/brazil-trip-organizer/backup_YYYYMMDD_HHMMSS.tar.gz
+sudo rm -rf /var/www/pops/*
+cd /var/www/pops
+sudo tar -xzf /var/backups/pops/backup_YYYYMMDD_HHMMSS.tar.gz
 sudo chown -R www-data:www-data .
 sudo systemctl reload nginx
 ```

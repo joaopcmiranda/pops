@@ -88,7 +88,7 @@ jobs:
           set -e
           
           # Configuration
-          APP_NAME="brazil-trip-organizer"
+          APP_NAME="pops"
           DEPLOY_DIR="/var/www/$APP_NAME"
           BACKUP_DIR="/var/backups/$APP_NAME"
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)

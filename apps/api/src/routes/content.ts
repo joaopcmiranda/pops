@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { router, protectedProcedure } from '@/config/trpc'
-import { slugify } from '@trip-organizer/shared'
+import { slugify } from '@pops/shared'
 import type { Prisma } from '@prisma/client'
 
 // Type interfaces for better type safety

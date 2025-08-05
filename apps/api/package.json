@@ -1,5 +1,5 @@
 {
-  "name": "@trip-organizer/api",
+  "name": "@pops/api",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -26,8 +26,8 @@
   },
   "dependencies": {
     "@prisma/client": "^5.17.0",
-    "@trip-organizer/shared": "workspace:*",
-    "@trip-organizer/types": "workspace:*",
+    "@pops/shared": "workspace:*",
+    "@pops/types": "workspace:*",
     "@trpc/server": "^10.45.2",
     "bcrypt": "^5.1.1",
     "compression": "^1.7.4",

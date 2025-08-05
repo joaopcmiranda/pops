@@ -20,7 +20,7 @@ COPY . .
 RUN cd apps/api && npx prisma generate
 
 # Build the application
-RUN npm run build --filter="@trip-organizer/api"
+RUN npm run build --filter="@pops/api"
 
 # Production stage
 FROM node:20-alpine AS production
