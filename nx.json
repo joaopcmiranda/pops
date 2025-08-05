@@ -36,6 +36,16 @@
     "type-check": {
       "dependsOn": ["^build"],
       "cache": true
+    },
+    "health": {
+      "cache": false
+    },
+    "services:dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "services:health": {
+      "cache": false
     }
   },
   "generators": {
