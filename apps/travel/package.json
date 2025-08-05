@@ -63,6 +63,8 @@
     "@pops/shared": "workspace:*",
     "@pops/types": "workspace:*",
     "@pops/ui": "workspace:*",
+    "@pops/shared-contracts": "workspace:*",
+    "@pops/api-client": "workspace:*",
     "@trpc/client": "^11.4.3",
     "@trpc/next": "^11.4.3",
     "@trpc/react-query": "^11.4.3",

@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState } from 'react'
-import { trpc } from '@/utils/trpc'
+import { trpc, createTRPCQueryClient } from '@/utils/trpc'
 
 // Type for error with data property
 interface ErrorWithData {
@@ -30,8 +30,10 @@ export function TRPCProvider({ children }: TRPCProviderProps) {
       })
   )
 
+  const [trpcClient] = useState(() => createTRPCQueryClient())
+
   return (
-    <trpc.Provider>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </trpc.Provider>
   )
