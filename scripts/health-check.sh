@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# POps Backend Health Check Script
-# This script checks the health of all services and provides detailed status
+# POps Backend Health Check Script (Turbo Version)
+# This script checks the health of all services using Turbo
 
-echo "🏥 POps Backend Health Check"
-echo "============================"
+echo "🏥 POps Backend Health Check (Turbo Version)"
+echo "============================================"
 
 # Colors for output
 RED='\033[0;31m'
@@ -54,24 +54,26 @@ health_count=0
 api_count=0
 
 # Check service health
-check_service "http://localhost:3003/health" "Trip Service" && ((health_count++))
-check_service "http://localhost:3001/health" "API Gateway" && ((health_count++))
+check_service "http://localhost:8030/health" "Trip Service" && ((health_count++))
+check_service "http://localhost:8031/health" "Itinerary Service" && ((health_count++))
+check_service "http://localhost:8011/health" "User Service" && ((health_count++))
+check_service "http://localhost:8000/health" "API Gateway" && ((health_count++))
 
 echo -e "\n${YELLOW}🔌 API Tests:${NC}"
 echo "============="
 
 # Test API endpoints
-test_api "http://localhost:3003/trips" "Trip Service" && ((api_count++))
-test_api "http://localhost:3001/trpc/trip.list" "tRPC Gateway" && ((api_count++))
+test_api "http://localhost:8030/trips" "Trip Service" && ((api_count++))
+test_api "http://localhost:8000/trpc/trip.list" "tRPC Gateway" && ((api_count++))
 
 echo -e "\n${YELLOW}📊 Overall Status:${NC}"
 echo "=================="
 
-if [ $health_count -eq 2 ] && [ $api_count -eq 2 ]; then
-    echo -e "${GREEN}🎉 All systems operational (2/2 services, 2/2 APIs)${NC}"
+if [ $health_count -eq 4 ] && [ $api_count -eq 2 ]; then
+    echo -e "${GREEN}🎉 All systems operational (4/4 services, 2/2 APIs)${NC}"
     exit_code=0
 elif [ $health_count -gt 0 ]; then
-    echo -e "${YELLOW}⚠️  Partial outage ($health_count/2 services, $api_count/2 APIs)${NC}"
+    echo -e "${YELLOW}⚠️  Partial outage ($health_count/4 services, $api_count/2 APIs)${NC}"
     exit_code=1
 else
     echo -e "${RED}❌ All systems down${NC}"

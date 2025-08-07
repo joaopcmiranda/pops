@@ -6,6 +6,14 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  server: {
+    port: 4003,
+    strictPort: true,
+  },
+  preview: {
+    port: 4003,
+    strictPort: true,
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

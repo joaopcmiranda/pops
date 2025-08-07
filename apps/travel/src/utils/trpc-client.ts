@@ -9,7 +9,7 @@ export const trpc = createTRPCReact<AppRouter>()
 export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
-      url: 'http://localhost:3001/trpc', // API Gateway URL
+      url: 'http://localhost:8000/trpc', // API Gateway URL
       headers: {
         'x-user-id': 'user-demo-1', // TODO: Get from auth context
       },
@@ -22,7 +22,7 @@ export const createTRPCQueryClient = () => {
   return trpc.createClient({
     links: [
       httpBatchLink({
-        url: 'http://localhost:3001/trpc', // API Gateway URL
+        url: 'http://localhost:8000/trpc', // API Gateway URL
         headers: {
           'x-user-id': 'user-demo-1', // TODO: Get from auth context
         },
