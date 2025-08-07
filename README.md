@@ -1,305 +1,370 @@
 # 🚀 POps - Personal Operations Suite
 
-**POps** (Personal Operations) is a comprehensive suite of applications designed to streamline personal life management. Built with modern web technologies including React, TypeScript, and a robust monorepo architecture.
+**POps** (Personal Operations) is a comprehensive suite of applications designed to streamline personal life management. Built with modern web technologies including React, TypeScript, and a robust monorepo architecture using Turborepo.
 
-## 🎯 Current App: Travel Organizer ✈️
+> **Latest Update**: Recently migrated from NX to Turborepo for simplified build orchestration while maintaining all functionality and improving hot reload performance.
 
-**Live at**: [travel.mymops.io](https://travel.mymops.io)
+## 📚 Table of Contents
 
-The first POps application - a comprehensive trip planning platform to organize multiple trips and adventures around the world!
+- [Quick Start](#-quick-start)
+- [Current Status](#-current-status)
+- [Architecture](#-architecture)
+- [Port Strategy](#-port-strategy)
+- [Development](#-development)
+- [Roadmap](#-roadmap)
+- [Known Issues](#-known-issues)
 
-## ✅ Current Features
+---
 
-### 🗂️ **Multi-Trip Management System**
-
-- **Trip Selector Interface** - Beautiful trip selection with empty states and creation flow
-- **Trip Context Management** - Global state management with localStorage persistence
-- **New Trip Creation** - Professional form with validation for title, destination, dates, and type
-- **Trip-Aware Navigation** - Header shows current trip with switching capability
-- **Database Integration** - Persistent trip storage with user management
-- **Trip Management** - Create, read, update, and delete trips with full CRUD operations
-
-### 🔧 **Full-Stack Architecture**
-
-- **tRPC Backend API** - Type-safe API with Express.js and Prisma ORM
-- **Frontend-Backend Connection** - React Query integration with authentication
-- **Database Schema** - Trip, User, and Collaborator models with SQLite
-- **Development User** - Mock authentication for seamless development experience
-- **Health Monitoring** - Connection status indicators and error handling
-- **API Endpoints** - Complete trip, user, itinerary, and content management endpoints
-
-### 📝 **Rich Content Editing System** ✨
-
-- **TipTap WYSIWYG Editor** - Professional rich text editing with markdown support
-- **Auto-save Functionality** - Automatic saving after user stops typing (configurable delay)
-- **Content-Type-Specific Toolbars** - Different tools for itinerary, budget, destinations, etc.
-- **Multiple Editor Variants** - Full editor, inline editor, and modal editor components
-- **Character & Word Counting** - Real-time text statistics and content limits
-- **Advanced Features** - Tables, task lists, links, images, headings, and rich formatting
-- **Provider System** - Comprehensive state management with dirty tracking and error handling
-- **Keyboard Shortcuts** - Ctrl+S manual save, formatting shortcuts, and accessibility
-- **Shared UI Library** - Editor components migrated to packages/ui for reusability across apps
-
-### 🎨 **Modern UI & Developer Experience** ✨
-
-- **Professional Design** - shadcn/ui components with consistent styling
-- **Loading States** - Skeleton components and connection indicators
-- **Form Validation** - Client-side validation with user feedback
-- **Error Boundaries** - Comprehensive error handling throughout the app
-- **TypeScript** - Full type safety with strict ESLint rules (no `any` types!)
-- **Code Quality** - ESLint + Prettier + TypeScript checks all passing
-- **Shared UI Library** - Complete packages/ui with reusable components (Button, Card, Dialog, Form, etc.)
-- **Comprehensive Storybook** - All UI components documented with variants, controls, and examples
-- **Responsive Layout** - Sidebar navigation with collapsible design
-- **Monorepo Architecture** - Nx workspace with optimized build system and shared packages
-
-## 🚧 In Progress & Todo
-
-### 🔧 **Immediate Priorities**
-
-- [ ] **Mobile Responsive Design** - Optimize for phones/tablets (sidebar, cards, forms)
-- [ ] **Budget Calculator** - Add expense tracking and budget management
-- [ ] **Calendar Integration** - Connect calendar view with actual trip dates
-- [ ] **Content Routing** - Connect editor to category pages and content display
-- [ ] **Wishlist Feature** - Allow users to add places, activities, food, experiences to a wishlist
-
-### 🚀 **Backend Enhancements**
-
-- [ ] **Trip Sharing** - Allow sharing trips with other users (collaborators)
-- [ ] **Real Authentication** - Replace mock user with proper JWT authentication
-- [ ] **Multi-user Support** - User accounts, trip sharing, collaboration features
-- [ ] **PostgreSQL Migration** - Move from SQLite to PostgreSQL for production
-- [ ] **File Upload** - Support for images and documents in trips
-- [ ] **API Rate Limiting** - Implement proper rate limiting for production
-- [ ] **Deployment Setup** - Docker, CI/CD, hosting (Vercel + Railway/Supabase)
-
-### 🎯 **Future Enhancements**
-
-- [ ] **AI Trip Assistant** - AI-powered suggestions for activities and itineraries
-- [ ] **Interactive Maps** - Map integration for location visualization
-- [ ] **Export to PDF** - Generate printable trip documents
-- [ ] **Offline Support** - Work without internet connection via service workers
-- [ ] **Real-time Collaboration** - Live updates when multiple users edit
-- [ ] **Trip Templates** - Pre-built templates for popular destinations
-- [ ] **Weather Integration** - Show weather forecasts for trip dates
-- [ ] **Currency Converter** - Real-time currency conversion for budgets
-- [ ] **Travel Checklist** - Customizable packing and preparation lists
-- [ ] **Trip Sharing** - Share read-only trip views with friends/family
-
-## 🌟 POps App Suite Roadmap
-
-POps is designed as a comprehensive personal operations platform. The travel organizer is just the beginning!
-
-### 🚀 **Planned Applications**
-
-#### 💰 **Financial Management Suite**
-- **💳 Budget & Money Management** - Personal finance tracking, budgeting, expense categorization
-- **✈️ Trip Money Management** - Integrated with travel app for trip-specific budgeting and expense tracking
-- **🧾 Cost Splitting** - Split expenses for trips, events, home expenses, and group activities with automated calculations
-
-#### 🎉 **Lifestyle & Organization**
-- **🎊 Event/Party Manager** - Plan and organize events, parties, gatherings with guest management and coordination
-- **📄 Document Manager** - Secure document storage, organization, and sharing for important personal documents
-- **🍳 Recipe Manager** - Recipe collection, meal planning, grocery list generation, and cooking schedule
-- **🏠 Home Inventory** - Track household items, warranties, maintenance schedules, and replacement planning
-
-#### 🔮 **Future Concepts**
-- **📚 Learning Tracker** - Course progress, skill development, certification tracking
-- **💪 Health & Fitness Hub** - Workout planning, nutrition tracking, health metrics dashboard
-- **📱 Digital Life Manager** - Subscription tracking, digital asset organization, online account management
-- **🌱 Habit Tracker** - Build and maintain positive habits with progress visualization
-- **📊 Personal Analytics** - Cross-app insights and life optimization recommendations
-
-### 🔗 **Integrated Ecosystem**
-All POps applications will share:
-- **Unified UI Library** - Consistent design language across all apps
-- **Cross-App Data Integration** - Trip budgets connect to money management, event costs to cost splitting
-- **Single Sign-On** - One account for all POps applications
-- **Shared Calendar** - Events, trips, and schedules in one unified timeline
-
-## Tech Stack
-
-> **📦 Package Manager Migration**: Successfully migrated from Yarn to pnpm for faster installs, better dependency management, and reduced disk usage.
-> 
-> **🔧 Service Management Migration**: Migrated bash scripts to NX-powered service orchestration for better task management, caching, and developer experience while maintaining all existing functionality.
-
-- **Architecture**: Nx monorepo with pnpm workspaces (designed for multi-app suite)
-- **Frontend**: React 19 with TypeScript (apps/travel - first POps app)
-- **Backend**: tRPC with Express.js and Prisma ORM (apps/api - shared backend for all POps apps)
-- **Database**: SQLite with Prisma client generation
-- **Rich Text Editor**: TipTap with extensions (CharacterCount, Focus, Image, Table, TaskList, etc.)
-- **Shared Packages**: Complete UI library (packages/ui), types (packages/types), utilities (packages/shared), database models (packages/database)
-- **Build Tools**: Vite 7 (frontend), tsx (backend), tsup (packages)
-- **Styling**: Tailwind CSS v4
-- **UI Components**: shadcn/ui
-- **Component Documentation**: Storybook with comprehensive stories
-- **Icons**: Lucide React
-- **State Management**: React Query + tRPC + Context API
-- **Code Quality**: ESLint + Prettier + Husky
-- **Node Version**: v24.5.0 (required for Vite 7 compatibility)
-
-## Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
 
 - **Node.js v24.5.0+** (required for Vite 7 compatibility)
-- **pnpm v10.14.0+** package manager (fast, efficient, strict dependency management)
+- **pnpm v10.14.0+** package manager
 - **nvm** (recommended for Node version management)
 
 ### Installation
 
-1. Clone the repository:
-
 ```bash
+# Clone repository
 git clone https://github.com/joaopcmiranda/pops.git
 cd pops
-```
 
-2. Use the correct Node.js version:
-
-```bash
+# Use correct Node version
 nvm use 24.5.0
-```
 
-3. Install dependencies:
-
-```bash
+# Install dependencies
 pnpm install
+
+# Start everything (frontend + backend)
+pnpm dev
+
+# Or start services separately
+pnpm services:dev    # Backend services only
+pnpm dev:travel      # Travel app frontend only
 ```
 
-4. Start all development servers:
+### Access Points
 
-```bash
-# Frontend + Backend (full stack)
-pnpm run dev
+- **Travel App**: [http://localhost:4003](http://localhost:4003)
+- **API Gateway**: [http://localhost:8000/health](http://localhost:8000/health)
+- **Production**: [travel.mymops.io](https://travel.mymops.io)
+- **Storybook**: [http://localhost:6006](http://localhost:6006) (run `pnpm storybook`)
 
-# Backend services only (NX-powered with orchestration)
-pnpm services:dev
-```
+---
 
-5. **Alternative**: Run services individually:
+## 🎯 Current Status
 
-```bash
-# Terminal 1: Backend services (orchestrated startup with health checks)
-pnpm services:dev
+### ✅ Travel Organizer (First POps App)
 
-# Terminal 2: Travel App frontend
-pnpm nx run travel:dev
-```
+The travel organizer is live and functional with the following features:
 
-6. Open the application:
-   - **Travel App**: [http://localhost:5174](http://localhost:5174)
-   - **Production**: [travel.mypops.io](https://travel.mypops.io)
-   - **API Health**: [http://localhost:3001/health](http://localhost:3001/health)
-   - **Storybook**: [http://localhost:6006](http://localhost:6006) (run `pnpm run storybook` in apps/travel)
+#### Core Features
+- **Multi-Trip Management** - Create, manage, and switch between multiple trips
+- **Rich Content Editor** - TipTap WYSIWYG editor with markdown support
+- **Auto-save** - Automatic content saving with configurable delays
+- **Trip Context** - Global state management with localStorage persistence
+- **Database Integration** - SQLite with Drizzle ORM
 
-## Content Management
+#### Technical Implementation
+- **Frontend**: React 19 + TypeScript + Vite 7
+- **Backend**: Fastify + tRPC + Drizzle ORM
+- **UI Library**: shadcn/ui components + Tailwind CSS v4
+- **State Management**: React Query + Context API
+- **Documentation**: Comprehensive Storybook stories
 
-The app uses a markdown-based content system located in the `/content` directory:
+### 🚧 In Progress
 
-- `destinations/` - Information about places to visit
-- `itinerary/` - Daily schedules and trip timeline
-- `transport/` - Flight bookings, train tickets, etc.
-- `accommodation/` - Hotel bookings and lodging details
-- `activities/` - Tours, experiences, restaurants
-- `budget/` - Cost breakdowns and expense tracking
-- `documents/` - Travel documents and important info
+- [ ] Mobile responsive design optimization
+- [ ] Budget calculator integration
+- [ ] Calendar view with trip dates
+- [ ] Content routing for category pages
+- [ ] Real JWT authentication (currently mock)
+- [ ] PostgreSQL migration for production
 
-Simply add markdown files to these directories and the app will automatically load and display them.
+---
 
-## Development
+## 🏗 Architecture
 
-### Available Scripts
+### Tech Stack
 
-#### 🏃‍♂️ **Development & Build**
-- `pnpm run dev` - Start all development servers (Nx run-many)
-- `pnpm run build` - Build all apps and packages
-- `pnpm nx run travel:dev` - Start travel app frontend only
-
-#### 🔧 **Backend Services (NX-Powered)**
-- `pnpm services:dev` - Start all backend services with orchestration and health checks
-- `pnpm services:stop` - Stop all backend services gracefully
-- `pnpm services:health` - Check health status of all services
-- `pnpm services:build` - Build all backend services
-- `pnpm services:start` - Start built services in production mode
-- `pnpm services:dev:raw` - Start services in parallel (no orchestration)
-- `pnpm services:health:raw` - Run NX health targets directly
-
-#### 🧹 **Code Quality**
-- `pnpm run lint` - Run ESLint across all projects
-- `pnpm run lint:fix` - Auto-fix ESLint issues
-- `pnpm run format` - Format code with Prettier  
-- `pnpm run format:check` - Check code formatting
-- `pnpm run type-check` - Run TypeScript type checking
-
-#### 📚 **Development Tools**
-- `pnpm run storybook` - Start Storybook for component development (from apps/travel)
-- `pnpm run build-storybook` - Build Storybook for deployment (from apps/travel)
-
-#### 🗄️ **Database (Legacy API)**
-- `pnpm nx run api:db:generate` - Generate Prisma client
-- `pnpm nx run api:db:push` - Push database schema changes
+- **Monorepo**: Turborepo with pnpm workspaces
+- **Frontend**: React 19, TypeScript, Vite 7, Tailwind CSS v4
+- **Backend**: Fastify, tRPC, Drizzle ORM (SQLite)
+- **UI Components**: shadcn/ui with Radix UI
+- **Database**: SQLite (dev), PostgreSQL (planned for prod)
+- **Code Quality**: ESLint, Prettier, Husky, TypeScript strict mode
 
 ### Project Structure
 
 ```
-pops/ (POps Personal Operations Suite)
+pops/
 ├── apps/
-│   ├── api/                    # Shared backend API for all POps apps
-│   │   ├── src/
-│   │   │   ├── config/         # Database, env, tRPC configuration
-│   │   │   ├── middleware/     # Auth, error handling, rate limiting
-│   │   │   ├── routes/         # tRPC routers (trip, user, content, future: budget, events)
-│   │   │   └── index.ts        # Express server entry point
-│   │   └── prisma/
-│   │       └── schema.prisma   # Database schema (extensible for all POps apps)
-│   └── travel/                 # Travel Organizer (first POps app) ✈️
+│   └── travel/                 # Travel organizer frontend app
 │       ├── src/
-│       │   ├── components/     # Travel-specific components (Header, Sidebar, etc.)
-│       │   ├── contexts/       # React contexts (TripContext)
-│       │   ├── hooks/          # Custom React hooks
-│       │   ├── services/       # API services (tRPC integration)
-│       │   └── types/          # TypeScript type definitions
-│       └── .storybook/         # Storybook configuration
-├── packages/                   # Shared across all POps applications
-│   ├── ui/                     # Unified UI component library ✨
-│   │   ├── src/components/     # All shadcn/ui components with stories
-│   │   │   ├── editor/         # TipTap content editing components
-│   │   │   ├── button/         # Button component with variants
-│   │   │   ├── card/           # Card component
-│   │   │   ├── dialog/         # Modal dialog components
-│   │   │   └── ...             # 20+ other UI components
-│   │   └── src/typography/     # Typography system
-│   ├── database/               # Database models and utilities (shared schemas)
-│   ├── shared/                 # Shared utilities and helpers
-│   └── types/                  # Shared TypeScript types
-├── content/                    # Travel app content files
-│   ├── destinations/           # Travel destination guides
-│   ├── itinerary/             # Daily schedules
-│   └── ...                    # Other content categories
-└── nx.json                    # Nx workspace configuration
+│       │   ├── components/     # App-specific components
+│       │   ├── contexts/       # React contexts
+│       │   ├── hooks/          # Custom hooks
+│       │   └── utils/          # Utilities
+│       └── vite.config.ts      # Vite configuration
+│
+├── services/                   # Backend microservices
+│   ├── api-gateway/           # Main API orchestrator (port 8000)
+│   ├── trip-service/          # Trip management (port 8030)
+│   ├── itinerary-service/     # Itinerary management (port 8031)
+│   └── user-service/          # User management (port 8011)
+│
+├── packages/                   # Shared packages
+│   ├── ui/                    # Shared UI component library
+│   ├── shared-contracts/      # Shared TypeScript contracts
+│   ├── api-client/           # tRPC client configuration
+│   ├── shared/               # Shared utilities
+│   └── types/                # Shared TypeScript types
+│
+├── turbo.json                 # Turborepo configuration
+└── pnpm-workspace.yaml        # pnpm workspace configuration
 ```
+
+---
+
+## 🔌 Port Strategy
+
+POps uses a systematic port allocation strategy for scalable development:
+
+### Port Ranges
+- **Frontend Applications**: `4000-4099`
+- **Backend Services**: `8000-8099`
+
+### Current Active Ports
+
+#### Frontend (4000s)
+| Port | Application | Status |
+|------|-------------|--------|
+| **4003** | Travel Organizer | ✅ Active |
+
+#### Backend (8000s)
+| Port | Service | Status |
+|------|---------|--------|
+| **8000** | API Gateway | ✅ Active |
+| **8011** | User Service | ✅ Active |
+| **8030** | Trip Service | ✅ Active |
+| **8031** | Itinerary Service | ✅ Active |
+
+### Future Port Allocations
+
+<details>
+<summary>View Complete Port Strategy</summary>
+
+#### Frontend Applications (4000-4099)
+- `4000` - POps Hub (main dashboard)
+- `4001` - Auth & Accounts
+- `4002` - Money Manager
+- `4004` - Event Manager
+- `4005` - Document Manager
+- `4006` - Recipe Manager
+- `4007` - Home Inventory
+- `4008` - Health & Fitness
+- `4009` - Admin Dashboard
+
+#### Backend Services (8000-8099)
+
+**Core Infrastructure (8000-8009)**
+- `8001` - Health Monitor
+- `8002` - Configuration Service
+- `8006` - Analytics
+- `8008` - Centralized Logging
+
+**Authentication (8010-8019)**
+- `8010` - Auth Service
+- `8011` - User Management
+- `8013` - Permissions (RBAC)
+
+**Financial Services (8020-8029)**
+- `8020` - Budget Service
+- `8021` - Expense Tracker
+- `8022` - Cost Splitter
+- `8023` - Currency Service
+
+**Travel Services (8030-8039)**
+- `8030` - Trip Management
+- `8031` - Itinerary Service
+- `8032` - Travel Budget
+- `8036` - Weather Service
+
+**Event Services (8040-8049)**
+- `8040` - Event Management
+- `8041` - Guest Management
+- `8042` - Calendar Service
+
+**Document Services (8050-8059)**
+- `8050` - Document Storage
+- `8051` - Document Indexing
+- `8054` - OCR Service
+
+**Shared Services (8080-8089)**
+- `8080` - Notification Service
+- `8081` - File Processing
+- `8084` - Email Service
+
+</details>
+
+---
+
+## 💻 Development
+
+### Available Commands
+
+#### Development
+```bash
+pnpm dev              # Start everything
+pnpm dev:travel       # Start travel app only
+pnpm dev:services     # Start all backend services
+pnpm dev:backend      # Start backend services
+pnpm dev:frontend     # Start frontend apps
+```
+
+#### Services Management
+```bash
+pnpm services:dev     # Start backend with orchestration
+pnpm services:stop    # Stop all backend services
+pnpm services:health  # Check service health
+pnpm services:build   # Build all services
+```
+
+#### Code Quality
+```bash
+pnpm lint            # Run ESLint
+pnpm lint:fix        # Fix ESLint issues
+pnpm format          # Format with Prettier
+pnpm format:check    # Check formatting
+pnpm type-check      # TypeScript checking
+pnpm check           # Run all checks
+```
+
+#### Storybook
+```bash
+pnpm storybook       # Start Storybook dev server
+pnpm build-storybook # Build Storybook for deployment
+```
+
+### Environment Setup
+
+Each service has its own `.env.example` file. Copy to `.env` and configure:
+
+```bash
+# Example for API Gateway
+cp services/api-gateway/.env.example services/api-gateway/.env
+```
+
+### Hot Reload
+
+The project uses Turborepo for intelligent hot reloading:
+- Changes in `packages/ui` → Automatic reload of apps using those components
+- Changes in shared packages → Services rebuild automatically
+- All services run with `tsx watch --clear-screen=false` for instant backend updates
+- Smart caching prevents unnecessary rebuilds
+
+---
+
+## 🌟 Roadmap
+
+### POps Application Suite
+
+POps is designed as a comprehensive personal operations platform with multiple integrated applications:
+
+#### Phase 1: Core Infrastructure ✅
+- [x] Monorepo setup with Turborepo (migrated from NX)
+- [x] Shared UI component library
+- [x] Travel Organizer MVP
+- [x] Microservices architecture with proper port allocation
+- [x] Hot reload cascade system
+
+#### Phase 2: Authentication & Multi-App (Current)
+- [ ] Real JWT authentication
+- [ ] User management system
+- [ ] POps Hub (main dashboard)
+- [ ] Cross-app navigation
+
+#### Phase 3: Financial Suite
+- [ ] Budget & Money Manager
+- [ ] Expense Tracker
+- [ ] Cost Splitting Calculator
+- [ ] Trip-specific budgeting
+
+#### Phase 4: Lifestyle Applications
+- [ ] Event/Party Manager
+- [ ] Document Manager
+- [ ] Recipe Manager
+- [ ] Home Inventory
+
+#### Phase 5: Advanced Features
+- [ ] AI-powered suggestions
+- [ ] Real-time collaboration
+- [ ] Mobile applications
+- [ ] Offline support
+
+### Travel Organizer Enhancements
+
+**Immediate Priorities**
+- Mobile responsive design
+- Budget calculator
+- Calendar integration
+- Content routing
+
+**Future Features**
+- AI trip assistant
+- Interactive maps
+- Weather integration
+- Export to PDF
+- Trip templates
+- Currency converter
+
+---
 
 ## 🚨 Known Issues
 
-1. **Category Pages** - Content display not connected to editor system yet
-2. **Node Version** - Must use Node v24.5.0+ for Vite 7 compatibility
-3. **Type Casting** - Compression middleware requires type casting due to version mismatch
-4. **API Type Errors** - Backend has unresolved Prisma type issues (doesn't affect frontend development)
+1. **Node Version** - Must use Node v24.5.0+ for Vite 7 compatibility
+2. **Content Routing** - Content display not connected to editor system yet
+3. **Mobile Responsive** - UI needs optimization for mobile devices
+4. **Authentication** - Currently using mock authentication for development
+
+---
 
 ## 🤖 Development Notes
 
-**For Claude Code Assistant:**
+### For Contributors
 
-- Always read this README and CLAUDE.md before starting work
-- Update the "In Progress & Todo" section when completing tasks
-- Move completed items from Todo to "Current Features"
-- Add new features discovered during development to the appropriate sections
-- Keep the project structure updated as new files are added
-- Update available scripts when new npm scripts are added
-- Run `pnpm run lint`, `pnpm run type-check`, and `pnpm run format:check` before committing
-- All code quality checks must pass before pushing
+- Read `CLAUDE.md` for AI assistant instructions
+- Follow the port strategy when adding services
+- Update this README when adding features
+- Ensure all checks pass before committing:
+  ```bash
+  pnpm check
+  ```
 
-## License
+### Content Management
+
+The travel app supports markdown-based content in `/content` (future feature):
+- `destinations/` - Travel destination guides
+- `itinerary/` - Daily schedules
+- `transport/` - Travel bookings
+- `accommodation/` - Lodging details
+- `activities/` - Tours and experiences
+- `budget/` - Cost tracking
+- `documents/` - Important documents
+
+*Note: Content routing is currently in development.*
+
+---
+
+## 📝 License
 
 Private repository for personal use.
+
+---
+
+## 🔗 Links
+
+- **Production**: [travel.mymops.io](https://travel.mymops.io)
+- **Repository**: [github.com/joaopcmiranda/pops](https://github.com/joaopcmiranda/pops)

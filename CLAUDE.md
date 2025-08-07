@@ -3,7 +3,7 @@
 ## 🚀 Current Status
 
 **Status**: ✅ Core UI complete, ready for feature development
-**Server**: Running on http://localhost:5174 (Node.js v24.5.0 required)
+**Server**: Running on http://localhost:4003 (Node.js v24.5.0 required)
 **Package Manager**: pnpm (migrated from Yarn for better performance)
 **Last Updated**: January 2025
 
