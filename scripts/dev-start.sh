@@ -57,7 +57,6 @@ echo -e "${YELLOW}🛑 Stopping existing services...${NC}"
 pkill -f "tsx.*trip-service" || true
 pkill -f "tsx.*itinerary-service" || true
 pkill -f "tsx.*user-service" || true
-pkill -f "tsx.*api-gateway" || true
 sleep 2
 
 # Check if ports are available
@@ -65,7 +64,6 @@ echo -e "${BLUE}🔍 Checking ports...${NC}"
 check_port 8030 || exit 1
 check_port 8031 || exit 1
 check_port 8011 || exit 1
-check_port 8000 || exit 1
 
 # Create logs directory if it doesn't exist
 mkdir -p logs
@@ -83,14 +81,11 @@ ITINERARY_SERVICE_PID=$!
 PORT=8011 pnpm turbo run dev --filter=@pops/user-service > logs/user-service.log 2>&1 &
 USER_SERVICE_PID=$!
 
-PORT=8000 pnpm turbo run dev --filter=@pops/api-gateway > logs/api-gateway.log 2>&1 &
-API_GATEWAY_PID=$!
 
 # Wait for services to be ready
 wait_for_service "http://localhost:8030/health" "Trip Service" || exit 1
 wait_for_service "http://localhost:8031/health" "Itinerary Service" || exit 1
 wait_for_service "http://localhost:8011/health" "User Service" || exit 1
-wait_for_service "http://localhost:8000/health" "API Gateway" || exit 1
 
 echo ""
 echo -e "${GREEN}🎉 All services started successfully!${NC}"
@@ -99,14 +94,12 @@ echo -e "${BLUE}📊 Service Status:${NC}"
 echo "• Trip Service:      http://localhost:8030"
 echo "• Itinerary Service: http://localhost:8031"  
 echo "• User Service:      http://localhost:8011"
-echo "• API Gateway:       http://localhost:8000"
 echo "• Frontend:          http://localhost:4003 (run 'pnpm dev:travel')"
 echo ""
 echo -e "${YELLOW}📝 Logs:${NC}"
 echo "• Trip Service:      tail -f logs/trip-service.log"
 echo "• Itinerary Service: tail -f logs/itinerary-service.log"
 echo "• User Service:      tail -f logs/user-service.log"
-echo "• API Gateway:       tail -f logs/api-gateway.log"
 echo ""
 echo -e "${YELLOW}🛑 To stop services:${NC}"
 echo "  pnpm services:stop  # or ./scripts/dev-stop.sh"

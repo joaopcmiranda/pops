@@ -57,23 +57,21 @@ api_count=0
 check_service "http://localhost:8030/health" "Trip Service" && ((health_count++))
 check_service "http://localhost:8031/health" "Itinerary Service" && ((health_count++))
 check_service "http://localhost:8011/health" "User Service" && ((health_count++))
-check_service "http://localhost:8000/health" "API Gateway" && ((health_count++))
 
 echo -e "\n${YELLOW}🔌 API Tests:${NC}"
 echo "============="
 
 # Test API endpoints
 test_api "http://localhost:8030/trips" "Trip Service" && ((api_count++))
-test_api "http://localhost:8000/trpc/trip.list" "tRPC Gateway" && ((api_count++))
 
 echo -e "\n${YELLOW}📊 Overall Status:${NC}"
 echo "=================="
 
-if [ $health_count -eq 4 ] && [ $api_count -eq 2 ]; then
-    echo -e "${GREEN}🎉 All systems operational (4/4 services, 2/2 APIs)${NC}"
+if [ $health_count -eq 3 ] && [ $api_count -eq 1 ]; then
+    echo -e "${GREEN}🎉 All systems operational (3/3 services, 1/1 APIs)${NC}"
     exit_code=0
 elif [ $health_count -gt 0 ]; then
-    echo -e "${YELLOW}⚠️  Partial outage ($health_count/4 services, $api_count/2 APIs)${NC}"
+    echo -e "${YELLOW}⚠️  Partial outage ($health_count/3 services, $api_count/1 APIs)${NC}"
     exit_code=1
 else
     echo -e "${RED}❌ All systems down${NC}"

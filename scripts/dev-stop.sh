@@ -45,7 +45,6 @@ stop_service() {
 stop_service "tsx.*trip-service" "Trip Service"
 stop_service "tsx.*itinerary-service" "Itinerary Service" 
 stop_service "tsx.*user-service" "User Service"
-stop_service "tsx.*api-gateway" "API Gateway"
 stop_service "vite.*travel" "Frontend (if running)"
 
 # Clean up log files if they exist
