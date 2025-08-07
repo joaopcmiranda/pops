@@ -25,7 +25,7 @@ import { SidebarInset, SidebarProvider } from '@pops/ui'
 import '@/styles/animations.css'
 
 // Type interfaces
-import type { Trip } from '@/types/trip'
+import type { Trip } from '@pops/types'
 
 function AppContent() {
   const [activeCategory, setActiveCategory] = useState('dashboard')

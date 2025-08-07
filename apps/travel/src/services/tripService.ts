@@ -1,19 +1,32 @@
-import type { Trip } from '@/types/trip'
 import { apiClient } from '@/utils/api-client'
-import { TripType, TripStatus } from '@pops/types'
+import {
+  TripType,
+  TripStatus,
+  type Trip,
+  type CreateTripInput,
+  type UpdateTripInput,
+} from '@pops/types'
 
 export class TripService {
   // Get all trips
   static async getAllTrips(): Promise<Trip[]> {
-    const trips = await apiClient.trips.list()
-    return trips.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+    try {
+      const trips = await apiClient.trips.list()
+      return trips.sort((a, b) => {
+        const dateA = typeof a.startDate === 'string' ? new Date(a.startDate) : a.startDate
+        const dateB = typeof b.startDate === 'string' ? new Date(b.startDate) : b.startDate
+        return dateB.getTime() - dateA.getTime()
+      })
+    } catch (error) {
+      console.error('Failed to get all trips:', error)
+      return []
+    }
   }
 
   // Get trip by ID
   static async getTripById(id: string): Promise<Trip | null> {
     try {
-      const trip = await apiClient.trips.getById(id)
-      return trip
+      return await apiClient.trips.get(id)
     } catch (error) {
       console.error('Failed to get trip by ID:', error)
       return null
@@ -22,30 +35,35 @@ export class TripService {
 
   // Get trips by status
   static async getTripsByStatus(status: string): Promise<Trip[]> {
-    const trips = await apiClient.trips.list({
-      filters: { status: [status as TripStatus] },
-    })
-    return trips
+    try {
+      return await apiClient.trips.list({
+        filters: { status: [status as TripStatus] },
+      })
+    } catch (error) {
+      console.error('Failed to get trips by status:', error)
+      return []
+    }
   }
 
   // Get trips by type
   static async getTripsByType(type: string): Promise<Trip[]> {
-    const trips = await apiClient.trips.list({
-      filters: { type: [type as TripType] },
-    })
-    return trips
+    try {
+      return await apiClient.trips.list({
+        filters: { type: [type as TripType] },
+      })
+    } catch (error) {
+      console.error('Failed to get trips by type:', error)
+      return []
+    }
   }
 
   // Add new trip
-  static async addTrip(trip: Omit<Trip, 'id' | 'createdAt' | 'updatedAt'>): Promise<Trip> {
+  static async addTrip(trip: CreateTripInput): Promise<Trip> {
     return await apiClient.trips.create(trip)
   }
 
   // Update trip
-  static async updateTrip(
-    id: string,
-    updates: Partial<Omit<Trip, 'id' | 'createdAt' | 'updatedAt'>>
-  ): Promise<Trip> {
+  static async updateTrip(id: string, updates: Omit<UpdateTripInput, 'id'>): Promise<Trip> {
     return await apiClient.trips.update({ id, ...updates })
   }
 

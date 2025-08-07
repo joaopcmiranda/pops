@@ -1,16 +1,6 @@
 import { MapPin, Calendar, Settings } from 'lucide-react'
 import { Card, CardContent, Button, Badge } from '@pops/ui'
-
-interface Trip {
-  id: string
-  title: string
-  destination: string
-  startDate: string
-  endDate: string
-  type: string
-  status: string
-  coverImage?: string
-}
+import type { Trip } from '@pops/types'
 
 interface TripCardProps {
   trip: Trip
@@ -20,8 +10,12 @@ interface TripCardProps {
 }
 
 export function TripCard({ trip, isSelected = false, onSelect, onSettings }: TripCardProps) {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+  const formatDate = (date: Date | string) => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    if (!dateObj || isNaN(dateObj.getTime())) {
+      return 'Invalid Date'
+    }
+    return dateObj.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',

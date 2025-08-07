@@ -46,8 +46,12 @@ export function ItineraryView() {
     }
   }
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
+  const formatDate = (date: Date | string) => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    if (!dateObj || isNaN(dateObj.getTime())) {
+      return 'Invalid Date'
+    }
+    return dateObj.toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',

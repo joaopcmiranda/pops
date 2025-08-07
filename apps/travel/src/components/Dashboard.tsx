@@ -13,7 +13,6 @@ import { Card, CardContent, Button, SkeletonCard } from '@pops/ui'
 import { ContentService } from '@/services/contentService'
 import { ItineraryService } from '@/services/itineraryService'
 import { ErrorScreen } from '@/components/ErrorScreen'
-import { trpc } from '@/utils/trpc'
 import type { ItineraryItem } from '@/types/itinerary'
 
 interface DashboardProps {
@@ -25,9 +24,6 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
   const [error, setError] = useState<string | null>(null)
   const [categoryMetadata, setCategoryMetadata] = useState<Record<string, number>>({})
   const [upcomingItems, setUpcomingItems] = useState<ItineraryItem[]>([])
-
-  // Test tRPC connection
-  const healthQuery = trpc.health.check.useQuery()
 
   const loadDashboardData = async () => {
     try {
@@ -124,24 +120,6 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
           Welcome back! ✈️
         </h1>
 
-        {/* tRPC Connection Status */}
-        <div
-          style={{
-            fontSize: '0.875rem',
-            color: healthQuery.isLoading ? '#f59e0b' : healthQuery.error ? '#ef4444' : '#10b981',
-            marginBottom: '1rem',
-          }}
-        >
-          API Status:{' '}
-          {healthQuery.isLoading
-            ? 'Connecting...'
-            : healthQuery.error
-              ? 'Disconnected'
-              : 'Connected ✓'}
-          {healthQuery.data && (
-            <span style={{ marginLeft: '0.5rem', opacity: 0.7 }}>({healthQuery.data.status})</span>
-          )}
-        </div>
         <p style={{ color: '#64748b', fontSize: '1rem' }}>
           Your adventure is taking shape. Here's your trip overview.
         </p>

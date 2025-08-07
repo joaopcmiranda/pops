@@ -18,10 +18,8 @@ import {
   Alert,
   AlertDescription,
 } from '@pops/ui'
-import { trpc } from '@/utils/trpc'
-
-// Type interface for Trip
-import type { Trip } from '@/types/trip'
+import type { Trip } from '@pops/types'
+import { TripService } from '@/services/tripService'
 
 interface NewTripModalProps {
   isOpen: boolean
@@ -63,11 +61,46 @@ export function NewTripModal({ isOpen, onClose, onTripCreated }: NewTripModalPro
     },
   })
   const [validationError, setValidationError] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const createTripMutation = trpc.trip.create.useMutation({
-    onSuccess: trip => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setValidationError(null)
+
+    // Basic validation
+    if (!formData.title.trim()) {
+      setValidationError('Please enter a trip title')
+      return
+    }
+    if (!formData.destination.trim()) {
+      setValidationError('Please enter a destination')
+      return
+    }
+    if (!formData.startDate) {
+      setValidationError('Please select a start date')
+      return
+    }
+    if (!formData.endDate) {
+      setValidationError('Please select an end date')
+      return
+    }
+    if (new Date(formData.startDate) > new Date(formData.endDate)) {
+      setValidationError('End date must be after start date')
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      const trip = await TripService.addTrip({
+        ...formData,
+        status: 'planning',
+        startDate: new Date(formData.startDate).toISOString(),
+        endDate: new Date(formData.endDate).toISOString(),
+      })
+
       onTripCreated(trip)
       onClose()
+
       // Reset form
       setFormData({
         title: '',
@@ -102,39 +135,10 @@ export function NewTripModal({ isOpen, onClose, onTripCreated }: NewTripModalPro
         },
       })
       setValidationError(null)
-    },
-    onError: error => {
-      setValidationError(error.message || 'Failed to create trip')
-    },
-  })
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setValidationError(null)
-
-    // Basic validation
-    if (!formData.title.trim()) {
-      setValidationError('Please enter a trip title')
-      return
+    } catch (error) {
+      setValidationError(error instanceof Error ? error.message : 'Failed to create trip')
     }
-    if (!formData.destination.trim()) {
-      setValidationError('Please enter a destination')
-      return
-    }
-    if (!formData.startDate) {
-      setValidationError('Please select a start date')
-      return
-    }
-    if (!formData.endDate) {
-      setValidationError('Please select an end date')
-      return
-    }
-    if (new Date(formData.startDate) > new Date(formData.endDate)) {
-      setValidationError('End date must be after start date')
-      return
-    }
-
-    createTripMutation.mutate(formData)
+    setIsSubmitting(false)
   }
 
   const handleChange = (field: string, value: string | number) => {
@@ -273,8 +277,8 @@ export function NewTripModal({ isOpen, onClose, onTripCreated }: NewTripModalPro
             <Button type='button' variant='outline' onClick={onClose}>
               Cancel
             </Button>
-            <Button type='submit' disabled={createTripMutation.isLoading}>
-              {createTripMutation.isLoading ? 'Creating...' : 'Create Trip'}
+            <Button type='submit' disabled={isSubmitting}>
+              {isSubmitting ? 'Creating...' : 'Create Trip'}
             </Button>
           </div>
         </form>

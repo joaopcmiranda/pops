@@ -27,16 +27,7 @@ import {
 
 import { TripSelectorSidebar } from './TripSelectorSidebar'
 import { useTripContext } from '@/hooks/useTripContext'
-
-interface Trip {
-  id: string
-  title: string
-  destination: string
-  startDate: string
-  endDate: string
-  type: string
-  status: string
-}
+import type { Trip } from '@pops/types'
 
 interface AppSidebarProps {
   activeCategory?: string

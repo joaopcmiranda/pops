@@ -10,8 +10,8 @@ import {
   X,
 } from 'lucide-react'
 import { Button, Card, CardContent } from '@pops/ui'
-import { trpc } from '@/utils/trpc'
-import type { Trip } from '@/types/trip'
+import type { Trip } from '@pops/types'
+import { TripService } from '@/services/tripService'
 
 interface TripCreationWizardProps {
   onClose: () => void
@@ -49,17 +49,6 @@ export function TripCreationWizard({ onClose, onTripCreated }: TripCreationWizar
   const [formData, setFormData] = useState<FormData>(initialFormData)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const createTripMutation = trpc.trip.create.useMutation({
-    onSuccess: data => {
-      if (data?.data) {
-        onTripCreated(data.data)
-      }
-    },
-    onError: error => {
-      console.error('Failed to create trip:', error)
-    },
-  })
-
   const steps = [
     { number: 1, title: 'Where', description: 'Choose your destination', icon: MapPin },
     { number: 2, title: 'When', description: 'Pick your dates', icon: Calendar },
@@ -89,7 +78,7 @@ export function TripCreationWizard({ onClose, onTripCreated }: TripCreationWizar
       const startDateTime = new Date(formData.startDate).toISOString()
       const endDateTime = new Date(formData.endDate).toISOString()
 
-      await createTripMutation.mutateAsync({
+      const trip = await TripService.addTrip({
         title: formData.title,
         description: formData.description,
         destination: formData.destination,
@@ -97,6 +86,7 @@ export function TripCreationWizard({ onClose, onTripCreated }: TripCreationWizar
         type: formData.type,
         startDate: startDateTime,
         endDate: endDateTime,
+        status: 'planning',
         budget: {
           total: formData.budget,
           currency: formData.currency,
@@ -121,6 +111,8 @@ export function TripCreationWizard({ onClose, onTripCreated }: TripCreationWizar
           privacy: 'private' as const,
         },
       })
+
+      onTripCreated(trip)
     } catch (error) {
       console.error('Failed to create trip:', error)
     }

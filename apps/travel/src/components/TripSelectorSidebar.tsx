@@ -1,16 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { ChevronDown, MapPin, Check } from 'lucide-react'
 import { Button } from '@pops/ui'
-
-interface Trip {
-  id: string
-  title: string
-  destination: string
-  startDate: string
-  endDate: string
-  type: string
-  status: string
-}
+import type { Trip } from '@pops/types'
 
 interface TripSelectorSidebarProps {
   currentTrip?: Trip | null
@@ -40,8 +31,12 @@ export function TripSelectorSidebar({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+  const formatDate = (date: Date | string) => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    if (!dateObj || isNaN(dateObj.getTime())) {
+      return 'Invalid Date'
+    }
+    return dateObj.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',

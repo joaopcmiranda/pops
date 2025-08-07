@@ -1,16 +1,6 @@
 import { TripCard } from './TripCard'
 import { NewTripCard } from './NewTripCard'
-
-interface Trip {
-  id: string
-  title: string
-  destination: string
-  startDate: string
-  endDate: string
-  type: string
-  status: string
-  coverImage?: string
-}
+import type { Trip } from '@pops/types'
 
 interface TripGridProps {
   trips: Trip[]

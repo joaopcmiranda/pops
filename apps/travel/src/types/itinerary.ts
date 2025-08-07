@@ -51,7 +51,7 @@ export interface Location {
     lat: number
     lng: number
   }
-  type: 'venue' | 'accommodation' | 'workplace' | 'tourist-spot' | 'restaurant' | 'other'
+  type: 'venue' | 'accommodation' | 'workplace' | 'tourist-spot' | 'restaurant' | 'other' | 'beach'
 }
 
 export interface BaseItineraryItem {

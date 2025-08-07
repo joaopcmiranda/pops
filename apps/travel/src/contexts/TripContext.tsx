@@ -1,5 +1,5 @@
 import { useState, useEffect, type ReactNode } from 'react'
-import type { Trip } from '@/types/trip'
+import type { Trip } from '@pops/types'
 import { TripContext } from './TripContextDefinition'
 
 interface TripProviderProps {

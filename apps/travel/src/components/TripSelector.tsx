@@ -3,17 +3,7 @@ import { Plus, MapPin, Calendar, Settings } from 'lucide-react'
 import { Card, CardContent, Button } from '@pops/ui'
 import { TripService } from '@/services/tripService'
 import { useTripContext } from '@/hooks/useTripContext'
-
-interface Trip {
-  id: string
-  title: string
-  destination: string
-  startDate: string
-  endDate: string
-  type: string
-  status: string
-  coverImage?: string
-}
+import type { Trip } from '@pops/types'
 
 interface TripSelectorProps {
   onTripSelect: (tripId: string) => void
@@ -47,8 +37,12 @@ export function TripSelector({ onTripSelect, onNewTrip }: TripSelectorProps) {
     onTripSelect(tripId)
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+  const formatDate = (date: Date | string) => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    if (!dateObj || isNaN(dateObj.getTime())) {
+      return 'Invalid Date'
+    }
+    return dateObj.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
