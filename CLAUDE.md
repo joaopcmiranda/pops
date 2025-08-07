@@ -137,3 +137,7 @@ pnpm run type-check
 ## 💡 Development Best Practices
 
 - Never use any, always type properly
+
+## 💡 Type Management Guidelines
+
+- For data types, use types from the types package, if not available, consider creating it there, otherwise create the types on the individual app or service
