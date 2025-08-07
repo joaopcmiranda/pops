@@ -25,12 +25,27 @@ import {
   SidebarMenuItem,
 } from '@pops/ui'
 
+import { TripSelectorSidebar } from './TripSelectorSidebar'
+import { useTripContext } from '@/hooks/useTripContext'
+
+interface Trip {
+  id: string
+  title: string
+  destination: string
+  startDate: string
+  endDate: string
+  type: string
+  status: string
+}
+
 interface AppSidebarProps {
   activeCategory?: string
   onCategorySelect?: (category: string) => void
+  availableTrips?: Trip[]
 }
 
-export function AppSidebar({ activeCategory = 'dashboard', onCategorySelect }: AppSidebarProps) {
+export function AppSidebar({ activeCategory = 'dashboard', onCategorySelect, availableTrips = [] }: AppSidebarProps) {
+  const { currentTrip, setCurrentTrip, setIsSelectingTrip, setShowNewTripModal } = useTripContext()
   const overviewItems = [
     { id: 'dashboard', name: 'Dashboard', icon: Home },
     { id: 'calendar', name: 'Calendar', icon: CalendarDays },
@@ -56,16 +71,33 @@ export function AppSidebar({ activeCategory = 'dashboard', onCategorySelect }: A
     onCategorySelect?.(categoryId)
   }
 
+  const handleTripChange = (trip: Trip) => {
+    setCurrentTrip(trip)
+  }
+
+  const handleCreateTrip = () => {
+    setShowNewTripModal(true)
+  }
+
   return (
-    <Sidebar>
+    <Sidebar collapsible="none">
       <SidebarHeader>
-        <button
-          className='flex items-center gap-2 px-2 py-1 text-left w-full hover:bg-accent rounded-md transition-colors'
-          onClick={() => handleCategoryClick('dashboard')}
-        >
-          <span className='text-xl'>✈️</span>
-          <span className='font-semibold'>Trip Organizer</span>
-        </button>
+        <div style={{ paddingBottom: '0.5rem', borderBottom: '1px solid #f1f5f9' }}>
+          <button
+            className='flex items-center gap-2 px-2 py-1 text-left w-full hover:bg-accent rounded-md transition-colors'
+            onClick={() => handleCategoryClick('dashboard')}
+          >
+            <span className='text-xl'>✈️</span>
+            <span className='font-semibold'>Trip Organizer</span>
+          </button>
+        </div>
+        
+        <TripSelectorSidebar
+          currentTrip={currentTrip}
+          availableTrips={availableTrips}
+          onTripChange={handleTripChange}
+          onCreateNew={handleCreateTrip}
+        />
       </SidebarHeader>
 
       <SidebarContent>

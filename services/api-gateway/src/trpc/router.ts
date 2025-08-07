@@ -3,6 +3,17 @@ import type { FastifyRequest, FastifyReply } from 'fastify'
 import { ApiClient } from '@pops/api-client'
 import { config } from '../config/env.js'
 import { z } from 'zod'
+// Import and re-export existing schemas as API gateway routes
+import {
+  tripTypeSchema,
+  createTripSchema,
+  updateTripSchema,
+  tripFiltersSchema,
+  createItineraryItemSchema,
+  updateItineraryItemSchema,
+  itemTypeSchema,
+  itemStatusSchema,
+} from '@pops/shared-contracts'
 
 // Create context for tRPC
 export interface Context {
@@ -79,21 +90,6 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
     },
   })
 })
-
-// Import and re-export existing schemas as API gateway routes
-import {
-  tripTypeSchema,
-  tripStatusSchema,
-  tripBudgetSchema,
-  tripSettingsSchema,
-  createTripSchema,
-  updateTripSchema,
-  tripFiltersSchema,
-  createItineraryItemSchema,
-  updateItineraryItemSchema,
-  itemTypeSchema,
-  itemStatusSchema,
-} from '@pops/shared-contracts'
 
 // Trip router that proxies to trip service
 export const tripRouter = router({

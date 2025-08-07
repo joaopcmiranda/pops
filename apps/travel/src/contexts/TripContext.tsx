@@ -6,9 +6,35 @@ interface TripProviderProps {
   children: ReactNode
 }
 
+// Demo trip for testing the layout improvements
+const DEMO_TRIP: Trip = {
+  id: 'demo-trip-1',
+  title: 'Amazing Paris Adventure',
+  destination: 'Paris, France',
+  country: 'France',
+  type: 'leisure',
+  status: 'upcoming',
+  startDate: '2025-03-15T00:00:00.000Z',
+  endDate: '2025-03-22T00:00:00.000Z',
+  userId: 'demo-user',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  settings: {
+    timezone: 'Europe/Paris',
+    dateFormat: 'EU',
+    currency: 'EUR',
+    notifications: {
+      email: true,
+      push: true,
+      reminders: true
+    },
+    privacy: 'private'
+  }
+}
+
 export function TripProvider({ children }: TripProviderProps) {
-  const [currentTrip, setCurrentTrip] = useState<Trip | null>(null)
-  const [isSelectingTrip, setIsSelectingTrip] = useState(true)
+  const [currentTrip, setCurrentTrip] = useState<Trip | null>(DEMO_TRIP) // Use demo trip for testing
+  const [isSelectingTrip, setIsSelectingTrip] = useState(false) // Show dashboard immediately
   const [showNewTripModal, setShowNewTripModal] = useState(false)
 
   // Load saved trip from localStorage on mount

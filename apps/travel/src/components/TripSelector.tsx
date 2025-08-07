@@ -28,9 +28,9 @@ export function TripSelector({ onTripSelect, onNewTrip }: TripSelectorProps) {
 
   // Load trips on mount
   useEffect(() => {
-    const loadTrips = () => {
+    const loadTrips = async () => {
       try {
-        const allTrips = TripService.getAllTrips()
+        const allTrips = await TripService.getAllTrips()
         setTrips(allTrips)
       } catch (error) {
         console.error('Failed to load trips:', error)

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   MapPin,
   Calendar as CalIcon,
@@ -30,6 +30,7 @@ import type { Trip } from '@/types/trip'
 function AppContent() {
   const [activeCategory, setActiveCategory] = useState('dashboard')
   const [currentView, setCurrentView] = useState('dashboard')
+  const [availableTrips, setAvailableTrips] = useState<Trip[]>([])
   const {
     currentTrip,
     setCurrentTrip,
@@ -39,11 +40,22 @@ function AppContent() {
     showNewTripModal,
   } = useTripContext()
 
-  // Fetch trip details when a trip is selected
-  // const _tripQuery = trpc.trip.getById.useQuery(
-  //   { id: currentTrip?.id || '' },
-  //   { enabled: !!currentTrip?.id }
-  // )
+  // Load available trips
+  useEffect(() => {
+    const loadTrips = async () => {
+      try {
+        const trips = await TripService.getAllTrips()
+        setAvailableTrips(trips)
+      } catch (error) {
+        console.error('Failed to load trips:', error)
+        setAvailableTrips([])
+      }
+    }
+    
+    if (currentTrip) {
+      loadTrips()
+    }
+  }, [currentTrip])
 
   const handleCategorySelect = (category: string) => {
     console.log('Category selected:', category)
@@ -68,6 +80,24 @@ function AppContent() {
   const handleTripCreated = (trip: Trip) => {
     setCurrentTrip(trip)
     setShowNewTripModal(false)
+  }
+
+  const getPageTitle = (view: string) => {
+    const titles: Record<string, string> = {
+      dashboard: 'Dashboard',
+      destinations: 'Destinations',
+      itinerary: 'Itinerary', 
+      transport: 'Transport',
+      accommodation: 'Accommodation',
+      activities: 'Activities',
+      budget: 'Budget',
+      documents: 'Documents',
+      calendar: 'Calendar',
+      analytics: 'Analytics',
+      settings: 'Settings',
+      readme: 'Documentation'
+    }
+    return titles[view] || 'Trip Organizer'
   }
 
   // Show wizard if user wants to create new trip
@@ -171,7 +201,11 @@ function AppContent() {
           </div>
         }
       >
-        <AppSidebar activeCategory={activeCategory} onCategorySelect={handleCategorySelect} />
+        <AppSidebar 
+          activeCategory={activeCategory} 
+          onCategorySelect={handleCategorySelect}
+          availableTrips={availableTrips}
+        />
       </ErrorBoundary>
 
       <SidebarInset>
@@ -182,7 +216,7 @@ function AppContent() {
             </div>
           }
         >
-          <AppHeader currentTrip={currentTrip} onTripSwitch={() => setIsSelectingTrip(true)} />
+          <AppHeader title={getPageTitle(currentView)} />
         </ErrorBoundary>
 
         <ErrorBoundary>{renderCurrentView()}</ErrorBoundary>

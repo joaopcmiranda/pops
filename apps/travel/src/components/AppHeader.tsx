@@ -1,98 +1,31 @@
-import { Search, Bell, User, ChevronDown, MapPin } from 'lucide-react'
+import { Search, Bell, User } from 'lucide-react'
 import { Button, Avatar, AvatarFallback } from '@pops/ui'
 import { SidebarTrigger } from '@pops/ui'
 
-interface Trip {
-  id: string
-  title: string
-  destination: string
-  startDate: string
-  endDate: string
-  type: string
-  status: string
-}
-
 interface AppHeaderProps {
-  currentTrip?: Trip | null
-  onTripSwitch?: () => void
+  title?: string
 }
 
-export function AppHeader({ currentTrip, onTripSwitch }: AppHeaderProps) {
+export function AppHeader({ title = 'Trip Organizer' }: AppHeaderProps) {
   return (
     <header className='app-header'>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1, minWidth: 0 }}>
-        <SidebarTrigger className='md:hidden' />
-
-        {currentTrip ? (
-          <div
-            onClick={onTripSwitch}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.5rem 0.75rem',
-              backgroundColor: '#f8fafc',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              border: '1px solid #e2e8f0',
-              transition: 'all 0.2s ease',
-              minWidth: 0,
-              flex: '0 1 auto',
-              touchAction: 'manipulation',
-            }}
-            className='trip-selector-header'
-            role='button'
-            tabIndex={0}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                onTripSwitch?.()
-              }
-            }}
-          >
-            <MapPin style={{ width: '16px', height: '16px', color: '#3b82f6', flexShrink: 0 }} />
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <div
-                style={{
-                  fontSize: '0.875rem',
-                  fontWeight: '600',
-                  color: '#0f172a',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {currentTrip.title}
-              </div>
-              <div
-                style={{
-                  fontSize: '0.75rem',
-                  color: '#64748b',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {currentTrip.destination}
-              </div>
-            </div>
-            <ChevronDown
-              style={{ width: '16px', height: '16px', color: '#64748b', flexShrink: 0 }}
-            />
-          </div>
-        ) : (
-          <h1
-            className='header-title'
-            style={{
-              minWidth: 0,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            Trip Organizer
-          </h1>
-        )}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, minWidth: 0 }}>
+        <SidebarTrigger className="md:hidden" />
+        
+        <h1
+          className='header-title'
+          style={{
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            fontSize: '1.5rem',
+            fontWeight: '600',
+            color: '#1e293b'
+          }}
+        >
+          {title}
+        </h1>
       </div>
 
       <div className='header-actions'>

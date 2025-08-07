@@ -85,14 +85,18 @@ export function TripCreationWizard({ onClose, onTripCreated }: TripCreationWizar
   const handleSubmit = async () => {
     setIsSubmitting(true)
     try {
+      // Convert date strings to ISO datetime format
+      const startDateTime = new Date(formData.startDate).toISOString()
+      const endDateTime = new Date(formData.endDate).toISOString()
+
       await createTripMutation.mutateAsync({
         title: formData.title,
         description: formData.description,
         destination: formData.destination,
         country: formData.country,
         type: formData.type,
-        startDate: formData.startDate,
-        endDate: formData.endDate,
+        startDate: startDateTime,
+        endDate: endDateTime,
         budget: {
           total: formData.budget,
           currency: formData.currency,
