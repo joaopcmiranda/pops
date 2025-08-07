@@ -7,15 +7,14 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsup",
-    "dev": "tsup --watch",
-    "lint": "eslint .",
+    "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@pops/shared-contracts": "workspace:*",
+    "@pops/types": "workspace:*",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -36,6 +35,31 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
+    },
+    "./http": {
+      "types": "./dist/http-client.d.ts",
+      "import": "./dist/http-client.mjs",
+      "require": "./dist/http-client.js"
+    },
+    "./trips": {
+      "types": "./dist/trip-client.d.ts",
+      "import": "./dist/trip-client.mjs",
+      "require": "./dist/trip-client.js"
+    },
+    "./itinerary": {
+      "types": "./dist/itinerary-client.d.ts",
+      "import": "./dist/itinerary-client.mjs",
+      "require": "./dist/itinerary-client.js"
+    },
+    "./content": {
+      "types": "./dist/content-client.d.ts",
+      "import": "./dist/content-client.mjs",
+      "require": "./dist/content-client.js"
+    },
+    "./users": {
+      "types": "./dist/user-client.d.ts",
+      "import": "./dist/user-client.mjs",
+      "require": "./dist/user-client.js"
     }
   }
 }

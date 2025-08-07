@@ -1,14 +1,14 @@
 // Main API client
-export { ApiClient, type ApiClientConfig } from './api-client.js'
+export { ApiClient, type ApiClientConfig } from './api-client'
 
 // HTTP client (for advanced usage)
-export { HttpClient, HttpClientError, type HttpClientConfig } from './http-client.js'
+export { HttpClient, HttpClientError, type HttpClientConfig } from './http-client'
 
 // Individual clients (for modular usage)
-export { TripClient } from './trip-client.js'
-export { ItineraryClient } from './itinerary-client.js'
-export { ContentClient } from './content-client.js'
-export { UserClient } from './user-client.js'
+export { TripClient } from './trip-client'
+export { ItineraryClient } from './itinerary-client'
+export { ContentClient } from './content-client'
+export { UserClient } from './user-client'
 
-// Re-export shared contracts for convenience
-export * from '@pops/shared-contracts'
+// Re-export types for convenience
+export * from '@pops/types'

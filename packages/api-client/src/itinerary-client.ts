@@ -9,8 +9,8 @@ import {
   itineraryFiltersSchema,
   createItineraryItemSchema,
   updateItineraryItemSchema,
-} from '@pops/shared-contracts'
-import { HttpClient } from './http-client.js'
+} from '@pops/types'
+import { HttpClient } from './http-client'
 import { z } from 'zod'
 
 export class ItineraryClient {

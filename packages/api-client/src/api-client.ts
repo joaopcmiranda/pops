@@ -1,9 +1,9 @@
-import { HttpClient, type HttpClientConfig } from './http-client.js'
-import { TripClient } from './trip-client.js'
-import { ItineraryClient } from './itinerary-client.js'
-import { ContentClient } from './content-client.js'
-import { UserClient } from './user-client.js'
-import type { HealthCheck } from '@pops/shared-contracts'
+import { HttpClient, type HttpClientConfig } from './http-client'
+import { TripClient } from './trip-client'
+import { ItineraryClient } from './itinerary-client'
+import { ContentClient } from './content-client'
+import { UserClient } from './user-client'
+import type { HealthCheck } from '@pops/types'
 
 export interface ApiClientConfig extends HttpClientConfig {
   userId?: string

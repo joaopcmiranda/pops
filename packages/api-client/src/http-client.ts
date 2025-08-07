@@ -1,4 +1,4 @@
-import type { SuccessResponse, ErrorResponse } from '@pops/shared-contracts'
+import type { SuccessResponse, ErrorResponse } from '@pops/types'
 import { z } from 'zod'
 
 export interface HttpClientConfig {
