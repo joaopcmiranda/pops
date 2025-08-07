@@ -267,6 +267,7 @@ export class TripService {
       destination: input.destination,
       country: input.country,
       type: input.type,
+      status: input.status || 'planning',
       startDate: new Date(input.startDate),
       endDate: new Date(input.endDate),
       budget: input.budget ? JSON.stringify(input.budget) : undefined,
@@ -357,8 +358,12 @@ export class TripService {
     if (updates.country !== undefined) updateData.country = updates.country
     if (updates.type !== undefined) updateData.type = updates.type
     if (updates.status !== undefined) updateData.status = updates.status
-    if (updates.startDate !== undefined) updateData.startDate = new Date(updates.startDate)
-    if (updates.endDate !== undefined) updateData.endDate = new Date(updates.endDate)
+    if (updates.startDate !== undefined)
+      updateData.startDate =
+        updates.startDate instanceof Date ? updates.startDate : new Date(updates.startDate)
+    if (updates.endDate !== undefined)
+      updateData.endDate =
+        updates.endDate instanceof Date ? updates.endDate : new Date(updates.endDate)
     if (updates.budget !== undefined)
       updateData.budget = updates.budget ? JSON.stringify(updates.budget) : null
     if (updates.settings !== undefined) updateData.settings = JSON.stringify(updates.settings)

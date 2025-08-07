@@ -1,6 +1,9 @@
 import type { FastifyInstance } from 'fastify'
 import * as types from '@pops/types'
-console.log('Available types:', Object.keys(types).filter(k => k.includes('Trip')))
+console.log(
+  'Available types:',
+  Object.keys(types).filter(k => k.includes('Trip'))
+)
 const { createTripSchema } = types
 import { TripService } from '../services/trip-service.js'
 

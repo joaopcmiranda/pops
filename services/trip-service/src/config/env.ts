@@ -13,7 +13,7 @@ const envSchema = z.object({
   DATABASE_URL: z.string().default('./data/trips.db'),
 
   // CORS
-  CORS_ORIGIN: z.string().default('http://localhost:3001'), // API Gateway
+  CORS_ORIGIN: z.string().default('http://localhost:4003'), // Frontend app
 
   // Rate limiting
   RATE_LIMIT_MAX: z.coerce.number().default(1000),

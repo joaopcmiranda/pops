@@ -1,11 +1,11 @@
 import type { FastifyInstance } from 'fastify'
 import * as types from '@pops/types'
+import { ItineraryService } from '../services/itinerary-service'
 console.log(
   'Available types:',
   Object.keys(types).filter(k => k.includes('Itinerary'))
 )
 const { createItineraryItemSchema } = types
-import { ItineraryService } from '../services/itinerary-service'
 
 export async function itineraryRoutes(fastify: FastifyInstance) {
   const itineraryService = new ItineraryService()

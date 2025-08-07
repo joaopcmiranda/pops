@@ -9,22 +9,11 @@ import {
   itineraryItemAttendees,
 } from '../db/schema.js'
 import type { ItineraryItem, CreateItineraryItemInput, UpdateItineraryItemInput } from '@pops/types'
-import { ItemType, ItemStatus } from '@pops/types'
+import { ItemType, ItemStatus, ItemPriority, LocationType, RelationshipType } from '@pops/types'
 
 export class ItineraryService {
-  async list(
-    tripId: string,
-    userId: string,
-    filters: {
-      startDate?: string
-      endDate?: string
-      types?: ItemType[]
-      status?: ItemStatus[]
-      limit?: number
-      offset?: number
-    } = {}
-  ): Promise<ItineraryItem[]> {
-    // Verify trip access
+  // Helper method to verify trip access
+  private async verifyTripAccess(tripId: string, userId: string): Promise<void> {
     const tripAccess = await db
       .select({ id: trips.id })
       .from(trips)
@@ -40,6 +29,73 @@ export class ItineraryService {
     if (tripAccess.length === 0) {
       throw new Error('Trip not found or access denied')
     }
+  }
+
+  // Helper method to verify edit permissions
+  private async verifyEditPermissions(tripId: string, userId: string): Promise<void> {
+    const tripAccess = await db
+      .select({ id: trips.id, userId: trips.userId })
+      .from(trips)
+      .leftJoin(tripCollaborators, eq(trips.id, tripCollaborators.tripId))
+      .where(
+        and(
+          eq(trips.id, tripId),
+          or(
+            eq(trips.userId, userId),
+            and(
+              eq(tripCollaborators.userId, userId),
+              inArray(tripCollaborators.role, ['admin', 'editor'])
+            )
+          )
+        )
+      )
+      .limit(1)
+
+    if (tripAccess.length === 0) {
+      throw new Error('Trip not found or insufficient permissions')
+    }
+  }
+
+  // Helper method to verify item access and edit permissions
+  private async verifyItemAccess(itemId: string, userId: string): Promise<void> {
+    const existingItem = await db
+      .select({ id: itineraryItems.id })
+      .from(itineraryItems)
+      .leftJoin(trips, eq(itineraryItems.tripId, trips.id))
+      .leftJoin(tripCollaborators, eq(trips.id, tripCollaborators.tripId))
+      .where(
+        and(
+          eq(itineraryItems.id, itemId),
+          or(
+            eq(trips.userId, userId),
+            and(
+              eq(tripCollaborators.userId, userId),
+              inArray(tripCollaborators.role, ['admin', 'editor'])
+            )
+          )
+        )
+      )
+      .limit(1)
+
+    if (existingItem.length === 0) {
+      throw new Error('Item not found or insufficient permissions')
+    }
+  }
+
+  async list(
+    tripId: string,
+    userId: string,
+    filters: {
+      startDate?: string
+      endDate?: string
+      types?: ItemType[]
+      status?: ItemStatus[]
+      limit?: number
+      offset?: number
+    } = {}
+  ): Promise<ItineraryItem[]> {
+    // Verify trip access
+    await this.verifyTripAccess(tripId, userId)
 
     // Build conditions
     const conditions = [eq(itineraryItems.tripId, tripId)]
@@ -139,11 +195,7 @@ export class ItineraryService {
             name: attendee.personName,
             email: attendee.personEmail || undefined,
             phone: attendee.personPhone || undefined,
-            relationshipType: attendee.personRelationshipType as
-              | 'family'
-              | 'friend'
-              | 'colleague'
-              | 'contact',
+            relationshipType: attendee.personRelationshipType as RelationshipType,
             createdAt: new Date(),
             updatedAt: new Date(),
           })
@@ -170,44 +222,38 @@ export class ItineraryService {
     return results.map(row => ({
       id: row.id as string,
       title: row.title as string,
-      description: (row.description as string | null) || undefined,
-      type: row.type as ItineraryItem['type'],
+      description: (row.description as string) || undefined,
+      type: row.type as ItemType,
       startDate: row.startDate as Date,
-      endDate: (row.endDate as Date | null) || undefined,
-      isAllDay: (row.isAllDay as boolean | null) || false,
-      status: row.status as ItineraryItem['status'],
-      priority: row.priority as ItineraryItem['priority'],
+      endDate: (row.endDate as Date) || undefined,
+      isAllDay: (row.isAllDay as boolean) || false,
+      status: row.status as ItemStatus,
+      priority: row.priority as ItemPriority,
       tags: row.tags ? JSON.parse(row.tags as string) : [],
-      notes: (row.notes as string | null) || undefined,
+      notes: (row.notes as string) || undefined,
       createdAt: row.createdAt as Date,
       updatedAt: row.updatedAt as Date,
       tripId: row.tripId as string,
       userId: row.userId as string,
-      locationId: (row.locationId as string | null) || undefined,
+      locationId: (row.locationId as string) || undefined,
       location:
         row.locationId && row.locationName && row.locationCity && row.locationType
           ? {
-              id: row.locationId,
-              name: row.locationName,
-              address: row.locationAddress || undefined,
-              city: row.locationCity,
-              state: row.locationState || undefined,
-              latitude: row.locationLatitude || undefined,
-              longitude: row.locationLongitude || undefined,
-              type: row.locationType as
-                | 'accommodation'
-                | 'other'
-                | 'venue'
-                | 'workplace'
-                | 'tourist-spot'
-                | 'restaurant',
+              id: row.locationId as string,
+              name: row.locationName as string,
+              address: (row.locationAddress as string) || undefined,
+              city: row.locationCity as string,
+              state: (row.locationState as string) || undefined,
+              latitude: (row.locationLatitude as number) || undefined,
+              longitude: (row.locationLongitude as number) || undefined,
+              type: row.locationType as LocationType,
               createdAt: new Date(),
               updatedAt: new Date(),
             }
           : undefined,
       attendees: attendeesByItem[row.id as string] || [],
-      typeData: row.typeData ? JSON.parse(row.typeData as string) : undefined,
-    }))
+      typeData: (row.typeData as string) || undefined,
+    })) as ItineraryItem[]
   }
 
   async get(id: string, userId: string): Promise<ItineraryItem | null> {
@@ -277,13 +323,13 @@ export class ItineraryService {
       id: item.id,
       title: item.title,
       description: item.description || undefined,
-      type: item.type as ItineraryItem['type'],
+      type: item.type as ItemType,
       startDate: item.startDate,
       endDate: item.endDate || undefined,
       isAllDay: item.isAllDay || false,
-      status: item.status as ItineraryItem['status'],
-      priority: item.priority as ItineraryItem['priority'],
-      tags: item.tags ? JSON.parse(item.tags) : [],
+      status: item.status as ItemStatus,
+      priority: item.priority as ItemPriority,
+      tags: item.tags ? JSON.parse(item.tags as string) : [],
       notes: item.notes || undefined,
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
@@ -300,13 +346,7 @@ export class ItineraryService {
               state: item.locationState || undefined,
               latitude: item.locationLatitude || undefined,
               longitude: item.locationLongitude || undefined,
-              type: item.locationType as
-                | 'accommodation'
-                | 'other'
-                | 'venue'
-                | 'workplace'
-                | 'tourist-spot'
-                | 'restaurant',
+              type: item.locationType as LocationType,
               createdAt: new Date(),
               updatedAt: new Date(),
             }
@@ -318,41 +358,17 @@ export class ItineraryService {
           name: a.personName!,
           email: a.personEmail || undefined,
           phone: a.personPhone || undefined,
-          relationshipType: a.personRelationshipType as
-            | 'family'
-            | 'friend'
-            | 'colleague'
-            | 'contact',
+          relationshipType: a.personRelationshipType as RelationshipType,
           createdAt: new Date(),
           updatedAt: new Date(),
         })),
-      typeData: item.typeData ? JSON.parse(item.typeData) : undefined,
-    }
+      typeData: item.typeData ? JSON.parse(item.typeData as string) : undefined,
+    } as ItineraryItem
   }
 
   async create(input: CreateItineraryItemInput, userId: string): Promise<ItineraryItem> {
     // Verify trip access and edit permissions
-    const tripAccess = await db
-      .select({ id: trips.id, userId: trips.userId })
-      .from(trips)
-      .leftJoin(tripCollaborators, eq(trips.id, tripCollaborators.tripId))
-      .where(
-        and(
-          eq(trips.id, input.tripId),
-          or(
-            eq(trips.userId, userId),
-            and(
-              eq(tripCollaborators.userId, userId),
-              inArray(tripCollaborators.role, ['admin', 'editor'])
-            )
-          )
-        )
-      )
-      .limit(1)
-
-    if (tripAccess.length === 0) {
-      throw new Error('Trip not found or insufficient permissions')
-    }
+    await this.verifyEditPermissions(input.tripId, userId)
 
     const { attendees } = input
 
@@ -420,31 +436,7 @@ export class ItineraryService {
     const { id, attendees, ...updates } = input
 
     // Verify access and edit permissions
-    const existingItem = await db
-      .select({
-        id: itineraryItems.id,
-        tripId: itineraryItems.tripId,
-      })
-      .from(itineraryItems)
-      .leftJoin(trips, eq(itineraryItems.tripId, trips.id))
-      .leftJoin(tripCollaborators, eq(trips.id, tripCollaborators.tripId))
-      .where(
-        and(
-          eq(itineraryItems.id, id),
-          or(
-            eq(trips.userId, userId),
-            and(
-              eq(tripCollaborators.userId, userId),
-              inArray(tripCollaborators.role, ['admin', 'editor'])
-            )
-          )
-        )
-      )
-      .limit(1)
-
-    if (existingItem.length === 0) {
-      throw new Error('Item not found or insufficient permissions')
-    }
+    await this.verifyItemAccess(id, userId)
 
     // Build update data
     const updateData: Record<string, unknown> = {}
@@ -485,33 +477,16 @@ export class ItineraryService {
     }
 
     // Return updated item
-    return this.get(id, userId) as Promise<ItineraryItem>
+    const result = await this.get(id, userId)
+    if (!result) {
+      throw new Error('Failed to retrieve updated item')
+    }
+    return result
   }
 
   async delete(id: string, userId: string): Promise<{ success: boolean }> {
     // Verify access and edit permissions
-    const existingItem = await db
-      .select({ id: itineraryItems.id })
-      .from(itineraryItems)
-      .leftJoin(trips, eq(itineraryItems.tripId, trips.id))
-      .leftJoin(tripCollaborators, eq(trips.id, tripCollaborators.tripId))
-      .where(
-        and(
-          eq(itineraryItems.id, id),
-          or(
-            eq(trips.userId, userId),
-            and(
-              eq(tripCollaborators.userId, userId),
-              inArray(tripCollaborators.role, ['admin', 'editor'])
-            )
-          )
-        )
-      )
-      .limit(1)
-
-    if (existingItem.length === 0) {
-      throw new Error('Item not found or insufficient permissions')
-    }
+    await this.verifyItemAccess(id, userId)
 
     // Delete attendee associations first
     await db.delete(itineraryItemAttendees).where(eq(itineraryItemAttendees.itineraryItemId, id))
@@ -536,21 +511,7 @@ export class ItineraryService {
     } | null
   }> {
     // Verify trip access
-    const tripAccess = await db
-      .select({ id: trips.id })
-      .from(trips)
-      .leftJoin(tripCollaborators, eq(trips.id, tripCollaborators.tripId))
-      .where(
-        and(
-          eq(trips.id, tripId),
-          or(eq(trips.userId, userId), eq(tripCollaborators.userId, userId))
-        )
-      )
-      .limit(1)
-
-    if (tripAccess.length === 0) {
-      throw new Error('Trip not found or access denied')
-    }
+    await this.verifyTripAccess(tripId, userId)
 
     const items = await db
       .select({
