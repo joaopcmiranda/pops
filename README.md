@@ -48,7 +48,7 @@ pnpm dev:travel      # Travel app frontend only
 ### Access Points
 
 - **Travel App**: [http://localhost:4003](http://localhost:4003)
-- **API Gateway**: [http://localhost:8000/health](http://localhost:8000/health)
+- **Trip Service**: [http://localhost:8030/health](http://localhost:8030/health)
 - **Production**: [travel.mymops.io](https://travel.mymops.io)
 - **Storybook**: [http://localhost:6006](http://localhost:6006) (run `pnpm storybook`)
 
@@ -69,7 +69,7 @@ The travel organizer is live and functional with the following features:
 
 #### Technical Implementation
 - **Frontend**: React 19 + TypeScript + Vite 7
-- **Backend**: Fastify + tRPC + Drizzle ORM
+- **Backend**: Fastify + Direct API Client + Drizzle ORM
 - **UI Library**: shadcn/ui components + Tailwind CSS v4
 - **State Management**: React Query + Context API
 - **Documentation**: Comprehensive Storybook stories
@@ -91,7 +91,7 @@ The travel organizer is live and functional with the following features:
 
 - **Monorepo**: Turborepo with pnpm workspaces
 - **Frontend**: React 19, TypeScript, Vite 7, Tailwind CSS v4
-- **Backend**: Fastify, tRPC, Drizzle ORM (SQLite)
+- **Backend**: Fastify, Direct API Client, Drizzle ORM (SQLite)
 - **UI Components**: shadcn/ui with Radix UI
 - **Database**: SQLite (dev), PostgreSQL (planned for prod)
 - **Code Quality**: ESLint, Prettier, Husky, TypeScript strict mode
@@ -110,17 +110,15 @@ pops/
 │       └── vite.config.ts      # Vite configuration
 │
 ├── services/                   # Backend microservices
-│   ├── api-gateway/           # Main API orchestrator (port 8000)
 │   ├── trip-service/          # Trip management (port 8030)
 │   ├── itinerary-service/     # Itinerary management (port 8031)
 │   └── user-service/          # User management (port 8011)
 │
 ├── packages/                   # Shared packages
 │   ├── ui/                    # Shared UI component library
-│   ├── shared-contracts/      # Shared TypeScript contracts
-│   ├── api-client/           # tRPC client configuration
-│   ├── shared/               # Shared utilities
-│   └── types/                # Shared TypeScript types
+│   ├── types/                 # Shared TypeScript types and schemas
+│   ├── api-client/           # Direct API client for service communication
+│   └── shared/               # Shared utilities
 │
 ├── turbo.json                 # Turborepo configuration
 └── pnpm-workspace.yaml        # pnpm workspace configuration
@@ -146,7 +144,6 @@ POps uses a systematic port allocation strategy for scalable development:
 #### Backend (8000s)
 | Port | Service | Status |
 |------|---------|--------|
-| **8000** | API Gateway | ✅ Active |
 | **8011** | User Service | ✅ Active |
 | **8030** | Trip Service | ✅ Active |
 | **8031** | Itinerary Service | ✅ Active |
@@ -253,8 +250,8 @@ pnpm build-storybook # Build Storybook for deployment
 Each service has its own `.env.example` file. Copy to `.env` and configure:
 
 ```bash
-# Example for API Gateway
-cp services/api-gateway/.env.example services/api-gateway/.env
+# Example for Trip Service
+cp services/trip-service/.env.example services/trip-service/.env
 ```
 
 ### Hot Reload

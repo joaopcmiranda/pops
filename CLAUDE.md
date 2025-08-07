@@ -133,3 +133,7 @@ pnpm run type-check
 ## 💡 Project Principles
 
 - NO TASK IS FINISHED UNTIL ALL ERRORS HAVE BEEN RESOLVED
+
+## 💡 Development Best Practices
+
+- Never use any, always type properly
