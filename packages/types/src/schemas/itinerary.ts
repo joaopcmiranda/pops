@@ -1,57 +1,15 @@
 import { z } from 'zod'
-import { personSchema, locationSchema } from './user.js'
-
-// Item types
-export const itemTypeSchema = z.enum([
-  'transport',
-  'accommodation',
-  'activity',
-  'work',
-  'overarching-event',
-  'other',
-])
-
-// Item status
-export const itemStatusSchema = z.enum(['planned', 'confirmed', 'completed', 'cancelled'])
-
-// Item priority
-export const itemPrioritySchema = z.enum(['low', 'medium', 'high'])
-
-// Transportation types
-export const transportationTypeSchema = z.enum(['flight', 'train', 'bus', 'car', 'boat', 'other'])
-
-// Accommodation types
-export const accommodationTypeSchema = z.enum([
-  'hotel',
-  'hostel',
-  'airbnb',
-  'friend',
-  'family',
-  'camping',
-  'other',
-])
-
-// Activity types
-export const activityTypeSchema = z.enum([
-  'sightseeing',
-  'leisure',
-  'cultural',
-  'adventure',
-  'food',
-  'shopping',
-  'walking-tour',
-  'planning',
-  'other',
-])
-
-// Work types
-export const workTypeSchema = z.enum([
-  'meeting',
-  'conference',
-  'presentation',
-  'interview',
-  'other',
-])
+import {
+  ItemType,
+  ItemStatus,
+  ItemPriority,
+  TransportationType,
+  AccommodationType,
+  ActivityType,
+  WorkType,
+  DifficultyLevel,
+} from '../enums'
+import { personSchema, locationSchema } from './user'
 
 // Cost schema
 export const costSchema = z.object({
@@ -64,12 +22,12 @@ export const baseItineraryItemSchema = z.object({
   id: z.string(),
   title: z.string(),
   description: z.string().optional(),
-  type: itemTypeSchema,
+  type: z.nativeEnum(ItemType),
   startDate: z.date(),
   endDate: z.date().optional(),
   isAllDay: z.boolean(),
-  status: itemStatusSchema,
-  priority: itemPrioritySchema,
+  status: z.nativeEnum(ItemStatus),
+  priority: z.nativeEnum(ItemPriority),
   tags: z.array(z.string()).optional(),
   notes: z.string().optional(),
   createdAt: z.date(),
@@ -86,7 +44,7 @@ export const baseItineraryItemSchema = z.object({
 
 // Type-specific data schemas
 export const transportTypeDataSchema = z.object({
-  transportationType: transportationTypeSchema,
+  transportationType: z.nativeEnum(TransportationType),
   flightNumber: z.string().optional(),
   airline: z.string().optional(),
   trainNumber: z.string().optional(),
@@ -98,7 +56,7 @@ export const transportTypeDataSchema = z.object({
 })
 
 export const accommodationTypeDataSchema = z.object({
-  accommodationType: accommodationTypeSchema,
+  accommodationType: z.nativeEnum(AccommodationType),
   checkInDate: z.date().optional(),
   checkOutDate: z.date().optional(),
   roomType: z.string().optional(),
@@ -108,17 +66,17 @@ export const accommodationTypeDataSchema = z.object({
 })
 
 export const activityTypeDataSchema = z.object({
-  activityType: activityTypeSchema,
+  activityType: z.nativeEnum(ActivityType),
   ticketRequired: z.boolean().optional(),
   ticketUrl: z.string().optional(),
   duration: z.number().optional(), // minutes
   capacity: z.number().optional(),
-  difficulty: z.enum(['easy', 'medium', 'hard']).optional(),
+  difficulty: z.nativeEnum(DifficultyLevel).optional(),
   equipment: z.array(z.string()).optional(),
 })
 
 export const workTypeDataSchema = z.object({
-  workType: workTypeSchema,
+  workType: z.nativeEnum(WorkType),
   company: z.string().optional(),
   contactPerson: z.string().optional(),
   contactEmail: z.string().optional(),
@@ -134,7 +92,7 @@ export const itineraryItemSchema = baseItineraryItemSchema.extend({
 // Typed itinerary item schemas
 export const transportItemSchema = baseItineraryItemSchema.extend({
   type: z.literal('transport'),
-  transportationType: transportationTypeSchema,
+  transportationType: z.nativeEnum(TransportationType),
   flightNumber: z.string().optional(),
   airline: z.string().optional(),
   trainNumber: z.string().optional(),
@@ -147,7 +105,7 @@ export const transportItemSchema = baseItineraryItemSchema.extend({
 
 export const accommodationItemSchema = baseItineraryItemSchema.extend({
   type: z.literal('accommodation'),
-  accommodationType: accommodationTypeSchema,
+  accommodationType: z.nativeEnum(AccommodationType),
   checkInDate: z.date().optional(),
   checkOutDate: z.date().optional(),
   roomType: z.string().optional(),
@@ -158,18 +116,18 @@ export const accommodationItemSchema = baseItineraryItemSchema.extend({
 
 export const activityItemSchema = baseItineraryItemSchema.extend({
   type: z.literal('activity'),
-  activityType: activityTypeSchema,
+  activityType: z.nativeEnum(ActivityType),
   ticketRequired: z.boolean().optional(),
   ticketUrl: z.string().optional(),
   duration: z.number().optional(),
   capacity: z.number().optional(),
-  difficulty: z.enum(['easy', 'medium', 'hard']).optional(),
+  difficulty: z.nativeEnum(DifficultyLevel).optional(),
   equipment: z.array(z.string()).optional(),
 })
 
 export const workItemSchema = baseItineraryItemSchema.extend({
   type: z.literal('work'),
-  workType: workTypeSchema,
+  workType: z.nativeEnum(WorkType),
   company: z.string().optional(),
   contactPerson: z.string().optional(),
   contactEmail: z.string().optional(),
@@ -190,7 +148,7 @@ export const itineraryDaySchema = z.object({
 
 // Itinerary filters
 export const itineraryFiltersSchema = z.object({
-  types: z.array(itemTypeSchema).optional(),
+  types: z.array(z.nativeEnum(ItemType)).optional(),
   dateRange: z
     .object({
       start: z.date(),
@@ -199,7 +157,7 @@ export const itineraryFiltersSchema = z.object({
     .optional(),
   location: z.string().optional(),
   attendees: z.array(z.string()).optional(), // Person IDs
-  status: z.array(itemStatusSchema).optional(),
+  status: z.array(z.nativeEnum(ItemStatus)).optional(),
   tags: z.array(z.string()).optional(),
 })
 
@@ -207,12 +165,12 @@ export const itineraryFiltersSchema = z.object({
 export const createItineraryItemSchema = z.object({
   title: z.string().min(1),
   description: z.string().optional(),
-  type: itemTypeSchema,
+  type: z.nativeEnum(ItemType),
   startDate: z.string().datetime(),
   endDate: z.string().datetime().optional(),
   isAllDay: z.boolean().default(false),
-  status: itemStatusSchema.default('planned'),
-  priority: itemPrioritySchema.default('medium'),
+  status: z.nativeEnum(ItemStatus).default(ItemStatus.PLANNED),
+  priority: z.nativeEnum(ItemPriority).default(ItemPriority.MEDIUM),
   tags: z.array(z.string()).optional(),
   notes: z.string().optional(),
   tripId: z.string(),
@@ -225,23 +183,3 @@ export const createItineraryItemSchema = z.object({
 export const updateItineraryItemSchema = createItineraryItemSchema.partial().extend({
   id: z.string(),
 })
-
-// Type exports
-export type ItemType = z.infer<typeof itemTypeSchema>
-export type ItemStatus = z.infer<typeof itemStatusSchema>
-export type ItemPriority = z.infer<typeof itemPrioritySchema>
-export type TransportationType = z.infer<typeof transportationTypeSchema>
-export type AccommodationType = z.infer<typeof accommodationTypeSchema>
-export type ActivityType = z.infer<typeof activityTypeSchema>
-export type WorkType = z.infer<typeof workTypeSchema>
-export type Cost = z.infer<typeof costSchema>
-export type ItineraryItem = z.infer<typeof itineraryItemSchema>
-export type TransportItem = z.infer<typeof transportItemSchema>
-export type AccommodationItem = z.infer<typeof accommodationItemSchema>
-export type ActivityItem = z.infer<typeof activityItemSchema>
-export type WorkItem = z.infer<typeof workItemSchema>
-export type OverarchingEventItem = z.infer<typeof overarchingEventItemSchema>
-export type ItineraryDay = z.infer<typeof itineraryDaySchema>
-export type ItineraryFilters = z.infer<typeof itineraryFiltersSchema>
-export type CreateItineraryItemInput = z.infer<typeof createItineraryItemSchema>
-export type UpdateItineraryItemInput = z.infer<typeof updateItineraryItemSchema>

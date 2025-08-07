@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { RelationshipType, LocationType } from '../enums'
 
 // User schema
 export const userSchema = z.object({
@@ -14,7 +15,7 @@ export const userSchema = z.object({
 export const personSchema = z.object({
   id: z.string(),
   name: z.string(),
-  relationshipType: z.enum(['family', 'friend', 'colleague', 'contact']),
+  relationshipType: z.nativeEnum(RelationshipType),
   phone: z.string().optional(),
   email: z.string().email().optional(),
   whatsapp: z.string().optional(),
@@ -32,7 +33,7 @@ export const locationSchema = z.object({
   state: z.string().optional(),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
-  type: z.enum(['venue', 'accommodation', 'workplace', 'tourist-spot', 'restaurant', 'other']),
+  type: z.nativeEnum(LocationType),
   createdAt: z.date(),
   updatedAt: z.date(),
 })
@@ -50,7 +51,7 @@ export const updateUserSchema = createUserSchema.partial().extend({
 
 export const createPersonSchema = z.object({
   name: z.string().min(1),
-  relationshipType: z.enum(['family', 'friend', 'colleague', 'contact']),
+  relationshipType: z.nativeEnum(RelationshipType),
   phone: z.string().optional(),
   email: z.string().email().optional(),
   whatsapp: z.string().optional(),
@@ -68,20 +69,9 @@ export const createLocationSchema = z.object({
   state: z.string().optional(),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
-  type: z.enum(['venue', 'accommodation', 'workplace', 'tourist-spot', 'restaurant', 'other']),
+  type: z.nativeEnum(LocationType),
 })
 
 export const updateLocationSchema = createLocationSchema.partial().extend({
   id: z.string(),
 })
-
-// Type exports
-export type User = z.infer<typeof userSchema>
-export type Person = z.infer<typeof personSchema>
-export type Location = z.infer<typeof locationSchema>
-export type CreateUserInput = z.infer<typeof createUserSchema>
-export type UpdateUserInput = z.infer<typeof updateUserSchema>
-export type CreatePersonInput = z.infer<typeof createPersonSchema>
-export type UpdatePersonInput = z.infer<typeof updatePersonSchema>
-export type CreateLocationInput = z.infer<typeof createLocationSchema>
-export type UpdateLocationInput = z.infer<typeof updateLocationSchema>
