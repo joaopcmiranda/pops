@@ -14,7 +14,16 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@pops/shared": ["packages/shared/src"],
+      "@pops/shared/*": ["packages/shared/src/*"],
+      "@pops/types": ["packages/types/src"],
+      "@pops/types/*": ["packages/types/src/*"],
+      "@pops/ui": ["packages/ui/src"],
+      "@pops/ui/*": ["packages/ui/src/*"],
+      "@pops/api-client": ["packages/api-client/src"],
+      "@pops/api-client/*": ["packages/api-client/src/*"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

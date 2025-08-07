@@ -10,17 +10,17 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev --parallel",
+    "dev": "turbo run dev --filter='@pops/*-service' --filter='@pops/travel' --parallel",
     "dev:travel": "turbo run dev --filter=@pops/travel",
-    "dev:services": "turbo run dev --filter='@pops/*-service' --filter=@pops/api-gateway --parallel",
-    "dev:backend": "turbo run dev --filter='./services/*' --parallel",
+    "dev:services": "turbo run dev --filter='@pops/*-service' --parallel",
+    "dev:backend": "turbo run dev --filter='@pops/*-service' --parallel",
     "dev:frontend": "turbo run dev --filter='./apps/*' --parallel",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "format": "turbo run format",
     "format:check": "turbo run format:check",
     "type-check": "turbo run type-check",
-    "check": "turbo run type-check lint format:check --parallel",
+    "check": "turbo run type-check lint format format:check --parallel",
     "test": "turbo run test",
     "clean": "turbo daemon clean && rm -rf node_modules/.cache/turbo",
     "prepare": "husky",
@@ -38,12 +38,13 @@
     "@eslint/js": "^9.32.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
+    "eslint-plugin-storybook": "9.1.1",
     "globals": "^16.3.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.1.2",
-    "puppeteer": "^24.15.0",
+    "lint-staged": "^16.1.4",
+    "puppeteer": "^24.16.0",
     "turbo": "^2.5.5",
-    "typescript-eslint": "^8.38.0"
+    "typescript-eslint": "^8.39.0"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

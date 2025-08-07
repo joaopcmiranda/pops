@@ -8,9 +8,9 @@
       "env": ["NODE_ENV"]
     },
     "dev": {
+      "dependsOn": ["^build"],
       "cache": false,
-      "persistent": true,
-      "dependsOn": ["^build"]
+      "persistent": true
     },
     "lint": {
       "dependsOn": ["^lint"],

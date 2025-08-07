@@ -12,3 +12,8 @@ ignoredBuiltDependencies:
   - esbuild
   - nx
   - prisma
+
+onlyBuiltDependencies:
+  - better-sqlite3
+  - puppeteer
+  - sharp
