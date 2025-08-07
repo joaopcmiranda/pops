@@ -33,3 +33,19 @@ export enum DifficultyLevel {
   MEDIUM = 'medium',
   HARD = 'hard',
 }
+
+export enum LocationType {
+  ACCOMMODATION = 'accommodation',
+  VENUE = 'venue',
+  WORKPLACE = 'workplace',
+  TOURIST_SPOT = 'tourist-spot',
+  RESTAURANT = 'restaurant',
+  OTHER = 'other',
+}
+
+export enum RelationshipType {
+  FAMILY = 'family',
+  FRIEND = 'friend',
+  COLLEAGUE = 'colleague',
+  CONTACT = 'contact',
+}

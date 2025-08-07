@@ -23,15 +23,15 @@ export const baseItineraryItemSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
   type: z.nativeEnum(ItemType),
-  startDate: z.date(),
-  endDate: z.date().optional(),
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date().optional(),
   isAllDay: z.boolean(),
   status: z.nativeEnum(ItemStatus),
   priority: z.nativeEnum(ItemPriority),
   tags: z.array(z.string()).optional(),
   notes: z.string().optional(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 
   // Relations
   tripId: z.string(),
@@ -57,8 +57,8 @@ export const transportTypeDataSchema = z.object({
 
 export const accommodationTypeDataSchema = z.object({
   accommodationType: z.nativeEnum(AccommodationType),
-  checkInDate: z.date().optional(),
-  checkOutDate: z.date().optional(),
+  checkInDate: z.coerce.date().optional(),
+  checkOutDate: z.coerce.date().optional(),
   roomType: z.string().optional(),
   roomNumber: z.string().optional(),
   confirmationNumber: z.string().optional(),
@@ -106,8 +106,8 @@ export const transportItemSchema = baseItineraryItemSchema.extend({
 export const accommodationItemSchema = baseItineraryItemSchema.extend({
   type: z.literal('accommodation'),
   accommodationType: z.nativeEnum(AccommodationType),
-  checkInDate: z.date().optional(),
-  checkOutDate: z.date().optional(),
+  checkInDate: z.coerce.date().optional(),
+  checkOutDate: z.coerce.date().optional(),
   roomType: z.string().optional(),
   roomNumber: z.string().optional(),
   confirmationNumber: z.string().optional(),

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { RelationshipType, LocationType } from '../enums'
+import { RelationshipType, LocationType } from '../enums/common'
 
 // User schema
 export const userSchema = z.object({

@@ -49,8 +49,8 @@ export const tripCollaboratorSchema = z.object({
     canInvite: z.boolean(),
     canExport: z.boolean(),
   }),
-  invitedAt: z.date(),
-  acceptedAt: z.date().optional(),
+  invitedAt: z.coerce.date(),
+  acceptedAt: z.coerce.date().optional(),
   invitedBy: z.string(),
 })
 
@@ -62,7 +62,7 @@ export const tripStatsSchema = z.object({
   totalDays: z.number(),
   budgetUtilization: z.number().optional(),
   completionRate: z.number().optional(),
-  lastActivity: z.date(),
+  lastActivity: z.coerce.date(),
 })
 
 // Main trip schema
@@ -75,9 +75,9 @@ export const tripSchema = z.object({
   type: z.nativeEnum(TripType),
   status: z.nativeEnum(TripStatus),
 
-  // Dates
-  startDate: z.date(),
-  endDate: z.date(),
+  // Dates (handle both string and Date objects)
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date(),
 
   // Budget and settings
   budget: tripBudgetSchema.optional(),
@@ -126,26 +126,35 @@ export const tripTemplateSchema = z.object({
   updatedAt: z.date(),
 })
 
-// Input schemas for API operations
-export const createTripSchema = z.object({
-  title: z.string().min(1),
-  description: z.string().optional(),
-  destination: z.string().min(1),
-  country: z.string().min(1),
-  type: z.nativeEnum(TripType),
-  startDate: z.string().datetime(),
-  endDate: z.string().datetime(),
-  budget: tripBudgetSchema.optional(),
-  settings: tripSettingsSchema.optional(),
-  coverImage: z.string().optional(),
-  tags: z.array(z.string()).optional(),
-  templateId: z.string().optional(),
-})
+// Input schemas for API operations - derived from base tripSchema
+export const createTripSchema = tripSchema
+  .omit({
+    id: true,
+    userId: true, // Set by the API based on auth context
+    createdAt: true,
+    updatedAt: true,
+    stats: true, // Computed field
+    collaborators: true, // Handled separately
+  })
+  .extend({
+    // Make settings optional for creation (API can provide defaults)
+    settings: tripSettingsSchema.optional(),
+    // Add status for creation (defaults to planning if not provided)
+    status: z.nativeEnum(TripStatus).optional(),
+  })
 
-export const updateTripSchema = createTripSchema.partial().extend({
-  id: z.string(),
-  status: z.nativeEnum(TripStatus).optional(),
-})
+export const updateTripSchema = tripSchema
+  .omit({
+    userId: true, // Cannot be changed
+    createdAt: true, // Cannot be changed
+    updatedAt: true, // Set by API
+    stats: true, // Computed field
+    collaborators: true, // Handled separately
+  })
+  .partial()
+  .extend({
+    id: z.string(), // Required for updates
+  })
 
 // Trip filters schema
 export const tripFiltersSchema = z.object({
