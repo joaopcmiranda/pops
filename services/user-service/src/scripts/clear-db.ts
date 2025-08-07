@@ -1,5 +1,7 @@
 #!/usr/bin/env tsx
 
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+
 import { db, sqlite } from '../db/index.js'
 import {
   users,

@@ -1,11 +1,11 @@
 import type { FastifyInstance } from 'fastify'
-import {
-  createItineraryItemSchema,
-  updateItineraryItemSchema,
-  itemTypeSchema,
-  itemStatusSchema,
-} from '@pops/shared-contracts'
-import { ItineraryService } from '../services/itinerary-service.js'
+import * as types from '@pops/types'
+console.log(
+  'Available types:',
+  Object.keys(types).filter(k => k.includes('Itinerary'))
+)
+const { createItineraryItemSchema } = types
+import { ItineraryService } from '../services/itinerary-service'
 
 export async function itineraryRoutes(fastify: FastifyInstance) {
   const itineraryService = new ItineraryService()
@@ -21,7 +21,7 @@ export async function itineraryRoutes(fastify: FastifyInstance) {
       return
     }
     // Store userId in request context
-    ;(request as any).userId = userId
+    ;(request as unknown as { userId: string }).userId = userId
   })
 
   // List itinerary items for a trip
@@ -46,35 +46,35 @@ export async function itineraryRoutes(fastify: FastifyInstance) {
     },
     async (request, reply) => {
       try {
-        const query = request.query as any
-        const userId = (request as any).userId
+        const query = request.query as Record<string, unknown>
+        const userId = (request as unknown as { userId: string }).userId
 
-        const filters: any = {}
+        const filters: Record<string, unknown> = {}
 
         if (query.startDate) filters.startDate = query.startDate
         if (query.endDate) filters.endDate = query.endDate
-        if (query.limit) filters.limit = parseInt(query.limit)
-        if (query.offset) filters.offset = parseInt(query.offset)
+        if (query.limit) filters.limit = parseInt(query.limit as string)
+        if (query.offset) filters.offset = parseInt(query.offset as string)
 
         if (query.types) {
-          filters.types = query.types.split(',')
+          filters.types = (query.types as string).split(',')
         }
 
         if (query.status) {
-          filters.status = query.status.split(',')
+          filters.status = (query.status as string).split(',')
         }
 
-        const items = await itineraryService.list(query.tripId, userId, filters)
+        const items = await itineraryService.list(query.tripId as string, userId, filters)
 
         reply.send({
           success: true,
           data: items,
         })
-      } catch (error: any) {
+      } catch (error: unknown) {
         fastify.log.error(error)
         reply.code(500).send({
           success: false,
-          error: error.message || 'Internal Server Error',
+          error: error instanceof Error ? error.message : 'Internal Server Error',
         })
       }
     }
@@ -97,7 +97,7 @@ export async function itineraryRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       try {
         const { id } = request.params as { id: string }
-        const userId = (request as any).userId
+        const userId = (request as unknown as { userId: string }).userId
 
         const item = await itineraryService.get(id, userId)
 
@@ -113,11 +113,11 @@ export async function itineraryRoutes(fastify: FastifyInstance) {
           success: true,
           data: item,
         })
-      } catch (error: any) {
+      } catch (error: unknown) {
         fastify.log.error(error)
         reply.code(500).send({
           success: false,
-          error: error.message || 'Internal Server Error',
+          error: error instanceof Error ? error.message : 'Internal Server Error',
         })
       }
     }
@@ -126,7 +126,7 @@ export async function itineraryRoutes(fastify: FastifyInstance) {
   // Create itinerary item
   fastify.post('/itinerary', async (request, reply) => {
     try {
-      const userId = (request as any).userId
+      const userId = (request as unknown as { userId: string }).userId
       const input = createItineraryItemSchema.parse(request.body)
 
       const item = await itineraryService.create(input, userId)
@@ -135,11 +135,11 @@ export async function itineraryRoutes(fastify: FastifyInstance) {
         success: true,
         data: item,
       })
-    } catch (error: any) {
+    } catch (error: unknown) {
       fastify.log.error(error)
       reply.code(500).send({
         success: false,
-        error: error.message || 'Internal Server Error',
+        error: error instanceof Error ? error.message : 'Internal Server Error',
       })
     }
   })
@@ -161,8 +161,8 @@ export async function itineraryRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       try {
         const { id } = request.params as { id: string }
-        const userId = (request as any).userId
-        const updateData = request.body as any
+        const userId = (request as unknown as { userId: string }).userId
+        const updateData = request.body as Record<string, unknown>
 
         const input = { id, ...updateData }
         const item = await itineraryService.update(input, userId)
@@ -171,15 +171,17 @@ export async function itineraryRoutes(fastify: FastifyInstance) {
           success: true,
           data: item,
         })
-      } catch (error: any) {
+      } catch (error: unknown) {
         fastify.log.error(error)
         const status =
-          error.message.includes('not found') || error.message.includes('insufficient permissions')
+          error instanceof Error &&
+          (error.message.includes('not found') ||
+            error.message.includes('insufficient permissions'))
             ? 404
             : 500
         reply.code(status).send({
           success: false,
-          error: error.message || 'Internal Server Error',
+          error: error instanceof Error ? error.message : 'Internal Server Error',
         })
       }
     }
@@ -202,7 +204,7 @@ export async function itineraryRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       try {
         const { id } = request.params as { id: string }
-        const userId = (request as any).userId
+        const userId = (request as unknown as { userId: string }).userId
 
         const result = await itineraryService.delete(id, userId)
 
@@ -210,15 +212,17 @@ export async function itineraryRoutes(fastify: FastifyInstance) {
           success: true,
           data: result,
         })
-      } catch (error: any) {
+      } catch (error: unknown) {
         fastify.log.error(error)
         const status =
-          error.message.includes('not found') || error.message.includes('insufficient permissions')
+          error instanceof Error &&
+          (error.message.includes('not found') ||
+            error.message.includes('insufficient permissions'))
             ? 404
             : 500
         reply.code(status).send({
           success: false,
-          error: error.message || 'Internal Server Error',
+          error: error instanceof Error ? error.message : 'Internal Server Error',
         })
       }
     }
@@ -240,20 +244,20 @@ export async function itineraryRoutes(fastify: FastifyInstance) {
     },
     async (request, reply) => {
       try {
-        const query = request.query as any
-        const userId = (request as any).userId
+        const query = request.query as Record<string, unknown>
+        const userId = (request as unknown as { userId: string }).userId
 
-        const stats = await itineraryService.getStats(query.tripId, userId)
+        const stats = await itineraryService.getStats(query.tripId as string, userId)
 
         reply.send({
           success: true,
           data: stats,
         })
-      } catch (error: any) {
+      } catch (error: unknown) {
         fastify.log.error(error)
         reply.code(500).send({
           success: false,
-          error: error.message || 'Internal Server Error',
+          error: error instanceof Error ? error.message : 'Internal Server Error',
         })
       }
     }

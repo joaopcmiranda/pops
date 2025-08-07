@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 
-import { db, sqlite } from '../db/index.js'
+import { db } from '../db/index.js'
 import {
   users,
   trips,
@@ -12,6 +12,7 @@ import {
   tripTemplates,
   itineraryItemAttendees,
 } from '../db/schema.js'
+import type { SQLiteTable } from 'drizzle-orm/sqlite-core'
 
 /**
  * Clear Database Script
@@ -24,12 +25,12 @@ async function clearDatabase() {
 
   try {
     // Helper function to safely delete from table
-    const safeDelete = async (table: any, tableName: string) => {
+    const safeDelete = async (table: SQLiteTable, tableName: string) => {
       try {
         await db.delete(table)
         console.log(`   ✓ Cleared ${tableName}`)
-      } catch (error: any) {
-        if (error.message?.includes('no such table')) {
+      } catch (error: unknown) {
+        if (error instanceof Error && error.message?.includes('no such table')) {
           console.log(`   ~ Skipped ${tableName} (table doesn't exist)`)
         } else {
           throw error

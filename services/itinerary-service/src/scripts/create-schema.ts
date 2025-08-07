@@ -1,7 +1,6 @@
 #!/usr/bin/env tsx
 
 import { DatabaseSync } from 'node:sqlite'
-import { sql } from 'drizzle-orm'
 
 const dbFile = './data/trips.db'
 const sqlite = new DatabaseSync(dbFile)

@@ -1,7 +1,6 @@
 #!/usr/bin/env tsx
 
-import { migrate } from 'drizzle-orm/sqlite-proxy/migrator'
-import { db, sqlite } from '../db/index.js'
+import { sqlite } from '../db/index.js'
 
 /**
  * Database Migration Script

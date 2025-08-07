@@ -1,5 +1,7 @@
 #!/usr/bin/env tsx
 
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+
 import { migrate } from 'drizzle-orm/sqlite-proxy/migrator'
 import { db, sqlite } from '../db/index.js'
 

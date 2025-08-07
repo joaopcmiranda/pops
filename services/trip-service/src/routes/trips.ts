@@ -1,10 +1,7 @@
 import type { FastifyInstance } from 'fastify'
-import {
-  tripListInputSchema,
-  createTripSchema,
-  updateTripSchema,
-  tripTemplateListInputSchema,
-} from '@pops/shared-contracts'
+import * as types from '@pops/types'
+console.log('Available types:', Object.keys(types).filter(k => k.includes('Trip')))
+const { createTripSchema } = types
 import { TripService } from '../services/trip-service.js'
 
 export async function tripRoutes(fastify: FastifyInstance) {
@@ -21,7 +18,8 @@ export async function tripRoutes(fastify: FastifyInstance) {
       return
     }
     // Store userId in request context
-    ;(request as any).userId = userId
+    // Store userId in request context
+    ;(request as unknown as { userId: string }).userId = userId
   })
 
   // List trips
@@ -50,24 +48,24 @@ export async function tripRoutes(fastify: FastifyInstance) {
     },
     async (request, reply) => {
       try {
-        const query = request.query as any
-        const userId = (request as any).userId
+        const query = request.query as Record<string, unknown>
+        const userId = (request as unknown as { userId: string }).userId
 
         // Parse query parameters into TripListInput format
-        const input: any = {}
+        const input: Record<string, unknown> = {}
 
         if (query.sortBy) input.sortBy = query.sortBy
         if (query.sortOrder) input.sortOrder = query.sortOrder
-        if (query.limit) input.limit = parseInt(query.limit)
-        if (query.offset) input.offset = parseInt(query.offset)
+        if (query.limit) input.limit = parseInt(query.limit as string)
+        if (query.offset) input.offset = parseInt(query.offset as string)
 
         // Parse filters
-        const filters: any = {}
+        const filters: Record<string, unknown> = {}
         if (query['filters.status']) {
-          filters.status = query['filters.status'].split(',')
+          filters.status = (query['filters.status'] as string).split(',')
         }
         if (query['filters.type']) {
-          filters.type = query['filters.type'].split(',')
+          filters.type = (query['filters.type'] as string).split(',')
         }
         if (query['filters.destination']) {
           filters.destination = query['filters.destination']
@@ -82,7 +80,7 @@ export async function tripRoutes(fastify: FastifyInstance) {
           }
         }
         if (query['filters.tags']) {
-          filters.tags = query['filters.tags'].split(',')
+          filters.tags = (query['filters.tags'] as string).split(',')
         }
         if (query['filters.collaborator'] !== undefined) {
           filters.collaborator = query['filters.collaborator']
@@ -98,11 +96,11 @@ export async function tripRoutes(fastify: FastifyInstance) {
           success: true,
           data: trips,
         })
-      } catch (error: any) {
+      } catch (error: unknown) {
         fastify.log.error(error)
         reply.code(500).send({
           success: false,
-          error: error.message || 'Internal Server Error',
+          error: error instanceof Error ? error.message : 'Internal Server Error',
         })
       }
     }
@@ -125,7 +123,7 @@ export async function tripRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       try {
         const { id } = request.params as { id: string }
-        const userId = (request as any).userId
+        const userId = (request as unknown as { userId: string }).userId
 
         const trip = await tripService.get(id, userId)
 
@@ -141,11 +139,11 @@ export async function tripRoutes(fastify: FastifyInstance) {
           success: true,
           data: trip,
         })
-      } catch (error: any) {
+      } catch (error: unknown) {
         fastify.log.error(error)
         reply.code(500).send({
           success: false,
-          error: error.message || 'Internal Server Error',
+          error: error instanceof Error ? error.message : 'Internal Server Error',
         })
       }
     }
@@ -154,7 +152,7 @@ export async function tripRoutes(fastify: FastifyInstance) {
   // Create trip
   fastify.post('/trips', async (request, reply) => {
     try {
-      const userId = (request as any).userId
+      const userId = (request as unknown as { userId: string }).userId
       const input = createTripSchema.parse(request.body)
 
       const trip = await tripService.create(input, userId)
@@ -163,11 +161,11 @@ export async function tripRoutes(fastify: FastifyInstance) {
         success: true,
         data: trip,
       })
-    } catch (error: any) {
+    } catch (error: unknown) {
       fastify.log.error(error)
       reply.code(500).send({
         success: false,
-        error: error.message || 'Internal Server Error',
+        error: error instanceof Error ? error.message : 'Internal Server Error',
       })
     }
   })
@@ -189,25 +187,27 @@ export async function tripRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       try {
         const { id } = request.params as { id: string }
-        const userId = (request as any).userId
-        const updateData = request.body as any
+        const userId = (request as unknown as { userId: string }).userId
+        const updateData = request.body as Record<string, unknown>
 
-        const input = { id, ...updateData }
+        const input = { id, ...(updateData as Record<string, unknown>) }
         const trip = await tripService.update(input, userId)
 
         reply.send({
           success: true,
           data: trip,
         })
-      } catch (error: any) {
+      } catch (error: unknown) {
         fastify.log.error(error)
         const status =
-          error.message.includes('not found') || error.message.includes('insufficient permissions')
+          error instanceof Error &&
+          (error.message.includes('not found') ||
+            error.message.includes('insufficient permissions'))
             ? 404
             : 500
         reply.code(status).send({
           success: false,
-          error: error.message || 'Internal Server Error',
+          error: error instanceof Error ? error.message : 'Internal Server Error',
         })
       }
     }
@@ -230,7 +230,7 @@ export async function tripRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       try {
         const { id } = request.params as { id: string }
-        const userId = (request as any).userId
+        const userId = (request as unknown as { userId: string }).userId
 
         const result = await tripService.delete(id, userId)
 
@@ -238,15 +238,17 @@ export async function tripRoutes(fastify: FastifyInstance) {
           success: true,
           data: result,
         })
-      } catch (error: any) {
+      } catch (error: unknown) {
         fastify.log.error(error)
         const status =
-          error.message.includes('not found') || error.message.includes('insufficient permissions')
+          error instanceof Error &&
+          (error.message.includes('not found') ||
+            error.message.includes('insufficient permissions'))
             ? 404
             : 500
         reply.code(status).send({
           success: false,
-          error: error.message || 'Internal Server Error',
+          error: error instanceof Error ? error.message : 'Internal Server Error',
         })
       }
     }
@@ -255,7 +257,7 @@ export async function tripRoutes(fastify: FastifyInstance) {
   // Get trip statistics
   fastify.get('/trips/stats', async (request, reply) => {
     try {
-      const userId = (request as any).userId
+      const userId = (request as unknown as { userId: string }).userId
 
       const stats = await tripService.getStats(userId)
 
@@ -263,11 +265,11 @@ export async function tripRoutes(fastify: FastifyInstance) {
         success: true,
         data: stats,
       })
-    } catch (error: any) {
+    } catch (error: unknown) {
       fastify.log.error(error)
       reply.code(500).send({
         success: false,
-        error: error.message || 'Internal Server Error',
+        error: error instanceof Error ? error.message : 'Internal Server Error',
       })
     }
   })
@@ -280,11 +282,11 @@ export async function tripRoutes(fastify: FastifyInstance) {
         success: true,
         data: [],
       })
-    } catch (error: any) {
+    } catch (error: unknown) {
       fastify.log.error(error)
       reply.code(500).send({
         success: false,
-        error: error.message || 'Internal Server Error',
+        error: error instanceof Error ? error.message : 'Internal Server Error',
       })
     }
   })

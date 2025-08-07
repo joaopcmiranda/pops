@@ -38,7 +38,7 @@ export const db = drizzle(
 
       // Default case
       return { rows: [] }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Database query error:', error)
       console.error('SQL:', sql)
       console.error('Params:', params)

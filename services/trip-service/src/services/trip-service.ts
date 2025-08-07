@@ -1,13 +1,7 @@
 import { eq, and, or, like, gte, lte, desc, asc, count, sql } from 'drizzle-orm'
 import { db } from '../db/index.js'
 import { trips, users, tripCollaborators, itineraryItems, contentItems } from '../db/schema.js'
-import type {
-  Trip,
-  TripListInput,
-  CreateTripInput,
-  UpdateTripInput,
-  TripTemplateListInput,
-} from '@pops/shared-contracts'
+import type { Trip, TripListInput, CreateTripInput, UpdateTripInput } from '@pops/types'
 
 export class TripService {
   async list(input: TripListInput = {}, userId: string): Promise<Trip[]> {
@@ -116,56 +110,67 @@ export class TripService {
         ? baseQuery.orderBy(desc(orderColumn))
         : baseQuery.orderBy(asc(orderColumn))
 
-    // Apply pagination using explicit query execution
-    let finalQuery: any = queryWithOrder
-    if (limit && offset) {
-      finalQuery = queryWithOrder.limit(limit).offset(offset)
-    } else if (limit) {
-      finalQuery = queryWithOrder.limit(limit)
-    } else if (offset) {
-      finalQuery = queryWithOrder.offset(offset)
-    }
-
-    const results = await finalQuery
+    // Apply pagination and execute query
+    const results = await (() => {
+      const query = queryWithOrder
+      if (limit !== undefined && offset !== undefined) {
+        return query.limit(limit).offset(offset)
+      } else if (limit !== undefined) {
+        return query.limit(limit)
+      } else if (offset !== undefined) {
+        return query.offset(offset)
+      } else {
+        return query
+      }
+    })()
 
     // Transform results to match Trip interface
-    return results.map((row: any) => ({
-      id: row.id,
-      title: row.title,
-      description: row.description || undefined,
-      destination: row.destination,
-      country: row.country,
-      type: row.type as Trip['type'],
-      status: row.status as Trip['status'],
-      startDate: row.startDate,
-      endDate: row.endDate,
-      budget: row.budget ? JSON.parse(row.budget) : undefined,
-      settings: row.settings
-        ? JSON.parse(row.settings)
-        : {
-            currency: 'USD',
-            timezone: 'UTC',
-            dateFormat: 'US',
-            notifications: { email: true, push: false, reminders: true },
-            privacy: 'private',
-          },
-      coverImage: row.coverImage || undefined,
-      tags: row.tags ? JSON.parse(row.tags) : undefined,
-      isTemplate: row.isTemplate || undefined,
-      templateId: row.templateId || undefined,
-      userId: row.userId,
-      createdAt: row.createdAt,
-      updatedAt: row.updatedAt,
-      stats: {
-        totalItems: row.itineraryCount,
-        contentItems: row.contentCount,
-        itemsByType: {}, // TODO: Implement detailed stats
-        itemsByStatus: {}, // TODO: Implement detailed stats
-        totalDays:
-          Math.ceil((row.endDate.getTime() - row.startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
-        lastActivity: row.updatedAt,
-      },
-    }))
+    return results.map(row => {
+      const startDate = row.startDate as Date
+      const endDate = row.endDate as Date
+      const budget = row.budget as string | null
+      const settings = row.settings as string | null
+      const tags = row.tags as string | null
+      const coverImage = row.coverImage as string | null
+      const description = row.description as string | null
+
+      return {
+        id: row.id as string,
+        title: row.title as string,
+        description: description || undefined,
+        destination: row.destination as string,
+        country: row.country as string,
+        type: row.type as Trip['type'],
+        status: row.status as Trip['status'],
+        startDate,
+        endDate,
+        budget: budget ? JSON.parse(budget) : undefined,
+        settings: settings
+          ? JSON.parse(settings)
+          : {
+              currency: 'USD',
+              timezone: 'UTC',
+              dateFormat: 'US',
+              notifications: { email: true, push: false, reminders: true },
+              privacy: 'private',
+            },
+        coverImage: coverImage || undefined,
+        tags: tags ? JSON.parse(tags) : undefined,
+        isTemplate: (row.isTemplate as boolean | null) || undefined,
+        templateId: (row.templateId as string | null) || undefined,
+        userId: row.userId as string,
+        createdAt: row.createdAt as Date,
+        updatedAt: row.updatedAt as Date,
+        stats: {
+          totalItems: row.itineraryCount as number,
+          itemsByType: {}, // TODO: Implement detailed stats
+          itemsByStatus: {}, // TODO: Implement detailed stats
+          totalDays:
+            Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
+          lastActivity: row.updatedAt as Date,
+        },
+      }
+    })
   }
 
   async get(id: string, userId: string): Promise<Trip | null> {
@@ -205,10 +210,7 @@ export class TripService {
       totalItems += stat.count
     })
 
-    const contentItemsCount = await db
-      .select({ count: count() })
-      .from(contentItems)
-      .where(eq(contentItems.tripId, id))
+    await db.select({ count: count() }).from(contentItems).where(eq(contentItems.tripId, id))
 
     const totalDays =
       Math.ceil((trip.endDate.getTime() - trip.startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
@@ -224,10 +226,10 @@ export class TripService {
       status: trip.status as Trip['status'],
       startDate: trip.startDate,
       endDate: trip.endDate,
-      budget: trip.budget ? JSON.parse(trip.budget) : undefined,
-      settings: JSON.parse(trip.settings),
+      budget: trip.budget ? JSON.parse(trip.budget as string) : undefined,
+      settings: JSON.parse(trip.settings as string),
       coverImage: trip.coverImage || undefined,
-      tags: trip.tags ? JSON.parse(trip.tags) : undefined,
+      tags: trip.tags ? JSON.parse(trip.tags as string) : undefined,
       isTemplate: trip.isTemplate || undefined,
       templateId: trip.templateId || undefined,
       userId: trip.userId,
@@ -346,7 +348,7 @@ export class TripService {
       throw new Error('Trip not found or insufficient permissions')
     }
 
-    const updateData: Record<string, any> = {}
+    const updateData: Record<string, unknown> = {}
 
     // Handle each field that might be updated
     if (updates.title !== undefined) updateData.title = updates.title
@@ -381,10 +383,10 @@ export class TripService {
       status: trip.status as Trip['status'],
       startDate: trip.startDate,
       endDate: trip.endDate,
-      budget: trip.budget ? JSON.parse(trip.budget) : undefined,
-      settings: JSON.parse(trip.settings),
+      budget: trip.budget ? JSON.parse(trip.budget as string) : undefined,
+      settings: JSON.parse(trip.settings as string),
       coverImage: trip.coverImage || undefined,
-      tags: trip.tags ? JSON.parse(trip.tags) : undefined,
+      tags: trip.tags ? JSON.parse(trip.tags as string) : undefined,
       isTemplate: trip.isTemplate || undefined,
       templateId: trip.templateId || undefined,
       userId: trip.userId,

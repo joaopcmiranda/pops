@@ -46,7 +46,7 @@ await fastify.register(rateLimit, {
 })
 
 // Health check endpoint
-fastify.get('/health', async (request, reply) => {
+fastify.get('/health', async () => {
   return {
     status: 'healthy',
     service: 'itinerary-service',

@@ -1,21 +1,15 @@
-import { eq, and, or, like, gte, lte, desc, asc, count, sql, inArray } from 'drizzle-orm'
+import { eq, and, or, gte, lte, desc, asc, inArray } from 'drizzle-orm'
 import { db } from '../db/index.js'
 import {
   itineraryItems,
   trips,
-  users,
   tripCollaborators,
   locations,
   people,
   itineraryItemAttendees,
 } from '../db/schema.js'
-import type {
-  ItineraryItem,
-  CreateItineraryItemInput,
-  UpdateItineraryItemInput,
-  ItemType,
-  ItemStatus,
-} from '@pops/shared-contracts'
+import type { ItineraryItem, CreateItineraryItemInput, UpdateItineraryItemInput } from '@pops/types'
+import { ItemType, ItemStatus } from '@pops/types'
 
 export class ItineraryService {
   async list(
@@ -68,7 +62,7 @@ export class ItineraryService {
     }
 
     // Build and execute query
-    let query = db
+    const query = db
       .select({
         id: itineraryItems.id,
         title: itineraryItems.title,
@@ -101,17 +95,22 @@ export class ItineraryService {
       .where(and(...conditions))
       .orderBy(asc(itineraryItems.startDate))
 
-    if (filters.limit) {
-      query = query.limit(filters.limit)
-    }
-    if (filters.offset) {
-      query = query.offset(filters.offset)
-    }
-
-    const results = await query
+    // Apply pagination and execute query
+    const results = await (() => {
+      const q = query
+      if (filters.limit !== undefined && filters.offset !== undefined) {
+        return q.limit(filters.limit).offset(filters.offset)
+      } else if (filters.limit !== undefined) {
+        return q.limit(filters.limit)
+      } else if (filters.offset !== undefined) {
+        return q.offset(filters.offset)
+      } else {
+        return q
+      }
+    })()
 
     // Get attendees for each item
-    const itemIds = results.map(r => r.id)
+    const itemIds = results.map((r: Record<string, unknown>) => r.id as string)
     const attendees =
       itemIds.length > 0
         ? await db
@@ -131,53 +130,83 @@ export class ItineraryService {
     // Group attendees by item ID
     const attendeesByItem = attendees.reduce(
       (acc, attendee) => {
-        if (!acc[attendee.itemId]) acc[attendee.itemId] = []
-        acc[attendee.itemId].push({
-          id: attendee.personId,
-          name: attendee.personName,
-          email: attendee.personEmail,
-          phone: attendee.personPhone,
-          relationshipType: attendee.personRelationshipType,
-        })
+        if (!attendee.itemId) return acc
+        const itemId = attendee.itemId!
+        if (!acc[itemId]) acc[itemId] = []
+        if (attendee.personId && attendee.personName && attendee.personRelationshipType) {
+          acc[itemId].push({
+            id: attendee.personId,
+            name: attendee.personName,
+            email: attendee.personEmail || undefined,
+            phone: attendee.personPhone || undefined,
+            relationshipType: attendee.personRelationshipType as
+              | 'family'
+              | 'friend'
+              | 'colleague'
+              | 'contact',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          })
+        }
         return acc
       },
-      {} as Record<string, any[]>
+      {} as Record<
+        string,
+        Array<{
+          id: string
+          name: string
+          email?: string
+          phone?: string
+          whatsapp?: string
+          notes?: string
+          relationshipType: 'family' | 'friend' | 'colleague' | 'contact'
+          createdAt: Date
+          updatedAt: Date
+        }>
+      >
     )
 
     // Transform results
-    return results.map((row: any) => ({
-      id: row.id,
-      title: row.title,
-      description: row.description || undefined,
+    return results.map(row => ({
+      id: row.id as string,
+      title: row.title as string,
+      description: (row.description as string | null) || undefined,
       type: row.type as ItineraryItem['type'],
-      startDate: row.startDate,
-      endDate: row.endDate || undefined,
-      isAllDay: row.isAllDay,
+      startDate: row.startDate as Date,
+      endDate: (row.endDate as Date | null) || undefined,
+      isAllDay: (row.isAllDay as boolean | null) || false,
       status: row.status as ItineraryItem['status'],
       priority: row.priority as ItineraryItem['priority'],
-      tags: row.tags ? JSON.parse(row.tags) : [],
-      notes: row.notes || undefined,
-      createdAt: row.createdAt,
-      updatedAt: row.updatedAt,
-      tripId: row.tripId,
-      userId: row.userId,
-      locationId: row.locationId || undefined,
-      location: row.locationId
-        ? {
-            id: row.locationId,
-            name: row.locationName,
-            address: row.locationAddress,
-            city: row.locationCity,
-            state: row.locationState,
-            latitude: row.locationLatitude,
-            longitude: row.locationLongitude,
-            type: row.locationType,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          }
-        : undefined,
-      attendees: attendeesByItem[row.id] || [],
-      typeData: row.typeData || undefined,
+      tags: row.tags ? JSON.parse(row.tags as string) : [],
+      notes: (row.notes as string | null) || undefined,
+      createdAt: row.createdAt as Date,
+      updatedAt: row.updatedAt as Date,
+      tripId: row.tripId as string,
+      userId: row.userId as string,
+      locationId: (row.locationId as string | null) || undefined,
+      location:
+        row.locationId && row.locationName && row.locationCity && row.locationType
+          ? {
+              id: row.locationId,
+              name: row.locationName,
+              address: row.locationAddress || undefined,
+              city: row.locationCity,
+              state: row.locationState || undefined,
+              latitude: row.locationLatitude || undefined,
+              longitude: row.locationLongitude || undefined,
+              type: row.locationType as
+                | 'accommodation'
+                | 'other'
+                | 'venue'
+                | 'workplace'
+                | 'tourist-spot'
+                | 'restaurant',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            }
+          : undefined,
+      attendees: attendeesByItem[row.id as string] || [],
+      typeData: row.typeData ? JSON.parse(row.typeData as string) : undefined,
     }))
   }
 
@@ -227,6 +256,9 @@ export class ItineraryService {
     }
 
     const item = result[0]
+    if (!item) {
+      return null
+    }
 
     // Get attendees
     const attendees = await db
@@ -248,7 +280,7 @@ export class ItineraryService {
       type: item.type as ItineraryItem['type'],
       startDate: item.startDate,
       endDate: item.endDate || undefined,
-      isAllDay: item.isAllDay,
+      isAllDay: item.isAllDay || false,
       status: item.status as ItineraryItem['status'],
       priority: item.priority as ItineraryItem['priority'],
       tags: item.tags ? JSON.parse(item.tags) : [],
@@ -258,28 +290,43 @@ export class ItineraryService {
       tripId: item.tripId,
       userId: item.userId,
       locationId: item.locationId || undefined,
-      location: item.locationId
-        ? {
-            id: item.locationId,
-            name: item.locationName,
-            address: item.locationAddress,
-            city: item.locationCity,
-            state: item.locationState,
-            latitude: item.locationLatitude,
-            longitude: item.locationLongitude,
-            type: item.locationType,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          }
-        : undefined,
-      attendees: attendees.map(a => ({
-        id: a.personId,
-        name: a.personName,
-        email: a.personEmail,
-        phone: a.personPhone,
-        relationshipType: a.personRelationshipType,
-      })),
-      typeData: item.typeData || undefined,
+      location:
+        item.locationId && item.locationName && item.locationCity && item.locationType
+          ? {
+              id: item.locationId,
+              name: item.locationName,
+              address: item.locationAddress || undefined,
+              city: item.locationCity,
+              state: item.locationState || undefined,
+              latitude: item.locationLatitude || undefined,
+              longitude: item.locationLongitude || undefined,
+              type: item.locationType as
+                | 'accommodation'
+                | 'other'
+                | 'venue'
+                | 'workplace'
+                | 'tourist-spot'
+                | 'restaurant',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            }
+          : undefined,
+      attendees: attendees
+        .filter(a => a.personId && a.personName && a.personRelationshipType)
+        .map(a => ({
+          id: a.personId!,
+          name: a.personName!,
+          email: a.personEmail || undefined,
+          phone: a.personPhone || undefined,
+          relationshipType: a.personRelationshipType as
+            | 'family'
+            | 'friend'
+            | 'colleague'
+            | 'contact',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })),
+      typeData: item.typeData ? JSON.parse(item.typeData) : undefined,
     }
   }
 
@@ -307,7 +354,7 @@ export class ItineraryService {
       throw new Error('Trip not found or insufficient permissions')
     }
 
-    const { attendees, ...itemData } = input
+    const { attendees } = input
 
     const insertData = {
       title: input.title,
@@ -348,6 +395,9 @@ export class ItineraryService {
     }
 
     const item = createdItem[0]
+    if (!item) {
+      throw new Error('Failed to retrieve created item')
+    }
 
     // Add attendees if provided
     if (attendees && attendees.length > 0) {
@@ -359,7 +409,11 @@ export class ItineraryService {
     }
 
     // Return the created item with attendees
-    return this.get(item.id, userId) as Promise<ItineraryItem>
+    const result = await this.get(item.id, userId)
+    if (!result) {
+      throw new Error('Failed to retrieve created item after creation')
+    }
+    return result
   }
 
   async update(input: UpdateItineraryItemInput, userId: string): Promise<ItineraryItem> {
@@ -393,7 +447,7 @@ export class ItineraryService {
     }
 
     // Build update data
-    const updateData: Record<string, any> = {}
+    const updateData: Record<string, unknown> = {}
 
     if (updates.title !== undefined) updateData.title = updates.title
     if (updates.description !== undefined) updateData.description = updates.description
@@ -517,13 +571,13 @@ export class ItineraryService {
 
     const dates = items.map(item => item.startDate).sort((a, b) => a.getTime() - b.getTime())
     const timeSpan =
-      dates.length > 0
+      dates.length > 0 && dates.every(d => d != null)
         ? {
-            start: dates[0],
-            end: dates[dates.length - 1],
+            start: dates[0]!,
+            end: dates[dates.length - 1]!,
             totalDays:
               Math.ceil(
-                (dates[dates.length - 1].getTime() - dates[0].getTime()) / (1000 * 60 * 60 * 24)
+                (dates[dates.length - 1]!.getTime() - dates[0]!.getTime()) / (1000 * 60 * 60 * 24)
               ) + 1,
           }
         : null

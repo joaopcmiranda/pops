@@ -1,12 +1,12 @@
 import { z } from 'zod'
-import dotenv from 'dotenv'
+import * as dotenv from 'dotenv'
 
 // Load environment variables from .env file
 dotenv.config()
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  PORT: z.coerce.number().default(3005),
+  PORT: z.coerce.number().default(8011),
   HOST: z.string().default('localhost'),
 
   // Database

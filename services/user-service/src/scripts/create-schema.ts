@@ -1,5 +1,7 @@
 #!/usr/bin/env tsx
 
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+
 import { DatabaseSync } from 'node:sqlite'
 import { sql } from 'drizzle-orm'
 
