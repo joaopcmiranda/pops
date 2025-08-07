@@ -31,14 +31,8 @@ function AppContent() {
   const [activeCategory, setActiveCategory] = useState('dashboard')
   const [currentView, setCurrentView] = useState('dashboard')
   const [availableTrips, setAvailableTrips] = useState<Trip[]>([])
-  const {
-    currentTrip,
-    setCurrentTrip,
-    isSelectingTrip,
-    setIsSelectingTrip,
-    setShowNewTripModal,
-    showNewTripModal,
-  } = useTripContext()
+  const { currentTrip, setCurrentTrip, isSelectingTrip, setShowNewTripModal, showNewTripModal } =
+    useTripContext()
 
   // Load available trips
   useEffect(() => {
@@ -51,7 +45,7 @@ function AppContent() {
         setAvailableTrips([])
       }
     }
-    
+
     if (currentTrip) {
       loadTrips()
     }
@@ -86,7 +80,7 @@ function AppContent() {
     const titles: Record<string, string> = {
       dashboard: 'Dashboard',
       destinations: 'Destinations',
-      itinerary: 'Itinerary', 
+      itinerary: 'Itinerary',
       transport: 'Transport',
       accommodation: 'Accommodation',
       activities: 'Activities',
@@ -95,7 +89,7 @@ function AppContent() {
       calendar: 'Calendar',
       analytics: 'Analytics',
       settings: 'Settings',
-      readme: 'Documentation'
+      readme: 'Documentation',
     }
     return titles[view] || 'Trip Organizer'
   }
@@ -201,8 +195,8 @@ function AppContent() {
           </div>
         }
       >
-        <AppSidebar 
-          activeCategory={activeCategory} 
+        <AppSidebar
+          activeCategory={activeCategory}
           onCategorySelect={handleCategorySelect}
           availableTrips={availableTrips}
         />

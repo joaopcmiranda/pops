@@ -26,10 +26,10 @@ const DEMO_TRIP: Trip = {
     notifications: {
       email: true,
       push: true,
-      reminders: true
+      reminders: true,
     },
-    privacy: 'private'
-  }
+    privacy: 'private',
+  },
 }
 
 export function TripProvider({ children }: TripProviderProps) {

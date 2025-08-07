@@ -1,18 +1,18 @@
 import type { Trip } from '@/types/trip'
-import { trpcClient } from '@/utils/trpc'
-import type { TripType, TripStatus } from '@pops/shared-contracts'
+import { apiClient } from '@/utils/api-client'
+import { TripType, TripStatus } from '@pops/types'
 
 export class TripService {
   // Get all trips
   static async getAllTrips(): Promise<Trip[]> {
-    const trips = await trpcClient.trip.list.query()
+    const trips = await apiClient.trips.list()
     return trips.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
   }
 
   // Get trip by ID
   static async getTripById(id: string): Promise<Trip | null> {
     try {
-      const trip = await trpcClient.trip.getById.query({ id })
+      const trip = await apiClient.trips.getById(id)
       return trip
     } catch (error) {
       console.error('Failed to get trip by ID:', error)
@@ -22,19 +22,23 @@ export class TripService {
 
   // Get trips by status
   static async getTripsByStatus(status: string): Promise<Trip[]> {
-    const trips = await trpcClient.trip.list.query({ status: status as TripStatus })
+    const trips = await apiClient.trips.list({
+      filters: { status: [status as TripStatus] },
+    })
     return trips
   }
 
   // Get trips by type
   static async getTripsByType(type: string): Promise<Trip[]> {
-    const trips = await trpcClient.trip.list.query({ type: type as TripType })
+    const trips = await apiClient.trips.list({
+      filters: { type: [type as TripType] },
+    })
     return trips
   }
 
   // Add new trip
   static async addTrip(trip: Omit<Trip, 'id' | 'createdAt' | 'updatedAt'>): Promise<Trip> {
-    return await trpcClient.trip.create.mutate(trip)
+    return await apiClient.trips.create(trip)
   }
 
   // Update trip
@@ -42,17 +46,17 @@ export class TripService {
     id: string,
     updates: Partial<Omit<Trip, 'id' | 'createdAt' | 'updatedAt'>>
   ): Promise<Trip> {
-    return await trpcClient.trip.update.mutate({ id, ...updates })
+    return await apiClient.trips.update({ id, ...updates })
   }
 
   // Delete trip
   static async deleteTrip(id: string): Promise<void> {
-    await trpcClient.trip.delete.mutate({ id })
+    await apiClient.trips.delete(id)
   }
 
   // Get upcoming trips
   static async getUpcomingTrips(): Promise<Trip[]> {
-    const trips = await trpcClient.trip.list.query()
+    const trips = await apiClient.trips.list()
     const now = new Date()
     return trips
       .filter(trip => new Date(trip.startDate) > now)
@@ -61,7 +65,7 @@ export class TripService {
 
   // Get active trips
   static async getActiveTrips(): Promise<Trip[]> {
-    const trips = await trpcClient.trip.list.query()
+    const trips = await apiClient.trips.list()
     const now = new Date()
     return trips.filter(trip => {
       const start = new Date(trip.startDate)
@@ -72,7 +76,7 @@ export class TripService {
 
   // Get trip statistics
   static async getTripStats() {
-    const trips = await trpcClient.trip.list.query()
+    const trips = await apiClient.trips.list()
 
     const byStatus = trips.reduce(
       (acc, trip) => {
@@ -109,7 +113,14 @@ export class TripService {
 
   // Search trips
   static async searchTrips(query: string): Promise<Trip[]> {
-    const trips = await trpcClient.trip.list.query({ search: query })
-    return trips
+    // Note: The API client would need to support search functionality
+    // For now, we'll get all trips and filter client-side
+    const trips = await apiClient.trips.list()
+    return trips.filter(
+      trip =>
+        trip.title.toLowerCase().includes(query.toLowerCase()) ||
+        trip.destination.toLowerCase().includes(query.toLowerCase()) ||
+        trip.country.toLowerCase().includes(query.toLowerCase())
+    )
   }
 }

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { ChevronDown, MapPin, Calendar, Check } from 'lucide-react'
+import { ChevronDown, MapPin, Check } from 'lucide-react'
 import { Button } from '@pops/ui'
 
 interface Trip {
@@ -19,11 +19,11 @@ interface TripSelectorSidebarProps {
   onCreateNew?: () => void
 }
 
-export function TripSelectorSidebar({ 
-  currentTrip, 
-  availableTrips = [], 
-  onTripChange, 
-  onCreateNew 
+export function TripSelectorSidebar({
+  currentTrip,
+  availableTrips = [],
+  onTripChange,
+  onCreateNew,
 }: TripSelectorSidebarProps) {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -44,7 +44,7 @@ export function TripSelectorSidebar({
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
-      year: 'numeric'
+      year: 'numeric',
     })
   }
 
@@ -68,11 +68,7 @@ export function TripSelectorSidebar({
   if (!currentTrip) {
     return (
       <div style={{ padding: '0.75rem' }}>
-        <Button 
-          onClick={onCreateNew}
-          className="w-full justify-start"
-          variant="outline"
-        >
+        <Button onClick={onCreateNew} className='w-full justify-start' variant='outline'>
           <MapPin style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
           Create Your First Trip
         </Button>
@@ -94,7 +90,7 @@ export function TripSelectorSidebar({
           cursor: 'pointer',
           border: '1px solid #e2e8f0',
           transition: 'all 0.2s ease',
-          minHeight: '60px'
+          minHeight: '60px',
         }}
         className='hover:bg-gray-50 hover:border-gray-300'
         role='button'
@@ -106,16 +102,16 @@ export function TripSelectorSidebar({
           }
         }}
       >
-        <div 
+        <div
           style={{
             width: '8px',
             height: '8px',
             borderRadius: '50%',
             backgroundColor: getStatusColor(currentTrip.status),
-            flexShrink: 0
+            flexShrink: 0,
           }}
         />
-        
+
         <div style={{ flex: 1, minWidth: 0 }}>
           <div
             style={{
@@ -125,7 +121,7 @@ export function TripSelectorSidebar({
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              marginBottom: '0.125rem'
+              marginBottom: '0.125rem',
             }}
           >
             {currentTrip.title}
@@ -136,20 +132,20 @@ export function TripSelectorSidebar({
               color: '#64748b',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
+              whiteSpace: 'nowrap',
             }}
           >
             {currentTrip.destination} • {formatDate(currentTrip.startDate)}
           </div>
         </div>
-        
-        <ChevronDown 
-          style={{ 
-            width: '16px', 
-            height: '16px', 
+
+        <ChevronDown
+          style={{
+            width: '16px',
+            height: '16px',
             color: '#64748b',
             transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-            transition: 'transform 0.2s ease'
+            transition: 'transform 0.2s ease',
           }}
         />
       </div>
@@ -169,24 +165,24 @@ export function TripSelectorSidebar({
             boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
             zIndex: 50,
             maxHeight: '300px',
-            overflowY: 'auto'
+            overflowY: 'auto',
           }}
         >
           <div style={{ padding: '0.5rem' }}>
-            <div 
-              style={{ 
+            <div
+              style={{
                 fontSize: '0.75rem',
                 fontWeight: '600',
                 color: '#64748b',
                 padding: '0.5rem',
                 borderBottom: '1px solid #f1f5f9',
-                marginBottom: '0.5rem'
+                marginBottom: '0.5rem',
               }}
             >
               YOUR TRIPS
             </div>
-            
-            {availableTrips.map((trip) => (
+
+            {availableTrips.map(trip => (
               <div
                 key={trip.id}
                 onClick={() => {
@@ -201,20 +197,20 @@ export function TripSelectorSidebar({
                   borderRadius: '6px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
-                  backgroundColor: currentTrip.id === trip.id ? '#eff6ff' : 'transparent'
+                  backgroundColor: currentTrip.id === trip.id ? '#eff6ff' : 'transparent',
                 }}
                 className='hover:bg-gray-50'
               >
-                <div 
+                <div
                   style={{
                     width: '8px',
                     height: '8px',
                     borderRadius: '50%',
                     backgroundColor: getStatusColor(trip.status),
-                    flexShrink: 0
+                    flexShrink: 0,
                   }}
                 />
-                
+
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div
                     style={{
@@ -224,7 +220,7 @@ export function TripSelectorSidebar({
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
-                      marginBottom: '0.125rem'
+                      marginBottom: '0.125rem',
                     }}
                   >
                     {trip.title}
@@ -235,27 +231,29 @@ export function TripSelectorSidebar({
                       color: '#64748b',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap'
+                      whiteSpace: 'nowrap',
                     }}
                   >
                     {trip.destination}
                   </div>
                 </div>
-                
+
                 {currentTrip.id === trip.id && (
                   <Check style={{ width: '16px', height: '16px', color: '#3b82f6' }} />
                 )}
               </div>
             ))}
-            
-            <div style={{ borderTop: '1px solid #f1f5f9', marginTop: '0.5rem', paddingTop: '0.5rem' }}>
-              <Button 
+
+            <div
+              style={{ borderTop: '1px solid #f1f5f9', marginTop: '0.5rem', paddingTop: '0.5rem' }}
+            >
+              <Button
                 onClick={() => {
                   onCreateNew?.()
                   setIsOpen(false)
                 }}
-                variant="ghost"
-                className="w-full justify-start text-sm"
+                variant='ghost'
+                className='w-full justify-start text-sm'
               >
                 <MapPin style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
                 Create New Trip

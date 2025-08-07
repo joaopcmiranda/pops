@@ -10,8 +10,8 @@ export function AppHeader({ title = 'Trip Organizer' }: AppHeaderProps) {
   return (
     <header className='app-header'>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, minWidth: 0 }}>
-        <SidebarTrigger className="md:hidden" />
-        
+        <SidebarTrigger className='md:hidden' />
+
         <h1
           className='header-title'
           style={{
@@ -21,7 +21,7 @@ export function AppHeader({ title = 'Trip Organizer' }: AppHeaderProps) {
             whiteSpace: 'nowrap',
             fontSize: '1.5rem',
             fontWeight: '600',
-            color: '#1e293b'
+            color: '#1e293b',
           }}
         >
           {title}

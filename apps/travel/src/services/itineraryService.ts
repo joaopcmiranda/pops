@@ -8,7 +8,7 @@ import type {
 } from '@/types/itinerary'
 // TODO: Replace with API calls when itinerary service is implemented
 // import { trpcClient } from '@/utils/trpc'
-// import type { ItineraryItem as APIItineraryItem } from '@pops/shared-contracts'
+// import type { ItineraryItem as APIItineraryItem } from '@pops/types'
 
 // TEMPORARY: Keep sample data until itinerary API service is implemented
 // This data will be removed when we complete the backend migration for itinerary items

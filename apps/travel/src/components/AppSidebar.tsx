@@ -44,8 +44,12 @@ interface AppSidebarProps {
   availableTrips?: Trip[]
 }
 
-export function AppSidebar({ activeCategory = 'dashboard', onCategorySelect, availableTrips = [] }: AppSidebarProps) {
-  const { currentTrip, setCurrentTrip, setIsSelectingTrip, setShowNewTripModal } = useTripContext()
+export function AppSidebar({
+  activeCategory = 'dashboard',
+  onCategorySelect,
+  availableTrips = [],
+}: AppSidebarProps) {
+  const { currentTrip, setCurrentTrip, setShowNewTripModal } = useTripContext()
   const overviewItems = [
     { id: 'dashboard', name: 'Dashboard', icon: Home },
     { id: 'calendar', name: 'Calendar', icon: CalendarDays },
@@ -80,7 +84,7 @@ export function AppSidebar({ activeCategory = 'dashboard', onCategorySelect, ava
   }
 
   return (
-    <Sidebar collapsible="none">
+    <Sidebar collapsible='none'>
       <SidebarHeader>
         <div style={{ paddingBottom: '0.5rem', borderBottom: '1px solid #f1f5f9' }}>
           <button
@@ -91,7 +95,7 @@ export function AppSidebar({ activeCategory = 'dashboard', onCategorySelect, ava
             <span className='font-semibold'>Trip Organizer</span>
           </button>
         </div>
-        
+
         <TripSelectorSidebar
           currentTrip={currentTrip}
           availableTrips={availableTrips}
