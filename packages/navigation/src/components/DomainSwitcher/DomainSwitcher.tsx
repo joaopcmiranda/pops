@@ -107,12 +107,7 @@ export function DomainSwitcher({
       <DropdownMenuTrigger asChild>
         <Button
           variant='ghost'
-          className={cn(
-            'flex items-center gap-2 px-3 py-2 text-sm font-medium',
-            'hover:bg-gray-100 dark:hover:bg-gray-800',
-            'focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
-            className
-          )}
+          className={cn('flex items-center gap-2 px-3 py-2 text-sm font-medium', className)}
           aria-label={`Switch from ${currentAppData?.meta.name || currentApp} to another POps app`}
           aria-expanded={isOpen}
           aria-haspopup='menu'
@@ -135,8 +130,8 @@ export function DomainSwitcher({
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className='w-64 p-1' align='start' sideOffset={4}>
-        <DropdownMenuLabel className='px-2 py-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400'>
+      <DropdownMenuContent className='w-64' align='start' sideOffset={4}>
+        <DropdownMenuLabel className='text-xs font-semibold text-muted-foreground'>
           POps Applications
         </DropdownMenuLabel>
 
@@ -152,9 +147,7 @@ export function DomainSwitcher({
               key={app.id}
               className={cn(
                 'flex items-center justify-between px-2 py-2 cursor-pointer',
-                'hover:bg-gray-100 dark:hover:bg-gray-800',
-                'focus:bg-gray-100 dark:focus:bg-gray-800',
-                isCurrentApp && 'bg-blue-50 dark:bg-blue-900/20'
+                isCurrentApp && 'bg-accent text-accent-foreground'
               )}
               onClick={() => !isCurrentApp && handleAppSelect(app.id)}
               onKeyDown={e => !isCurrentApp && handleKeyDown(e, app.id)}
@@ -169,23 +162,12 @@ export function DomainSwitcher({
 
                 <div className='flex-1 min-w-0'>
                   <div className='flex items-center gap-2'>
-                    <span
-                      className={cn(
-                        'font-medium truncate',
-                        isCurrentApp
-                          ? 'text-blue-700 dark:text-blue-300'
-                          : 'text-gray-900 dark:text-gray-100'
-                      )}
-                    >
-                      {app.meta.name}
-                    </span>
+                    <span className='font-medium truncate'>{app.meta.name}</span>
                     {isCurrentApp && (
-                      <span className='text-xs text-blue-600 dark:text-blue-400 font-medium'>
-                        Current
-                      </span>
+                      <span className='text-xs font-medium opacity-70'>Current</span>
                     )}
                   </div>
-                  <p className='text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5'>
+                  <p className='text-xs text-muted-foreground truncate mt-0.5'>
                     {app.meta.description}
                   </p>
                 </div>
@@ -195,7 +177,7 @@ export function DomainSwitcher({
 
                   {!isCurrentApp && (
                     <ExternalLink
-                      className='h-3 w-3 text-gray-400 dark:text-gray-600'
+                      className='h-3 w-3 text-muted-foreground opacity-50'
                       aria-hidden='true'
                     />
                   )}
@@ -208,7 +190,7 @@ export function DomainSwitcher({
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
-          className='px-2 py-2 text-xs text-gray-500 dark:text-gray-400 cursor-default'
+          className='px-2 py-2 text-xs text-muted-foreground cursor-default'
           disabled
         >
           <div className='flex items-center justify-between w-full'>
