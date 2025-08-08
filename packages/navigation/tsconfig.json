@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "jsx": "react-jsx",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "importHelpers": false,
+    "composite": false,
+    "rootDir": "../.."
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules", "**/*.disabled/**/*"]
+}

@@ -1,0 +1,371 @@
+/**
+ * Global styles for POps Hub application
+ */
+
+@import 'tailwindcss';
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+
+    /* Hub-specific CSS variables */
+    --hub-primary: #3b82f6;
+    --hub-primary-hover: #2563eb;
+    --hub-secondary: #6b7280;
+    --hub-accent: #10b981;
+    --hub-background: #fafbfc;
+    --hub-surface: #ffffff;
+    --hub-border: #e5e7eb;
+
+    /* Grid system */
+    --grid-gap: 1rem;
+    --grid-columns: 12;
+    --widget-min-height: 120px;
+    --widget-border-radius: 8px;
+
+    /* Layout */
+    --header-height: 64px;
+    --sidebar-width: 280px;
+    --content-padding: 2rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+
+    /* Dark mode hub-specific adjustments */
+    --hub-background: #0f172a;
+    --hub-surface: #1e293b;
+    --hub-border: #334155;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+    box-sizing: border-box;
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+}
+
+/* Base layout */
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Roboto',
+    'Oxygen',
+    'Ubuntu',
+    'Cantarell',
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--hub-background);
+  color: rgb(15 23 42);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.dark body {
+  color: rgb(248 250 252);
+}
+
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* App layout */
+.app-layout {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  height: var(--header-height);
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--hub-border);
+  background-color: var(--hub-surface);
+}
+
+.app-content {
+  flex: 1;
+  overflow: hidden;
+  background-color: var(--hub-background);
+}
+
+/* Dashboard grid */
+.dashboard-grid {
+  padding: var(--content-padding);
+  height: 100%;
+  overflow: auto;
+}
+
+.widget-grid {
+  min-height: calc(100vh - var(--header-height) - calc(var(--content-padding) * 2));
+}
+
+/* Widget styling */
+.react-grid-item {
+  transition: all 200ms ease;
+  transition-property: left, top, width, height;
+}
+
+.react-grid-item.cssTransforms {
+  transition-property: transform, width, height;
+}
+
+.react-grid-item > .react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  bottom: 0;
+  right: 0;
+  background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNiIgaGVpZ2h0PSI2IiB2aWV3Qm94PSIwIDAgNiA2IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGZpbGw9IiM0QTVGN0EiIGZpbGwtb3BhY2l0eT0iMC4zIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Im0wIDZoNnYtNnoiLz48L2c+PC9zdmc+')
+    no-repeat;
+  background-position: bottom right;
+  padding: 0 3px 3px 0;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  box-sizing: border-box;
+  cursor: se-resize;
+  opacity: 0.4;
+  transition: opacity 0.2s ease;
+}
+
+.react-grid-item:hover > .react-resizable-handle {
+  opacity: 0.8;
+}
+
+.react-grid-item.react-grid-placeholder {
+  background: var(--hub-primary);
+  opacity: 0.2;
+  transition-duration: 100ms;
+  z-index: 2;
+  user-select: none;
+  border-radius: var(--widget-border-radius);
+}
+
+/* App launcher grid */
+.app-launcher-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.app-launcher-card {
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.app-launcher-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.dark .app-launcher-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* Status indicators */
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-online {
+  background-color: #10b981;
+}
+.status-offline {
+  background-color: #ef4444;
+}
+.status-degraded {
+  background-color: #f59e0b;
+}
+.status-maintenance {
+  background-color: #3b82f6;
+}
+
+/* Quick stats */
+.quick-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: var(--hub-surface);
+  border: 1px solid var(--hub-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+  border-color: var(--hub-primary);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--hub-primary);
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--hub-secondary);
+  font-weight: 500;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  :root {
+    --content-padding: 1rem;
+    --grid-gap: 0.75rem;
+  }
+
+  .app-launcher-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .quick-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .quick-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Loading and error states */
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--hub-border);
+  border-radius: 50%;
+  border-top-color: var(--hub-primary);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error-state {
+  color: #ef4444;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.dark .error-state {
+  background-color: #450a0a;
+  border-color: #991b1b;
+  color: #fca5a5;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus indicators */
+*:focus-visible {
+  outline: 2px solid var(--hub-primary);
+  outline-offset: 2px;
+}

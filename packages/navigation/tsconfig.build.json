@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "noEmit": false,
+    "skipLibCheck": true
+  },
+  "include": [
+    "src/api/**/*",
+    "src/config/**/*",
+    "src/contexts/**/*",
+    "src/types.ts",
+    "src/index.ts"
+  ]
+}
