@@ -20,7 +20,7 @@
     "format": "turbo run format",
     "format:check": "turbo run format:check",
     "type-check": "turbo run type-check",
-    "check": "turbo run type-check lint format format:check --parallel",
+    "check": "turbo run type-check lint format format:check",
     "test": "turbo run test",
     "clean": "turbo daemon clean && rm -rf node_modules/.cache/turbo",
     "prepare": "husky",
