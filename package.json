@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev --filter='@pops/*-service' --filter='@pops/travel' --parallel",
+    "dev": "turbo run dev --filter='@pops/*-service' --filter='@pops/hub' --filter='@pops/travel' --parallel",
+    "dev:hub": "turbo run dev --filter=@pops/hub",
     "dev:travel": "turbo run dev --filter=@pops/travel",
     "dev:services": "turbo run dev --filter='@pops/*-service' --parallel",
     "dev:backend": "turbo run dev --filter='@pops/*-service' --parallel",
@@ -56,6 +57,6 @@
     ]
   },
   "dependencies": {
-    "storybook": "9.1.0"
+    "storybook": "9.1.1"
   }
 }
