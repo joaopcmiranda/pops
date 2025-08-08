@@ -39,9 +39,12 @@ pnpm install
 
 # Start everything (frontend + backend)
 pnpm dev
+# Alternative: ./scripts/dev.sh
 
 # Or start services separately
 pnpm services:dev    # Backend services only
+# Alternative: ./scripts/dev-start.sh
+
 pnpm dev:travel      # Travel app frontend only
 ```
 
@@ -119,6 +122,16 @@ pops/
 │   ├── types/                 # Shared TypeScript types and schemas
 │   ├── api-client/           # Direct API client for service communication
 │   └── shared/               # Shared utilities
+│
+├── scripts/                   # Development and deployment scripts
+│   ├── dev.sh                # Main development starter
+│   ├── dev-start.sh          # Backend services orchestration
+│   ├── dev-stop.sh           # Clean service shutdown
+│   ├── dev-reset.sh          # Full environment reset
+│   ├── health-check.sh       # System health validation
+│   ├── seed-all-databases.sh # Database initialization
+│   ├── test-migration.sh     # Architecture validation
+│   └── test-deployment.sh    # Pre-deployment testing
 │
 ├── turbo.json                 # Turborepo configuration
 └── pnpm-workspace.yaml        # pnpm workspace configuration
@@ -229,6 +242,18 @@ pnpm services:health  # Check service health
 pnpm services:build   # Build all services
 ```
 
+#### Development Scripts (Alternative Approach)
+```bash
+./scripts/dev.sh              # 🚀 Main development starter
+./scripts/dev-start.sh        # 🔧 Backend services orchestration
+./scripts/dev-stop.sh         # 🛑 Clean service shutdown
+./scripts/dev-reset.sh        # 🔄 Full environment reset
+./scripts/health-check.sh     # 🏥 System health validation
+./scripts/seed-all-databases.sh # 🌱 Database initialization
+./scripts/test-migration.sh   # 🧪 Architecture validation
+./scripts/test-deployment.sh  # 🚀 Pre-deployment testing
+```
+
 #### Code Quality
 ```bash
 pnpm lint            # Run ESLint
@@ -253,6 +278,17 @@ Each service has its own `.env.example` file. Copy to `.env` and configure:
 # Example for Trip Service
 cp services/trip-service/.env.example services/trip-service/.env
 ```
+
+### Script Organization
+
+All development and deployment scripts are organized in the `/scripts` directory for better maintainability:
+
+- **Unified Approach**: All scripts use consistent error handling and logging
+- **pnpm Integration**: Scripts work alongside pnpm commands 
+- **Production Ready**: Scripts include health checks and deployment validation
+- **Turborepo Aware**: Scripts leverage Turbo for parallel execution and caching
+
+Use pnpm commands for day-to-day development, and scripts for complex orchestration, testing, and deployment tasks.
 
 ### Hot Reload
 
