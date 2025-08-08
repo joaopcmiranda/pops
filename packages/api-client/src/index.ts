@@ -10,5 +10,16 @@ export { ItineraryClient } from './itinerary-client'
 export { ContentClient } from './content-client'
 export { UserClient } from './user-client'
 
+// Cross-domain functionality
+export { getAppUrl, type PopsAppId } from './domains'
+export type {
+  CrossDomainResponse,
+  CrossDomainRequestOptions,
+  CrossDomainEvent,
+  AppStatus,
+  PopsNotification,
+  WebSocketConfig,
+} from './cross-domain-types'
+
 // Re-export types for convenience
 export * from '@pops/types'
