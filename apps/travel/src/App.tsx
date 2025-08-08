@@ -18,6 +18,8 @@ import { ReadmeView } from '@/components/ReadmeView'
 import { TripSelector } from '@/components/TripSelector'
 import { TripCreationWizard } from '@/components/TripCreationWizard'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
+import { AuthProvider } from '@/contexts/AuthContext'
 import { TripProvider } from '@/contexts/TripContext'
 import { useTripContext } from '@/hooks/useTripContext'
 import { TripService } from '@/services/tripService'
@@ -57,11 +59,11 @@ function AppContent() {
     setCurrentView(category)
   }
 
-  const handleTripSelect = (tripId: string) => {
+  const handleTripSelect = async (tripId: string) => {
     // Fetch the actual trip data from the service
     const trip = TripService.getTripById(tripId)
     if (trip) {
-      setCurrentTrip(trip)
+      setCurrentTrip(await trip)
     } else {
       console.error('Trip not found:', tripId)
     }
@@ -221,16 +223,20 @@ function AppContent() {
 
 function App() {
   return (
-    <TripProvider>
-      <ErrorBoundary
-        onError={(error: Error, errorInfo: React.ErrorInfo) => {
-          console.error('App Error Boundary:', error, errorInfo)
-          // In production, you would send this to your error reporting service
-        }}
-      >
-        <AppContent />
-      </ErrorBoundary>
-    </TripProvider>
+    <AuthProvider>
+      <ProtectedRoute>
+        <TripProvider>
+          <ErrorBoundary
+            onError={(error: Error, errorInfo: React.ErrorInfo) => {
+              console.error('App Error Boundary:', error, errorInfo)
+              // In production, you would send this to your error reporting service
+            }}
+          >
+            <AppContent />
+          </ErrorBoundary>
+        </TripProvider>
+      </ProtectedRoute>
+    </AuthProvider>
   )
 }
 

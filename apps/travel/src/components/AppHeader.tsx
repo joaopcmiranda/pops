@@ -1,6 +1,7 @@
-import { Search, Bell, User } from 'lucide-react'
-import { Button, Avatar, AvatarFallback } from '@pops/ui'
+import { Search, Bell } from 'lucide-react'
+import { Button } from '@pops/ui'
 import { SidebarTrigger } from '@pops/ui'
+import { UserMenu } from '@/components/UserMenu'
 
 interface AppHeaderProps {
   title?: string
@@ -95,11 +96,7 @@ export function AppHeader({ title = 'Trip Organizer' }: AppHeaderProps) {
           <Bell style={{ width: '20px', height: '20px' }} />
         </Button>
 
-        <Avatar className='h-8 w-8 cursor-pointer'>
-          <AvatarFallback>
-            <User className='h-4 w-4' />
-          </AvatarFallback>
-        </Avatar>
+        <UserMenu />
       </div>
     </header>
   )
