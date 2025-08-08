@@ -1,45 +1,121 @@
 import { useState, useEffect } from 'react'
 import { Plus, Calendar, MapPin, Users, Clock, Tag, MoreHorizontal } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button } from '@pops/ui'
-import { ItineraryService } from '@/services/itineraryService'
-import type { ItineraryDay, ItemType } from '@/types/itinerary'
+import { itineraryApiClient } from '@/lib/api-client'
+import { useTripContext } from '@/hooks/useTripContext'
+import { ItemType, ItemStatus } from '@pops/types'
+import type { ItineraryDay, ItineraryItem } from '@pops/types'
+
+// Helper function to organize items by day
+const organizeItemsByDay = (items: ItineraryItem[]): ItineraryDay[] => {
+  const itemsByDate = new Map<string, ItineraryItem[]>()
+
+  items.forEach(item => {
+    const dateKey = new Date(item.startDate).toISOString().split('T')[0]
+    if (!itemsByDate.has(dateKey)) {
+      itemsByDate.set(dateKey, [])
+    }
+    itemsByDate.get(dateKey)!.push(item)
+  })
+
+  return Array.from(itemsByDate.entries())
+    .map(([dateStr, dayItems]) => ({
+      date: new Date(dateStr),
+      items: dayItems.sort(
+        (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+      ),
+    }))
+    .sort((a, b) => a.date.getTime() - b.date.getTime())
+}
 
 export function ItineraryView() {
   const [itineraryDays, setItineraryDays] = useState<ItineraryDay[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   // const [selectedFilters, setSelectedFilters] = useState<ItemType[]>([])
-  const [stats, setStats] = useState(ItineraryService.getStats())
+  const [stats, setStats] = useState({
+    totalItems: 0,
+    byType: {} as Record<string, number>,
+    byStatus: {} as Record<string, number>,
+    totalBudget: 0,
+    timeSpan: {
+      start: new Date(),
+      end: new Date(),
+      totalDays: 0,
+    },
+  })
+  const { currentTrip } = useTripContext()
 
   useEffect(() => {
-    const days = ItineraryService.getItemsByDay()
-    setItineraryDays(days)
-    setStats(ItineraryService.getStats())
-  }, [])
+    const loadItineraryData = async () => {
+      if (!currentTrip) {
+        setLoading(false)
+        return
+      }
+
+      try {
+        setLoading(true)
+        setError(null)
+
+        // Load both items and stats
+        const [items, statsData] = await Promise.all([
+          itineraryApiClient().itinerary.list(currentTrip.id),
+          itineraryApiClient().itinerary.getStats(currentTrip.id),
+        ])
+
+        // Organize items by day
+        const days = organizeItemsByDay(items)
+        setItineraryDays(days)
+        setStats(statsData)
+      } catch (error) {
+        console.error('Failed to load itinerary data:', error)
+        const errorMessage = error instanceof Error ? error.message : 'Failed to load itinerary'
+        setError(`API Error: ${errorMessage}. The backend service may not be configured properly.`)
+        setItineraryDays([])
+        setStats({
+          totalItems: 0,
+          byType: {},
+          byStatus: {},
+          totalBudget: 0,
+          timeSpan: {
+            start: new Date(),
+            end: new Date(),
+            totalDays: 0,
+          },
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadItineraryData()
+  }, [currentTrip])
 
   const getItemTypeColor = (type: ItemType) => {
     const colors = {
-      accommodation: 'bg-orange-500',
-      event: 'bg-red-500',
-      work: 'bg-blue-500',
-      activity: 'bg-green-500',
-      transport: 'bg-purple-500',
-      'overarching-event': 'bg-yellow-500',
+      [ItemType.ACCOMMODATION]: 'bg-orange-500',
+      [ItemType.OTHER]: 'bg-red-500',
+      [ItemType.WORK]: 'bg-blue-500',
+      [ItemType.ACTIVITY]: 'bg-green-500',
+      [ItemType.TRANSPORT]: 'bg-purple-500',
+      [ItemType.OVERARCHING_EVENT]: 'bg-yellow-500',
     }
     return colors[type] || 'bg-gray-500'
   }
 
   const getItemTypeIcon = (type: ItemType) => {
     switch (type) {
-      case 'accommodation':
+      case ItemType.ACCOMMODATION:
         return '🏠'
-      case 'event':
+      case ItemType.OTHER:
         return '🎉'
-      case 'work':
+      case ItemType.WORK:
         return '💼'
-      case 'activity':
+      case ItemType.ACTIVITY:
         return '🎯'
-      case 'transport':
+      case ItemType.TRANSPORT:
         return '✈️'
-      case 'overarching-event':
+      case ItemType.OVERARCHING_EVENT:
         return '🎪'
       default:
         return '📅'
@@ -64,6 +140,59 @@ export function ItineraryView() {
       hour: '2-digit',
       minute: '2-digit',
     })
+  }
+
+  // Show loading state
+  if (loading) {
+    return (
+      <main className='app-content animate-fade-in page-enter'>
+        <div style={{ textAlign: 'center', padding: '3rem' }}>
+          <Calendar
+            style={{ width: '48px', height: '48px', color: '#94a3b8', margin: '0 auto 1rem' }}
+          />
+          <h3
+            style={{
+              fontSize: '1.25rem',
+              fontWeight: '600',
+              color: '#1e293b',
+              marginBottom: '0.5rem',
+            }}
+          >
+            Loading itinerary...
+          </h3>
+          <p style={{ color: '#64748b' }}>Please wait while we fetch your trip details.</p>
+        </div>
+      </main>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <main className='app-content animate-fade-in page-enter'>
+        <div
+          style={{
+            textAlign: 'center',
+            padding: '3rem',
+            backgroundColor: '#fee2e2',
+            borderRadius: '0.5rem',
+          }}
+        >
+          <h3
+            style={{
+              fontSize: '1.25rem',
+              fontWeight: '600',
+              color: '#dc2626',
+              marginBottom: '0.5rem',
+            }}
+          >
+            Failed to load itinerary
+          </h3>
+          <p style={{ color: '#991b1b', marginBottom: '1.5rem' }}>{error}</p>
+          <Button onClick={() => window.location.reload()}>Retry</Button>
+        </div>
+      </main>
+    )
   }
 
   return (
@@ -300,8 +429,9 @@ export function ItineraryView() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                           <span
                             style={{
-                              backgroundColor: item.status === 'confirmed' ? '#dcfce7' : '#f1f5f9',
-                              color: item.status === 'confirmed' ? '#166534' : '#64748b',
+                              backgroundColor:
+                                item.status === ItemStatus.CONFIRMED ? '#dcfce7' : '#f1f5f9',
+                              color: item.status === ItemStatus.CONFIRMED ? '#166534' : '#64748b',
                               padding: '2px 8px',
                               borderRadius: '12px',
                               fontSize: '0.75rem',
