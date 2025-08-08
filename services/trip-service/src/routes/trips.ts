@@ -1,10 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import * as types from '@pops/types'
-console.log(
-  'Available types:',
-  Object.keys(types).filter(k => k.includes('Trip'))
-)
-const { createTripSchema } = types
+const { createTripSchema, TripStatus, TripSortBy, SortOrder } = types
 import { TripService } from '../services/trip-service.js'
 
 export async function tripRoutes(fastify: FastifyInstance) {
@@ -284,6 +280,83 @@ export async function tripRoutes(fastify: FastifyInstance) {
       reply.send({
         success: true,
         data: [],
+      })
+    } catch (error: unknown) {
+      fastify.log.error(error)
+      reply.code(500).send({
+        success: false,
+        error: error instanceof Error ? error.message : 'Internal Server Error',
+      })
+    }
+  })
+
+  // Dashboard summary endpoint for widgets
+  fastify.get('/dashboard/summary', async (request, reply) => {
+    try {
+      const userId = (request as unknown as { userId: string }).userId
+
+      // Get basic trip statistics
+      const stats = await tripService.getStats(userId)
+
+      // Get trips to find next upcoming trip
+      const trips = await tripService.list(
+        {
+          filters: { status: [TripStatus.PLANNING, TripStatus.UPCOMING] },
+          sortBy: TripSortBy.START_DATE,
+          sortOrder: SortOrder.ASC,
+          limit: 1,
+        },
+        userId
+      )
+
+      const nextTrip = trips.length > 0 ? trips[0] : null
+      const daysUntilNext = nextTrip
+        ? Math.ceil(
+            (new Date(nextTrip.startDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+          )
+        : 0
+
+      reply.send({
+        success: true,
+        data: {
+          nextTrip: nextTrip
+            ? {
+                id: nextTrip.id,
+                destination: nextTrip.destination,
+                startDate: nextTrip.startDate,
+                endDate: nextTrip.endDate,
+                daysUntil: Math.max(0, daysUntilNext),
+              }
+            : null,
+          totalTrips: stats.totalTrips || 0,
+          upcomingTrips: stats.upcomingTrips || 0,
+          totalSpent: 0, // TODO: Calculate from actual budget data
+          averageTripCost: 0, // TODO: Calculate from actual budget data
+        },
+      })
+    } catch (error: unknown) {
+      fastify.log.error(error)
+      reply.code(500).send({
+        success: false,
+        error: error instanceof Error ? error.message : 'Internal Server Error',
+      })
+    }
+  })
+
+  // Quick stats endpoint for Hub dashboard
+  fastify.get('/dashboard/quick-stats', async (request, reply) => {
+    try {
+      const userId = (request as unknown as { userId: string }).userId
+      const stats = await tripService.getStats(userId)
+
+      reply.send({
+        success: true,
+        data: {
+          totalTrips: stats.totalTrips || 0,
+          upcomingTrips: stats.upcomingTrips || 0,
+          totalSpent: 0, // TODO: Calculate from actual budget data
+          activeProjects: stats.upcomingTrips || 0, // Using upcoming trips as active projects
+        },
       })
     } catch (error: unknown) {
       fastify.log.error(error)
