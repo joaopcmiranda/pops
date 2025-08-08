@@ -16,7 +16,7 @@ export default tseslint.config(
     },
     rules: {
       // Service-specific rules
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
     },
   }
 )
