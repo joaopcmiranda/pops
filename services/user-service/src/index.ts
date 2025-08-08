@@ -4,6 +4,7 @@ import helmet from '@fastify/helmet'
 import compress from '@fastify/compress'
 import rateLimit from '@fastify/rate-limit'
 import { config } from './config/env'
+import { authRoutes } from './routes/auth'
 
 // Create Fastify instance
 const fastify = Fastify({
@@ -55,53 +56,8 @@ fastify.get('/health', async () => {
   }
 })
 
-// Placeholder user routes - future authentication service
-fastify.get('/users/me', async (request, reply) => {
-  const userId = request.headers['x-user-id'] as string
-
-  if (!userId) {
-    reply.code(401).send({
-      success: false,
-      error: 'Unauthorized - User ID required in headers',
-    })
-    return
-  }
-
-  // TODO: Implement actual user lookup from database
-  reply.send({
-    success: true,
-    data: {
-      id: userId,
-      name: 'Demo User',
-      email: 'demo@pops.travel',
-      avatar: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-  })
-})
-
-// Placeholder authentication endpoints
-fastify.post('/auth/login', async (request, reply) => {
-  reply.code(501).send({
-    success: false,
-    error: 'Authentication not implemented yet - placeholder service',
-  })
-})
-
-fastify.post('/auth/register', async (request, reply) => {
-  reply.code(501).send({
-    success: false,
-    error: 'Registration not implemented yet - placeholder service',
-  })
-})
-
-fastify.post('/auth/logout', async (request, reply) => {
-  reply.send({
-    success: true,
-    message: 'Logout successful (placeholder)',
-  })
-})
+// Register authentication routes
+await fastify.register(authRoutes)
 
 // 404 handler
 fastify.setNotFoundHandler(async (request, reply) => {
