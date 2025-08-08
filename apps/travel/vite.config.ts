@@ -21,6 +21,7 @@ export default defineConfig({
       '@pops/shared': path.resolve(__dirname, '../../packages/shared/src'),
       '@pops/types': path.resolve(__dirname, '../../packages/types/src'),
       '@pops/api-client': path.resolve(__dirname, '../../packages/api-client/src'),
+      '@pops/navigation': path.resolve(__dirname, '../../packages/navigation/src'),
     },
   },
 })

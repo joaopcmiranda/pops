@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect, type ErrorInfo } from 'react'
 import {
   MapPin,
   Calendar as CalIcon,
@@ -8,7 +8,7 @@ import {
   DollarSign,
   FileText,
 } from 'lucide-react'
-import { AppHeader } from '@/components/AppHeader'
+import { UnifiedHeader } from '@pops/navigation'
 import { AppSidebar } from '@/components/AppSidebar'
 import { Dashboard } from '@/components/Dashboard'
 import { ItineraryView } from '@/components/ItineraryView'
@@ -19,6 +19,7 @@ import { TripSelector } from '@/components/TripSelector'
 import { TripCreationWizard } from '@/components/TripCreationWizard'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
+import { AppSuiteProvider } from '@pops/navigation'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { TripProvider } from '@/contexts/TripContext'
 import { useTripContext } from '@/hooks/useTripContext'
@@ -212,7 +213,13 @@ function AppContent() {
             </div>
           }
         >
-          <AppHeader title={getPageTitle(currentView)} />
+          <UnifiedHeader
+            currentApp='travel'
+            title={getPageTitle(currentView)}
+            showDomainSwitcher={true}
+            showNotifications={true}
+            showSearch={true}
+          />
         </ErrorBoundary>
 
         <ErrorBoundary>{renderCurrentView()}</ErrorBoundary>
@@ -223,20 +230,22 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <ProtectedRoute>
-        <TripProvider>
-          <ErrorBoundary
-            onError={(error: Error, errorInfo: React.ErrorInfo) => {
-              console.error('App Error Boundary:', error, errorInfo)
-              // In production, you would send this to your error reporting service
-            }}
-          >
-            <AppContent />
-          </ErrorBoundary>
-        </TripProvider>
-      </ProtectedRoute>
-    </AuthProvider>
+    <AppSuiteProvider currentApp='travel'>
+      <AuthProvider>
+        <ProtectedRoute>
+          <TripProvider>
+            <ErrorBoundary
+              onError={(error: Error, errorInfo: ErrorInfo) => {
+                console.error('App Error Boundary:', error, errorInfo)
+                // In production, you would send this to your error reporting service
+              }}
+            >
+              <AppContent />
+            </ErrorBoundary>
+          </TripProvider>
+        </ProtectedRoute>
+      </AuthProvider>
+    </AppSuiteProvider>
   )
 }
 

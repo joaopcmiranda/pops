@@ -1,12 +1,46 @@
-import { useEffect, useState, ReactNode, useCallback } from 'react'
-import { TOKEN_KEY, USER_KEY, API_BASE_URL } from '@/lib/auth-config'
-import {
-  AuthContext,
-  User,
-  LoginCredentials,
-  RegisterCredentials,
-  AuthContextType,
-} from './AuthContextType'
+import { useEffect, useState, ReactNode, useCallback, createContext } from 'react'
+import { TOKEN_KEY, USER_KEY } from '@/lib/auth-config'
+import { userApiClient } from '@/lib/api-client'
+
+// Types
+export interface User {
+  id: string
+  name: string
+  email: string
+  avatar?: string | null
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface AuthTokens {
+  accessToken: string
+  refreshToken: string
+}
+
+export interface LoginCredentials {
+  email: string
+  password: string
+}
+
+export interface RegisterCredentials {
+  name: string
+  email: string
+  password: string
+}
+
+export interface AuthContextType {
+  user: User | null
+  isAuthenticated: boolean
+  isLoading: boolean
+  error: string | null
+  login: (credentials: LoginCredentials) => Promise<void>
+  register: (credentials: RegisterCredentials) => Promise<void>
+  logout: () => void
+  clearError: () => void
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 interface AuthProviderProps {
   children: ReactNode
@@ -19,38 +53,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const isAuthenticated = !!user
 
-  // Initialize auth state on mount
-  useEffect(() => {
-    initializeAuth()
-  }, [initializeAuth])
-
   const initializeAuth = useCallback(async () => {
     try {
       const token = localStorage.getItem(TOKEN_KEY)
       const savedUser = localStorage.getItem(USER_KEY)
 
       if (token && savedUser) {
-        // Verify token is still valid
-        const response = await fetch(`${API_BASE_URL}/auth/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        try {
+          // Verify token is still valid using api-client
+          const apiClient = userApiClient()
+          const healthCheck = await apiClient.health()
 
-        if (response.ok) {
-          const result = await response.json()
-          if (result.success) {
-            setUser({
-              ...result.data,
-              createdAt: new Date(result.data.createdAt),
-              updatedAt: new Date(result.data.updatedAt),
-            })
+          if (healthCheck.status === 'healthy') {
+            // Token is valid, restore user from localStorage
+            setUser(JSON.parse(savedUser))
           } else {
-            // Token invalid, clear storage
+            // Service unavailable, clear storage
             clearAuthStorage()
           }
-        } else {
-          // Token invalid, clear storage
+        } catch (err) {
+          // Token invalid or service error, clear storage
+          console.error('Token validation failed:', err)
           clearAuthStorage()
         }
       }
@@ -62,42 +85,34 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [])
 
+  // Initialize auth state on mount
+  useEffect(() => {
+    initializeAuth()
+  }, [initializeAuth])
+
   const login = async (credentials: LoginCredentials) => {
     try {
       setError(null)
       setIsLoading(true)
 
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      })
+      // TODO: Implement login through @pops/api-client when auth endpoints are available
+      // For now, we'll use a mock implementation
 
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Login failed')
+      // Mock successful login - replace with actual api-client call
+      const mockUserData = {
+        id: 'user-1',
+        email: credentials.email,
+        name: credentials.email.split('@')[0],
+        createdAt: new Date(),
+        updatedAt: new Date(),
       }
 
-      if (result.success) {
-        const { user: userData, tokens } = result.data
+      const mockToken = 'mock-jwt-token'
 
-        // Convert date strings to Date objects
-        const userWithDates = {
-          ...userData,
-          createdAt: new Date(userData.createdAt),
-          updatedAt: new Date(userData.updatedAt),
-        }
-
-        // Store in state and localStorage
-        setUser(userWithDates)
-        localStorage.setItem(TOKEN_KEY, tokens.accessToken)
-        localStorage.setItem(USER_KEY, JSON.stringify(userWithDates))
-      } else {
-        throw new Error(result.error || 'Login failed')
-      }
+      // Store in state and localStorage
+      setUser(mockUserData)
+      localStorage.setItem(TOKEN_KEY, mockToken)
+      localStorage.setItem(USER_KEY, JSON.stringify(mockUserData))
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Login failed'
       setError(errorMessage)
@@ -112,37 +127,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setError(null)
       setIsLoading(true)
 
-      const response = await fetch(`${API_BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      })
+      // TODO: Implement registration through @pops/api-client when auth endpoints are available
+      // For now, we'll use a mock implementation
 
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Registration failed')
+      // Mock successful registration - replace with actual api-client call
+      const mockUserData = {
+        id: 'user-' + Date.now(),
+        email: credentials.email,
+        name: credentials.name || credentials.email.split('@')[0],
+        createdAt: new Date(),
+        updatedAt: new Date(),
       }
 
-      if (result.success) {
-        const { user: userData, tokens } = result.data
+      const mockToken = 'mock-jwt-token-' + Date.now()
 
-        // Convert date strings to Date objects
-        const userWithDates = {
-          ...userData,
-          createdAt: new Date(userData.createdAt),
-          updatedAt: new Date(userData.updatedAt),
-        }
-
-        // Store in state and localStorage
-        setUser(userWithDates)
-        localStorage.setItem(TOKEN_KEY, tokens.accessToken)
-        localStorage.setItem(USER_KEY, JSON.stringify(userWithDates))
-      } else {
-        throw new Error(result.error || 'Registration failed')
-      }
+      // Store in state and localStorage
+      setUser(mockUserData)
+      localStorage.setItem(TOKEN_KEY, mockToken)
+      localStorage.setItem(USER_KEY, JSON.stringify(mockUserData))
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Registration failed'
       setError(errorMessage)
