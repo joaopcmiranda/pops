@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# POps Backend Development Reset Script
-# This script resets the development environment completely
+# Trip Organizer Development Environment Reset Script
+# This script completely resets the development environment
 
 set -e
 
-echo "🔄 Resetting POps Development Environment..."
-echo "==========================================="
+echo "🔄 Resetting Trip Organizer Development Environment..."
+echo "====================================================="
 
 # Colors for output
 RED='\033[0;31m'
@@ -15,60 +15,101 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Check if we're in the project root
+if [[ ! -f "package.json" ]]; then
+    echo "❌ Please run this script from the project root directory"
+    exit 1
+fi
+
 # Stop all services first
 echo -e "${YELLOW}🛑 Stopping all services...${NC}"
 ./scripts/dev-stop.sh
 
-# Reset database
-echo -e "${BLUE}🗑️  Clearing database...${NC}"
-cd services/trip-service
-pnpm nx run trip-service:db:clear || pnpm run db:clear || tsx src/scripts/clear-db.ts
-echo -e "${GREEN}✅ Database cleared${NC}"
+# Function to reset service database
+reset_service_database() {
+    local service_name=$1
+    local service_path=$2
+    
+    echo -e "${BLUE}🗑️  Resetting ${service_name} database...${NC}"
+    
+    if cd "$service_path"; then
+        # Clear database
+        tsx src/scripts/clear-db.ts || {
+            echo -e "${YELLOW}⚠️  Clear script failed for ${service_name}, continuing...${NC}"
+        }
+        
+        # Recreate schema
+        tsx src/scripts/create-schema.ts
+        echo -e "${GREEN}✅ ${service_name} schema created${NC}"
+        
+        cd - > /dev/null
+    else
+        echo -e "${RED}❌ Failed to access ${service_name} directory${NC}"
+        return 1
+    fi
+}
 
-# Recreate schema
-echo -e "${BLUE}🏗️  Recreating database schema...${NC}"
-tsx src/scripts/create-schema.ts
-echo -e "${GREEN}✅ Schema created${NC}"
+# Reset all service databases
+echo -e "${YELLOW}🏗️  Resetting all service databases...${NC}"
 
-# Seed with example data
-echo -e "${BLUE}🌱 Seeding database with example data...${NC}"
-pnpm nx run trip-service:db:seed || pnpm run db:seed || tsx src/scripts/seed.ts
-echo -e "${GREEN}✅ Database seeded${NC}"
+reset_service_database "User Service" "services/user-service"
+reset_service_database "Trip Service" "services/trip-service" 
+reset_service_database "Itinerary Service" "services/itinerary-service"
 
-cd ../..
+# Seed all databases
+echo -e "${BLUE}🌱 Seeding all databases with sample data...${NC}"
+./scripts/seed-all-databases.sh
+
+# Clean Turbo cache
+echo -e "${BLUE}🧹 Cleaning Turbo cache...${NC}"
+pnpm turbo daemon clean || {
+    echo -e "${YELLOW}⚠️  Turbo daemon clean failed, continuing...${NC}"
+}
 
 # Clean and reinstall dependencies (optional)
 read -p "$(echo -e ${YELLOW}Do you want to reinstall dependencies? [y/N]: ${NC})" -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo -e "${BLUE}📦 Reinstalling dependencies...${NC}"
+    echo -e "${BLUE}📦 Cleaning and reinstalling dependencies...${NC}"
+    
+    # Clean node_modules
+    find . -name "node_modules" -type d -prune -exec rm -rf {} + 2>/dev/null || true
+    
+    # Clean lockfile
+    rm -f pnpm-lock.yaml
+    
+    # Reinstall
     pnpm install
     echo -e "${GREEN}✅ Dependencies reinstalled${NC}"
 fi
 
-# Rebuild TypeScript (optional)
-read -p "$(echo -e ${YELLOW}Do you want to rebuild TypeScript? [y/N]: ${NC})" -n 1 -r
+# Rebuild all packages (optional)
+read -p "$(echo -e ${YELLOW}Do you want to rebuild all packages? [y/N]: ${NC})" -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo -e "${BLUE}🔨 Building TypeScript...${NC}"
-    pnpm run build:all 2>/dev/null || {
-        echo -e "${YELLOW}Note: build:all script not found, running individual builds...${NC}"
-        cd services/trip-service && pnpm run build
-        cd ../api-gateway && pnpm run build
-        cd ../..
+    echo -e "${BLUE}🔨 Building all packages...${NC}"
+    pnpm turbo run build --filter='./packages/*' || {
+        echo -e "${YELLOW}⚠️  Some packages failed to build, continuing...${NC}"
     }
-    echo -e "${GREEN}✅ TypeScript built${NC}"
+    echo -e "${GREEN}✅ Packages built${NC}"
 fi
 
 echo ""
 echo -e "${GREEN}🎉 Development environment reset complete!${NC}"
-echo "=========================================="
+echo "====================================================="
 echo -e "${BLUE}🚀 To start development:${NC}"
-echo "  ./scripts/dev-start.sh"
+echo "  ./scripts/dev-start.sh  # or pnpm services:dev"
+echo "  ./scripts/dev.sh        # or pnpm run dev"
+echo ""
+echo -e "${BLUE}🔍 Check system health:${NC}"
+echo "  ./scripts/health-check.sh  # or pnpm services:health"
 echo ""
 echo -e "${BLUE}📊 Sample Data Available:${NC}"
-echo "• 1 demo user (user-demo-1)"
-echo "• 6 sample trips (Rio, Tokyo, London, Paris, Iceland, NYC)"
-echo "• 3 sample people"
-echo "• 9 sample locations"
-echo "• 10 sample itinerary items"
+echo "• 3 test users with authentication"
+echo "• 6 travel contacts/attendees"
+echo "• 11 locations across Rio, Tokyo, London"
+echo "• 4 trips (3 active + 1 template)"
+echo "• 9 detailed itinerary items"
+echo "• 4 rich content pieces"
+echo ""
+echo -e "${GREEN}Ready for development! 🚀${NC}"
