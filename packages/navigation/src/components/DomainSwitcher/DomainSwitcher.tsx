@@ -130,7 +130,11 @@ export function DomainSwitcher({
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className='w-64' align='start' sideOffset={4}>
+      <DropdownMenuContent
+        className='w-64 bg-white dark:bg-slate-800 shadow-lg border border-slate-200 dark:border-slate-700'
+        align='start'
+        sideOffset={4}
+      >
         <DropdownMenuLabel className='text-xs font-semibold text-muted-foreground'>
           POps Applications
         </DropdownMenuLabel>
