@@ -28,6 +28,7 @@ import { useTripContext } from '@/hooks/useTripContext'
 import { TripService } from '@/services/tripService'
 import { SidebarInset, SidebarProvider } from '@pops/ui'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { useSwipeGesture } from '@/hooks/use-mobile-gestures'
 import '@/styles/animations.css'
 import '@/styles/mobile.css'
 
@@ -42,6 +43,21 @@ function AppContent() {
   const isMobile = useIsMobile()
   const { currentTrip, setCurrentTrip, isSelectingTrip, setShowNewTripModal, showNewTripModal } =
     useTripContext()
+
+  // Mobile swipe gestures for sidebar
+  const swipeGestures = useSwipeGesture({
+    onSwipeRight: () => {
+      if (isMobile && !isMobileSidebarOpen) {
+        setIsMobileSidebarOpen(true)
+      }
+    },
+    onSwipeLeft: () => {
+      if (isMobile && isMobileSidebarOpen) {
+        setIsMobileSidebarOpen(false)
+      }
+    },
+    threshold: 75,
+  })
 
   // Load available trips
   useEffect(() => {
@@ -210,7 +226,10 @@ function AppContent() {
 
   // Main app layout when trip is selected
   return (
-    <div className={`app-container ${isMobile ? 'mobile' : 'desktop'}`}>
+    <div
+      className={`app-container ${isMobile ? 'mobile' : 'desktop'} ${isMobile && isMobileSidebarOpen ? 'sidebar-open' : ''}`}
+      {...(isMobile ? swipeGestures : {})}
+    >
       <SidebarProvider>
         {/* Mobile overlay */}
         {isMobile && isMobileSidebarOpen && (

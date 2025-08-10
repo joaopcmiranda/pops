@@ -182,6 +182,8 @@ export interface UnifiedHeaderProps {
   customActions?: React.ReactNode
   /** Additional CSS class names */
   className?: string
+  /** Callback for mobile menu toggle */
+  onMenuToggle?: () => void
 }
 
 /**

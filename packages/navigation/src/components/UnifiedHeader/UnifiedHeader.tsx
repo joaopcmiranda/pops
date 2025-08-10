@@ -6,7 +6,7 @@
  */
 
 import React from 'react'
-import { Search, Bell } from 'lucide-react'
+import { Search, Bell, Menu } from 'lucide-react'
 import { Button } from '@pops/ui'
 import { cn } from '@pops/ui'
 import { DomainSwitcher } from '../DomainSwitcher'
@@ -44,6 +44,7 @@ export function UnifiedHeader({
   showSearch = true,
   customActions,
   className,
+  onMenuToggle,
 }: UnifiedHeaderProps) {
   const { authState, unreadCount } = useAppSuite()
   const [searchQuery, setSearchQuery] = React.useState('')
@@ -88,8 +89,21 @@ export function UnifiedHeader({
       role='banner'
       aria-label='Main navigation'
     >
-      {/* Left section: App switcher and title */}
+      {/* Left section: Mobile menu button, app switcher, and title */}
       <div className='flex items-center gap-4 flex-1 min-w-0'>
+        {/* Mobile hamburger menu button */}
+        {onMenuToggle && (
+          <Button
+            variant='ghost'
+            size='sm'
+            onClick={onMenuToggle}
+            className='lg:hidden shrink-0 hamburger-menu-button'
+            aria-label='Toggle navigation menu'
+          >
+            <Menu className='h-5 w-5 menu-icon' />
+          </Button>
+        )}
+
         {showDomainSwitcher && <DomainSwitcher currentApp={currentApp} className='shrink-0' />}
 
         <div className='flex items-center gap-2 min-w-0'>
