@@ -14,7 +14,7 @@ import { Label } from '../label'
 import { FormFieldContext, FormItemContext } from './FormContext'
 import { useFormField } from './UseFormField'
 
-const Form = FormProvider
+const Form: typeof FormProvider = FormProvider
 
 const FormField = <
   TFieldValues extends FieldValues = FieldValues,
