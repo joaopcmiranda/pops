@@ -75,7 +75,10 @@ export const assertions = {
   /**
    * Assert that a response has the expected error structure.
    */
-  isErrorResponse: (response: { statusCode: number; json: () => Record<string, unknown> }, expectedStatus = 500) => {
+  isErrorResponse: (
+    response: { statusCode: number; json: () => Record<string, unknown> },
+    expectedStatus = 500
+  ) => {
     expect(response.statusCode).toBe(expectedStatus)
     expect(response.json()).toHaveProperty('success', false)
     expect(response.json()).toHaveProperty('error')
@@ -102,7 +105,10 @@ export const assertions = {
   /**
    * Assert that a response indicates unauthorized access.
    */
-  isUnauthorizedResponse: (response: { statusCode: number; json: () => Record<string, unknown> }) => {
+  isUnauthorizedResponse: (response: {
+    statusCode: number
+    json: () => Record<string, unknown>
+  }) => {
     expect(response.statusCode).toBe(401)
     expect(response.json()).toHaveProperty('success', false)
     expect(response.json()).toHaveProperty('error')

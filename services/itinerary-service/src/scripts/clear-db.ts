@@ -1,18 +1,7 @@
 #!/usr/bin/env tsx
 
 import { db } from '../db/index.js'
-import {
-  users,
-  trips,
-  tripCollaborators,
-  itineraryItems,
-  contentItems,
-  people,
-  locations,
-  tripTemplates,
-  itineraryItemAttendees,
-} from '../db/schema.js'
-import type { SQLiteTable } from 'drizzle-orm/sqlite-core'
+import { itineraryItems, contentItems, itineraryItemAttendees } from '../db/index.js'
 
 /**
  * Clear Database Script
@@ -25,7 +14,8 @@ async function clearDatabase() {
 
   try {
     // Helper function to safely delete from table
-    const safeDelete = async (table: SQLiteTable, tableName: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const safeDelete = async (table: any, tableName: string) => {
       try {
         await db.delete(table)
         console.log(`   ✓ Cleared ${tableName}`)
@@ -40,22 +30,16 @@ async function clearDatabase() {
 
     // Delete in reverse dependency order to avoid foreign key constraints
     await safeDelete(itineraryItemAttendees, 'itinerary item attendees')
-    await safeDelete(contentItems, 'content items')
     await safeDelete(itineraryItems, 'itinerary items')
-    await safeDelete(tripCollaborators, 'trip collaborators')
-    await safeDelete(trips, 'trips')
-    await safeDelete(tripTemplates, 'trip templates')
-    await safeDelete(locations, 'locations')
-    await safeDelete(people, 'people')
-    await safeDelete(users, 'users')
+    await safeDelete(contentItems, 'content items')
 
     console.log('✅ Database cleared successfully!')
   } catch (error) {
     console.error('❌ Error clearing database:', error)
     process.exit(1)
   } finally {
-    // Don't close the database connection here as it might be used by other operations
-    // sqlite.close()
+    // PostgreSQL connections are handled by the connection pool
+    // No explicit closing needed for individual operations
   }
 }
 

@@ -58,6 +58,17 @@ export class HttpClient {
 
       if (!response.ok) {
         const errorResponse = responseData as ErrorResponse
+
+        // Handle 401 Unauthorized - trigger token refresh if available
+        if (response.status === 401) {
+          // Dispatch custom event for token refresh handling
+          window.dispatchEvent(
+            new CustomEvent('auth:token-expired', {
+              detail: { originalRequest: { method, endpoint, data, headers } },
+            })
+          )
+        }
+
         throw new HttpClientError(
           errorResponse.error || `HTTP ${response.status}`,
           response.status,

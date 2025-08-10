@@ -1,6 +1,72 @@
 version: '3.8'
 
 services:
+  # PostgreSQL Database for Development
+  postgres-dev:
+    image: postgres:16-alpine
+    container_name: pops-postgres-dev
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: pops_development
+      POSTGRES_USER: pops_user
+      POSTGRES_PASSWORD: pops_password
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./scripts/init-schemas.sql:/docker-entrypoint-initdb.d/init-schemas.sql
+    networks:
+      - pops-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pops_user -d pops_development"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles:
+      - dev
+      - default
+
+  # PostgreSQL Database for Testing
+  postgres-test:
+    image: postgres:16-alpine
+    container_name: pops-postgres-test
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: pops_test
+      POSTGRES_USER: pops_test_user
+      POSTGRES_PASSWORD: pops_test_password
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+      - ./scripts/init-schemas.sql:/docker-entrypoint-initdb.d/init-schemas.sql
+    networks:
+      - pops-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pops_test_user -d pops_test"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles:
+      - test
+      - dev
+
+  # Database Administration Interface
+  adminer:
+    image: adminer
+    container_name: pops-adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres-dev
+    depends_on:
+      - postgres-dev
+    networks:
+      - pops-network
+    profiles:
+      - dev
+
   # Frontend Travel App
   travel:
     build:
@@ -10,66 +76,18 @@ services:
     ports:
       - "${WEB_PORT:-5173}:5173"
     environment:
-      - VITE_API_URL=http://localhost:3001
-    depends_on:
-      - api
+      - VITE_TRIP_SERVICE_URL=http://localhost:8030
+      - VITE_USER_SERVICE_URL=http://localhost:8011
+      - VITE_ITINERARY_SERVICE_URL=http://localhost:8031
     networks:
       - pops-network
     profiles:
       - production
 
-  # Backend API Server
-  api:
-    build:
-      context: .
-      dockerfile: apps/api/Dockerfile
-    container_name: pops-api
-    ports:
-      - "${API_PORT:-3001}:3001"
-    environment:
-      NODE_ENV: ${NODE_ENV:-production}
-      PORT: 3001
-      DATABASE_URL: file:/app/data/prod.db
-      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
-      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
-    volumes:
-      - api_data:/app/data
-    networks:
-      - pops-network
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
-
-  # Development Services
-  api-dev:
-    build:
-      context: .
-      dockerfile: apps/api/Dockerfile.dev
-    container_name: pops-api-dev
-    ports:
-      - "${DEV_API_PORT:-3002}:3001"
-    environment:
-      NODE_ENV: development
-      PORT: 3001
-      DATABASE_URL: file:/app/data/dev.db
-      JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret}
-      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
-    volumes:
-      - ./apps/api:/app
-      - /app/node_modules
-      - api_dev_data:/app/data
-    networks:
-      - pops-network
-    profiles:
-      - dev
-
 volumes:
-  api_data:
+  postgres_dev_data:
     driver: local
-  api_dev_data:
+  postgres_test_data:
     driver: local
 
 networks:

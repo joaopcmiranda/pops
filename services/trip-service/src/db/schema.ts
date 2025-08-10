@@ -225,6 +225,9 @@ export const usersRelations = relations(users, ({ many }) => ({
   itineraryItems: many(itineraryItems),
   contentItems: many(contentItems),
   collaborations: many(tripCollaborators),
+  wishlistItems: many(wishlistItems),
+  budgetCategories: many(budgetCategories),
+  budgetItems: many(budgetItems),
 }))
 
 export const tripsRelations = relations(trips, ({ one, many }) => ({
@@ -235,6 +238,9 @@ export const tripsRelations = relations(trips, ({ one, many }) => ({
   collaborators: many(tripCollaborators),
   itineraryItems: many(itineraryItems),
   contentItems: many(contentItems),
+  wishlistItems: many(wishlistItems),
+  budgetCategories: many(budgetCategories),
+  budgetItems: many(budgetItems),
 }))
 
 export const tripCollaboratorsRelations = relations(tripCollaborators, ({ one }) => ({
@@ -294,6 +300,40 @@ export const itineraryItemAttendeesRelations = relations(itineraryItemAttendees,
   }),
 }))
 
+// Wishlist items table
+export const wishlistItems = sqliteTable('wishlist_items', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  title: text('title').notNull(),
+  description: text('description'),
+  type: text('type').notNull(), // 'food' | 'place' | 'experience' | 'accommodation' | 'transport' | 'activity'
+  category: text('category').notNull(), // relates to trip categories: destinations, activities, etc.
+  status: text('status').notNull().default('wishlist'), // 'wishlist' | 'planned' | 'booked' | 'completed'
+  priority: text('priority').notNull().default('medium'), // 'low' | 'medium' | 'high'
+  tags: text('tags'), // JSON array of strings
+  location: text('location'),
+  estimatedCost: real('estimated_cost'),
+  notes: text('notes'),
+  imageUrl: text('image_url'),
+  websiteUrl: text('website_url'),
+
+  createdAt: integer('created_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+  updatedAt: integer('updated_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+
+  // Relations
+  tripId: text('trip_id')
+    .notNull()
+    .references(() => trips.id, { onDelete: 'cascade' }),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+})
+
 // Type exports for use in services
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
@@ -311,3 +351,109 @@ export type Location = typeof locations.$inferSelect
 export type NewLocation = typeof locations.$inferInsert
 export type TripTemplate = typeof tripTemplates.$inferSelect
 export type NewTripTemplate = typeof tripTemplates.$inferInsert
+export type WishlistItem = typeof wishlistItems.$inferSelect
+export type NewWishlistItem = typeof wishlistItems.$inferInsert
+export type BudgetCategory = typeof budgetCategories.$inferSelect
+export type NewBudgetCategory = typeof budgetCategories.$inferInsert
+export type BudgetItem = typeof budgetItems.$inferSelect
+export type NewBudgetItem = typeof budgetItems.$inferInsert
+
+export const wishlistItemsRelations = relations(wishlistItems, ({ one }) => ({
+  trip: one(trips, {
+    fields: [wishlistItems.tripId],
+    references: [trips.id],
+  }),
+  user: one(users, {
+    fields: [wishlistItems.userId],
+    references: [users.id],
+  }),
+}))
+
+// Budget categories table
+export const budgetCategories = sqliteTable('budget_categories', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  name: text('name').notNull(),
+  color: text('color').notNull(), // hex color for UI
+  icon: text('icon').notNull(), // icon name/emoji for UI
+  description: text('description'),
+  isDefault: integer('is_default', { mode: 'boolean' }).default(false),
+
+  createdAt: integer('created_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+  updatedAt: integer('updated_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+
+  // Relations
+  tripId: text('trip_id')
+    .notNull()
+    .references(() => trips.id, { onDelete: 'cascade' }),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+})
+
+// Budget items table
+export const budgetItems = sqliteTable('budget_items', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  description: text('description').notNull(),
+  budgetedAmount: real('budgeted_amount').notNull(),
+  actualAmount: real('actual_amount').notNull().default(0),
+  notes: text('notes'),
+  tags: text('tags'), // JSON array of strings
+
+  // Date tracking
+  dateSpent: integer('date_spent', { mode: 'timestamp' }),
+
+  createdAt: integer('created_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+  updatedAt: integer('updated_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+
+  // Relations
+  categoryId: text('category_id')
+    .notNull()
+    .references(() => budgetCategories.id, { onDelete: 'cascade' }),
+  tripId: text('trip_id')
+    .notNull()
+    .references(() => trips.id, { onDelete: 'cascade' }),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+})
+
+// Budget categories relations
+export const budgetCategoriesRelations = relations(budgetCategories, ({ one, many }) => ({
+  trip: one(trips, {
+    fields: [budgetCategories.tripId],
+    references: [trips.id],
+  }),
+  user: one(users, {
+    fields: [budgetCategories.userId],
+    references: [users.id],
+  }),
+  budgetItems: many(budgetItems),
+}))
+
+// Budget items relations
+export const budgetItemsRelations = relations(budgetItems, ({ one }) => ({
+  category: one(budgetCategories, {
+    fields: [budgetItems.categoryId],
+    references: [budgetCategories.id],
+  }),
+  trip: one(trips, {
+    fields: [budgetItems.tripId],
+    references: [trips.id],
+  }),
+  user: one(users, {
+    fields: [budgetItems.userId],
+    references: [users.id],
+  }),
+}))

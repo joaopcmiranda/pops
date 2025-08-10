@@ -2,18 +2,8 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 
-import { db, sqlite } from '../db/index.js'
-import {
-  users,
-  trips,
-  tripCollaborators,
-  itineraryItems,
-  contentItems,
-  people,
-  locations,
-  tripTemplates,
-  itineraryItemAttendees,
-} from '../db/schema.js'
+import { db } from '../db/index.js'
+import { users, people, locations } from '../db/index.js'
 
 /**
  * Clear Database Script
@@ -40,14 +30,8 @@ async function clearDatabase() {
     }
 
     // Delete in reverse dependency order to avoid foreign key constraints
-    await safeDelete(itineraryItemAttendees, 'itinerary item attendees')
-    await safeDelete(contentItems, 'content items')
-    await safeDelete(itineraryItems, 'itinerary items')
-    await safeDelete(tripCollaborators, 'trip collaborators')
-    await safeDelete(trips, 'trips')
-    await safeDelete(tripTemplates, 'trip templates')
-    await safeDelete(locations, 'locations')
     await safeDelete(people, 'people')
+    await safeDelete(locations, 'locations')
     await safeDelete(users, 'users')
 
     console.log('✅ Database cleared successfully!')
@@ -55,8 +39,8 @@ async function clearDatabase() {
     console.error('❌ Error clearing database:', error)
     process.exit(1)
   } finally {
-    // Don't close the database connection here as it might be used by other operations
-    // sqlite.close()
+    // PostgreSQL connections are handled by the connection pool
+    // No explicit closing needed for individual operations
   }
 }
 

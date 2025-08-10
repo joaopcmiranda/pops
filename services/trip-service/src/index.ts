@@ -5,6 +5,9 @@ import compress from '@fastify/compress'
 import rateLimit from '@fastify/rate-limit'
 import { config } from './config/env'
 import { tripRoutes } from './routes/trips'
+import { wishlistRoutes } from './routes/wishlist'
+import { contentRoutes } from './routes/content'
+import { budgetRoutes } from './routes/budget'
 
 // Create Fastify instance
 const fastify = Fastify({
@@ -58,6 +61,9 @@ fastify.get('/health', async () => {
 
 // Register routes
 await fastify.register(tripRoutes)
+await fastify.register(wishlistRoutes)
+await fastify.register(contentRoutes)
+await fastify.register(budgetRoutes)
 
 // 404 handler
 fastify.setNotFoundHandler(async (request, reply) => {
@@ -94,6 +100,9 @@ const start = async () => {
     fastify.log.info(`🚀 Trip Service running on http://${config.HOST}:${config.PORT}`)
     fastify.log.info(`📊 Health check: http://${config.HOST}:${config.PORT}/health`)
     fastify.log.info(`🧳 Trips API: http://${config.HOST}:${config.PORT}/trips`)
+    fastify.log.info(`💝 Wishlist API: http://${config.HOST}:${config.PORT}/trips/:tripId/wishlist`)
+    fastify.log.info(`📝 Content API: http://${config.HOST}:${config.PORT}/trips/:tripId/content`)
+    fastify.log.info(`💰 Budget API: http://${config.HOST}:${config.PORT}/trips/:tripId/budget`)
     fastify.log.info(`🌍 Environment: ${config.NODE_ENV}`)
   } catch (err) {
     console.error('❌ Failed to start server:', err)

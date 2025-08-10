@@ -79,6 +79,28 @@ try {
       created_at INTEGER,
       updated_at INTEGER
     )`,
+
+    // Wishlist items table
+    `CREATE TABLE IF NOT EXISTS wishlist_items (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      description TEXT,
+      type TEXT NOT NULL,
+      category TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'wishlist',
+      priority TEXT NOT NULL DEFAULT 'medium',
+      tags TEXT,
+      location TEXT,
+      estimated_cost REAL,
+      notes TEXT,
+      image_url TEXT,
+      website_url TEXT,
+      created_at INTEGER,
+      updated_at INTEGER,
+      trip_id TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE
+    )`,
   ]
 
   // Execute each statement

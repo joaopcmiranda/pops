@@ -1,6 +1,7 @@
 #!/usr/bin/env tsx
 
-import { sqlite } from '../db/index.js'
+import { migrate } from 'drizzle-orm/node-postgres/migrator'
+import { db } from '../db/index.js'
 
 /**
  * Database Migration Script
@@ -11,16 +12,15 @@ async function runMigrations() {
   console.log('🔄 Running database migrations...')
 
   try {
-    // Note: migrate function for sqlite-proxy requires different parameters
-    console.log(
-      'Note: Migration support for sqlite-proxy is limited. Database should be manually updated or use direct schema creation.'
-    )
+    // Run PostgreSQL migrations from the migrations directory
+    await migrate(db, { migrationsFolder: './migrations' })
     console.log('✅ Migrations completed successfully!')
   } catch (error) {
     console.error('❌ Error running migrations:', error)
     process.exit(1)
   } finally {
-    sqlite.close()
+    // PostgreSQL connections are handled by the connection pool
+    // No explicit closing needed for individual operations
   }
 }
 
