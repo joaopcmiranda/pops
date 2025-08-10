@@ -11,6 +11,7 @@ import {
   Settings,
   Home,
   BookOpen,
+  Heart,
 } from 'lucide-react'
 
 import {
@@ -33,12 +34,18 @@ interface AppSidebarProps {
   activeCategory?: string
   onCategorySelect?: (category: string) => void
   availableTrips?: Trip[]
+  isMobile?: boolean
+  isOpen?: boolean
+  onClose?: () => void
 }
 
 export function AppSidebar({
   activeCategory = 'dashboard',
   onCategorySelect,
   availableTrips = [],
+  isMobile = false,
+  isOpen = true,
+  onClose,
 }: AppSidebarProps) {
   const { currentTrip, setCurrentTrip, setShowNewTripModal } = useTripContext()
   const overviewItems = [
@@ -48,6 +55,7 @@ export function AppSidebar({
   ]
 
   const planningItems = [
+    { id: 'wishlist', name: 'Wishlist', icon: Heart },
     { id: 'destinations', name: 'Destinations', icon: MapPin },
     { id: 'itinerary', name: 'Itinerary', icon: Calendar },
     { id: 'transport', name: 'Transport', icon: Plane },
@@ -64,6 +72,10 @@ export function AppSidebar({
 
   const handleCategoryClick = (categoryId: string) => {
     onCategorySelect?.(categoryId)
+    // Close mobile sidebar when category is selected
+    if (isMobile) {
+      onClose?.()
+    }
   }
 
   const handleTripChange = (trip: Trip) => {
@@ -75,7 +87,10 @@ export function AppSidebar({
   }
 
   return (
-    <Sidebar collapsible='none'>
+    <Sidebar 
+      collapsible='none' 
+      className={`${isMobile ? 'mobile-sidebar' : ''} ${!isOpen ? 'sidebar-hidden' : ''}`}
+    >
       <SidebarHeader>
         <div style={{ paddingBottom: '0.5rem', borderBottom: '1px solid #f1f5f9' }}>
           <button

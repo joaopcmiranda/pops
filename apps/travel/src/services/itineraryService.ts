@@ -6,9 +6,7 @@ import type {
   Location,
   OverarchingEventItem,
 } from '@/types/itinerary'
-// TODO: Replace with API calls when itinerary service is implemented
-// import { trpcClient } from '@/utils/trpc'
-// import type { ItineraryItem as APIItineraryItem } from '@pops/types'
+import { itineraryApiClient } from '@/lib/api-client'
 
 // TEMPORARY: Keep sample data until itinerary API service is implemented
 // This data will be removed when we complete the backend migration for itinerary items
@@ -63,6 +61,7 @@ const sampleLocations: Location[] = [
 ]
 
 // Sample itinerary items
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const sampleItinerary: ItineraryItem[] = [
   // Rio de Janeiro Trip Items
   {
@@ -306,94 +305,216 @@ const sampleItinerary: ItineraryItem[] = [
 ]
 
 export class ItineraryService {
-  private static items: ItineraryItem[] = [...sampleItinerary]
   private static people: Person[] = [...samplePeople]
   private static locations: Location[] = [...sampleLocations]
 
+  private static getCurrentTripId(): string {
+    // Get current trip ID from localStorage (fallback for non-React contexts)
+    const storedTrip = localStorage.getItem('currentTrip')
+    if (storedTrip) {
+      const trip = JSON.parse(storedTrip)
+      return trip.id
+    }
+    throw new Error('No active trip found')
+  }
+
   // CRUD Operations for Items
-  static getAllItems(): ItineraryItem[] {
-    return [...this.items].sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
+  static async getAllItems(): Promise<ItineraryItem[]> {
+    try {
+      const tripId = this.getCurrentTripId()
+      const client = itineraryApiClient()
+
+      const response = await client.get(`/itinerary?tripId=${tripId}`)
+      const apiItems = response.data || []
+
+      // Transform API items to frontend format
+      return apiItems
+        .map((item: Record<string, unknown>) => ({
+          ...item,
+          startDate: new Date(item.startDate),
+          endDate: item.endDate ? new Date(item.endDate) : undefined,
+          createdAt: new Date(item.createdAt),
+          updatedAt: new Date(item.updatedAt),
+          tags: item.tags ? JSON.parse(item.tags) : [],
+          typeData: item.typeData ? JSON.parse(item.typeData) : undefined,
+        }))
+        .sort((a: ItineraryItem, b: ItineraryItem) => a.startDate.getTime() - b.startDate.getTime())
+    } catch (error) {
+      console.error('Error fetching itinerary items:', error)
+      return []
+    }
   }
 
-  static getItemById(id: string): ItineraryItem | null {
-    return this.items.find(item => item.id === id) || null
+  static async getItemById(id: string): Promise<ItineraryItem | null> {
+    try {
+      const client = itineraryApiClient()
+
+      const response = await client.get(`/itinerary/${id}`)
+      const item = response.data
+
+      if (!item) return null
+
+      // Transform API item to frontend format
+      return {
+        ...item,
+        startDate: new Date(item.startDate),
+        endDate: item.endDate ? new Date(item.endDate) : undefined,
+        createdAt: new Date(item.createdAt),
+        updatedAt: new Date(item.updatedAt),
+        tags: item.tags ? JSON.parse(item.tags) : [],
+        typeData: item.typeData ? JSON.parse(item.typeData) : undefined,
+      }
+    } catch (error) {
+      console.error('Error fetching itinerary item:', error)
+      return null
+    }
   }
 
-  static addItem(item: ItineraryItem): void {
-    this.items.push({
-      ...item,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    })
+  static async addItem(item: ItineraryItem): Promise<boolean> {
+    try {
+      const tripId = this.getCurrentTripId()
+      const client = itineraryApiClient()
+
+      // Transform frontend item to API format
+      const apiItem = {
+        title: item.title,
+        description: item.description || '',
+        type: item.type,
+        startDate: item.startDate.toISOString(),
+        endDate: item.endDate?.toISOString(),
+        isAllDay: item.isAllDay,
+        status: item.status,
+        priority: item.priority,
+        tags: item.tags ? JSON.stringify(item.tags) : undefined,
+        notes: item.notes || '',
+        typeData: item.typeData ? JSON.stringify(item.typeData) : undefined,
+        tripId,
+        locationId: item.location?.id,
+      }
+
+      await client.post('/itinerary', apiItem)
+      return true
+    } catch (error) {
+      console.error('Error adding itinerary item:', error)
+      return false
+    }
   }
 
-  static updateItem(id: string, updates: Partial<ItineraryItem>): boolean {
-    const index = this.items.findIndex(item => item.id === id)
-    if (index === -1) return false
+  static async updateItem(id: string, updates: Partial<ItineraryItem>): Promise<boolean> {
+    try {
+      const client = itineraryApiClient()
 
-    // Type assertion to ensure TypeScript understands the update is valid
-    this.items[index] = {
-      ...this.items[index],
-      ...updates,
-      updatedAt: new Date(),
-    } as ItineraryItem
-    return true
+      // Transform updates to API format
+      const apiUpdates: Record<string, unknown> = { ...updates }
+      if (apiUpdates.startDate) {
+        apiUpdates.startDate = apiUpdates.startDate.toISOString()
+      }
+      if (apiUpdates.endDate) {
+        apiUpdates.endDate = apiUpdates.endDate.toISOString()
+      }
+      if (apiUpdates.tags) {
+        apiUpdates.tags = JSON.stringify(apiUpdates.tags)
+      }
+      if (apiUpdates.typeData) {
+        apiUpdates.typeData = JSON.stringify(apiUpdates.typeData)
+      }
+      if (apiUpdates.location) {
+        apiUpdates.locationId = apiUpdates.location.id
+        delete apiUpdates.location
+      }
+
+      await client.put(`/itinerary/${id}`, apiUpdates)
+      return true
+    } catch (error) {
+      console.error('Error updating itinerary item:', error)
+      return false
+    }
   }
 
-  static deleteItem(id: string): boolean {
-    const index = this.items.findIndex(item => item.id === id)
-    if (index === -1) return false
+  static async deleteItem(id: string): Promise<boolean> {
+    try {
+      const client = itineraryApiClient()
 
-    this.items.splice(index, 1)
-    return true
+      await client.delete(`/itinerary/${id}`)
+      return true
+    } catch (error) {
+      console.error('Error deleting itinerary item:', error)
+      return false
+    }
   }
 
   // Filtering and Search
-  static getFilteredItems(filters: ItineraryFilters): ItineraryItem[] {
-    let filtered = this.getAllItems()
+  static async getFilteredItems(filters: ItineraryFilters): Promise<ItineraryItem[]> {
+    try {
+      const tripId = this.getCurrentTripId()
+      const client = itineraryApiClient()
 
-    if (filters.types && filters.types.length > 0) {
-      filtered = filtered.filter(item => filters.types!.includes(item.type))
-    }
+      // Build query parameters for API filtering
+      const queryParams = new URLSearchParams({ tripId })
 
-    if (filters.dateRange) {
-      filtered = filtered.filter(
-        item =>
-          item.startDate >= filters.dateRange!.start && item.startDate <= filters.dateRange!.end
+      if (filters.types && filters.types.length > 0) {
+        queryParams.set('types', filters.types.join(','))
+      }
+
+      if (filters.dateRange) {
+        queryParams.set('startDate', filters.dateRange.start.toISOString())
+        queryParams.set('endDate', filters.dateRange.end.toISOString())
+      }
+
+      if (filters.status && filters.status.length > 0) {
+        queryParams.set('status', filters.status.join(','))
+      }
+
+      const response = await client.get(`/itinerary?${queryParams.toString()}`)
+      const apiItems = response.data || []
+
+      // Transform API items to frontend format
+      let filtered = apiItems.map((item: Record<string, unknown>) => ({
+        ...item,
+        startDate: new Date(item.startDate),
+        endDate: item.endDate ? new Date(item.endDate) : undefined,
+        createdAt: new Date(item.createdAt),
+        updatedAt: new Date(item.updatedAt),
+        tags: item.tags ? JSON.parse(item.tags) : [],
+        typeData: item.typeData ? JSON.parse(item.typeData) : undefined,
+      }))
+
+      // Apply client-side filtering for complex filters not supported by API
+      if (filters.location) {
+        filtered = filtered.filter(
+          (item: ItineraryItem) =>
+            item.location?.city.toLowerCase().includes(filters.location!.toLowerCase()) ||
+            item.location?.name.toLowerCase().includes(filters.location!.toLowerCase())
+        )
+      }
+
+      if (filters.attendees && filters.attendees.length > 0) {
+        filtered = filtered.filter((item: ItineraryItem) =>
+          item.attendees?.some(attendee => filters.attendees!.includes(attendee.id))
+        )
+      }
+
+      if (filters.tags && filters.tags.length > 0) {
+        filtered = filtered.filter((item: ItineraryItem) =>
+          item.tags?.some(tag => filters.tags!.includes(tag))
+        )
+      }
+
+      return filtered.sort(
+        (a: ItineraryItem, b: ItineraryItem) => a.startDate.getTime() - b.startDate.getTime()
       )
+    } catch (error) {
+      console.error('Error fetching filtered itinerary items:', error)
+      return []
     }
-
-    if (filters.location) {
-      filtered = filtered.filter(
-        item =>
-          item.location?.city.toLowerCase().includes(filters.location!.toLowerCase()) ||
-          item.location?.name.toLowerCase().includes(filters.location!.toLowerCase())
-      )
-    }
-
-    if (filters.attendees && filters.attendees.length > 0) {
-      filtered = filtered.filter(item =>
-        item.attendees?.some(attendee => filters.attendees!.includes(attendee.id))
-      )
-    }
-
-    if (filters.status && filters.status.length > 0) {
-      filtered = filtered.filter(item => filters.status!.includes(item.status))
-    }
-
-    if (filters.tags && filters.tags.length > 0) {
-      filtered = filtered.filter(item => item.tags?.some(tag => filters.tags!.includes(tag)))
-    }
-
-    return filtered
   }
 
   // Get items organized by day
-  static getItemsByDay(startDate?: Date, endDate?: Date): ItineraryDay[] {
+  static async getItemsByDay(startDate?: Date, endDate?: Date): Promise<ItineraryDay[]> {
     const items =
       startDate && endDate
-        ? this.getFilteredItems({ dateRange: { start: startDate, end: endDate } })
-        : this.getAllItems()
+        ? await this.getFilteredItems({ dateRange: { start: startDate, end: endDate } })
+        : await this.getAllItems()
 
     const itemsByDate = new Map<string, ItineraryItem[]>()
 

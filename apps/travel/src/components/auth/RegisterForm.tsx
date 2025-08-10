@@ -5,9 +5,10 @@ import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } fro
 
 interface RegisterFormProps {
   onSwitchToLogin: () => void
+  isMobile?: boolean
 }
 
-export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
+export function RegisterForm({ onSwitchToLogin, isMobile = false }: RegisterFormProps) {
   const { register, isLoading, error, clearError } = useAuth()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -81,8 +82,8 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                   left: '0.75rem',
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  width: '16px',
-                  height: '16px',
+                  width: isMobile ? '20px' : '16px',
+                  height: isMobile ? '20px' : '16px',
                   color: '#9ca3af',
                 }}
               />
@@ -95,10 +96,11 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                 disabled={isLoading}
                 style={{
                   width: '100%',
-                  padding: '0.75rem 0.75rem 0.75rem 2.5rem',
+                  padding: isMobile ? '1rem 1rem 1rem 3rem' : '0.75rem 0.75rem 0.75rem 2.5rem',
                   border: '1px solid #d1d5db',
                   borderRadius: '0.5rem',
-                  fontSize: '0.875rem',
+                  fontSize: isMobile ? '1rem' : '0.875rem',
+                  minHeight: isMobile ? '44px' : 'auto',
                   outline: 'none',
                   transition: 'border-color 0.2s',
                   backgroundColor: isLoading ? '#f9fafb' : 'white',
@@ -124,8 +126,8 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                   left: '0.75rem',
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  width: '16px',
-                  height: '16px',
+                  width: isMobile ? '20px' : '16px',
+                  height: isMobile ? '20px' : '16px',
                   color: '#9ca3af',
                 }}
               />
@@ -138,10 +140,11 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                 disabled={isLoading}
                 style={{
                   width: '100%',
-                  padding: '0.75rem 0.75rem 0.75rem 2.5rem',
+                  padding: isMobile ? '1rem 1rem 1rem 3rem' : '0.75rem 0.75rem 0.75rem 2.5rem',
                   border: '1px solid #d1d5db',
                   borderRadius: '0.5rem',
-                  fontSize: '0.875rem',
+                  fontSize: isMobile ? '1rem' : '0.875rem',
+                  minHeight: isMobile ? '44px' : 'auto',
                   outline: 'none',
                   transition: 'border-color 0.2s',
                   backgroundColor: isLoading ? '#f9fafb' : 'white',
@@ -167,8 +170,8 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                   left: '0.75rem',
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  width: '16px',
-                  height: '16px',
+                  width: isMobile ? '20px' : '16px',
+                  height: isMobile ? '20px' : '16px',
                   color: '#9ca3af',
                 }}
               />
@@ -181,10 +184,11 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                 disabled={isLoading}
                 style={{
                   width: '100%',
-                  padding: '0.75rem 2.5rem 0.75rem 2.5rem',
+                  padding: isMobile ? '1rem 3rem 1rem 3rem' : '0.75rem 2.5rem 0.75rem 2.5rem',
                   border: '1px solid #d1d5db',
                   borderRadius: '0.5rem',
-                  fontSize: '0.875rem',
+                  fontSize: isMobile ? '1rem' : '0.875rem',
+                  minHeight: isMobile ? '44px' : 'auto',
                   outline: 'none',
                   transition: 'border-color 0.2s',
                   backgroundColor: isLoading ? '#f9fafb' : 'white',
@@ -204,11 +208,16 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  padding: '0',
+                  padding: isMobile ? '12px' : '4px',
                   color: '#9ca3af',
+                  minWidth: isMobile ? '44px' : 'auto',
+                  minHeight: isMobile ? '44px' : 'auto',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                {showPassword ? <EyeOff size={isMobile ? 20 : 16} /> : <Eye size={isMobile ? 20 : 16} />}
               </button>
             </div>
             <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0' }}>
@@ -243,10 +252,11 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
               width: '100%',
               backgroundColor: isLoading ? '#9ca3af' : '#3b82f6',
               color: 'white',
-              padding: '0.75rem',
-              fontSize: '0.875rem',
+              padding: isMobile ? '1rem' : '0.75rem',
+              fontSize: isMobile ? '1rem' : '0.875rem',
               fontWeight: '500',
               cursor: isLoading ? 'not-allowed' : 'pointer',
+              minHeight: isMobile ? '48px' : 'auto',
             }}
           >
             {isLoading ? 'Creating account...' : 'Create account'}
@@ -265,10 +275,15 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                 background: 'none',
                 border: 'none',
                 color: '#3b82f6',
-                fontSize: '0.875rem',
+                fontSize: isMobile ? '1rem' : '0.875rem',
                 fontWeight: '500',
                 cursor: 'pointer',
                 textDecoration: 'underline',
+                padding: isMobile ? '12px' : '4px',
+                minHeight: isMobile ? '44px' : 'auto',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
               Sign in

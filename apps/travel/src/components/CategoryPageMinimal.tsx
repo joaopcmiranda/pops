@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
-import { Plus, FileText, Eye, ArrowLeft } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import { Plus, FileText, Eye, ArrowLeft, Edit2 } from 'lucide-react'
 import { ContentService, type ContentItem } from '@/services/contentService'
 import { ContentViewer } from '@/components/ContentViewer'
+import { AddContentModal } from '@/components/AddContentModal'
 import {
   Card,
   CardContent,
@@ -26,16 +27,24 @@ export function CategoryPageMinimal({
   const [contentItems, setContentItems] = useState<ContentItem[]>([])
   const [selectedContent, setSelectedContent] = useState<ContentItem | null>(null)
   const [loading, setLoading] = useState(true)
+  const [showAddModal, setShowAddModal] = useState(false)
+
+  const loadContentItems = useCallback(async () => {
+    setLoading(true)
+    try {
+      const items = await ContentService.getContentByCategory(category)
+      setContentItems(items)
+    } catch (error) {
+      console.error('Error loading content items:', error)
+      setContentItems([])
+    } finally {
+      setLoading(false)
+    }
+  }, [category])
 
   useEffect(() => {
-    setLoading(true)
-    // Simulate loading delay for demonstration
-    setTimeout(() => {
-      const items = ContentService.getContentByCategory(category)
-      setContentItems(items)
-      setLoading(false)
-    }, 300)
-  }, [category])
+    loadContentItems()
+  }, [loadContentItems])
 
   const handleViewContent = (item: ContentItem) => {
     setSelectedContent(item)
@@ -43,6 +52,31 @@ export function CategoryPageMinimal({
 
   const handleBackToList = () => {
     setSelectedContent(null)
+  }
+
+  const handleAddContent = async (data: { title: string; content: string }) => {
+    try {
+      const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+      
+      const newItem = await ContentService.addContentItem({
+        title: data.title,
+        content: data.content,
+        category: category,
+        slug: slug,
+      })
+
+      if (newItem) {
+        // Reload content items to show the new item
+        await loadContentItems()
+        setShowAddModal(false)
+      } else {
+        console.error('Failed to add content item')
+        // TODO: Show error message to user
+      }
+    } catch (error) {
+      console.error('Error adding content item:', error)
+      // TODO: Show error message to user
+    }
   }
 
   // If viewing a specific content item, show the content viewer
@@ -91,12 +125,15 @@ export function CategoryPageMinimal({
               {categoryName}
             </h1>
             <p style={{ color: '#64748b', fontSize: '1rem', margin: 0 }}>
-              {contentItems.length} {contentItems.length === 1 ? 'item' : 'items'}
+              {loading ? 'Loading...' : `${contentItems.length} ${contentItems.length === 1 ? 'item' : 'items'}`}
             </p>
           </div>
         </div>
 
-        <Button className='button-hover focus-ring'>
+        <Button 
+          className='button-hover focus-ring'
+          onClick={() => setShowAddModal(true)}
+        >
           <Plus style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
           Add New
         </Button>
@@ -141,7 +178,10 @@ export function CategoryPageMinimal({
             <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>
               Get started by adding your first {categoryName.toLowerCase().slice(0, -1)} item.
             </p>
-            <Button className='button-hover focus-ring'>
+            <Button 
+              className='button-hover focus-ring'
+              onClick={() => setShowAddModal(true)}
+            >
               <Plus style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
               Add Your First {categoryName.slice(0, -1)}
             </Button>
@@ -177,7 +217,16 @@ export function CategoryPageMinimal({
                     <Eye style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
                     View
                   </Button>
-                  <Button variant='outline' style={{ flex: 1 }} className='button-hover focus-ring'>
+                  <Button 
+                    variant='outline' 
+                    style={{ flex: 1 }} 
+                    className='button-hover focus-ring'
+                    onClick={() => {
+                      // TODO: Implement edit functionality
+                      console.log('Edit clicked for:', item.title)
+                    }}
+                  >
+                    <Edit2 style={{ width: '14px', height: '14px', marginRight: '0.5rem' }} />
                     Edit
                   </Button>
                 </div>
@@ -186,6 +235,15 @@ export function CategoryPageMinimal({
           ))}
         </div>
       )}
+
+      {/* Add Content Modal */}
+      <AddContentModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSubmit={handleAddContent}
+        category={category}
+        categoryName={categoryName}
+      />
     </main>
   )
 }

@@ -2,11 +2,13 @@ import { useState } from 'react'
 import { Plane } from 'lucide-react'
 import { LoginForm } from './LoginForm'
 import { RegisterForm } from './RegisterForm'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 type AuthMode = 'login' | 'register'
 
 export function AuthPage() {
   const [authMode, setAuthMode] = useState<AuthMode>('login')
+  const isMobile = useIsMobile()
 
   return (
     <div
@@ -16,7 +18,7 @@ export function AuthPage() {
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#f8fafc',
-        padding: '2rem',
+        padding: isMobile ? '1rem' : '2rem',
       }}
     >
       <div
@@ -71,9 +73,9 @@ export function AuthPage() {
 
         {/* Auth Forms */}
         {authMode === 'login' ? (
-          <LoginForm onSwitchToRegister={() => setAuthMode('register')} />
+          <LoginForm onSwitchToRegister={() => setAuthMode('register')} isMobile={isMobile} />
         ) : (
-          <RegisterForm onSwitchToLogin={() => setAuthMode('login')} />
+          <RegisterForm onSwitchToLogin={() => setAuthMode('login')} isMobile={isMobile} />
         )}
       </div>
     </div>

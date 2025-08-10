@@ -15,6 +15,8 @@ import { ItineraryView } from '@/components/ItineraryView'
 import { Calendar } from '@/components/Calendar'
 import { CategoryPageMinimal } from '@/components/CategoryPageMinimal'
 import { ReadmeView } from '@/components/ReadmeView'
+import { WishlistView } from '@/components/WishlistView'
+import { BudgetCalculator } from '@/components/BudgetCalculator'
 import { TripSelector } from '@/components/TripSelector'
 import { TripCreationWizard } from '@/components/TripCreationWizard'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
@@ -25,7 +27,9 @@ import { TripProvider } from '@/contexts/TripContext'
 import { useTripContext } from '@/hooks/useTripContext'
 import { TripService } from '@/services/tripService'
 import { SidebarInset, SidebarProvider } from '@pops/ui'
+import { useIsMobile } from '@/hooks/use-mobile'
 import '@/styles/animations.css'
+import '@/styles/mobile.css'
 
 // Type interfaces
 import type { Trip } from '@pops/types'
@@ -34,6 +38,8 @@ function AppContent() {
   const [activeCategory, setActiveCategory] = useState('dashboard')
   const [currentView, setCurrentView] = useState('dashboard')
   const [availableTrips, setAvailableTrips] = useState<Trip[]>([])
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const isMobile = useIsMobile()
   const { currentTrip, setCurrentTrip, isSelectingTrip, setShowNewTripModal, showNewTripModal } =
     useTripContext()
 
@@ -58,6 +64,10 @@ function AppContent() {
     console.log('Category selected:', category)
     setActiveCategory(category)
     setCurrentView(category)
+    // Close mobile sidebar when category is selected
+    if (isMobile) {
+      setIsMobileSidebarOpen(false)
+    }
   }
 
   const handleTripSelect = async (tripId: string) => {
@@ -82,6 +92,7 @@ function AppContent() {
   const getPageTitle = (view: string) => {
     const titles: Record<string, string> = {
       dashboard: 'Dashboard',
+      wishlist: 'Wishlist',
       destinations: 'Destinations',
       itinerary: 'Itinerary',
       transport: 'Transport',
@@ -117,6 +128,7 @@ function AppContent() {
   }
 
   const categoryMetadata = {
+    wishlist: { name: 'Wishlist', icon: MapPin },
     destinations: { name: 'Destinations', icon: MapPin },
     itinerary: { name: 'Itinerary', icon: CalIcon },
     transport: { name: 'Transport', icon: Plane },
@@ -129,6 +141,10 @@ function AppContent() {
   const renderCurrentView = () => {
     if (currentView === 'dashboard') {
       return <Dashboard onCategorySelect={handleCategorySelect} />
+    }
+
+    if (currentView === 'wishlist') {
+      return <WishlistView />
     }
 
     if (currentView === 'itinerary') {
@@ -163,6 +179,10 @@ function AppContent() {
       return <ReadmeView />
     }
 
+    if (currentView === 'budget') {
+      return <BudgetCalculator />
+    }
+
     if (currentView === 'settings') {
       return (
         <main className='app-content'>
@@ -190,20 +210,32 @@ function AppContent() {
 
   // Main app layout when trip is selected
   return (
-    <SidebarProvider>
-      <ErrorBoundary
-        fallback={
-          <div style={{ padding: '1rem', backgroundColor: '#fee2e2', color: '#dc2626' }}>
-            Navigation error occurred. Please refresh the page.
-          </div>
-        }
-      >
-        <AppSidebar
-          activeCategory={activeCategory}
-          onCategorySelect={handleCategorySelect}
-          availableTrips={availableTrips}
-        />
-      </ErrorBoundary>
+    <div className={`app-container ${isMobile ? 'mobile' : 'desktop'}`}>
+      <SidebarProvider>
+        {/* Mobile overlay */}
+        {isMobile && isMobileSidebarOpen && (
+          <div 
+            className="mobile-sidebar-overlay"
+            onClick={() => setIsMobileSidebarOpen(false)}
+          />
+        )}
+        
+        <ErrorBoundary
+          fallback={
+            <div style={{ padding: '1rem', backgroundColor: '#fee2e2', color: '#dc2626' }}>
+              Navigation error occurred. Please refresh the page.
+            </div>
+          }
+        >
+          <AppSidebar
+            activeCategory={activeCategory}
+            onCategorySelect={handleCategorySelect}
+            availableTrips={availableTrips}
+            isMobile={isMobile}
+            isOpen={!isMobile || isMobileSidebarOpen}
+            onClose={() => setIsMobileSidebarOpen(false)}
+          />
+        </ErrorBoundary>
 
       <SidebarInset>
         <ErrorBoundary
@@ -216,15 +248,19 @@ function AppContent() {
           <UnifiedHeader
             currentApp='travel'
             title={getPageTitle(currentView)}
-            showDomainSwitcher={true}
-            showNotifications={true}
-            showSearch={true}
+            showDomainSwitcher={!isMobile}
+            showNotifications={!isMobile}
+            showSearch={!isMobile}
+            onMenuToggle={isMobile ? () => setIsMobileSidebarOpen(!isMobileSidebarOpen) : undefined}
           />
         </ErrorBoundary>
 
-        <ErrorBoundary>{renderCurrentView()}</ErrorBoundary>
+        <div className={`main-content ${isMobile ? 'mobile-content' : ''}`}>
+          <ErrorBoundary>{renderCurrentView()}</ErrorBoundary>
+        </div>
       </SidebarInset>
     </SidebarProvider>
+    </div>
   )
 }
 

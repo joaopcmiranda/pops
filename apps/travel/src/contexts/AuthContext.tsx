@@ -2,6 +2,9 @@ import { useEffect, useState, ReactNode, useCallback, createContext } from 'reac
 import { TOKEN_KEY, USER_KEY } from '@/lib/auth-config'
 import { userApiClient } from '@/lib/api-client'
 
+// Storage key for refresh token
+const REFRESH_TOKEN_KEY = 'auth_refresh_token'
+
 // Types
 export interface User {
   id: string
@@ -15,6 +18,11 @@ export interface User {
 export interface AuthTokens {
   accessToken: string
   refreshToken: string
+}
+
+export interface AuthResponse {
+  user: User
+  tokens: AuthTokens
 }
 
 export interface LoginCredentials {
@@ -85,35 +93,52 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [])
 
+  // Create stable logout callback
+  const logoutCallback = useCallback(() => {
+    logout()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // Initialize auth state on mount
   useEffect(() => {
     initializeAuth()
-  }, [initializeAuth])
+
+    // Listen for token refresh failures
+    const handleTokenRefreshFailed = () => {
+      console.log('Token refresh failed, logging out user')
+      logoutCallback()
+    }
+
+    window.addEventListener('auth:token-refresh-failed', handleTokenRefreshFailed)
+    return () => {
+      window.removeEventListener('auth:token-refresh-failed', handleTokenRefreshFailed)
+    }
+  }, [initializeAuth, logoutCallback])
 
   const login = async (credentials: LoginCredentials) => {
     try {
       setError(null)
       setIsLoading(true)
 
-      // TODO: Implement login through @pops/api-client when auth endpoints are available
-      // For now, we'll use a mock implementation
+      // Use real authentication API
+      const apiClient = userApiClient()
+      const response = await apiClient.post<{
+        success: boolean
+        data: AuthResponse
+      }>('/auth/login', credentials)
 
-      // Mock successful login - replace with actual api-client call
-      const mockUserData = {
-        id: 'user-1',
-        email: credentials.email,
-        name: credentials.email.split('@')[0],
-        createdAt: new Date(),
-        updatedAt: new Date(),
+      if (!response.data?.success) {
+        throw new Error('Login failed')
       }
 
-      const mockToken = 'mock-jwt-token'
+      const { user, tokens } = response.data.data
 
       // Store in state and localStorage
-      setUser(mockUserData)
-      localStorage.setItem(TOKEN_KEY, mockToken)
-      localStorage.setItem(USER_KEY, JSON.stringify(mockUserData))
-    } catch (err) {
+      setUser(user)
+      localStorage.setItem(TOKEN_KEY, tokens.accessToken)
+      localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken)
+      localStorage.setItem(USER_KEY, JSON.stringify(user))
+    } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Login failed'
       setError(errorMessage)
       throw err
@@ -127,25 +152,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setError(null)
       setIsLoading(true)
 
-      // TODO: Implement registration through @pops/api-client when auth endpoints are available
-      // For now, we'll use a mock implementation
+      // Use real authentication API
+      const apiClient = userApiClient()
+      const response = await apiClient.post<{
+        success: boolean
+        data: AuthResponse
+      }>('/auth/register', credentials)
 
-      // Mock successful registration - replace with actual api-client call
-      const mockUserData = {
-        id: 'user-' + Date.now(),
-        email: credentials.email,
-        name: credentials.name || credentials.email.split('@')[0],
-        createdAt: new Date(),
-        updatedAt: new Date(),
+      if (!response.data?.success) {
+        throw new Error('Registration failed')
       }
 
-      const mockToken = 'mock-jwt-token-' + Date.now()
+      const { user, tokens } = response.data.data
 
       // Store in state and localStorage
-      setUser(mockUserData)
-      localStorage.setItem(TOKEN_KEY, mockToken)
-      localStorage.setItem(USER_KEY, JSON.stringify(mockUserData))
-    } catch (err) {
+      setUser(user)
+      localStorage.setItem(TOKEN_KEY, tokens.accessToken)
+      localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken)
+      localStorage.setItem(USER_KEY, JSON.stringify(user))
+    } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Registration failed'
       setError(errorMessage)
       throw err
@@ -166,6 +191,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const clearAuthStorage = () => {
     localStorage.removeItem(TOKEN_KEY)
+    localStorage.removeItem(REFRESH_TOKEN_KEY)
     localStorage.removeItem(USER_KEY)
   }
 

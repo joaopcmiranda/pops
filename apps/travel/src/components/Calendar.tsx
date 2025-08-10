@@ -11,6 +11,8 @@ import {
 } from 'lucide-react'
 import { Card, CardContent, Button } from '@pops/ui'
 import { ItineraryService } from '@/services/itineraryService'
+import { AddEventModal } from '@/components/AddEventModal'
+import { useIsMobile } from '@/hooks/use-mobile'
 import type { ItineraryItem, ItemType } from '@/types/itinerary'
 
 interface CalendarProps {
@@ -43,18 +45,21 @@ const MONTHS = [
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-export function Calendar({ onEventClick, onAddEvent }: CalendarProps) {
+export function Calendar({ onEventClick }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [events, setEvents] = useState<ItineraryItem[]>([])
   const [filteredTypes, setFilteredTypes] = useState<ItemType[]>([])
   const [loading, setLoading] = useState(true)
+  const [showAddEventModal, setShowAddEventModal] = useState(false)
+  const [modalSelectedDate, setModalSelectedDate] = useState<Date | null>(null)
+  const isMobile = useIsMobile()
 
   // Load events from service
-  useEffect(() => {
+  const loadEvents = async () => {
     try {
       setLoading(true)
-      const allEvents = ItineraryService.getAllItems()
+      const allEvents = await ItineraryService.getAllItems()
       setEvents(allEvents)
     } catch (error) {
       console.error('Error loading calendar events:', error)
@@ -63,7 +68,114 @@ export function Calendar({ onEventClick, onAddEvent }: CalendarProps) {
     } finally {
       setLoading(false)
     }
+  }
+
+  useEffect(() => {
+    loadEvents()
   }, [])
+
+  const handleAddEvent = (date: Date) => {
+    setModalSelectedDate(date)
+    setShowAddEventModal(true)
+  }
+
+  const handleEventSubmit = async (eventData: {
+    title: string
+    description: string
+    startDate: Date
+    endDate?: Date
+    startTime: string
+    endTime?: string
+    location?: string
+    type: 'event' | 'accommodation' | 'transport' | 'activity'
+    isAllDay: boolean
+  }) => {
+    // Create new itinerary item based on type
+    let newEvent: ItineraryItem
+
+    if (eventData.type === 'event') {
+      newEvent = {
+        id: Date.now().toString(),
+        title: eventData.title,
+        description: eventData.description || '',
+        type: 'event',
+        startDate: eventData.startDate,
+        endDate: eventData.endDate || eventData.startDate,
+        isAllDay: eventData.isAllDay,
+        status: 'planned',
+        priority: 'medium',
+        notes: eventData.location ? `Location: ${eventData.location}` : '',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        eventType: 'general'
+      }
+    } else if (eventData.type === 'accommodation') {
+      newEvent = {
+        id: Date.now().toString(),
+        title: eventData.title,
+        description: eventData.description || '',
+        type: 'accommodation',
+        startDate: eventData.startDate,
+        endDate: eventData.endDate || eventData.startDate,
+        isAllDay: eventData.isAllDay,
+        status: 'planned',
+        priority: 'medium',
+        notes: eventData.location ? `Location: ${eventData.location}` : '',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        accommodationType: 'hotel',
+        checkInTime: '15:00',
+        checkOutTime: '11:00'
+      }
+    } else if (eventData.type === 'transport') {
+      newEvent = {
+        id: Date.now().toString(),
+        title: eventData.title,
+        description: eventData.description || '',
+        type: 'transport',
+        startDate: eventData.startDate,
+        endDate: eventData.endDate || eventData.startDate,
+        isAllDay: eventData.isAllDay,
+        status: 'planned',
+        priority: 'medium',
+        notes: eventData.location ? `Location: ${eventData.location}` : '',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        transportType: 'flight',
+        from: 'Unknown',
+        to: 'Unknown'
+      }
+    } else {
+      // activity
+      newEvent = {
+        id: Date.now().toString(),
+        title: eventData.title,
+        description: eventData.description || '',
+        type: 'activity',
+        startDate: eventData.startDate,
+        endDate: eventData.endDate || eventData.startDate,
+        isAllDay: eventData.isAllDay,
+        status: 'planned',
+        priority: 'medium',
+        notes: eventData.location ? `Location: ${eventData.location}` : '',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        activityType: 'sightseeing'
+      }
+    }
+
+    // Add to ItineraryService via backend API
+    const success = await ItineraryService.addItem(newEvent)
+    
+    if (success) {
+      // Reload events
+      await loadEvents()
+      setShowAddEventModal(false)
+    } else {
+      console.error('Failed to add calendar event')
+      // TODO: Show error message to user
+    }
+  }
 
   // Generate calendar days for current month view
   const calendarDays = useMemo(() => {
@@ -137,9 +249,9 @@ export function Calendar({ onEventClick, onAddEvent }: CalendarProps) {
 
   const handleDayClick = (day: CalendarDay) => {
     setSelectedDate(day.date)
-    if (onAddEvent && day.events.length === 0) {
+    if (day.events.length === 0) {
       // If no events on this day, show option to add
-      onAddEvent(day.date)
+      handleAddEvent(day.date)
     }
   }
 
@@ -204,20 +316,22 @@ export function Calendar({ onEventClick, onAddEvent }: CalendarProps) {
   }
 
   return (
-    <div className='animate-fade-in'>
+    <div className={`animate-fade-in ${isMobile ? 'mobile' : ''}`}>
       {/* Calendar Header */}
       <div
         style={{
           display: 'flex',
-          alignItems: 'center',
+          alignItems: isMobile ? 'flex-start' : 'center',
           justifyContent: 'space-between',
           marginBottom: '1.5rem',
+          flexDirection: isMobile ? 'column' : 'row',
+          gap: isMobile ? '1rem' : '0',
         }}
       >
         <div>
           <h1
             style={{
-              fontSize: '2rem',
+              fontSize: isMobile ? '1.5rem' : '2rem',
               fontWeight: '700',
               color: '#0f172a',
               marginBottom: '0.5rem',
@@ -226,31 +340,37 @@ export function Calendar({ onEventClick, onAddEvent }: CalendarProps) {
           >
             Trip Calendar ✈️
           </h1>
-          <p style={{ color: '#64748b', fontSize: '1rem' }}>
+          <p style={{ color: '#64748b', fontSize: isMobile ? '0.875rem' : '1rem' }}>
             Your complete trip itinerary at a glance
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <Button variant='outline' className='button-hover button-entrance' onClick={goToToday}>
+        <div style={{ display: 'flex', gap: '0.5rem', width: isMobile ? '100%' : 'auto' }}>
+          <Button 
+            variant='outline' 
+            className='button-hover button-entrance' 
+            onClick={goToToday}
+            style={{ minHeight: isMobile ? '44px' : 'auto', flex: isMobile ? 1 : 'none' }}
+          >
             <CalendarIcon style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
-            Today
+            {isMobile ? 'Today' : 'Today'}
           </Button>
 
           <Button
             variant='default'
             className='button-hover button-premium button-entrance'
-            onClick={() => onAddEvent?.(selectedDate || new Date())}
+            onClick={() => handleAddEvent(selectedDate || new Date())}
+            style={{ minHeight: isMobile ? '44px' : 'auto', flex: isMobile ? 1 : 'none' }}
           >
             <Plus style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
-            Add Event
+            {isMobile ? 'Add' : 'Add Event'}
           </Button>
         </div>
       </div>
 
       {/* Event Type Filters */}
-      <Card style={{ marginBottom: '1.5rem', padding: '1rem' }} className='animate-fade-in-up'>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+      <Card style={{ marginBottom: '1.5rem', padding: isMobile ? '0.75rem' : '1rem' }} className='animate-fade-in-up'>
+        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.5rem' : '1rem', flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Filter style={{ width: '16px', height: '16px', color: '#64748b' }} />
             <span style={{ fontSize: '0.875rem', fontWeight: '500', color: '#374151' }}>
@@ -266,15 +386,18 @@ export function Calendar({ onEventClick, onAddEvent }: CalendarProps) {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.25rem',
-                padding: '0.25rem 0.75rem',
+                padding: isMobile ? '0.5rem 0.75rem' : '0.25rem 0.75rem',
                 borderRadius: '1rem',
                 border: filteredTypes.includes(type) ? '2px solid #3b82f6' : '1px solid #e2e8f0',
                 backgroundColor: filteredTypes.includes(type) ? '#eff6ff' : 'white',
-                fontSize: '0.75rem',
+                fontSize: isMobile ? '0.875rem' : '0.75rem',
                 fontWeight: '500',
                 color: filteredTypes.includes(type) ? '#1d4ed8' : '#6b7280',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease-in-out',
+                minHeight: isMobile ? '40px' : 'auto',
+                minWidth: isMobile ? '44px' : 'auto',
+                touchAction: 'manipulation',
               }}
               className='hover:scale-105'
             >
@@ -295,14 +418,14 @@ export function Calendar({ onEventClick, onAddEvent }: CalendarProps) {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
         {/* Main Calendar */}
         <Card className='animate-fade-in-up stagger-1'>
-          <CardContent style={{ padding: '1.5rem' }}>
+          <CardContent style={{ padding: isMobile ? '1rem' : '1.5rem' }}>
             {/* Month Navigation */}
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'between',
-                marginBottom: '1.5rem',
+                justifyContent: 'space-between',
+                marginBottom: isMobile ? '1rem' : '1.5rem',
               }}
             >
               <Button
@@ -310,13 +433,14 @@ export function Calendar({ onEventClick, onAddEvent }: CalendarProps) {
                 size='icon'
                 className='button-hover'
                 onClick={() => navigateMonth('prev')}
+                style={{ minHeight: isMobile ? '44px' : 'auto', minWidth: isMobile ? '44px' : 'auto' }}
               >
-                <ChevronLeft style={{ width: '20px', height: '20px' }} />
+                <ChevronLeft style={{ width: isMobile ? '24px' : '20px', height: isMobile ? '24px' : '20px' }} />
               </Button>
 
               <h2
                 style={{
-                  fontSize: '1.5rem',
+                  fontSize: isMobile ? '1.25rem' : '1.5rem',
                   fontWeight: '600',
                   color: '#0f172a',
                   fontFamily: 'Poppins, sans-serif',
@@ -330,8 +454,9 @@ export function Calendar({ onEventClick, onAddEvent }: CalendarProps) {
                 size='icon'
                 className='button-hover'
                 onClick={() => navigateMonth('next')}
+                style={{ minHeight: isMobile ? '44px' : 'auto', minWidth: isMobile ? '44px' : 'auto' }}
               >
-                <ChevronRight style={{ width: '20px', height: '20px' }} />
+                <ChevronRight style={{ width: isMobile ? '24px' : '20px', height: isMobile ? '24px' : '20px' }} />
               </Button>
             </div>
 
@@ -348,9 +473,9 @@ export function Calendar({ onEventClick, onAddEvent }: CalendarProps) {
                 <div
                   key={day}
                   style={{
-                    padding: '0.75rem',
+                    padding: isMobile ? '0.5rem' : '0.75rem',
                     textAlign: 'center',
-                    fontSize: '0.875rem',
+                    fontSize: isMobile ? '0.75rem' : '0.875rem',
                     fontWeight: '600',
                     color: '#6b7280',
                     backgroundColor: '#f8fafc',
@@ -497,7 +622,7 @@ export function Calendar({ onEventClick, onAddEvent }: CalendarProps) {
                   variant='outline'
                   className='button-hover'
                   style={{ marginTop: '1rem' }}
-                  onClick={() => onAddEvent?.(selectedDate)}
+                  onClick={() => handleAddEvent(selectedDate!)}
                 >
                   <Plus style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
                   Add Event
@@ -609,6 +734,14 @@ export function Calendar({ onEventClick, onAddEvent }: CalendarProps) {
           </CardContent>
         </Card>
       )}
+
+      {/* Add Event Modal */}
+      <AddEventModal
+        isOpen={showAddEventModal}
+        onClose={() => setShowAddEventModal(false)}
+        onSubmit={handleEventSubmit}
+        selectedDate={modalSelectedDate}
+      />
     </div>
   )
 }

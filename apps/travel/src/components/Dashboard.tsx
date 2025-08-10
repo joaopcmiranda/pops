@@ -8,6 +8,7 @@ import {
   Target,
   ArrowRight,
   Plus,
+  Heart,
 } from 'lucide-react'
 import { Card, CardContent, Button, SkeletonCard } from '@pops/ui'
 import { ContentService } from '@/services/contentService'
@@ -422,6 +423,32 @@ export function Dashboard({ onCategorySelect }: DashboardProps) {
                     </p>
                     <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>
                       Keep organized
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card
+              className='card-hover cursor-pointer'
+              onClick={() => onCategorySelect('wishlist')}
+            >
+              <CardContent style={{ padding: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <Heart style={{ width: '20px', height: '20px', color: '#ec4899' }} />
+                  <div>
+                    <p
+                      style={{
+                        fontSize: '0.875rem',
+                        fontWeight: '500',
+                        color: '#0f172a',
+                        margin: 0,
+                      }}
+                    >
+                      Trip Wishlist
+                    </p>
+                    <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>
+                      Dream destinations
                     </p>
                   </div>
                 </div>
