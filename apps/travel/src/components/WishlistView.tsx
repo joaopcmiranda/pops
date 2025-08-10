@@ -2,7 +2,15 @@ import { useState, useEffect, useCallback } from 'react'
 import { Plus, Heart, MapPin, DollarSign, Trash2, Edit2, ArrowRight } from 'lucide-react'
 import { WishlistService } from '@/services/wishlistService'
 import { useTripContext } from '@/hooks/useTripContext'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, SkeletonCard } from '@pops/ui'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Button,
+  SkeletonCard,
+} from '@pops/ui'
 import { ErrorScreen } from '@/components/ErrorScreen'
 import type { WishlistItem, NewWishlistItem } from '@pops/types'
 
@@ -88,22 +96,33 @@ export function WishlistView({ category }: WishlistViewProps) {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'text-red-600 bg-red-50'
-      case 'medium': return 'text-yellow-600 bg-yellow-50'
-      case 'low': return 'text-green-600 bg-green-50'
-      default: return 'text-gray-600 bg-gray-50'
+      case 'high':
+        return 'text-red-600 bg-red-50'
+      case 'medium':
+        return 'text-yellow-600 bg-yellow-50'
+      case 'low':
+        return 'text-green-600 bg-green-50'
+      default:
+        return 'text-gray-600 bg-gray-50'
     }
   }
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'place': return MapPin
-      case 'food': return '🍽️'
-      case 'experience': return '🎯'
-      case 'accommodation': return '🏨'
-      case 'transport': return '✈️'
-      case 'activity': return '🏃'
-      default: return Heart
+      case 'place':
+        return MapPin
+      case 'food':
+        return '🍽️'
+      case 'experience':
+        return '🎯'
+      case 'accommodation':
+        return '🏨'
+      case 'transport':
+        return '✈️'
+      case 'activity':
+        return '🏃'
+      default:
+        return Heart
     }
   }
 
@@ -150,10 +169,7 @@ export function WishlistView({ category }: WishlistViewProps) {
           </div>
         </div>
 
-        <Button 
-          className='button-hover focus-ring'
-          onClick={() => setShowAddModal(true)}
-        >
+        <Button className='button-hover focus-ring' onClick={() => setShowAddModal(true)}>
           <Plus style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
           Add to Wishlist
         </Button>
@@ -196,12 +212,10 @@ export function WishlistView({ category }: WishlistViewProps) {
               No wishlist items yet
             </h3>
             <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>
-              Start building your dream trip by adding places, foods, and experiences to your wishlist.
+              Start building your dream trip by adding places, foods, and experiences to your
+              wishlist.
             </p>
-            <Button 
-              className='button-hover focus-ring'
-              onClick={() => setShowAddModal(true)}
-            >
+            <Button className='button-hover focus-ring' onClick={() => setShowAddModal(true)}>
               <Plus style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
               Add Your First Item
             </Button>
@@ -225,9 +239,22 @@ export function WishlistView({ category }: WishlistViewProps) {
                 className={`category-card card-hover animate-fade-in-up stagger-${index + 1}`}
               >
                 <CardHeader>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      justifyContent: 'space-between',
+                    }}
+                  >
                     <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          marginBottom: '0.5rem',
+                        }}
+                      >
                         {isIconComponent ? (
                           <TypeIcon style={{ width: '16px', height: '16px', color: '#64748b' }} />
                         ) : (
@@ -237,8 +264,15 @@ export function WishlistView({ category }: WishlistViewProps) {
                           {item.title}
                         </CardTitle>
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                        <span 
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          marginBottom: '0.5rem',
+                        }}
+                      >
+                        <span
                           className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(item.priority)}`}
                         >
                           {item.priority} priority
@@ -256,10 +290,19 @@ export function WishlistView({ category }: WishlistViewProps) {
                     </div>
                   </div>
                 </CardHeader>
-                
+
                 <CardContent>
                   {(item.location || item.estimatedCost) && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem', fontSize: '0.875rem', color: '#64748b' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '1rem',
+                        marginBottom: '1rem',
+                        fontSize: '0.875rem',
+                        color: '#64748b',
+                      }}
+                    >
                       {item.location && (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                           <MapPin style={{ width: '14px', height: '14px' }} />
@@ -274,7 +317,7 @@ export function WishlistView({ category }: WishlistViewProps) {
                       )}
                     </div>
                   )}
-                  
+
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <Button
                       variant='default'
@@ -283,7 +326,9 @@ export function WishlistView({ category }: WishlistViewProps) {
                       onClick={() => handleConvertToItinerary(item.id)}
                       className='button-hover focus-ring'
                     >
-                      <ArrowRight style={{ width: '14px', height: '14px', marginRight: '0.5rem' }} />
+                      <ArrowRight
+                        style={{ width: '14px', height: '14px', marginRight: '0.5rem' }}
+                      />
                       Plan It
                     </Button>
                     <Button
@@ -312,15 +357,17 @@ export function WishlistView({ category }: WishlistViewProps) {
 
       {/* TODO: Add Modal Component */}
       {showAddModal && (
-        <div style={{ 
-          position: 'fixed', 
-          inset: 0, 
-          backgroundColor: 'rgba(0, 0, 0, 0.5)', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          zIndex: 50 
-        }}>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 50,
+          }}
+        >
           <Card style={{ width: '500px', maxWidth: '90vw' }}>
             <CardHeader>
               <CardTitle>Add to Wishlist</CardTitle>
@@ -329,21 +376,21 @@ export function WishlistView({ category }: WishlistViewProps) {
             <CardContent>
               {/* Simple form - TODO: Create proper AddWishlistModal component */}
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.5rem' }}>
-                <Button 
-                  variant='outline' 
+                <Button
+                  variant='outline'
                   onClick={() => setShowAddModal(false)}
                   style={{ flex: 1 }}
                 >
                   Cancel
                 </Button>
-                <Button 
+                <Button
                   onClick={() => {
                     // TODO: Implement form submission
                     handleAddItem({
                       title: 'Sample Wishlist Item',
                       type: 'place',
                       category: category || 'destinations',
-                      description: 'This is a sample wishlist item'
+                      description: 'This is a sample wishlist item',
                     })
                   }}
                   style={{ flex: 1 }}

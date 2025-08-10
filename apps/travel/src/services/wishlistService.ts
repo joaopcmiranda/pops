@@ -32,11 +32,11 @@ export class WishlistService {
     try {
       const response = await fetch(`${TRIP_SERVICE_URL}/trips/${tripId}/wishlist`)
       const result: WishlistResponse = await response.json()
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Failed to fetch wishlist items')
       }
-      
+
       return result.data
     } catch (error) {
       console.error('Error fetching wishlist items:', error)
@@ -49,13 +49,15 @@ export class WishlistService {
    */
   static async getByCategoryAndTrip(tripId: string, category: string): Promise<WishlistItem[]> {
     try {
-      const response = await fetch(`${TRIP_SERVICE_URL}/trips/${tripId}/wishlist?category=${category}`)
+      const response = await fetch(
+        `${TRIP_SERVICE_URL}/trips/${tripId}/wishlist?category=${category}`
+      )
       const result: WishlistResponse = await response.json()
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Failed to fetch wishlist items')
       }
-      
+
       return result.data
     } catch (error) {
       console.error('Error fetching wishlist items by category:', error)
@@ -70,11 +72,11 @@ export class WishlistService {
     try {
       const response = await fetch(`${TRIP_SERVICE_URL}/trips/${tripId}/wishlist/${wishlistId}`)
       const result: WishlistItemResponse = await response.json()
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Failed to fetch wishlist item')
       }
-      
+
       return result.data
     } catch (error) {
       console.error('Error fetching wishlist item:', error)
@@ -94,13 +96,13 @@ export class WishlistService {
         },
         body: JSON.stringify(data),
       })
-      
+
       const result: WishlistItemResponse = await response.json()
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Failed to create wishlist item')
       }
-      
+
       return result.data
     } catch (error) {
       console.error('Error creating wishlist item:', error)
@@ -111,7 +113,11 @@ export class WishlistService {
   /**
    * Update a wishlist item
    */
-  static async update(tripId: string, wishlistId: string, data: Partial<WishlistItem>): Promise<WishlistItem> {
+  static async update(
+    tripId: string,
+    wishlistId: string,
+    data: Partial<WishlistItem>
+  ): Promise<WishlistItem> {
     try {
       const response = await fetch(`${TRIP_SERVICE_URL}/trips/${tripId}/wishlist/${wishlistId}`, {
         method: 'PUT',
@@ -120,13 +126,13 @@ export class WishlistService {
         },
         body: JSON.stringify(data),
       })
-      
+
       const result: WishlistItemResponse = await response.json()
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Failed to update wishlist item')
       }
-      
+
       return result.data
     } catch (error) {
       console.error('Error updating wishlist item:', error)
@@ -142,9 +148,9 @@ export class WishlistService {
       const response = await fetch(`${TRIP_SERVICE_URL}/trips/${tripId}/wishlist/${wishlistId}`, {
         method: 'DELETE',
       })
-      
+
       const result = await response.json()
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Failed to delete wishlist item')
       }
@@ -159,12 +165,15 @@ export class WishlistService {
    */
   static async convertToItinerary(tripId: string, wishlistId: string): Promise<void> {
     try {
-      const response = await fetch(`${TRIP_SERVICE_URL}/trips/${tripId}/wishlist/${wishlistId}/convert`, {
-        method: 'POST',
-      })
-      
+      const response = await fetch(
+        `${TRIP_SERVICE_URL}/trips/${tripId}/wishlist/${wishlistId}/convert`,
+        {
+          method: 'POST',
+        }
+      )
+
       const result = await response.json()
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Failed to convert wishlist item')
       }
@@ -181,11 +190,11 @@ export class WishlistService {
     try {
       const response = await fetch(`${TRIP_SERVICE_URL}/trips/${tripId}/wishlist/stats`)
       const result: WishlistStatsResponse = await response.json()
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Failed to fetch wishlist stats')
       }
-      
+
       return result.data
     } catch (error) {
       console.error('Error fetching wishlist stats:', error)

@@ -26,7 +26,7 @@
 
   /* Touch feedback improvements */
   .mobile button:active,
-  .mobile [role="button"]:active,
+  .mobile [role='button']:active,
   .mobile .calendar-day:active,
   .mobile .budget-item:active {
     transform: scale(0.98);
@@ -97,7 +97,7 @@
   .mobile button,
   .mobile a,
   .mobile input,
-  .mobile [role="button"] {
+  .mobile [role='button'] {
     min-height: 44px;
     min-width: 44px;
     touch-action: manipulation;
@@ -111,9 +111,9 @@
   }
 
   /* Form Elements */
-  .mobile input[type="text"],
-  .mobile input[type="email"],
-  .mobile input[type="password"],
+  .mobile input[type='text'],
+  .mobile input[type='email'],
+  .mobile input[type='password'],
   .mobile textarea,
   .mobile select {
     min-height: 44px;
@@ -233,7 +233,7 @@
     .mobile-sidebar {
       transition: none;
     }
-    
+
     .mobile-sidebar-overlay {
       transition: none;
     }

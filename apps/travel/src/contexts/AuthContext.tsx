@@ -96,7 +96,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Create stable logout callback
   const logoutCallback = useCallback(() => {
     logout()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Initialize auth state on mount

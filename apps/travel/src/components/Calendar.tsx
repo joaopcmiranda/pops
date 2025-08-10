@@ -107,7 +107,7 @@ export function Calendar({ onEventClick }: CalendarProps) {
         notes: eventData.location ? `Location: ${eventData.location}` : '',
         createdAt: new Date(),
         updatedAt: new Date(),
-        eventType: 'general'
+        eventType: 'general',
       }
     } else if (eventData.type === 'accommodation') {
       newEvent = {
@@ -125,7 +125,7 @@ export function Calendar({ onEventClick }: CalendarProps) {
         updatedAt: new Date(),
         accommodationType: 'hotel',
         checkInTime: '15:00',
-        checkOutTime: '11:00'
+        checkOutTime: '11:00',
       }
     } else if (eventData.type === 'transport') {
       newEvent = {
@@ -143,7 +143,7 @@ export function Calendar({ onEventClick }: CalendarProps) {
         updatedAt: new Date(),
         transportType: 'flight',
         from: 'Unknown',
-        to: 'Unknown'
+        to: 'Unknown',
       }
     } else {
       // activity
@@ -160,13 +160,13 @@ export function Calendar({ onEventClick }: CalendarProps) {
         notes: eventData.location ? `Location: ${eventData.location}` : '',
         createdAt: new Date(),
         updatedAt: new Date(),
-        activityType: 'sightseeing'
+        activityType: 'sightseeing',
       }
     }
 
     // Add to ItineraryService via backend API
     const success = await ItineraryService.addItem(newEvent)
-    
+
     if (success) {
       // Reload events
       await loadEvents()
@@ -346,9 +346,9 @@ export function Calendar({ onEventClick }: CalendarProps) {
         </div>
 
         <div style={{ display: 'flex', gap: '0.5rem', width: isMobile ? '100%' : 'auto' }}>
-          <Button 
-            variant='outline' 
-            className='button-hover button-entrance' 
+          <Button
+            variant='outline'
+            className='button-hover button-entrance'
             onClick={goToToday}
             style={{ minHeight: isMobile ? '44px' : 'auto', flex: isMobile ? 1 : 'none' }}
           >
@@ -369,8 +369,18 @@ export function Calendar({ onEventClick }: CalendarProps) {
       </div>
 
       {/* Event Type Filters */}
-      <Card style={{ marginBottom: '1.5rem', padding: isMobile ? '0.75rem' : '1rem' }} className='animate-fade-in-up'>
-        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.5rem' : '1rem', flexWrap: 'wrap' }}>
+      <Card
+        style={{ marginBottom: '1.5rem', padding: isMobile ? '0.75rem' : '1rem' }}
+        className='animate-fade-in-up'
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: isMobile ? '0.5rem' : '1rem',
+            flexWrap: 'wrap',
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Filter style={{ width: '16px', height: '16px', color: '#64748b' }} />
             <span style={{ fontSize: '0.875rem', fontWeight: '500', color: '#374151' }}>
@@ -433,9 +443,14 @@ export function Calendar({ onEventClick }: CalendarProps) {
                 size='icon'
                 className='button-hover'
                 onClick={() => navigateMonth('prev')}
-                style={{ minHeight: isMobile ? '44px' : 'auto', minWidth: isMobile ? '44px' : 'auto' }}
+                style={{
+                  minHeight: isMobile ? '44px' : 'auto',
+                  minWidth: isMobile ? '44px' : 'auto',
+                }}
               >
-                <ChevronLeft style={{ width: isMobile ? '24px' : '20px', height: isMobile ? '24px' : '20px' }} />
+                <ChevronLeft
+                  style={{ width: isMobile ? '24px' : '20px', height: isMobile ? '24px' : '20px' }}
+                />
               </Button>
 
               <h2
@@ -454,9 +469,14 @@ export function Calendar({ onEventClick }: CalendarProps) {
                 size='icon'
                 className='button-hover'
                 onClick={() => navigateMonth('next')}
-                style={{ minHeight: isMobile ? '44px' : 'auto', minWidth: isMobile ? '44px' : 'auto' }}
+                style={{
+                  minHeight: isMobile ? '44px' : 'auto',
+                  minWidth: isMobile ? '44px' : 'auto',
+                }}
               >
-                <ChevronRight style={{ width: isMobile ? '24px' : '20px', height: isMobile ? '24px' : '20px' }} />
+                <ChevronRight
+                  style={{ width: isMobile ? '24px' : '20px', height: isMobile ? '24px' : '20px' }}
+                />
               </Button>
             </div>
 

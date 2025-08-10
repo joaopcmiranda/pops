@@ -87,8 +87,8 @@ export function AppSidebar({
   }
 
   return (
-    <Sidebar 
-      collapsible='none' 
+    <Sidebar
+      collapsible='none'
       className={`${isMobile ? 'mobile-sidebar' : ''} ${!isOpen ? 'sidebar-hidden' : ''}`}
     >
       <SidebarHeader>

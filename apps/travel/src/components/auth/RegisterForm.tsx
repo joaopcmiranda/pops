@@ -217,7 +217,11 @@ export function RegisterForm({ onSwitchToLogin, isMobile = false }: RegisterForm
                   justifyContent: 'center',
                 }}
               >
-                {showPassword ? <EyeOff size={isMobile ? 20 : 16} /> : <Eye size={isMobile ? 20 : 16} />}
+                {showPassword ? (
+                  <EyeOff size={isMobile ? 20 : 16} />
+                ) : (
+                  <Eye size={isMobile ? 20 : 16} />
+                )}
               </button>
             </div>
             <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0' }}>

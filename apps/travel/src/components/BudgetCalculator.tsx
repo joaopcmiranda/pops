@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Plus, DollarSign, Calculator, PieChart, TrendingUp, Edit2, Trash2 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Input } from '@pops/ui'
 import { tripApiClient } from '@/lib/api-client'
@@ -51,7 +51,7 @@ export function BudgetCalculator() {
   const [newItem, setNewItem] = useState({
     categoryId: '',
     description: '',
-    budgetedAmount: 0
+    budgetedAmount: 0,
   })
   const isMobile = useIsMobile()
 
@@ -65,7 +65,7 @@ export function BudgetCalculator() {
   }
 
   // Load budget data
-  const loadBudgetData = async () => {
+  const loadBudgetData = useCallback(async () => {
     try {
       setLoading(true)
       const tripId = getCurrentTripId()
@@ -74,7 +74,7 @@ export function BudgetCalculator() {
       // Load categories
       const categoriesResponse = await client.get(`/trips/${tripId}/budget/categories`)
       let categories = categoriesResponse.data || []
-      
+
       // If no categories exist, initialize defaults
       if (categories.length === 0) {
         await client.post(`/trips/${tripId}/budget/categories/initialize`)
@@ -96,13 +96,14 @@ export function BudgetCalculator() {
     } finally {
       setLoading(false)
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newItem.categoryId])
 
   const loadBudgetItems = async () => {
     try {
       const tripId = getCurrentTripId()
       const client = tripApiClient()
-      
+
       const response = await client.get(`/trips/${tripId}/budget/items`)
       setBudgetItems(response.data || [])
     } catch (error) {
@@ -114,7 +115,7 @@ export function BudgetCalculator() {
     try {
       const tripId = getCurrentTripId()
       const client = tripApiClient()
-      
+
       const response = await client.get(`/trips/${tripId}/budget/summary`)
       setBudgetSummary(response.data || null)
     } catch (error) {
@@ -124,7 +125,7 @@ export function BudgetCalculator() {
 
   useEffect(() => {
     loadBudgetData()
-  }, [])
+  }, [loadBudgetData])
 
   const handleAddItem = async () => {
     if (!newItem.description || newItem.budgetedAmount <= 0 || !newItem.categoryId) return
@@ -141,12 +142,12 @@ export function BudgetCalculator() {
 
       // Reload data
       await Promise.all([loadBudgetItems(), loadBudgetSummary()])
-      
+
       // Reset form
-      setNewItem({ 
-        categoryId: budgetCategories.length > 0 ? budgetCategories[0].id : '', 
-        description: '', 
-        budgetedAmount: 0 
+      setNewItem({
+        categoryId: budgetCategories.length > 0 ? budgetCategories[0].id : '',
+        description: '',
+        budgetedAmount: 0,
       })
       setShowAddForm(false)
     } catch (error) {
@@ -225,12 +226,12 @@ export function BudgetCalculator() {
           </div>
         </div>
 
-        <Button 
+        <Button
           className='button-hover focus-ring'
           onClick={() => setShowAddForm(true)}
-          style={{ 
+          style={{
             minHeight: isMobile ? '44px' : 'auto',
-            width: isMobile ? '100%' : 'auto'
+            width: isMobile ? '100%' : 'auto',
           }}
         >
           <Plus style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
@@ -288,11 +289,11 @@ export function BudgetCalculator() {
           <CardContent>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <PieChart style={{ width: '20px', height: '20px', color: '#10b981' }} />
-              <span 
-                style={{ 
-                  fontSize: '1.5rem', 
-                  fontWeight: '700', 
-                  color: (budgetSummary?.remaining || 0) >= 0 ? '#10b981' : '#ef4444' 
+              <span
+                style={{
+                  fontSize: '1.5rem',
+                  fontWeight: '700',
+                  color: (budgetSummary?.remaining || 0) >= 0 ? '#10b981' : '#ef4444',
                 }}
               >
                 ${budgetSummary?.remaining.toLocaleString() || '0'}
@@ -309,26 +310,27 @@ export function BudgetCalculator() {
           </CardHeader>
           <CardContent>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <div 
-                style={{ 
-                  width: '20px', 
-                  height: '20px', 
+              <div
+                style={{
+                  width: '20px',
+                  height: '20px',
                   borderRadius: '50%',
-                  backgroundColor: (budgetSummary?.utilizationPercentage || 0) > 100 ? '#ef4444' : '#3b82f6',
+                  backgroundColor:
+                    (budgetSummary?.utilizationPercentage || 0) > 100 ? '#ef4444' : '#3b82f6',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: '0.75rem',
-                  color: 'white'
+                  color: 'white',
                 }}
               >
                 %
               </div>
-              <span 
-                style={{ 
-                  fontSize: '1.5rem', 
-                  fontWeight: '700', 
-                  color: (budgetSummary?.utilizationPercentage || 0) > 100 ? '#ef4444' : '#0f172a' 
+              <span
+                style={{
+                  fontSize: '1.5rem',
+                  fontWeight: '700',
+                  color: (budgetSummary?.utilizationPercentage || 0) > 100 ? '#ef4444' : '#0f172a',
                 }}
               >
                 {budgetSummary?.utilizationPercentage.toFixed(0) || '0'}%
@@ -346,57 +348,92 @@ export function BudgetCalculator() {
             <CardDescription>Add a new expense category to track</CardDescription>
           </CardHeader>
           <CardContent>
-            <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto auto', gap: '1rem', alignItems: 'end' }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'auto 1fr auto auto',
+                gap: '1rem',
+                alignItems: 'end',
+              }}
+            >
               <div>
-                <label style={{ fontSize: '0.875rem', fontWeight: '500', display: 'block', marginBottom: '0.5rem' }}>
+                <label
+                  style={{
+                    fontSize: '0.875rem',
+                    fontWeight: '500',
+                    display: 'block',
+                    marginBottom: '0.5rem',
+                  }}
+                >
                   Category
                 </label>
-                <select 
+                <select
                   value={newItem.categoryId}
-                  onChange={(e) => setNewItem(prev => ({ ...prev, categoryId: e.target.value }))}
+                  onChange={e => setNewItem(prev => ({ ...prev, categoryId: e.target.value }))}
                   style={{
                     padding: '0.5rem',
                     border: '1px solid #d1d5db',
                     borderRadius: '0.375rem',
-                    fontSize: '0.875rem'
+                    fontSize: '0.875rem',
                   }}
                 >
-                  {budgetCategories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  {budgetCategories.map(cat => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label style={{ fontSize: '0.875rem', fontWeight: '500', display: 'block', marginBottom: '0.5rem' }}>
+                <label
+                  style={{
+                    fontSize: '0.875rem',
+                    fontWeight: '500',
+                    display: 'block',
+                    marginBottom: '0.5rem',
+                  }}
+                >
                   Description
                 </label>
                 <Input
                   value={newItem.description}
-                  onChange={(e) => setNewItem(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="e.g., Hotel booking for 3 nights"
+                  onChange={e => setNewItem(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder='e.g., Hotel booking for 3 nights'
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: '0.875rem', fontWeight: '500', display: 'block', marginBottom: '0.5rem' }}>
+                <label
+                  style={{
+                    fontSize: '0.875rem',
+                    fontWeight: '500',
+                    display: 'block',
+                    marginBottom: '0.5rem',
+                  }}
+                >
                   Budget ($)
                 </label>
                 <Input
-                  type="number"
+                  type='number'
                   value={newItem.budgetedAmount || ''}
-                  onChange={(e) => setNewItem(prev => ({ ...prev, budgetedAmount: Number(e.target.value) }))}
-                  placeholder="0"
-                  min="0"
-                  step="0.01"
+                  onChange={e =>
+                    setNewItem(prev => ({ ...prev, budgetedAmount: Number(e.target.value) }))
+                  }
+                  placeholder='0'
+                  min='0'
+                  step='0.01'
                 />
               </div>
 
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <Button onClick={handleAddItem} disabled={!newItem.description || newItem.budgetedAmount <= 0}>
+                <Button
+                  onClick={handleAddItem}
+                  disabled={!newItem.description || newItem.budgetedAmount <= 0}
+                >
                   Add
                 </Button>
-                <Button variant="outline" onClick={() => setShowAddForm(false)}>
+                <Button variant='outline' onClick={() => setShowAddForm(false)}>
                   Cancel
                 </Button>
               </div>
@@ -410,35 +447,54 @@ export function BudgetCalculator() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {[1, 2, 3].map(i => (
             <Card key={i}>
-              <div className="animate-pulse" style={{ padding: '1.5rem' }}>
-                <div style={{ width: '200px', height: '20px', backgroundColor: '#e2e8f0', borderRadius: '4px', marginBottom: '1rem' }} />
-                <div style={{ width: '100%', height: '60px', backgroundColor: '#f1f5f9', borderRadius: '8px' }} />
+              <div className='animate-pulse' style={{ padding: '1.5rem' }}>
+                <div
+                  style={{
+                    width: '200px',
+                    height: '20px',
+                    backgroundColor: '#e2e8f0',
+                    borderRadius: '4px',
+                    marginBottom: '1rem',
+                  }}
+                />
+                <div
+                  style={{
+                    width: '100%',
+                    height: '60px',
+                    backgroundColor: '#f1f5f9',
+                    borderRadius: '8px',
+                  }}
+                />
               </div>
             </Card>
           ))}
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {budgetCategories.map((category) => {
+          {budgetCategories.map(category => {
             const items = getItemsByCategory(category.id)
             if (items.length === 0) return null
 
-            const categoryBreakdown = budgetSummary?.categoryBreakdown.find(cb => cb.categoryId === category.id)
+            const categoryBreakdown = budgetSummary?.categoryBreakdown.find(
+              cb => cb.categoryId === category.id
+            )
 
             return (
               <Card key={category.id}>
                 <CardHeader style={{ padding: isMobile ? '1rem' : '1.5rem' }}>
-                  <div style={{ 
-                    display: 'flex', 
-                    alignItems: isMobile ? 'flex-start' : 'center', 
-                    justifyContent: 'space-between',
-                    flexDirection: isMobile ? 'column' : 'row',
-                    gap: isMobile ? '0.5rem' : '0'
-                  }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: isMobile ? 'flex-start' : 'center',
+                      justifyContent: 'space-between',
+                      flexDirection: isMobile ? 'column' : 'row',
+                      gap: isMobile ? '0.5rem' : '0',
+                    }}
+                  >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <span style={{ fontSize: '1.5rem' }}>{category.icon}</span>
                       <CardTitle>{category.name}</CardTitle>
-                      <span 
+                      <span
                         style={{
                           padding: '0.25rem 0.5rem',
                           borderRadius: '9999px',
@@ -451,100 +507,118 @@ export function BudgetCalculator() {
                         {items.length} {items.length === 1 ? 'item' : 'items'}
                       </span>
                     </div>
-                    <div style={{ 
-                      fontSize: isMobile ? '0.75rem' : '0.875rem', 
-                      color: '#64748b',
-                      fontWeight: isMobile ? '600' : 'normal'
-                    }}>
-                      ${categoryBreakdown?.actual.toLocaleString() || '0'} / ${categoryBreakdown?.budgeted.toLocaleString() || '0'}
+                    <div
+                      style={{
+                        fontSize: isMobile ? '0.75rem' : '0.875rem',
+                        color: '#64748b',
+                        fontWeight: isMobile ? '600' : 'normal',
+                      }}
+                    >
+                      ${categoryBreakdown?.actual.toLocaleString() || '0'} / $
+                      {categoryBreakdown?.budgeted.toLocaleString() || '0'}
                     </div>
                   </div>
                 </CardHeader>
-              <CardContent style={{ padding: isMobile ? '1rem' : '1.5rem' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '0.75rem' : '0.5rem' }}>
-                  {items.map(item => (
-                    <div 
-                      key={item.id} 
-                      style={{ 
-                        display: isMobile ? 'flex' : 'grid', 
-                        flexDirection: isMobile ? 'column' : 'row',
-                        gridTemplateColumns: isMobile ? 'none' : '1fr auto auto auto auto',
-                        gap: isMobile ? '0.5rem' : '1rem',
-                        alignItems: isMobile ? 'stretch' : 'center',
-                        padding: isMobile ? '1rem' : '0.75rem',
-                        backgroundColor: '#f9fafb',
-                        borderRadius: '0.375rem'
-                      }}
-                    >
-                      <div>
-                        <div style={{ fontWeight: '500', color: '#0f172a' }}>{item.description}</div>
-                        <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                          Budgeted: ${item.budgetedAmount.toLocaleString()}
+                <CardContent style={{ padding: isMobile ? '1rem' : '1.5rem' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: isMobile ? '0.75rem' : '0.5rem',
+                    }}
+                  >
+                    {items.map(item => (
+                      <div
+                        key={item.id}
+                        style={{
+                          display: isMobile ? 'flex' : 'grid',
+                          flexDirection: isMobile ? 'column' : 'row',
+                          gridTemplateColumns: isMobile ? 'none' : '1fr auto auto auto auto',
+                          gap: isMobile ? '0.5rem' : '1rem',
+                          alignItems: isMobile ? 'stretch' : 'center',
+                          padding: isMobile ? '1rem' : '0.75rem',
+                          backgroundColor: '#f9fafb',
+                          borderRadius: '0.375rem',
+                        }}
+                      >
+                        <div>
+                          <div style={{ fontWeight: '500', color: '#0f172a' }}>
+                            {item.description}
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                            Budgeted: ${item.budgetedAmount.toLocaleString()}
+                          </div>
                         </div>
-                      </div>
 
-                      <div style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        gap: '0.5rem',
-                        justifyContent: isMobile ? 'space-between' : 'flex-start'
-                      }}>
-                        <span style={{ fontSize: '0.875rem', color: '#64748b' }}>Actual: $</span>
-                        <Input
-                          type="number"
-                          value={item.actualAmount || ''}
-                          onChange={(e) => handleUpdateActual(item.id, Number(e.target.value))}
-                          placeholder="0"
-                          min="0"
-                          step="0.01"
-                          style={{ 
-                            width: isMobile ? '120px' : '100px',
-                            minHeight: isMobile ? '44px' : 'auto'
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            justifyContent: isMobile ? 'space-between' : 'flex-start',
                           }}
-                        />
+                        >
+                          <span style={{ fontSize: '0.875rem', color: '#64748b' }}>Actual: $</span>
+                          <Input
+                            type='number'
+                            value={item.actualAmount || ''}
+                            onChange={e => handleUpdateActual(item.id, Number(e.target.value))}
+                            placeholder='0'
+                            min='0'
+                            step='0.01'
+                            style={{
+                              width: isMobile ? '120px' : '100px',
+                              minHeight: isMobile ? '44px' : 'auto',
+                            }}
+                          />
+                        </div>
+
+                        <div
+                          style={{
+                            fontSize: '0.875rem',
+                            fontWeight: '500',
+                            color: item.actualAmount <= item.budgetedAmount ? '#10b981' : '#ef4444',
+                          }}
+                        >
+                          {item.actualAmount <= item.budgetedAmount ? 'Under' : 'Over'}: $
+                          {Math.abs(item.actualAmount - item.budgetedAmount).toLocaleString()}
+                        </div>
+
+                        <Button
+                          variant='outline'
+                          size='sm'
+                          style={{
+                            minHeight: isMobile ? '44px' : 'auto',
+                            minWidth: isMobile ? '44px' : 'auto',
+                          }}
+                        >
+                          <Edit2
+                            style={{
+                              width: isMobile ? '18px' : '14px',
+                              height: isMobile ? '18px' : '14px',
+                            }}
+                          />
+                        </Button>
+
+                        <Button
+                          variant='outline'
+                          size='sm'
+                          onClick={() => handleDeleteItem(item.id)}
+                          className='text-red-600 hover:text-red-700'
+                          style={{
+                            minHeight: isMobile ? '44px' : 'auto',
+                            minWidth: isMobile ? '44px' : 'auto',
+                          }}
+                        >
+                          <Trash2 style={{ width: '14px', height: '14px' }} />
+                        </Button>
                       </div>
-
-                      <div 
-                        style={{ 
-                          fontSize: '0.875rem',
-                          fontWeight: '500',
-                          color: item.actualAmount <= item.budgetedAmount ? '#10b981' : '#ef4444' 
-                        }}
-                      >
-                        {item.actualAmount <= item.budgetedAmount ? 'Under' : 'Over'}: $
-                        {Math.abs(item.actualAmount - item.budgetedAmount).toLocaleString()}
-                      </div>
-
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        style={{
-                          minHeight: isMobile ? '44px' : 'auto',
-                          minWidth: isMobile ? '44px' : 'auto'
-                        }}
-                      >
-                        <Edit2 style={{ width: isMobile ? '18px' : '14px', height: isMobile ? '18px' : '14px' }} />
-                      </Button>
-
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => handleDeleteItem(item.id)}
-                        className="text-red-600 hover:text-red-700"
-                        style={{
-                          minHeight: isMobile ? '44px' : 'auto',
-                          minWidth: isMobile ? '44px' : 'auto'
-                        }}
-                      >
-                        <Trash2 style={{ width: '14px', height: '14px' }} />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )
-        })}
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })}
         </div>
       )}
 
@@ -572,10 +646,7 @@ export function BudgetCalculator() {
             <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>
               Start tracking your trip expenses by adding budget categories.
             </p>
-            <Button 
-              className='button-hover focus-ring'
-              onClick={() => setShowAddForm(true)}
-            >
+            <Button className='button-hover focus-ring' onClick={() => setShowAddForm(true)}>
               <Plus style={{ width: '16px', height: '16px', marginRight: '0.5rem' }} />
               Add Your First Expense
             </Button>

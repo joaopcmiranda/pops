@@ -37,15 +37,24 @@ export function useMobilePerformance() {
     prefersReducedMotion.addEventListener('change', handleMotionChange)
 
     // Detect connection speed
-    const connection = (navigator as Navigator & {
-      connection?: { effectiveType: string }
-      mozConnection?: { effectiveType: string }
-      webkitConnection?: { effectiveType: string }
-    }).connection || (navigator as Navigator & {
-      mozConnection?: { effectiveType: string }
-    }).mozConnection || (navigator as Navigator & {
-      webkitConnection?: { effectiveType: string }
-    }).webkitConnection
+    const connection =
+      (
+        navigator as Navigator & {
+          connection?: { effectiveType: string }
+          mozConnection?: { effectiveType: string }
+          webkitConnection?: { effectiveType: string }
+        }
+      ).connection ||
+      (
+        navigator as Navigator & {
+          mozConnection?: { effectiveType: string }
+        }
+      ).mozConnection ||
+      (
+        navigator as Navigator & {
+          webkitConnection?: { effectiveType: string }
+        }
+      ).webkitConnection
     if (connection) {
       const effectiveType = connection.effectiveType
       if (effectiveType === 'slow-2g' || effectiveType === '2g' || effectiveType === '3g') {

@@ -85,7 +85,7 @@ export function useMobileSidebar() {
 
   const handleTouchMove = (e: TouchEvent) => {
     if (!isDragging) return
-    
+
     const currentTouch = e.touches[0].clientX
     setCurrentX(currentTouch)
 
@@ -97,9 +97,9 @@ export function useMobileSidebar() {
 
   const handleTouchEnd = () => {
     if (!isDragging) return
-    
+
     setIsDragging(false)
-    
+
     const deltaX = currentX - startX
     const threshold = 100
 

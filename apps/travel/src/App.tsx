@@ -214,12 +214,9 @@ function AppContent() {
       <SidebarProvider>
         {/* Mobile overlay */}
         {isMobile && isMobileSidebarOpen && (
-          <div 
-            className="mobile-sidebar-overlay"
-            onClick={() => setIsMobileSidebarOpen(false)}
-          />
+          <div className='mobile-sidebar-overlay' onClick={() => setIsMobileSidebarOpen(false)} />
         )}
-        
+
         <ErrorBoundary
           fallback={
             <div style={{ padding: '1rem', backgroundColor: '#fee2e2', color: '#dc2626' }}>
@@ -237,29 +234,31 @@ function AppContent() {
           />
         </ErrorBoundary>
 
-      <SidebarInset>
-        <ErrorBoundary
-          fallback={
-            <div style={{ padding: '1rem', backgroundColor: '#fee2e2', color: '#dc2626' }}>
-              Header error occurred. Please refresh the page.
-            </div>
-          }
-        >
-          <UnifiedHeader
-            currentApp='travel'
-            title={getPageTitle(currentView)}
-            showDomainSwitcher={!isMobile}
-            showNotifications={!isMobile}
-            showSearch={!isMobile}
-            onMenuToggle={isMobile ? () => setIsMobileSidebarOpen(!isMobileSidebarOpen) : undefined}
-          />
-        </ErrorBoundary>
+        <SidebarInset>
+          <ErrorBoundary
+            fallback={
+              <div style={{ padding: '1rem', backgroundColor: '#fee2e2', color: '#dc2626' }}>
+                Header error occurred. Please refresh the page.
+              </div>
+            }
+          >
+            <UnifiedHeader
+              currentApp='travel'
+              title={getPageTitle(currentView)}
+              showDomainSwitcher={!isMobile}
+              showNotifications={!isMobile}
+              showSearch={!isMobile}
+              onMenuToggle={
+                isMobile ? () => setIsMobileSidebarOpen(!isMobileSidebarOpen) : undefined
+              }
+            />
+          </ErrorBoundary>
 
-        <div className={`main-content ${isMobile ? 'mobile-content' : ''}`}>
-          <ErrorBoundary>{renderCurrentView()}</ErrorBoundary>
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+          <div className={`main-content ${isMobile ? 'mobile-content' : ''}`}>
+            <ErrorBoundary>{renderCurrentView()}</ErrorBoundary>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
     </div>
   )
 }

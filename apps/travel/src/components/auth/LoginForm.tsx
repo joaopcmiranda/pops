@@ -162,7 +162,11 @@ export function LoginForm({ onSwitchToRegister, isMobile = false }: LoginFormPro
                   justifyContent: 'center',
                 }}
               >
-                {showPassword ? <EyeOff size={isMobile ? 20 : 16} /> : <Eye size={isMobile ? 20 : 16} />}
+                {showPassword ? (
+                  <EyeOff size={isMobile ? 20 : 16} />
+                ) : (
+                  <Eye size={isMobile ? 20 : 16} />
+                )}
               </button>
             </div>
           </div>
