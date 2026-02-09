@@ -1,0 +1,22 @@
+# Moltbot configuration for POPS
+# See https://github.com/moltbot/moltbot for full config reference.
+
+# Active messaging channel
+channel: telegram
+
+telegram:
+  # Token loaded from Docker secret at runtime
+  token_file: /run/secrets/telegram_bot_token
+  # Restrict to owner's Telegram user ID only (security: reject all other messages)
+  allowed_user_ids: []  # TODO: add your Telegram user ID
+
+# AI backend
+ai:
+  provider: anthropic
+  model: claude-haiku-4-5-20251001
+  # API key loaded from Docker secret at runtime
+  api_key_file: /run/secrets/claude_api_key
+
+# Skills directory
+workspace:
+  skills_dir: /home/node/.moltbot/workspace/skills

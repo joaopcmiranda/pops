@@ -6,7 +6,83 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 POPS (Personal Operations System) is a self-hosted financial tracking and automation platform. Notion is the **source of truth** for all data. Self-hosted services on an N95 mini PC provide sync, analytics, dashboards, and AI-powered automation. Cloudflare Tunnel exposes services with zero port forwarding.
 
-The repo was reset in Feb 2026. Phase 0 (data import) is complete. Phase 1 (Foundation) is next.
+Phase 0 (data import) is complete. Phase 1 (Foundation) targets March 2026.
+
+## Commands
+
+### Services (each has its own package.json)
+```bash
+cd services/notion-sync && npm install && npm run dev      # Run sync locally
+cd services/finance-api && npm install && npm run dev      # API with watch mode
+cd services/pops-pwa && npm install && npm run dev         # Vite dev server
+
+# Typecheck a service
+cd services/<service> && npm run typecheck
+
+# Run tests
+cd services/<service> && npm run test              # single run
+cd services/<service> && npm run test:watch        # watch mode
+```
+
+### Tools (import scripts)
+```bash
+cd tools && npm install
+
+npm run import:anz -- --csv path/to/file.csv --execute    # ANZ import
+npm run import:amex -- --csv path/to/file.csv --execute   # Amex import
+npm run import:ing -- --csv path/to/file.csv --execute    # ING import
+npm run import:up -- --since 2026-01-01 --execute         # Up Bank batch
+npm run match:transfers -- --execute                       # Link transfer pairs
+npm run match:novated -- --execute                         # Link novated pairs
+npm run entities:create -- --execute                       # Batch create entities
+npm run entities:lookup                                    # Rebuild entity lookup
+npm run audit                                              # DB statistics
+```
+Omit `--execute` for dry-run mode (no writes to Notion).
+
+### Docker
+```bash
+docker compose build                                       # Build all custom images
+docker compose up -d                                       # Start all services
+docker compose --profile tools run --rm tools src/import-anz.ts /data/imports/anz.csv
+docker compose config                                      # Validate compose file
+```
+
+### Ansible
+```bash
+# Provision fresh N95 (full run)
+ansible-playbook ansible/playbooks/site.yml
+
+# Deploy/update services only (skip OS hardening)
+ansible-playbook ansible/playbooks/deploy.yml
+
+# Syntax check
+ansible-playbook ansible/playbooks/site.yml --syntax-check
+
+# Encrypt vault file
+ansible-vault encrypt ansible/inventory/group_vars/pops_servers/vault.yml
+```
+
+## Repo Structure
+
+- `ansible/` — Ansible playbooks + roles for provisioning the N95 mini PC
+- `services/notion-sync/` — Notion → SQLite mirror (runs via systemd timer, not always-on)
+- `services/finance-api/` — Express REST API over SQLite (bridges frontend/backend networks)
+- `services/pops-pwa/` — React PWA served via nginx (Phase 4 stub)
+- `services/moltbot/` — Config + custom finance skill for Moltbot (no Dockerfile, uses upstream image)
+- `tools/` — Import scripts (on-demand, run via `--profile tools` or locally)
+- `docker-compose.yml` — Local dev compose; Ansible templates the production version
+
+### Docker Networks
+- `pops-frontend` — cloudflared, pops-pwa, metabase, finance-api
+- `pops-backend` — finance-api, notion-sync, moltbot, tools (SQLite access)
+- `pops-documents` — cloudflared, paperless-ngx, paperless-redis (isolated)
+
+finance-api bridges frontend ↔ backend. cloudflared bridges frontend ↔ documents.
+
+### Secrets
+Production: Ansible Vault → `/opt/pops/secrets/` files → Docker Compose file-based secrets → `/run/secrets/` in containers.
+Local dev: `.env` file (copy from `.env.example`), read via `process.env`.
 
 ## Architecture
 
@@ -77,22 +153,12 @@ Bank Feeds:
 ### Wish List (To Be Created — Phase 1)
 - Item, Target Amount, Saved, Priority tier (Needing / Soon / One Day / Dreaming)
 
-## Existing Import Scripts
+## Import Tools
 
-Located in `~/Downloads/transactions/` (not in this repo). These will be migrated into the repo during Phase 1.
+Stubs in `tools/src/`. Original implementations in `~/Downloads/transactions/` need migration.
+Shared logic lives in `tools/src/lib/` — entity matcher, deduplicator, CSV parser, AI categorizer, Notion client.
 
-| Script | Purpose |
-|---|---|
-| `import_anz.js` | ANZ CSV import with date+amount deduplication |
-| `import_amex.js` | Amex CSV import with multiline field parser |
-| `extract_personal_accounts.js` | Up Bank API batch extraction |
-| `match_transfers.js` | Link inter-account transfer pairs |
-| `match_novated.js` | Link novated lease reimbursements |
-| `create_entities.js` | Batch create entities in Notion |
-| `regenerate_entity_lookup.js` | Rebuild entity name → URL mapping |
-| `audit_notion.js` | Database statistics and audit |
-
-### Entity Matching Strategy (all import scripts)
+### Entity Matching Strategy (tools/src/lib/entity-matcher.ts)
 1. Manual aliases — hardcoded map of bank descriptions to entity names (per-bank)
 2. Exact match — case-insensitive against `entity_lookup.json`
 3. Prefix match — description starts with entity name (longest wins)

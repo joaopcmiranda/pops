@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BACKUP_DIR="{{ backup_dir }}"
+SQLITE_PATH="{{ sqlite_data_dir }}/pops.db"
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+ARCHIVE="${BACKUP_DIR}/pops-${TIMESTAMP}.tar"
+
+echo "[$(date)] Starting POPS backup..."
+
+# 1. SQLite online backup (safe with WAL mode)
+sqlite3 "${SQLITE_PATH}" ".backup ${BACKUP_DIR}/pops-backup.db"
+
+# 2. Create tar archive
+tar cf "${ARCHIVE}" \
+  -C "${BACKUP_DIR}" pops-backup.db \
+  -C "{{ paperless_data_dir }}" . \
+  -C "{{ metabase_data_dir }}" .
+
+# 3. Encrypt with age
+age --encrypt \
+  --passphrase \
+  --output "${ARCHIVE}.age" \
+  < "${ARCHIVE}" <<< "$(cat {{ secrets_dir }}/backup_encryption_passphrase 2>/dev/null || echo '{{ vault_backup_encryption_passphrase }}')"
+
+# 4. Upload to B2
+rclone copy "${ARCHIVE}.age" "{{ rclone_remote_name }}:pops-backups/" --progress
+
+# 5. Cleanup local temp files
+rm -f "${BACKUP_DIR}/pops-backup.db" "${ARCHIVE}" "${ARCHIVE}.age"
+
+# 6. Prune remote backups older than 90 days
+rclone delete "{{ rclone_remote_name }}:pops-backups/" --min-age 90d
+
+echo "[$(date)] Backup complete."

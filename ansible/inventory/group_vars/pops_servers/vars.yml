@@ -1,0 +1,32 @@
+---
+# Non-secret configuration for POPS servers
+
+domain: example.com  # TODO: replace with actual domain
+timezone: Australia/Melbourne
+
+# Paths on the N95
+docker_compose_dir: /opt/pops
+sqlite_data_dir: /opt/pops/data/sqlite
+paperless_data_dir: /opt/pops/data/paperless
+metabase_data_dir: /opt/pops/data/metabase
+secrets_dir: /opt/pops/secrets
+
+# Schedules
+notion_sync_schedule: "*:0/15"    # systemd OnCalendar: every 15 minutes
+backup_schedule: "*-*-* 03:00:00" # systemd OnCalendar: 3am daily
+
+# SSH
+ssh_port: 2222
+
+# Cloudflare Tunnel subdomains
+cf_subdomain_pwa: pops
+cf_subdomain_api: api.pops
+cf_subdomain_metabase: metabase.pops
+cf_subdomain_paperless: paperless.pops
+
+# Docker image versions (pin for security)
+metabase_version: "v0.52.5"
+paperless_version: "2.14"
+cloudflared_version: "2025.2.0"
+redis_version: "7-alpine"
+node_version: "22-alpine"

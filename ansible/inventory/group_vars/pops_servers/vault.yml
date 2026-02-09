@@ -1,0 +1,17 @@
+---
+# Encrypt this file with: ansible-vault encrypt ansible/inventory/group_vars/pops_servers/vault.yml
+# All values below are placeholders. Replace before encrypting.
+
+vault_notion_api_token: "REPLACE_ME"
+vault_up_bank_token: "REPLACE_ME"
+vault_up_webhook_secret: "REPLACE_ME"
+vault_claude_api_key: "REPLACE_ME"
+vault_telegram_bot_token: "REPLACE_ME"
+vault_finance_api_key: "REPLACE_ME"
+vault_cloudflare_tunnel_token: "REPLACE_ME"
+vault_metabase_admin_password: "REPLACE_ME"
+vault_paperless_admin_password: "REPLACE_ME"
+vault_paperless_secret_key: "REPLACE_ME"
+vault_b2_application_key_id: "REPLACE_ME"
+vault_b2_application_key: "REPLACE_ME"
+vault_backup_encryption_passphrase: "REPLACE_ME"

@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.secret
+
+# Data files
+*.db
+*.db-wal
+*.db-shm
+*.csv
+entity_lookup.json
+ai_entity_cache.json
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+*.jsonl
+
+# Ansible
+*.retry
+.ansible/

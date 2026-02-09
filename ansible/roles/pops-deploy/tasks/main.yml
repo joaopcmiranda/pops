@@ -1,0 +1,92 @@
+---
+- name: Create POPS data directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: pops
+    group: pops
+    mode: "0750"
+  loop:
+    - "{{ docker_compose_dir }}"
+    - "{{ sqlite_data_dir }}"
+    - "{{ paperless_data_dir }}"
+    - "{{ metabase_data_dir }}"
+
+- name: Clone or update POPS repository
+  ansible.builtin.git:
+    repo: "{{ pops_repo_url }}"
+    dest: "{{ docker_compose_dir }}/repo"
+    version: "{{ pops_branch }}"
+    force: true
+  become_user: pops
+  when: pops_repo_url | length > 0
+
+- name: Template production docker-compose.yml
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ docker_compose_dir }}/docker-compose.yml"
+    owner: pops
+    group: pops
+    mode: "0640"
+
+- name: Build custom service images
+  ansible.builtin.command:
+    cmd: docker compose build --no-cache
+    chdir: "{{ docker_compose_dir }}"
+  changed_when: true
+
+- name: Pull third-party images
+  ansible.builtin.command:
+    cmd: docker compose pull
+    chdir: "{{ docker_compose_dir }}"
+  changed_when: true
+
+- name: Start services
+  ansible.builtin.command:
+    cmd: docker compose up -d --remove-orphans
+    chdir: "{{ docker_compose_dir }}"
+  changed_when: true
+
+- name: Create notion-sync systemd service
+  ansible.builtin.copy:
+    content: |
+      [Unit]
+      Description=POPS Notion Sync
+      Requires=docker.service
+      After=docker.service
+
+      [Service]
+      Type=oneshot
+      User=pops
+      ExecStart=/usr/bin/docker compose -f {{ docker_compose_dir }}/docker-compose.yml run --rm notion-sync
+      TimeoutStartSec=300
+    dest: /etc/systemd/system/pops-notion-sync.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: reload systemd
+
+- name: Create notion-sync systemd timer
+  ansible.builtin.copy:
+    content: |
+      [Unit]
+      Description=Run POPS Notion Sync every 15 minutes
+
+      [Timer]
+      OnCalendar={{ notion_sync_schedule }}
+      Persistent=true
+
+      [Install]
+      WantedBy=timers.target
+    dest: /etc/systemd/system/pops-notion-sync.timer
+    owner: root
+    group: root
+    mode: "0644"
+  notify: reload systemd
+
+- name: Enable and start notion-sync timer
+  ansible.builtin.systemd:
+    name: pops-notion-sync.timer
+    state: started
+    enabled: true
+    daemon_reload: true

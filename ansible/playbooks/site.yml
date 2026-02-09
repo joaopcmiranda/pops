@@ -1,0 +1,16 @@
+---
+# Full provision + deploy. Run on a fresh Ubuntu 24.04 machine.
+# Usage: ansible-playbook ansible/playbooks/site.yml
+
+- name: Provision and deploy POPS
+  hosts: pops_servers
+  become: true
+
+  roles:
+    - common
+    - docker
+    - secrets
+    - pops-deploy
+    - cloudflare-tunnel
+    - backups
+    - monitoring

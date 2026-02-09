@@ -1,0 +1,3 @@
+---
+backup_dir: /opt/pops/backups
+rclone_remote_name: pops-b2
