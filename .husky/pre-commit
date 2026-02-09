@@ -1,2 +1,0 @@
-# Run comprehensive checks (type-check, lint, format:check)
-pnpm run check

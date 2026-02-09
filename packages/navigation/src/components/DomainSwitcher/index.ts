@@ -1,1 +1,0 @@
-export { DomainSwitcher } from './DomainSwitcher'

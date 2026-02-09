@@ -1,1 +1,0 @@
-export { navigationMenuTriggerStyle } from './NavigationMenuTriggerStyle'

@@ -1,1 +1,0 @@
-{"root":["./src/app.tsx","./src/main.tsx","./src/components/errorboundary.tsx","./src/components/welcomescreen.tsx","./src/components/index.ts","./src/components/applauncher/applauncher.tsx","./src/components/dashboard/dashboard.tsx","./src/components/dashboard/quickstats.tsx","./src/components/dashboard/widgetgallery.tsx","./src/components/dashboard/index.ts"],"version":"5.8.3"}
