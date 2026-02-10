@@ -5,12 +5,7 @@ import { z } from "zod/v4";
 import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure } from "../../trpc.js";
 import { paginationMeta } from "../../shared/pagination.js";
-import {
-  CreateEntitySchema,
-  UpdateEntitySchema,
-  EntityQuerySchema,
-  toEntity,
-} from "./types.js";
+import { CreateEntitySchema, UpdateEntitySchema, EntityQuerySchema, toEntity } from "./types.js";
 import * as service from "./service.js";
 import { NotFoundError, ConflictError } from "../../shared/errors.js";
 

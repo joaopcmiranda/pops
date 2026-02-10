@@ -35,11 +35,7 @@ export const transactionsRouter = router({
       type: input.type,
       online: input.online === "true" ? true : input.online === "false" ? false : undefined,
       novatedLease:
-        input.novatedLease === "true"
-          ? true
-          : input.novatedLease === "false"
-            ? false
-            : undefined,
+        input.novatedLease === "true" ? true : input.novatedLease === "false" ? false : undefined,
       taxReturn:
         input.taxReturn === "true" ? true : input.taxReturn === "false" ? false : undefined,
     };

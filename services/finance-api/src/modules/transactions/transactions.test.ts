@@ -138,7 +138,10 @@ describe("transactions.list", () => {
     seedTransaction(db, { description: "Within", account: "Up", date: "2025-03-15" });
     seedTransaction(db, { description: "After", account: "Up", date: "2025-06-01" });
 
-    const result = await caller.transactions.list({ startDate: "2025-03-01", endDate: "2025-04-01" });
+    const result = await caller.transactions.list({
+      startDate: "2025-03-01",
+      endDate: "2025-04-01",
+    });
     expect(result.data).toHaveLength(1);
     expect(result.data[0].description).toBe("Within");
   });
@@ -522,9 +525,9 @@ describe("transactions.update", () => {
   it("rejects empty description", async () => {
     const id = seedTransaction(db, { description: "Test", account: "Up" });
 
-    await expect(
-      caller.transactions.update({ id, data: { description: "" } })
-    ).rejects.toThrow(TRPCError);
+    await expect(caller.transactions.update({ id, data: { description: "" } })).rejects.toThrow(
+      TRPCError
+    );
     await expect(
       caller.transactions.update({ id, data: { description: "" } })
     ).rejects.toMatchObject({

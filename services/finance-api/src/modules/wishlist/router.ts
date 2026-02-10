@@ -24,12 +24,7 @@ export const wishlistRouter = router({
     const limit = input.limit ?? DEFAULT_LIMIT;
     const offset = input.offset ?? DEFAULT_OFFSET;
 
-    const { rows, total } = service.listWishListItems(
-      input.search,
-      input.priority,
-      limit,
-      offset
-    );
+    const { rows, total } = service.listWishListItems(input.search, input.priority, limit, offset);
 
     return {
       data: rows.map(toWishListItem),

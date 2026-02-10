@@ -396,12 +396,10 @@ describe("inventory.update", () => {
   it("throws BAD_REQUEST for empty itemName", async () => {
     const id = seedInventoryItem(db, { item_name: "MacBook" });
 
-    await expect(
-      caller.inventory.update({ id, data: { itemName: "" } })
-    ).rejects.toThrow(TRPCError);
-    await expect(
-      caller.inventory.update({ id, data: { itemName: "" } })
-    ).rejects.toMatchObject({
+    await expect(caller.inventory.update({ id, data: { itemName: "" } })).rejects.toThrow(
+      TRPCError
+    );
+    await expect(caller.inventory.update({ id, data: { itemName: "" } })).rejects.toMatchObject({
       code: "BAD_REQUEST",
     });
   });
