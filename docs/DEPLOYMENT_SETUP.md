@@ -1,6 +1,23 @@
 # Deployment Setup Checklist
 
-Complete these steps once to enable automatic deployment on push to main.
+⚠️ **CRITICAL SECURITY WARNING** ⚠️
+
+**Self-hosted runners are NOT SAFE with public repositories.**
+
+Before proceeding, you MUST choose one:
+
+1. **Make repository private** (RECOMMENDED)
+   - Settings → Change visibility → Make private
+   - Then follow this guide
+
+2. **Keep repo public, use manual deployment only**
+   - Already configured (workflow_dispatch only)
+   - Never enable automatic deployment
+   - See docs/SECURITY_WARNING.md
+
+**Read docs/SECURITY_WARNING.md before proceeding.**
+
+---
 
 ## Prerequisites
 

@@ -1,15 +1,8 @@
 name: Deploy to Production
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "services/**"
-      - "ansible/**"
-      - "docker-compose.yml"
-      - ".github/workflows/deploy.yml"
-
-  # Allow manual deployment trigger
+  # SECURITY: Disabled automatic deployment on public repo with self-hosted runner
+  # Only allow manual deployment trigger by repo owner
   workflow_dispatch:
 
 jobs:

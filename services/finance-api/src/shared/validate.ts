@@ -22,7 +22,7 @@ function formatIssues(issues: ZodIssue[]): Array<{ path: string; message: string
  * For "query"/"params", validates only — the route handler uses req.query/req.params as normal.
  * On failure, throws a ValidationError caught by the global error handler.
  */
-export function validate(schema: ZodType, field: RequestField = "body") {
+export function validate<T>(schema: ZodType<T>, field: RequestField = "body") {
   return (req: Request, _res: Response, next: NextFunction): void => {
     const result = schema.safeParse(req[field]);
     if (!result.success) {
@@ -30,7 +30,7 @@ export function validate(schema: ZodType, field: RequestField = "body") {
     }
     // Only replace body — query/params have readonly-ish Express types
     if (field === "body") {
-      req.body = result.data as typeof req.body;
+      req.body = result.data;
     }
     next();
   };
