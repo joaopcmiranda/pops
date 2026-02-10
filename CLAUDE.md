@@ -220,15 +220,13 @@ Full project documentation lives in Notion under **POPS - Personal Ops** (`30240
 
 ## Development Workflow
 
-All non-trivial work happens in git worktrees. The main conversation orchestrates; background agents execute.
-
 ### Process
 
-1. **Create worktree:** `worktree-branch <branch-name>` from the repo root
-2. **Launch background agent** targeting the worktree at `../<branch-name>` (absolute path: `/Volumes/knox/helix/dev/<branch-name>`)
-3. **Agent completes autonomously:** implements, tests, commits, pushes, and opens a PR
-4. **Main conversation reviews** agent output, checks PR, requests changes if needed
-5. **Cleanup after merge:** `git worktree remove ../<branch-name> && git branch -d <branch-name>`
+1. **Create branch:** `git checkout -b <branch-name>` from main
+2. **Implement:** Make changes, run tests, typecheck
+3. **Commit & push:** Commit changes and push to remote
+4. **Create PR:** Open pull request for review
+5. **Cleanup after merge:** `git branch -d <branch-name>`
 
 ### Branch Naming
 
@@ -240,20 +238,9 @@ All non-trivial work happens in git worktrees. The main conversation orchestrate
 ### Rules
 
 - **Never commit directly to `main`** — all changes go through PRs
-- Each worktree = one focused task = one PR
-- Background agents must include full context in their prompt (they start fresh — no conversation history)
-- Agents must run tests and typecheck before committing
-- Multiple worktrees can run in parallel for independent tasks
-- Trivial fixes (typos, single-line changes) can skip worktrees and go direct to a branch + PR
-
-### Agent Prompt Template
-
-When launching a background agent, include:
-- The absolute worktree path
-- What to implement (with enough detail to work autonomously)
-- Which files to read first for context
-- The branch name (already created by `worktree-branch`)
-- Instruction to commit, push, and create a PR when done
+- Run tests and typecheck before committing
+- Each branch = one focused task = one PR
+- Keep commits atomic and well-described
 
 ## Rules and Standards
 
