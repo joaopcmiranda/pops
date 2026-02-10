@@ -1,3 +1,4 @@
+#jinja2:variable_start_string:'[%',variable_end_string:'%]',comment_start_string:'[#',comment_end_string:'#]'
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -5,7 +6,7 @@ SERVICES=("pops-finance-api" "pops-pwa" "pops-metabase" "pops-paperless" "pops-c
 FAILED=()
 
 for svc in "${SERVICES[@]}"; do
-  if ! docker inspect --format='{% raw %}{{.State.Running}}{% endraw %}' "$svc" 2>/dev/null | grep -q true; then
+  if ! docker inspect --format='{{.State.Running}}' "$svc" 2>/dev/null | grep -q true; then
     FAILED+=("$svc")
   fi
 done
