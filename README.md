@@ -111,3 +111,60 @@ A unified platform for financial tracking, asset management, budgeting, AI-power
 | Amex | Credit Card | CSV export | Manual download |
 | Up Checking / Piggy | Checking + Savings | Up Bank API | Fully automatable (webhooks) |
 | ING Everyday / Loan | Checking + Personal Loan | CSV export | Manual download |
+
+## Development Workflow
+
+### CI/CD Pipeline
+
+All code changes are validated automatically via GitHub Actions before merge:
+
+#### Ansible CI
+- **YAML Linting** - Validates YAML syntax and formatting (`yamllint`)
+- **Ansible Linting** - Enforces best practices (`ansible-lint` production profile)
+- **Syntax Checking** - Validates playbook syntax (all playbooks in matrix)
+- **Security Scanning** - Checks for hardcoded secrets and vault encryption
+- **Best Practices** - Validates FQCN usage, become patterns, minimal shell usage
+
+See [ansible/README.md](ansible/README.md) for detailed Ansible documentation.
+
+### Pre-commit Hooks
+
+Install pre-commit hooks to run quality checks locally before committing:
+
+```bash
+# Install pre-commit
+pip install pre-commit
+
+# Install hooks
+pre-commit install
+
+# Run manually on all files
+pre-commit run --all-files
+```
+
+Hooks include:
+- `yamllint` - YAML syntax and formatting
+- `ansible-lint` - Ansible best practices
+- `detect-secrets` - Hardcoded credentials detection
+- `check-yaml` - YAML syntax validation
+- `trailing-whitespace` - Trailing whitespace removal
+- `end-of-file-fixer` - Ensure files end with newline
+- `check-added-large-files` - Prevent large file commits
+
+### Local Development Setup
+
+```bash
+# Install Ansible tools
+pip install -r ansible/requirements.txt
+
+# Install Ansible Galaxy collections
+ansible-galaxy collection install community.general
+ansible-galaxy collection install community.docker
+
+# Run Ansible linting locally
+yamllint ansible/
+ansible-lint ansible/
+
+# Syntax check playbooks
+ansible-playbook --syntax-check ansible/playbooks/site.yml
+```

@@ -1,0 +1,68 @@
+---
+# Pre-commit hooks for POPS project
+# Install: pip install pre-commit && pre-commit install
+# Run manually: pre-commit run --all-files
+
+repos:
+  # YAML linting
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        name: YAML Lint
+        args: [-c=.yamllint]
+        files: ^ansible/
+
+  # Ansible linting
+  - repo: https://github.com/ansible/ansible-lint
+    rev: v24.2.0
+    hooks:
+      - id: ansible-lint
+        name: Ansible Lint
+        files: ^ansible/
+        args:
+          - --profile=production
+          - --config-file=.ansible-lint
+
+  # General checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        name: Trim Trailing Whitespace
+        exclude: ^services/
+      - id: end-of-file-fixer
+        name: Fix End of Files
+        exclude: ^services/
+      - id: check-yaml
+        name: Check YAML Syntax
+        args: [--allow-multiple-documents]
+        exclude: ^ansible/inventory/group_vars/pops_servers/vault.yml$
+      - id: check-added-large-files
+        name: Check for Large Files
+        args: [--maxkb=1000]
+      - id: check-merge-conflict
+        name: Check for Merge Conflicts
+      - id: check-case-conflict
+        name: Check for Case Conflicts
+      - id: mixed-line-ending
+        name: Check Line Endings
+        args: [--fix=lf]
+
+  # Security checks
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        name: Detect Secrets
+        args:
+          - --baseline
+          - .secrets.baseline
+        exclude: ^ansible/inventory/group_vars/pops_servers/vault.yml$
+
+# CI-specific configuration
+ci:
+  autofix_commit_msg: 'fix: auto-fixes from pre-commit hooks'
+  autofix_prs: true
+  autoupdate_commit_msg: 'chore: update pre-commit hooks'
+  autoupdate_schedule: monthly

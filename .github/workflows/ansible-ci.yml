@@ -1,0 +1,220 @@
+---
+name: Ansible CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'ansible/**'
+      - '.ansible-lint'
+      - '.yamllint'
+      - '.github/workflows/ansible-ci.yml'
+  pull_request:
+    paths:
+      - 'ansible/**'
+      - '.ansible-lint'
+      - '.yamllint'
+      - '.github/workflows/ansible-ci.yml'
+
+jobs:
+  lint-yaml:
+    name: YAML Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install yamllint
+        run: pip install yamllint
+
+      - name: Run yamllint on Ansible files
+        run: yamllint ansible/
+
+  ansible-lint:
+    name: Ansible Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install Ansible and ansible-lint
+        run: |
+          pip install ansible-core ansible-lint
+
+      - name: Install Ansible Galaxy collections
+        run: |
+          ansible-galaxy collection install community.general
+          ansible-galaxy collection install community.docker
+          ansible-galaxy collection install ansible.posix
+
+      - name: Run ansible-lint
+        working-directory: ansible
+        run: ansible-lint .
+
+  syntax-check:
+    name: Ansible Syntax Check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        playbook:
+          - ansible/playbooks/site.yml
+          - ansible/playbooks/deploy.yml
+          - ansible/playbooks/bootstrap.yml
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install Ansible
+        run: pip install ansible-core
+
+      - name: Install Ansible Galaxy collections
+        run: |
+          ansible-galaxy collection install community.general
+          ansible-galaxy collection install community.docker
+          ansible-galaxy collection install ansible.posix
+
+      - name: Create dummy vault password file
+        run: echo "dummy-password-for-ci" > /tmp/vault-pass
+
+      - name: Run syntax check on ${{ matrix.playbook }}
+        run: |
+          cd ansible
+          ansible-playbook --syntax-check \
+            --vault-password-file=/tmp/vault-pass \
+            ../${{ matrix.playbook }}
+
+  security-check:
+    name: Security Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install ansible-lint
+        run: pip install ansible-lint
+
+      - name: Check for hardcoded secrets (basic scan)
+        run: |
+          # Check for common secret patterns in non-vault files
+          if grep -r -i \
+            --exclude-dir=.git \
+            --exclude="*.enc" \
+            --exclude="vault.yml" \
+            -E '(password|secret|api[_-]?key|token|credential):\s*["\047][^"\047]{8,}["\047]' \
+            ansible/; then
+            echo "Potential hardcoded secrets found!"
+            exit 1
+          else
+            echo "No obvious hardcoded secrets detected"
+          fi
+
+      - name: Check vault file is encrypted
+        run: |
+          if [ -f ansible/inventory/group_vars/pops_servers/vault.yml ]; then
+            if head -n 1 ansible/inventory/group_vars/pops_servers/vault.yml | grep -q '$ANSIBLE_VAULT'; then
+              echo "Vault file is properly encrypted"
+            else
+              echo "ERROR: vault.yml is not encrypted!"
+              exit 1
+            fi
+          else
+            echo "No vault file found (OK for CI)"
+          fi
+
+  best-practices:
+    name: Best Practices Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for become usage
+        run: |
+          echo "Checking for proper privilege escalation..."
+          # Ensure we're not using sudo directly
+          if grep -r "sudo:" ansible/roles/; then
+            echo "WARNING: Direct sudo usage found. Use 'become' instead."
+            exit 1
+          fi
+          echo "No direct sudo usage found ✓"
+
+      - name: Check for shell module usage
+        run: |
+          echo "Checking for shell module best practices..."
+          # Prefer command module over shell when possible
+          shell_count=$(grep -r "ansible.builtin.shell:" ansible/roles/ | wc -l || echo "0")
+          echo "Shell module usage count: $shell_count"
+          if [ "$shell_count" -gt 10 ]; then
+            echo "WARNING: High shell module usage. Consider using specific modules."
+          fi
+
+      - name: Check for FQCNs (Fully Qualified Collection Names)
+        run: |
+          echo "Checking for FQCN usage..."
+          # Ensure using FQCNs like ansible.builtin.* instead of bare module names
+          if grep -r -E "^[[:space:]]+-[[:space:]]+[a-z_]+:" ansible/roles/ | \
+             grep -v "ansible.builtin." | \
+             grep -v "community.general." | \
+             grep -v "community.docker." | \
+             grep -v "name:" | \
+             grep -v "hosts:" | \
+             grep -v "become:" | \
+             grep -v "vars:" | \
+             grep -v "tasks:" | \
+             grep -v "handlers:" | \
+             grep -v "roles:" | \
+             head -n 5; then
+            echo "Consider using FQCNs for all modules"
+          else
+            echo "FQCN usage looks good ✓"
+          fi
+
+  summary:
+    name: CI Summary
+    runs-on: ubuntu-latest
+    needs: [lint-yaml, ansible-lint, syntax-check, security-check, best-practices]
+    if: always()
+    steps:
+      - name: Check job statuses
+        run: |
+          if [[ "${{ needs.lint-yaml.result }}" == "success" ]] && \
+             [[ "${{ needs.ansible-lint.result }}" == "success" ]] && \
+             [[ "${{ needs.syntax-check.result }}" == "success" ]] && \
+             [[ "${{ needs.security-check.result }}" == "success" ]] && \
+             [[ "${{ needs.best-practices.result }}" == "success" ]]; then
+            echo "✅ All Ansible CI checks passed!"
+            exit 0
+          else
+            echo "❌ Some Ansible CI checks failed"
+            echo "YAML Lint: ${{ needs.lint-yaml.result }}"
+            echo "Ansible Lint: ${{ needs.ansible-lint.result }}"
+            echo "Syntax Check: ${{ needs.syntax-check.result }}"
+            echo "Security Check: ${{ needs.security-check.result }}"
+            echo "Best Practices: ${{ needs.best-practices.result }}"
+            exit 1
+          fi
