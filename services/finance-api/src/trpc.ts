@@ -4,74 +4,73 @@
  */
 import { initTRPC, TRPCError } from "@trpc/server";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
-import { readFileSync } from "node:fs";
+import { verifyCloudflareJWT } from "./middleware/cloudflare-jwt.js";
 
-/** Lazy-loaded API key for authentication. */
-let apiKey: string | null = null;
-
-function getApiKey(): string {
-  if (apiKey) return apiKey;
-
-  const filePath = process.env["FINANCE_API_KEY_FILE"];
-  if (filePath) {
-    apiKey = readFileSync(filePath, "utf-8").trim();
-    return apiKey;
-  }
-
-  const envKey = process.env["FINANCE_API_KEY"];
-  if (envKey) {
-    apiKey = envKey;
-    return apiKey;
-  }
-
-  throw new Error("Missing FINANCE_API_KEY_FILE or FINANCE_API_KEY");
+/**
+ * User context extracted from Cloudflare Access JWT
+ */
+export interface User {
+  email: string;
 }
 
-/** Extract and validate Bearer token from Authorization header. */
-function validateAuth(authHeader: string | undefined): void {
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "Missing or invalid Authorization header",
-    });
-  }
-
-  const token = authHeader.slice(7);
-  if (token !== getApiKey()) {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "Invalid API key",
-    });
-  }
+/**
+ * tRPC context available in all procedures
+ */
+export interface Context {
+  user: User | null;
 }
 
 /**
  * Create tRPC context from Express request.
- * Auth validation happens in the `protectedProcedure` middleware.
+ * Validates Cloudflare Access JWT and extracts user info.
  */
-export function createContext({ req }: CreateExpressContextOptions): {
-  authHeader: string | undefined;
-} {
-  return {
-    authHeader: req.headers.authorization,
-  };
+export async function createContext({
+  req,
+}: CreateExpressContextOptions): Promise<Context> {
+  const token = req.headers["cf-access-jwt-assertion"];
+
+  if (typeof token === "string") {
+    try {
+      const payload = await verifyCloudflareJWT(token);
+      return {
+        user: {
+          email: payload.email,
+        },
+      };
+    } catch (error) {
+      console.error("[trpc] JWT verification failed:", error);
+      return { user: null };
+    }
+  }
+
+  return { user: null };
 }
 
-export type Context = Awaited<ReturnType<typeof createContext>>;
+export type ContextType = Awaited<ReturnType<typeof createContext>>;
 
 const t = initTRPC.context<Context>().create();
 
 /** Base router for composing routers. */
 export const router = t.router;
 
-/** Base procedure for merging middleware. */
+/** Base procedure for all endpoints (no auth required). */
 export const publicProcedure = t.procedure;
 
 /**
- * Protected procedure that requires valid Bearer token.
+ * Protected procedure that requires valid Cloudflare Access JWT.
  * Use this for all authenticated endpoints.
  */
 export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
-  validateAuth(ctx.authHeader);
-  return next();
+  if (!ctx.user) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Missing or invalid Cloudflare Access JWT",
+    });
+  }
+
+  return next({
+    ctx: {
+      user: ctx.user,
+    },
+  });
 });

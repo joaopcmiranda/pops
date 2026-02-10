@@ -1,0 +1,35 @@
+name: PWA CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "services/pops-pwa/**"
+      - ".github/workflows/pwa-ci.yml"
+  pull_request:
+    paths:
+      - "services/pops-pwa/**"
+      - ".github/workflows/pwa-ci.yml"
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Type check
+        run: cd services/pops-pwa && yarn typecheck
+
+      - name: Lint
+        run: cd services/pops-pwa && yarn lint
+
+      - name: Build
+        run: cd services/pops-pwa && yarn build

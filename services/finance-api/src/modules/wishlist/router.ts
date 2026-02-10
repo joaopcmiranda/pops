@@ -1,7 +1,7 @@
 /**
  * Wish list tRPC router — CRUD procedures for wish list items.
  */
-import { z } from "zod/v4";
+import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure } from "../../trpc.js";
 import { paginationMeta } from "../../shared/pagination.js";

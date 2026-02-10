@@ -8,15 +8,13 @@ import { setDb, closeDb } from "../db.js";
 import { appRouter } from "../router.js";
 import type { Context } from "../trpc.js";
 
-const TEST_API_KEY = "test-api-key-for-tests";
-
 /**
  * Create a tRPC caller with authentication.
  * Use this in tests to call procedures directly.
  */
 export function createCaller(authenticated = true): ReturnType<typeof appRouter.createCaller> {
   const ctx: Context = {
-    authHeader: authenticated ? `Bearer ${TEST_API_KEY}` : undefined,
+    user: authenticated ? { email: 'test@example.com' } : null,
   };
   return appRouter.createCaller(ctx);
 }
@@ -344,7 +342,6 @@ export function setupTestContext() {
   let db: Database;
 
   function setup(): { db: Database; caller: ReturnType<typeof createCaller> } {
-    process.env["FINANCE_API_KEY"] = TEST_API_KEY;
     db = createTestDb();
     setDb(db);
     return { db, caller: createCaller(true) };
