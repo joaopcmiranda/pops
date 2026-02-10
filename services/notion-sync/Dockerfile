@@ -23,5 +23,4 @@ WORKDIR /app
 COPY --from=builder /app/services/notion-sync/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/services/notion-sync/package.json ./
-USER node
 CMD ["node", "dist/index.js"]
