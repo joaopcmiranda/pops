@@ -3,18 +3,18 @@ name: Tools CI
 on:
   pull_request:
     paths:
-      - 'tools/**'
+      - 'packages/import-tools/**'
       - '.github/workflows/tools-ci.yml'
   push:
     branches:
       - main
     paths:
-      - 'tools/**'
+      - 'packages/import-tools/**'
       - '.github/workflows/tools-ci.yml'
 
 defaults:
   run:
-    working-directory: tools
+    working-directory: packages/import-tools
 
 jobs:
   quality:
@@ -31,7 +31,7 @@ jobs:
         with:
           node-version: '22'
           cache: 'yarn'
-          cache-dependency-path: tools/yarn.lock
+          cache-dependency-path: packages/import-tools/yarn.lock
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile

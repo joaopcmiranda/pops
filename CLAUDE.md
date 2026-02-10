@@ -12,21 +12,21 @@ Phase 0 (data import) is complete. Phase 1 (Foundation) targets March 2026.
 
 ### Services (each has its own package.json)
 ```bash
-cd services/notion-sync && yarn install && yarn dev        # Run sync locally
-cd services/finance-api && yarn install && yarn dev        # API with watch mode
-cd services/pops-pwa && yarn install && yarn dev           # Vite dev server
+cd apps/notion-sync && yarn install && yarn dev        # Run sync locally
+cd apps/finance-api && yarn install && yarn dev        # API with watch mode
+cd apps/pops-pwa && yarn install && yarn dev           # Vite dev server
 
 # Typecheck a service
-cd services/<service> && yarn typecheck
+cd apps/<service> && yarn typecheck
 
 # Run tests
-cd services/<service> && yarn test                 # single run
-cd services/<service> && yarn test:watch           # watch mode
+cd apps/<service> && yarn test                 # single run
+cd apps/<service> && yarn test:watch           # watch mode
 ```
 
 ### Tools (import scripts)
 ```bash
-cd tools && yarn install
+cd packages/import-tools && yarn install
 
 yarn import:anz --csv path/to/file.csv --execute           # ANZ import
 yarn import:amex --csv path/to/file.csv --execute          # Amex import
@@ -57,16 +57,16 @@ git worktree remove ../<branch-name> && git branch -d <branch-name>
 
 ### Docker
 ```bash
-docker compose build                                       # Build all custom images
-docker compose up -d                                       # Start all services
-docker compose --profile tools run --rm tools src/import-anz.ts /data/imports/anz.csv
-docker compose config                                      # Validate compose file
+docker compose -f infra/docker-compose.yml build           # Build all custom images
+docker compose -f infra/docker-compose.yml up -d           # Start all services
+docker compose -f infra/docker-compose.yml --profile tools run --rm tools src/import-anz.ts /data/imports/anz.csv
+docker compose -f infra/docker-compose.yml config          # Validate compose file
 ```
 
 ### Ansible
 ```bash
-# All ansible commands must run from the ansible/ directory due to relative roles_path
-cd ansible
+# All ansible commands must run from the infra/ansible/ directory due to relative roles_path
+cd infra/ansible
 
 # Provision fresh N95 (full run)
 ansible-playbook playbooks/site.yml
@@ -77,19 +77,36 @@ ansible-playbook playbooks/deploy.yml
 # Syntax check
 ansible-playbook playbooks/site.yml --syntax-check
 
-# Encrypt vault file (path relative to ansible/)
+# Encrypt vault file (path relative to infra/ansible/)
 ansible-vault encrypt inventory/group_vars/pops_servers/vault.yml
 ```
 
 ## Repo Structure
 
-- `ansible/` — Ansible playbooks + roles for provisioning the N95 mini PC
-- `services/notion-sync/` — Notion → SQLite mirror (runs via systemd timer, not always-on)
-- `services/finance-api/` — Express REST API over SQLite (bridges frontend/backend networks)
-- `services/pops-pwa/` — React PWA served via nginx (Phase 4 stub)
-- `services/moltbot/` — Config + custom finance skill for Moltbot (no Dockerfile, uses upstream image)
-- `tools/` — Import scripts (on-demand, run via `--profile tools` or locally)
-- `docker-compose.yml` — Local dev compose; Ansible templates the production version
+```
+apps/
+├── notion-sync/          # Backend: Notion → SQLite sync
+├── finance-api/          # Backend: tRPC API
+├── pops-pwa/            # Frontend: React PWA
+└── moltbot/             # Bot: Telegram assistant
+
+packages/
+├── db-types/            # Shared: Database types (in workspace)
+└── import-tools/        # Shared: Import utilities (standalone, not in workspace)
+
+infra/
+├── ansible/             # Infrastructure as code
+└── docker-compose.yml   # Compose configs
+```
+
+- `apps/notion-sync/` — Notion → SQLite mirror (runs via systemd timer, not always-on)
+- `apps/finance-api/` — Express REST API over SQLite (bridges frontend/backend networks)
+- `apps/pops-pwa/` — React PWA served via nginx (Phase 4 stub)
+- `apps/moltbot/` — Config + custom finance skill for Moltbot (no Dockerfile, uses upstream image)
+- `packages/import-tools/` — Import scripts (on-demand, run via `--profile tools` or locally)
+- `packages/db-types/` — Shared TypeScript types for database schema
+- `infra/docker-compose.yml` — Local dev compose; Ansible templates the production version
+- `infra/ansible/` — Ansible playbooks + roles for provisioning the N95 mini PC
 
 ### Docker Networks
 - `pops-frontend` — cloudflared, pops-pwa, metabase, finance-api

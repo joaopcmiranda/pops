@@ -124,7 +124,7 @@ if [ "$SKIP_CHECKS" = false ]; then
 
     # Check finance-api
     echo -e "${BLUE}Finance API:${NC}"
-    cd services/finance-api
+    cd apps/finance-api
 
     if ! yarn typecheck; then
         echo -e "${RED}✗ TypeScript errors in finance-api${NC}"
@@ -142,7 +142,7 @@ if [ "$SKIP_CHECKS" = false ]; then
 
     # Check pops-pwa
     echo -e "${BLUE}PWA:${NC}"
-    cd services/pops-pwa
+    cd apps/pops-pwa
 
     if ! yarn typecheck; then
         echo -e "${RED}✗ TypeScript errors in pops-pwa${NC}"
@@ -212,7 +212,7 @@ if [ "$VERBOSE" = true ]; then
     ANSIBLE_ARGS="$ANSIBLE_ARGS -vv"
 fi
 
-if (cd ansible && ansible-playbook playbooks/deploy.yml $ANSIBLE_ARGS); then
+if (cd infra/ansible && ansible-playbook playbooks/deploy.yml $ANSIBLE_ARGS); then
     echo ""
     echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo -e "${GREEN}✓ Deployment successful!${NC}"
@@ -226,9 +226,9 @@ if (cd ansible && ansible-playbook playbooks/deploy.yml $ANSIBLE_ARGS); then
         COMMIT_MSG="Deploy $NEXT_VERSION to production
 
 Deployed services:
-- finance-api: $(cd services/finance-api && git log -1 --pretty=format:'%h %s')
-- pops-pwa: $(cd services/pops-pwa && git log -1 --pretty=format:'%h %s')
-- notion-sync: $(cd services/notion-sync && git log -1 --pretty=format:'%h %s')
+- finance-api: $(cd apps/finance-api && git log -1 --pretty=format:'%h %s')
+- pops-pwa: $(cd apps/pops-pwa && git log -1 --pretty=format:'%h %s')
+- notion-sync: $(cd apps/notion-sync && git log -1 --pretty=format:'%h %s')
 
 Deployed at: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
 Deployed to: pops.local (N95)"

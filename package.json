@@ -2,8 +2,8 @@
   "name": "@pops/monorepo",
   "private": true,
   "workspaces": [
-    "packages/*",
-    "services/*"
+    "packages/db-types",
+    "apps/*"
   ],
   "scripts": {
     "typecheck": "yarn workspaces foreach -A run typecheck",

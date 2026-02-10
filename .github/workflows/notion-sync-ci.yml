@@ -5,13 +5,13 @@ on:
     branches:
       - main
     paths:
-      - 'services/notion-sync/**'
+      - 'apps/notion-sync/**'
       - '.github/workflows/notion-sync-ci.yml'
   pull_request:
     branches:
       - main
     paths:
-      - 'services/notion-sync/**'
+      - 'apps/notion-sync/**'
       - '.github/workflows/notion-sync-ci.yml'
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: services/notion-sync
+        working-directory: apps/notion-sync
 
     steps:
       - name: Checkout repository
@@ -31,7 +31,7 @@ jobs:
         with:
           node-version: '22'
           cache: 'yarn'
-          cache-dependency-path: services/notion-sync/yarn.lock
+          cache-dependency-path: apps/notion-sync/yarn.lock
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile

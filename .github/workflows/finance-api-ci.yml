@@ -3,14 +3,14 @@ name: Finance API CI
 on:
   pull_request:
     paths:
-      - "services/finance-api/**"
+      - "apps/finance-api/**"
       - "packages/db-types/**"
       - ".github/workflows/finance-api-ci.yml"
   push:
     branches:
       - main
     paths:
-      - "services/finance-api/**"
+      - "apps/finance-api/**"
       - "packages/db-types/**"
       - ".github/workflows/finance-api-ci.yml"
 
@@ -36,24 +36,24 @@ jobs:
         run: cd packages/db-types && yarn build
 
       - name: Type check
-        run: cd services/finance-api && yarn typecheck
+        run: cd apps/finance-api && yarn typecheck
 
       - name: Lint
-        run: cd services/finance-api && yarn lint
+        run: cd apps/finance-api && yarn lint
 
       - name: Format check
-        run: cd services/finance-api && yarn format
+        run: cd apps/finance-api && yarn format
 
       - name: Run tests
-        run: cd services/finance-api && yarn test
+        run: cd apps/finance-api && yarn test
 
       - name: Build
-        run: cd services/finance-api && yarn build
+        run: cd apps/finance-api && yarn build
 
       - name: Upload build artifacts
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: finance-api-build
-          path: services/finance-api/dist
+          path: apps/finance-api/dist
           retention-days: 7

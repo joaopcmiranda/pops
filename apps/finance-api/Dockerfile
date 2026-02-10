@@ -6,7 +6,7 @@ COPY package.json yarn.lock ./
 
 # Copy all workspace packages
 COPY packages/db-types/package.json ./packages/db-types/
-COPY services/finance-api/package.json ./services/finance-api/
+COPY apps/finance-api/package.json ./apps/finance-api/
 
 # Install dependencies (workspace resolution)
 RUN yarn install --frozen-lockfile
@@ -14,15 +14,15 @@ RUN yarn install --frozen-lockfile
 # Copy source files
 COPY packages/db-types/src ./packages/db-types/src
 COPY packages/db-types/tsconfig.json ./packages/db-types/
-COPY services/finance-api/tsconfig.json ./services/finance-api/
-COPY services/finance-api/src ./services/finance-api/src
+COPY apps/finance-api/tsconfig.json ./apps/finance-api/
+COPY apps/finance-api/src ./apps/finance-api/src
 
 # Build db-types first
 WORKDIR /app/packages/db-types
 RUN yarn build
 
 # Build finance-api
-WORKDIR /app/services/finance-api
+WORKDIR /app/apps/finance-api
 RUN yarn build
 
 FROM node:22-alpine
@@ -30,8 +30,8 @@ WORKDIR /app
 RUN apk add --no-cache curl
 
 # Copy built service
-COPY --from=builder /app/services/finance-api/dist ./dist
-COPY --from=builder /app/services/finance-api/package.json ./
+COPY --from=builder /app/apps/finance-api/dist ./dist
+COPY --from=builder /app/apps/finance-api/package.json ./
 
 # Copy node_modules and workspace dependencies
 COPY --from=builder /app/node_modules ./node_modules

@@ -95,7 +95,7 @@ Choose **one** of these methods:
 
 3. Update Ansible inventory:
    ```yaml
-   # ansible/inventory/hosts.yml
+   # infra/ansible/inventory/hosts.yml
    n95:
      ansible_host: 100.x.x.x  # Your Tailscale IP
      ansible_port: 22
@@ -138,7 +138,7 @@ The new Cloudflare JWT authentication requires additional secrets in Ansible vau
 
 1. Edit vault file:
    ```bash
-   ansible-vault edit ansible/inventory/group_vars/pops_servers/vault.yml
+   ansible-vault edit infra/ansible/inventory/group_vars/pops_servers/vault.yml
    ```
 
 2. Add Cloudflare configuration:
@@ -154,7 +154,7 @@ The new Cloudflare JWT authentication requires additional secrets in Ansible vau
 
 4. Commit vault changes (encrypted):
    ```bash
-   git add ansible/inventory/group_vars/pops_servers/vault.yml
+   git add infra/ansible/inventory/group_vars/pops_servers/vault.yml
    git commit -m "chore: add cloudflare access configuration"
    ```
 
@@ -164,7 +164,7 @@ The finance-api now uses JWT instead of API keys.
 
 1. Check variables file:
    ```bash
-   cat ansible/inventory/group_vars/pops_servers/vars.yml
+   cat infra/ansible/inventory/group_vars/pops_servers/vars.yml
    ```
 
 2. Remove old API key variables (if present):
@@ -186,7 +186,7 @@ The Ansible template needs Cloudflare environment variables.
 
 1. Edit template:
    ```bash
-   vim ansible/roles/pops-deploy/templates/docker-compose.yml.j2
+   vim infra/ansible/roles/pops-deploy/templates/docker-compose.yml.j2
    ```
 
 2. Update finance-api service:
@@ -323,7 +323,7 @@ sudo systemctl restart actions.runner.*
 
 ```bash
 # Check Ansible can reach host
-ansible pops_servers -i ansible/inventory/hosts.yml -m ping
+ansible pops_servers -i infra/ansible/inventory/hosts.yml -m ping
 
 # Test Ansible playbook
 cd ansible
@@ -378,7 +378,7 @@ If deployment breaks production:
 3. Redeploy:
    ```bash
    cd /opt/pops
-   ansible-playbook ansible/playbooks/deploy.yml -i ansible/inventory/hosts.yml
+   ansible-playbook infra/ansible/playbooks/deploy.yml -i infra/ansible/inventory/hosts.yml
    ```
 
 4. Verify:
@@ -404,7 +404,7 @@ sudo ./svc.sh start
 
 1. Update Ansible vault:
    ```bash
-   ansible-vault edit ansible/inventory/group_vars/pops_servers/vault.yml
+   ansible-vault edit infra/ansible/inventory/group_vars/pops_servers/vault.yml
    ```
 
 2. Redeploy:

@@ -26,20 +26,20 @@ jobs:
 
       - name: Type check all services
         run: |
-          cd services/finance-api && yarn typecheck
+          cd apps/finance-api && yarn typecheck
           cd ../pops-pwa && yarn typecheck
 
       - name: Lint all services
         run: |
-          cd services/finance-api && yarn lint
+          cd apps/finance-api && yarn lint
           cd ../pops-pwa && yarn lint
 
       - name: Test finance-api
-        run: cd services/finance-api && yarn test
+        run: cd apps/finance-api && yarn test
 
       - name: Build all services
         run: |
-          cd services/finance-api && yarn build
+          cd apps/finance-api && yarn build
           cd ../pops-pwa && yarn build
 
   # Deploy to N95 server
@@ -75,7 +75,7 @@ jobs:
 
       - name: Run Ansible deployment
         run: |
-          cd ansible
+          cd infra/ansible
           ansible-playbook playbooks/deploy.yml \
             -i inventory/hosts.yml \
             --vault-password-file ~/.ansible/pops-vault-password \
