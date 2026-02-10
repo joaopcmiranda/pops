@@ -260,6 +260,66 @@ export function seedInventoryItem(
   return id;
 }
 
+/** Seed a single budget row into the test DB. Returns the notion_id. */
+export function seedBudget(
+  db: Database,
+  overrides: Partial<{
+    notion_id: string;
+    category: string;
+    period: string | null;
+    amount: number | null;
+    active: number;
+    notes: string | null;
+    last_edited_time: string;
+  }> = {}
+): string {
+  const id = overrides.notion_id ?? crypto.randomUUID();
+  db.prepare(`
+    INSERT INTO budgets (notion_id, category, period, amount, active, notes, last_edited_time)
+    VALUES (@notion_id, @category, @period, @amount, @active, @notes, @last_edited_time)
+  `).run({
+    notion_id: id,
+    category: overrides.category ?? "Test Category",
+    period: overrides.period ?? null,
+    amount: overrides.amount ?? null,
+    active: overrides.active ?? 0,
+    notes: overrides.notes ?? null,
+    last_edited_time: overrides.last_edited_time ?? "2025-01-01T00:00:00.000Z",
+  });
+  return id;
+}
+
+/** Seed a single wish list item row into the test DB. Returns the notion_id. */
+export function seedWishListItem(
+  db: Database,
+  overrides: Partial<{
+    notion_id: string;
+    item: string;
+    target_amount: number | null;
+    saved: number | null;
+    priority: string | null;
+    url: string | null;
+    notes: string | null;
+    last_edited_time: string;
+  }> = {}
+): string {
+  const id = overrides.notion_id ?? crypto.randomUUID();
+  db.prepare(`
+    INSERT INTO wish_list (notion_id, item, target_amount, saved, priority, url, notes, last_edited_time)
+    VALUES (@notion_id, @item, @target_amount, @saved, @priority, @url, @notes, @last_edited_time)
+  `).run({
+    notion_id: id,
+    item: overrides.item ?? "Test Wish List Item",
+    target_amount: overrides.target_amount ?? null,
+    saved: overrides.saved ?? null,
+    priority: overrides.priority ?? null,
+    url: overrides.url ?? null,
+    notes: overrides.notes ?? null,
+    last_edited_time: overrides.last_edited_time ?? "2025-01-01T00:00:00.000Z",
+  });
+  return id;
+}
+
 /**
  * Setup helper for test suites. Call in beforeEach/afterEach.
  * Returns the test DB and an Express app wired to it.

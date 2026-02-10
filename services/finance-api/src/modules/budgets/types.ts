@@ -1,0 +1,69 @@
+import { z } from "zod/v4";
+
+/** SQLite row shape returned by queries (snake_case columns). */
+export interface BudgetRow {
+  notion_id: string;
+  category: string;
+  period: string | null;
+  amount: number | null;
+  active: number;
+  notes: string | null;
+  last_edited_time: string;
+}
+
+/** API response shape (camelCase). */
+export interface Budget {
+  notionId: string;
+  category: string;
+  period: string | null;
+  amount: number | null;
+  active: boolean;
+  notes: string | null;
+  lastEditedTime: string;
+}
+
+/**
+ * Map a SQLite row to the API response shape.
+ * Converts active from INTEGER (0/1) to boolean.
+ */
+export function toBudget(row: BudgetRow): Budget {
+  return {
+    notionId: row.notion_id,
+    category: row.category,
+    period: row.period,
+    amount: row.amount,
+    active: row.active === 1,
+    notes: row.notes,
+    lastEditedTime: row.last_edited_time,
+  };
+}
+
+/** Zod schema for creating a budget. */
+export const CreateBudgetSchema = z.object({
+  category: z.string().min(1, "Category is required"),
+  period: z.string().nullable().optional(),
+  amount: z.number().nullable().optional(),
+  active: z.boolean().optional().default(false),
+  notes: z.string().nullable().optional(),
+});
+export type CreateBudgetInput = z.infer<typeof CreateBudgetSchema>;
+
+/** Zod schema for updating a budget (all fields optional). */
+export const UpdateBudgetSchema = z.object({
+  category: z.string().min(1, "Category cannot be empty").optional(),
+  period: z.string().nullable().optional(),
+  amount: z.number().nullable().optional(),
+  active: z.boolean().optional(),
+  notes: z.string().nullable().optional(),
+});
+export type UpdateBudgetInput = z.infer<typeof UpdateBudgetSchema>;
+
+/** Zod schema for budget list query params. */
+export const BudgetQuerySchema = z.object({
+  search: z.string().optional(),
+  period: z.string().optional(),
+  active: z.enum(["true", "false"]).optional(),
+  limit: z.coerce.number().positive().optional(),
+  offset: z.coerce.number().nonnegative().optional(),
+});
+export type BudgetQuery = z.infer<typeof BudgetQuerySchema>;

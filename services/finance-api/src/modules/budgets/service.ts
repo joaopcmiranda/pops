@@ -1,0 +1,152 @@
+/**
+ * Budget service — CRUD operations against the SQLite budgets table.
+ * All SQL uses parameterized queries (no string interpolation).
+ */
+import { randomUUID } from "node:crypto";
+import { getDb } from "../../db.js";
+import { NotFoundError, ConflictError } from "../../shared/errors.js";
+import type { BudgetRow, CreateBudgetInput, UpdateBudgetInput } from "./types.js";
+
+/** Count + rows for a paginated list. */
+export interface BudgetListResult {
+  rows: BudgetRow[];
+  total: number;
+}
+
+/**
+ * List budgets with optional filters.
+ * @param search - LIKE search on category field
+ * @param period - Exact match on period field
+ * @param active - Filter by active status (boolean)
+ */
+export function listBudgets(
+  search: string | undefined,
+  period: string | undefined,
+  active: boolean | undefined,
+  limit: number,
+  offset: number
+): BudgetListResult {
+  const db = getDb();
+  const conditions: string[] = [];
+  const params: Record<string, string | number> = {};
+
+  if (search) {
+    conditions.push("category LIKE @search");
+    params["search"] = `%${search}%`;
+  }
+  if (period) {
+    conditions.push("period = @period");
+    params["period"] = period;
+  }
+  if (active !== undefined) {
+    conditions.push("active = @active");
+    params["active"] = active ? 1 : 0;
+  }
+
+  const where = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
+  const rows = db
+    .prepare(`SELECT * FROM budgets ${where} ORDER BY category LIMIT @limit OFFSET @offset`)
+    .all({ ...params, limit, offset }) as BudgetRow[];
+
+  const countRow = db
+    .prepare(`SELECT COUNT(*) as total FROM budgets ${where}`)
+    .get(params) as { total: number };
+
+  return { rows, total: countRow.total };
+}
+
+/** Get a single budget by notion_id. Throws NotFoundError if missing. */
+export function getBudget(id: string): BudgetRow {
+  const db = getDb();
+  const row = db
+    .prepare("SELECT * FROM budgets WHERE notion_id = ?")
+    .get(id) as BudgetRow | undefined;
+
+  if (!row) throw new NotFoundError("Budget", id);
+  return row;
+}
+
+/**
+ * Create a new budget. Returns the created row.
+ * Throws ConflictError if a budget with the same category+period combination already exists.
+ */
+export function createBudget(input: CreateBudgetInput): BudgetRow {
+  const db = getDb();
+  const id = randomUUID();
+  const now = new Date().toISOString();
+
+  // Check for duplicate category+period combination
+  const existing = db
+    .prepare("SELECT notion_id FROM budgets WHERE category = ? AND (period = ? OR (period IS NULL AND ? IS NULL))")
+    .get(input.category, input.period ?? null, input.period ?? null) as { notion_id: string } | undefined;
+
+  if (existing) {
+    const periodDesc = input.period ? `'${input.period}'` : "null";
+    throw new ConflictError(`Budget with category '${input.category}' and period ${periodDesc} already exists`);
+  }
+
+  db.prepare(`
+    INSERT INTO budgets (notion_id, category, period, amount, active, notes, last_edited_time)
+    VALUES (@notionId, @category, @period, @amount, @active, @notes, @lastEditedTime)
+  `).run({
+    notionId: id,
+    category: input.category,
+    period: input.period ?? null,
+    amount: input.amount ?? null,
+    active: input.active ? 1 : 0,
+    notes: input.notes ?? null,
+    lastEditedTime: now,
+  });
+
+  return getBudget(id);
+}
+
+/** Update an existing budget. Returns the updated row. */
+export function updateBudget(id: string, input: UpdateBudgetInput): BudgetRow {
+  const db = getDb();
+
+  // Verify it exists first
+  getBudget(id);
+
+  const fields: string[] = [];
+  const params: Record<string, string | number | null> = { notionId: id };
+
+  if (input.category !== undefined) {
+    fields.push("category = @category");
+    params["category"] = input.category;
+  }
+  if (input.period !== undefined) {
+    fields.push("period = @period");
+    params["period"] = input.period ?? null;
+  }
+  if (input.amount !== undefined) {
+    fields.push("amount = @amount");
+    params["amount"] = input.amount ?? null;
+  }
+  if (input.active !== undefined) {
+    fields.push("active = @active");
+    params["active"] = input.active ? 1 : 0;
+  }
+  if (input.notes !== undefined) {
+    fields.push("notes = @notes");
+    params["notes"] = input.notes ?? null;
+  }
+
+  if (fields.length > 0) {
+    fields.push("last_edited_time = @lastEditedTime");
+    params["lastEditedTime"] = new Date().toISOString();
+
+    db.prepare(`UPDATE budgets SET ${fields.join(", ")} WHERE notion_id = @notionId`)
+      .run(params);
+  }
+
+  return getBudget(id);
+}
+
+/** Delete a budget by ID. Throws NotFoundError if missing. */
+export function deleteBudget(id: string): void {
+  const db = getDb();
+  const result = db.prepare("DELETE FROM budgets WHERE notion_id = ?").run(id);
+  if (result.changes === 0) throw new NotFoundError("Budget", id);
+}
