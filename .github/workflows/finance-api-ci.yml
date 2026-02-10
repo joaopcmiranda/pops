@@ -4,21 +4,20 @@ on:
   pull_request:
     paths:
       - "services/finance-api/**"
+      - "packages/db-types/**"
       - ".github/workflows/finance-api-ci.yml"
   push:
     branches:
       - main
     paths:
       - "services/finance-api/**"
+      - "packages/db-types/**"
       - ".github/workflows/finance-api-ci.yml"
 
 jobs:
   quality-checks:
     name: Quality Checks
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: services/finance-api
 
     steps:
       - name: Checkout repository
@@ -27,27 +26,29 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "yarn"
-          cache-dependency-path: services/finance-api/yarn.lock
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Build shared packages
+        run: cd packages/db-types && yarn build
+
       - name: Type check
-        run: yarn typecheck
+        run: cd services/finance-api && yarn typecheck
 
       - name: Lint
-        run: yarn lint
+        run: cd services/finance-api && yarn lint
 
       - name: Format check
-        run: yarn format
+        run: cd services/finance-api && yarn format
 
       - name: Run tests
-        run: yarn test
+        run: cd services/finance-api && yarn test
 
       - name: Build
-        run: yarn build
+        run: cd services/finance-api && yarn build
 
       - name: Upload build artifacts
         if: success()

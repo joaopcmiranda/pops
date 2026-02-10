@@ -21,6 +21,9 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Build shared packages
+        run: cd packages/db-types && yarn build
+
       - name: Type check all services
         run: |
           cd services/finance-api && yarn typecheck

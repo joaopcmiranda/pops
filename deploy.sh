@@ -110,6 +110,18 @@ echo ""
 if [ "$SKIP_CHECKS" = false ]; then
     echo -e "${YELLOW}Running quality checks...${NC}"
 
+    # Build shared packages first
+    echo -e "${BLUE}Shared packages:${NC}"
+    cd packages/db-types
+
+    if ! yarn build; then
+        echo -e "${RED}✗ Failed to build db-types${NC}"
+        exit 1
+    fi
+    echo -e "${GREEN}✓ db-types built${NC}"
+
+    cd ../..
+
     # Check finance-api
     echo -e "${BLUE}Finance API:${NC}"
     cd services/finance-api
