@@ -4,11 +4,11 @@ import { authMiddleware } from "./middleware/auth.js";
 import { rateLimiter } from "./middleware/rate-limit.js";
 import { errorHandler } from "./middleware/error-handler.js";
 import healthRouter from "./routes/health.js";
-import transactionsRouter from "./routes/transactions.js";
 import budgetsRouter from "./routes/budgets.js";
 import wishlistRouter from "./routes/wishlist.js";
 import upBankRouter from "./routes/webhooks/up-bank.js";
 import { entitiesRouter } from "./modules/entities/index.js";
+import { transactionsRouter } from "./modules/transactions/index.js";
 
 /**
  * Create and configure the Express application.
@@ -28,10 +28,10 @@ export function createApp(): express.Express {
 
   // Module routes (CRUD)
   app.use(entitiesRouter);
+  app.use(transactionsRouter);
 
   // Legacy routes (to be migrated to modules in Phase 2)
   app.use(healthRouter);
-  app.use(transactionsRouter);
   app.use(budgetsRouter);
   app.use(wishlistRouter);
   app.use(upBankRouter);

@@ -142,6 +142,63 @@ export function seedEntity(
   return id;
 }
 
+/** Seed a single transaction row into the test DB. Returns the notion_id. */
+export function seedTransaction(
+  db: Database,
+  overrides: Partial<{
+    notion_id: string;
+    description: string;
+    account: string;
+    amount: number;
+    date: string;
+    type: string;
+    categories: string;
+    entity_id: string | null;
+    entity_name: string | null;
+    location: string | null;
+    country: string | null;
+    online: number;
+    novated_lease: number;
+    tax_return: number;
+    related_transaction_id: string | null;
+    notes: string | null;
+    last_edited_time: string;
+  }> = {}
+): string {
+  const id = overrides.notion_id ?? crypto.randomUUID();
+  db.prepare(`
+    INSERT INTO transactions (
+      notion_id, description, account, amount, date, type, categories,
+      entity_id, entity_name, location, country, online, novated_lease,
+      tax_return, related_transaction_id, notes, last_edited_time
+    )
+    VALUES (
+      @notion_id, @description, @account, @amount, @date, @type, @categories,
+      @entity_id, @entity_name, @location, @country, @online, @novated_lease,
+      @tax_return, @related_transaction_id, @notes, @last_edited_time
+    )
+  `).run({
+    notion_id: id,
+    description: overrides.description ?? "Test Transaction",
+    account: overrides.account ?? "Test Account",
+    amount: overrides.amount ?? 100.0,
+    date: overrides.date ?? "2025-01-01",
+    type: overrides.type ?? "",
+    categories: overrides.categories ?? "",
+    entity_id: overrides.entity_id ?? null,
+    entity_name: overrides.entity_name ?? null,
+    location: overrides.location ?? null,
+    country: overrides.country ?? null,
+    online: overrides.online ?? 0,
+    novated_lease: overrides.novated_lease ?? 0,
+    tax_return: overrides.tax_return ?? 0,
+    related_transaction_id: overrides.related_transaction_id ?? null,
+    notes: overrides.notes ?? null,
+    last_edited_time: overrides.last_edited_time ?? "2025-01-01T00:00:00.000Z",
+  });
+  return id;
+}
+
 /**
  * Setup helper for test suites. Call in beforeEach/afterEach.
  * Returns the test DB and an Express app wired to it.
