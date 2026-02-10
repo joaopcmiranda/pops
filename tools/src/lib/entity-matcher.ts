@@ -1,4 +1,4 @@
-import type { EntityLookup, EntityMatch } from "./types.js";
+import type { EntityLookup, EntityMatch } from './types.js';
 
 /**
  * 5-stage entity matching pipeline.
@@ -21,15 +21,13 @@ export function matchEntity(
   const normalized = description.toUpperCase().trim();
 
   // Stage 1: Manual aliases
-  const aliasKey = Object.keys(aliases).find(
-    (key) => normalized.includes(key.toUpperCase())
-  );
+  const aliasKey = Object.keys(aliases).find((key) => normalized.includes(key.toUpperCase()));
   if (aliasKey) {
     const entityName = aliases[aliasKey];
     if (entityName === undefined) return null;
     const entityUrl = findInLookup(entityName, entityLookup);
     if (entityUrl) {
-      return { entityName, entityUrl, matchType: "alias" };
+      return { entityName, entityUrl, matchType: 'alias' };
     }
   }
 
@@ -38,23 +36,20 @@ export function matchEntity(
   if (result) return result;
 
   // Stage 5: Strip punctuation and retry
-  const stripped = normalized.replace(/[''`]/g, "");
+  const stripped = normalized.replace(/[''`]/g, '');
   const strippedResult = tryMatch(stripped, entityLookup);
   if (strippedResult) return strippedResult;
 
   return null;
 }
 
-function tryMatch(
-  normalized: string,
-  entityLookup: EntityLookup
-): EntityMatch | null {
+function tryMatch(normalized: string, entityLookup: EntityLookup): EntityMatch | null {
   const entries = Object.entries(entityLookup);
 
   // Stage 2: Exact match (case-insensitive)
   for (const [name, url] of entries) {
     if (normalized === name.toUpperCase()) {
-      return { entityName: name, entityUrl: url, matchType: "exact" };
+      return { entityName: name, entityUrl: url, matchType: 'exact' };
     }
   }
 
@@ -64,7 +59,7 @@ function tryMatch(
     const upper = name.toUpperCase();
     if (normalized.startsWith(upper)) {
       if (!bestPrefix || name.length > bestPrefix.entityName.length) {
-        bestPrefix = { entityName: name, entityUrl: url, matchType: "prefix" };
+        bestPrefix = { entityName: name, entityUrl: url, matchType: 'prefix' };
       }
     }
   }
@@ -77,7 +72,7 @@ function tryMatch(
     const upper = name.toUpperCase();
     if (normalized.includes(upper)) {
       if (!bestContains || name.length > bestContains.entityName.length) {
-        bestContains = { entityName: name, entityUrl: url, matchType: "contains" };
+        bestContains = { entityName: name, entityUrl: url, matchType: 'contains' };
       }
     }
   }
@@ -86,13 +81,8 @@ function tryMatch(
   return null;
 }
 
-function findInLookup(
-  entityName: string,
-  lookup: EntityLookup
-): string | undefined {
+function findInLookup(entityName: string, lookup: EntityLookup): string | undefined {
   // Case-insensitive lookup
-  const key = Object.keys(lookup).find(
-    (k) => k.toUpperCase() === entityName.toUpperCase()
-  );
+  const key = Object.keys(lookup).find((k) => k.toUpperCase() === entityName.toUpperCase());
   return key ? lookup[key] : undefined;
 }

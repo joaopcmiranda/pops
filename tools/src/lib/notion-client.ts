@@ -1,5 +1,5 @@
-import { Client } from "@notionhq/client";
-import { readFileSync } from "node:fs";
+import { Client } from '@notionhq/client';
+import { readFileSync } from 'node:fs';
 
 /**
  * Read a secret from a Docker secret file path or direct env var.
@@ -7,7 +7,7 @@ import { readFileSync } from "node:fs";
 function readSecret(envFileKey: string, envDirectKey: string): string {
   const filePath = process.env[envFileKey];
   if (filePath) {
-    return readFileSync(filePath, "utf-8").trim();
+    return readFileSync(filePath, 'utf-8').trim();
   }
   const direct = process.env[envDirectKey];
   if (direct) return direct;
@@ -16,7 +16,7 @@ function readSecret(envFileKey: string, envDirectKey: string): string {
 
 /** Create an authenticated Notion client. */
 export function createNotionClient(): Client {
-  const token = readSecret("NOTION_TOKEN_FILE", "NOTION_API_TOKEN");
+  const token = readSecret('NOTION_TOKEN_FILE', 'NOTION_API_TOKEN');
   return new Client({ auth: token });
 }
 
@@ -32,7 +32,7 @@ export async function createNotionPage(
 ): Promise<string> {
   const response = await client.pages.create({
     parent: { database_id: databaseId },
-    properties: properties as Parameters<typeof client.pages.create>[0]["properties"],
+    properties: properties as Parameters<typeof client.pages.create>[0]['properties'],
   });
 
   if (delay > 0) {

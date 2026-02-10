@@ -5,16 +5,16 @@
  * Usage: yarn import:amex --csv path/to/activity.csv [--execute]
  */
 
-import type { RunMode } from "./lib/types.js";
+import type { RunMode } from './lib/types.js';
 
 function parseArgs(): { csvPath: string; mode: RunMode } {
   const args = process.argv.slice(2);
-  const csvIndex = args.indexOf("--csv");
+  const csvIndex = args.indexOf('--csv');
   const csvPath = csvIndex >= 0 ? args[csvIndex + 1] : undefined;
-  const mode: RunMode = args.includes("--execute") ? "execute" : "dry-run";
+  const mode: RunMode = args.includes('--execute') ? 'execute' : 'dry-run';
 
   if (!csvPath) {
-    console.error("Usage: yarn import:amex --csv <path> [--execute]");
+    console.error('Usage: yarn import:amex --csv <path> [--execute]');
     process.exit(1);
   }
 
@@ -32,10 +32,10 @@ async function main(): Promise<void> {
   // 4. Deduplicate against existing Notion records
   // 5. Write new transactions to Notion (if --execute)
 
-  console.log("[import-amex] Not yet implemented — migrate from import_amex.js");
+  console.log('[import-amex] Not yet implemented — migrate from import_amex.js');
 }
 
 main().catch((err: unknown) => {
-  console.error("[import-amex] Fatal:", err);
+  console.error('[import-amex] Fatal:', err);
   process.exit(1);
 });

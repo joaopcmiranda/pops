@@ -1,6 +1,6 @@
-import type { Client } from "@notionhq/client";
-import type { ParsedTransaction } from "./types.js";
-import { NOTION_DB } from "./types.js";
+import type { Client } from '@notionhq/client';
+import type { ParsedTransaction } from './types.js';
+import { NOTION_DB } from './types.js';
 
 /**
  * Date + amount count-based deduplication against existing Notion records.
@@ -26,7 +26,7 @@ export async function findNewTransactions(
   const newTransactions: ParsedTransaction[] = [];
 
   for (const [key, batch] of groups) {
-    const [date, amountStr] = key.split("|");
+    const [date, amountStr] = key.split('|');
     if (!date || !amountStr) continue;
     const amount = Number(amountStr);
 
@@ -53,9 +53,9 @@ async function countExisting(
     database_id: NOTION_DB.BALANCE_SHEET,
     filter: {
       and: [
-        { property: "Date", date: { equals: date } },
-        { property: "Amount", number: { equals: amount } },
-        { property: "Account", select: { equals: account } },
+        { property: 'Date', date: { equals: date } },
+        { property: 'Amount', number: { equals: amount } },
+        { property: 'Account', select: { equals: account } },
       ],
     },
   });

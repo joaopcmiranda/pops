@@ -1,5 +1,17 @@
-import { readFileSync } from "node:fs";
-import { parse } from "csv-parse/sync";
+import { readFileSync } from 'node:fs';
+import { parse } from 'csv-parse/sync';
+
+type BufferEncoding =
+  | 'ascii'
+  | 'utf8'
+  | 'utf-8'
+  | 'utf16le'
+  | 'ucs2'
+  | 'ucs-2'
+  | 'base64'
+  | 'latin1'
+  | 'binary'
+  | 'hex';
 
 /** Generic CSV parsing with auto-detected headers. */
 export function parseCsv<T extends Record<string, string>>(
@@ -10,13 +22,13 @@ export function parseCsv<T extends Record<string, string>>(
     encoding?: BufferEncoding;
   }
 ): T[] {
-  const content = readFileSync(filePath, options?.encoding ?? "utf-8");
+  const content = readFileSync(filePath, options?.encoding ?? 'utf-8');
 
   return parse(content, {
     columns: true,
     skip_empty_lines: true,
     trim: true,
-    delimiter: options?.delimiter ?? ",",
+    delimiter: options?.delimiter ?? ',',
     from_line: (options?.skipLines ?? 0) + 1,
   }) as T[];
 }
@@ -31,21 +43,35 @@ export function normaliseDate(raw: string): string {
   // DD/MM/YYYY or DD-MM-YYYY
   const slashMatch = trimmed.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
   if (slashMatch) {
-    const [, day, month, year] = slashMatch;
-    return `${year}-${month!.padStart(2, "0")}-${day!.padStart(2, "0")}`;
+    const day = slashMatch[1];
+    const month = slashMatch[2];
+    const year = slashMatch[3];
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
   }
 
   // DD MMM YYYY (e.g. "15 Jan 2026")
   const months: Record<string, string> = {
-    Jan: "01", Feb: "02", Mar: "03", Apr: "04", May: "05", Jun: "06",
-    Jul: "07", Aug: "08", Sep: "09", Oct: "10", Nov: "11", Dec: "12",
+    Jan: '01',
+    Feb: '02',
+    Mar: '03',
+    Apr: '04',
+    May: '05',
+    Jun: '06',
+    Jul: '07',
+    Aug: '08',
+    Sep: '09',
+    Oct: '10',
+    Nov: '11',
+    Dec: '12',
   };
   const textMatch = trimmed.match(/^(\d{1,2})\s+(\w{3})\s+(\d{4})$/);
   if (textMatch) {
-    const [, day, monthAbbr, year] = textMatch;
-    const monthNum = months[monthAbbr!];
+    const day = textMatch[1];
+    const monthAbbr = textMatch[2];
+    const year = textMatch[3];
+    const monthNum = months[monthAbbr];
     if (monthNum) {
-      return `${year}-${monthNum}-${day!.padStart(2, "0")}`;
+      return `${year}-${monthNum}-${day.padStart(2, '0')}`;
     }
   }
 
@@ -59,7 +85,7 @@ export function normaliseDate(raw: string): string {
 
 /** Parse an amount string, handling parentheses for negatives and currency symbols. */
 export function normaliseAmount(raw: string): number {
-  let cleaned = raw.trim().replace(/[$,]/g, "");
+  let cleaned = raw.trim().replace(/[$,]/g, '');
 
   // Parentheses mean negative: (100.00) -> -100.00
   const parenMatch = cleaned.match(/^\((.+)\)$/);

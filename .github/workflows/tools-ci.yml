@@ -1,0 +1,49 @@
+name: Tools CI
+
+on:
+  pull_request:
+    paths:
+      - 'tools/**'
+      - '.github/workflows/tools-ci.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'tools/**'
+      - '.github/workflows/tools-ci.yml'
+
+defaults:
+  run:
+    working-directory: tools
+
+jobs:
+  quality:
+    name: Quality Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          cache-dependency-path: tools/yarn.lock
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Type check
+        run: yarn typecheck
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Format check
+        run: yarn format
+
+      - name: Run tests
+        run: yarn test
