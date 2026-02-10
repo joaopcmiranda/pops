@@ -29,82 +29,19 @@ export interface SyncCursor {
   lastEditedTime: string;
 }
 
-/** Flattened transaction row for SQLite */
-export interface TransactionRow {
-  notionId: string;
-  description: string;
-  account: string;
-  amount: number;
-  date: string;
-  type: string;
-  categories: string;
-  entityId: string | null;
-  entityName: string | null;
-  location: string | null;
-  country: string | null;
-  online: boolean;
-  novatedLease: boolean;
-  taxReturn: boolean;
-  relatedTransactionId: string | null;
-  notes: string | null;
-  lastEditedTime: string;
-}
-
-/** Flattened entity row for SQLite */
-export interface EntityRow {
-  notionId: string;
-  name: string;
-  type: string | null;
-  abn: string | null;
-  aliases: string | null;
-  defaultTransactionType: string | null;
-  defaultCategory: string | null;
-  notes: string | null;
-  lastEditedTime: string;
-}
-
-/** Flattened home inventory row for SQLite */
-export interface InventoryRow {
-  notionId: string;
-  itemName: string;
-  brand: string | null;
-  model: string | null;
-  itemId: string | null;
-  room: string | null;
-  location: string | null;
-  type: string | null;
-  condition: string | null;
-  inUse: boolean;
-  deductible: boolean;
-  purchaseDate: string | null;
-  warrantyExpires: string | null;
-  replacementValue: number | null;
-  resaleValue: number | null;
-  purchaseTransactionId: string | null;
-  purchasedFromId: string | null;
-  purchasedFromName: string | null;
-  lastEditedTime: string;
-}
-
-/** Flattened budget row for SQLite */
-export interface BudgetRow {
-  notionId: string;
-  category: string;
-  period: string | null;
-  amount: number | null;
-  active: boolean;
-  notes: string | null;
-  lastEditedTime: string;
-}
-
-/** Flattened wish list row for SQLite */
-export interface WishListRow {
-  notionId: string;
-  item: string;
-  targetAmount: number | null;
-  saved: number | null;
-  priority: string | null;
-  url: string | null;
-  notes: string | null;
-  lastEditedTime: string;
-}
+/*
+ * Per-database row types are co-located with their database modules:
+ *   - TransactionRow  → ./databases/transactions/types.js
+ *   - EntityRow       → ./databases/entities/types.js
+ *   - InventoryRow    → ./databases/inventory/types.js
+ *   - BudgetRow       → ./databases/budgets/types.js
+ *   - WishListRow     → ./databases/wish-list/types.js
+ *
+ * Re-exported here for convenience so existing consumers can keep
+ * importing from "./types.js" if they prefer a single entry point.
+ */
+export type { TransactionRow } from "./databases/transactions/types.js";
+export type { EntityRow } from "./databases/entities/types.js";
+export type { InventoryRow } from "./databases/inventory/types.js";
+export type { BudgetRow } from "./databases/budgets/types.js";
+export type { WishListRow } from "./databases/wish-list/types.js";

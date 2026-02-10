@@ -11,20 +11,9 @@ import {
   getRelationIds,
   getUrl,
 } from "./property-mapper.js";
+import { richText } from "./test-helpers.js";
 
 type PageProps = NotionPage["properties"];
-
-/** Helper to build a rich text item array from plain text. */
-function richText(text: string): Array<{ type: "text"; text: { content: string; link: null }; annotations: { bold: false; italic: false; strikethrough: false; underline: false; code: false; color: "default" }; plain_text: string; href: null }> {
-  if (!text) return [];
-  return [{
-    type: "text",
-    text: { content: text, link: null },
-    annotations: { bold: false, italic: false, strikethrough: false, underline: false, code: false, color: "default" },
-    plain_text: text,
-    href: null,
-  }];
-}
 
 describe("getTitle", () => {
   it("extracts plain text from a title property", () => {
