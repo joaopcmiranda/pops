@@ -65,17 +65,20 @@ docker compose config                                      # Validate compose fi
 
 ### Ansible
 ```bash
+# All ansible commands must run from the ansible/ directory due to relative roles_path
+cd ansible
+
 # Provision fresh N95 (full run)
-ansible-playbook ansible/playbooks/site.yml
+ansible-playbook playbooks/site.yml
 
 # Deploy/update services only (skip OS hardening)
-ansible-playbook ansible/playbooks/deploy.yml
+ansible-playbook playbooks/deploy.yml
 
 # Syntax check
-ansible-playbook ansible/playbooks/site.yml --syntax-check
+ansible-playbook playbooks/site.yml --syntax-check
 
-# Encrypt vault file
-ansible-vault encrypt ansible/inventory/group_vars/pops_servers/vault.yml
+# Encrypt vault file (path relative to ansible/)
+ansible-vault encrypt inventory/group_vars/pops_servers/vault.yml
 ```
 
 ## Repo Structure

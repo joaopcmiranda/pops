@@ -3,7 +3,9 @@
 
 services:
   notion-sync:
-    build: {{ docker_compose_dir }}/repo/services/notion-sync
+    build:
+      context: {{ docker_compose_dir }}/repo
+      dockerfile: services/notion-sync/Dockerfile
     container_name: pops-notion-sync
     restart: "no"
     networks:
@@ -18,7 +20,9 @@ services:
       NOTION_TOKEN_FILE: /run/secrets/notion_api_token
 
   finance-api:
-    build: {{ docker_compose_dir }}/repo/services/finance-api
+    build:
+      context: {{ docker_compose_dir }}/repo
+      dockerfile: services/finance-api/Dockerfile
     container_name: pops-finance-api
     restart: unless-stopped
     networks:
@@ -45,7 +49,9 @@ services:
       retries: 3
 
   pops-pwa:
-    build: {{ docker_compose_dir }}/repo/services/pops-pwa
+    build:
+      context: {{ docker_compose_dir }}/repo
+      dockerfile: services/pops-pwa/Dockerfile
     container_name: pops-pwa
     restart: unless-stopped
     networks:
