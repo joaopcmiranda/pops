@@ -1,8 +1,11 @@
 ---
 # Non-secret configuration for POPS servers
 
-domain: example.com  # TODO: replace with actual domain
+domain: jmiranda.dev
 timezone: Australia/Melbourne
+
+# Service user (created by bootstrap playbook)
+pops_user: pops
 
 # Paths on the N95
 docker_compose_dir: /opt/pops

@@ -1,3 +1,3 @@
 ---
-pops_repo_url: ""  # TODO: set to git remote URL
+pops_repo_url: "https://github.com/joaopcmiranda/pops.git"
 pops_branch: main
