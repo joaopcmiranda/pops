@@ -1,4 +1,4 @@
-import { z } from "zod/v4";
+import { z } from "zod";
 import type { BudgetRow } from "@pops/db-types";
 
 export type { BudgetRow };

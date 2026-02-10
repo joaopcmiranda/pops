@@ -2,6 +2,36 @@
 
 A unified platform for financial tracking, asset management, budgeting, AI-powered automation, and reporting. Built on Notion as the source of truth, with self-hosted services for intelligence, dashboards, and proactive assistance.
 
+## Quick Deploy
+
+Deploy everything to production with one command:
+
+```bash
+./deploy.sh
+```
+
+The script will:
+- ✅ Run quality checks (typecheck + tests)
+- ✅ Deploy to N95 via Ansible
+- ✅ Rebuild Docker images
+- ✅ Restart services
+- ✅ Create git tag (v1, v2, v3, etc.)
+- ✅ Push tag to GitHub
+
+**Options:**
+```bash
+./deploy.sh --dry-run      # Preview changes
+./deploy.sh -v             # Verbose output
+./deploy.sh --skip-checks  # Skip tests (faster)
+```
+
+**Prerequisites:**
+- Ansible: `brew install ansible`
+- SSH key: `~/.ssh/pops_n95`
+- Vault password: `~/.ansible/pops-vault-password`
+
+See `docs/DEPLOYMENT_SETUP.md` for setup instructions.
+
 ## Architecture
 
 ```

@@ -1,4 +1,4 @@
-import { z } from "zod/v4";
+import { z } from "zod";
 import { WISH_LIST_PRIORITIES, type WishListRow, type WishListPriority } from "@pops/db-types";
 
 export { WISH_LIST_PRIORITIES, type WishListPriority, type WishListRow };
