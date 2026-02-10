@@ -81,7 +81,11 @@ describe("GET /transactions", () => {
   });
 
   it("splits comma-separated categories into array", async () => {
-    seedTransaction(db, { description: "Test", account: "Up", categories: "Groceries, Food, Shopping" });
+    seedTransaction(db, {
+      description: "Test",
+      account: "Up",
+      categories: "Groceries, Food, Shopping",
+    });
 
     const res = await withAuth(request(app).get("/transactions"));
     expect(res.body.data[0].categories).toEqual(["Groceries", "Food", "Shopping"]);
@@ -137,7 +141,9 @@ describe("GET /transactions", () => {
     seedTransaction(db, { description: "Within", account: "Up", date: "2025-03-15" });
     seedTransaction(db, { description: "After", account: "Up", date: "2025-06-01" });
 
-    const res = await withAuth(request(app).get("/transactions?startDate=2025-03-01&endDate=2025-04-01"));
+    const res = await withAuth(
+      request(app).get("/transactions?startDate=2025-03-01&endDate=2025-04-01")
+    );
     expect(res.body.data).toHaveLength(1);
     expect(res.body.data[0].description).toBe("Within");
   });
@@ -224,19 +230,49 @@ describe("GET /transactions", () => {
   });
 
   it("combines multiple filters", async () => {
-    seedTransaction(db, { description: "Match", account: "Up", date: "2025-06-01", type: "Purchase", online: 1 });
-    seedTransaction(db, { description: "Wrong account", account: "ANZ", date: "2025-06-01", type: "Purchase", online: 1 });
-    seedTransaction(db, { description: "Wrong date", account: "Up", date: "2025-01-01", type: "Purchase", online: 1 });
-    seedTransaction(db, { description: "Wrong type", account: "Up", date: "2025-06-01", type: "Transfer", online: 1 });
+    seedTransaction(db, {
+      description: "Match",
+      account: "Up",
+      date: "2025-06-01",
+      type: "Purchase",
+      online: 1,
+    });
+    seedTransaction(db, {
+      description: "Wrong account",
+      account: "ANZ",
+      date: "2025-06-01",
+      type: "Purchase",
+      online: 1,
+    });
+    seedTransaction(db, {
+      description: "Wrong date",
+      account: "Up",
+      date: "2025-01-01",
+      type: "Purchase",
+      online: 1,
+    });
+    seedTransaction(db, {
+      description: "Wrong type",
+      account: "Up",
+      date: "2025-06-01",
+      type: "Transfer",
+      online: 1,
+    });
 
-    const res = await withAuth(request(app).get("/transactions?account=Up&startDate=2025-05-01&type=Purchase&online=true"));
+    const res = await withAuth(
+      request(app).get("/transactions?account=Up&startDate=2025-05-01&type=Purchase&online=true")
+    );
     expect(res.body.data).toHaveLength(1);
     expect(res.body.data[0].description).toBe("Match");
   });
 
   it("paginates with limit and offset", async () => {
     for (let i = 0; i < 10; i++) {
-      seedTransaction(db, { description: `Transaction ${String(i).padStart(2, "0")}`, account: "Up", date: `2025-06-${String(i + 1).padStart(2, "0")}` });
+      seedTransaction(db, {
+        description: `Transaction ${String(i).padStart(2, "0")}`,
+        account: "Up",
+        date: `2025-06-${String(i + 1).padStart(2, "0")}`,
+      });
     }
 
     const page1 = await withAuth(request(app).get("/transactions?limit=3&offset=0"));
@@ -320,23 +356,25 @@ describe("POST /transactions", () => {
 
   it("creates a transaction with all fields", async () => {
     const res = await withAuth(
-      request(app).post("/transactions").send({
-        description: "Woolworths Groceries",
-        account: "Up Savings",
-        amount: 150.75,
-        date: "2025-06-15",
-        type: "Purchase",
-        categories: ["Groceries", "Food"],
-        entityId: "ent-123",
-        entityName: "Woolworths",
-        location: "Sydney CBD",
-        country: "Australia",
-        online: false,
-        novatedLease: false,
-        taxReturn: false,
-        relatedTransactionId: "txn-456",
-        notes: "Weekly groceries",
-      })
+      request(app)
+        .post("/transactions")
+        .send({
+          description: "Woolworths Groceries",
+          account: "Up Savings",
+          amount: 150.75,
+          date: "2025-06-15",
+          type: "Purchase",
+          categories: ["Groceries", "Food"],
+          entityId: "ent-123",
+          entityName: "Woolworths",
+          location: "Sydney CBD",
+          country: "Australia",
+          online: false,
+          novatedLease: false,
+          taxReturn: false,
+          relatedTransactionId: "txn-456",
+          notes: "Weekly groceries",
+        })
     );
 
     expect(res.status).toBe(201);
@@ -390,14 +428,21 @@ describe("POST /transactions", () => {
       })
     );
 
-    const row = db.prepare("SELECT * FROM transactions WHERE description = ?").get("Test Transaction");
+    const row = db
+      .prepare("SELECT * FROM transactions WHERE description = ?")
+      .get("Test Transaction");
     expect(row).toBeDefined();
   });
 });
 
 describe("PUT /transactions/:id", () => {
   it("updates a single field", async () => {
-    const id = seedTransaction(db, { description: "Original", account: "Up", amount: 50.0, date: "2025-06-15" });
+    const id = seedTransaction(db, {
+      description: "Original",
+      account: "Up",
+      amount: 50.0,
+      date: "2025-06-15",
+    });
 
     const res = await withAuth(
       request(app).put(`/transactions/${id}`).send({ description: "Updated" })
@@ -410,14 +455,21 @@ describe("PUT /transactions/:id", () => {
   });
 
   it("updates multiple fields at once", async () => {
-    const id = seedTransaction(db, { description: "Test", account: "Up", amount: 50.0, date: "2025-06-15" });
+    const id = seedTransaction(db, {
+      description: "Test",
+      account: "Up",
+      amount: 50.0,
+      date: "2025-06-15",
+    });
 
     const res = await withAuth(
-      request(app).put(`/transactions/${id}`).send({
-        description: "New Description",
-        amount: 100.0,
-        categories: ["Shopping", "Retail"],
-      })
+      request(app)
+        .put(`/transactions/${id}`)
+        .send({
+          description: "New Description",
+          amount: 100.0,
+          categories: ["Shopping", "Retail"],
+        })
     );
 
     expect(res.status).toBe(200);
@@ -429,9 +481,7 @@ describe("PUT /transactions/:id", () => {
   it("clears a field by setting to null", async () => {
     const id = seedTransaction(db, { description: "Test", account: "Up", notes: "Some notes" });
 
-    const res = await withAuth(
-      request(app).put(`/transactions/${id}`).send({ notes: null })
-    );
+    const res = await withAuth(request(app).put(`/transactions/${id}`).send({ notes: null }));
 
     expect(res.status).toBe(200);
     expect(res.body.data.notes).toBeNull();
@@ -444,11 +494,11 @@ describe("PUT /transactions/:id", () => {
       last_edited_time: "2020-01-01T00:00:00.000Z",
     });
 
-    await withAuth(
-      request(app).put(`/transactions/${id}`).send({ amount: 100.0 })
-    );
+    await withAuth(request(app).put(`/transactions/${id}`).send({ amount: 100.0 }));
 
-    const row = db.prepare("SELECT last_edited_time FROM transactions WHERE notion_id = ?").get(id) as { last_edited_time: string };
+    const row = db
+      .prepare("SELECT last_edited_time FROM transactions WHERE notion_id = ?")
+      .get(id) as { last_edited_time: string };
     expect(row.last_edited_time).not.toBe("2020-01-01T00:00:00.000Z");
   });
 
@@ -463,9 +513,7 @@ describe("PUT /transactions/:id", () => {
   it("rejects empty description", async () => {
     const id = seedTransaction(db, { description: "Test", account: "Up" });
 
-    const res = await withAuth(
-      request(app).put(`/transactions/${id}`).send({ description: "" })
-    );
+    const res = await withAuth(request(app).put(`/transactions/${id}`).send({ description: "" }));
 
     expect(res.status).toBe(400);
   });

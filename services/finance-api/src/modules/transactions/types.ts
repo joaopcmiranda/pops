@@ -51,7 +51,12 @@ export function toTransaction(row: TransactionRow): Transaction {
     amount: row.amount,
     date: row.date,
     type: row.type,
-    categories: row.categories ? row.categories.split(",").map((s) => s.trim()).filter(Boolean) : [],
+    categories: row.categories
+      ? row.categories
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : [],
     entityId: row.entity_id,
     entityName: row.entity_name,
     location: row.location,

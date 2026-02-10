@@ -33,7 +33,12 @@ export function toEntity(row: EntityRow): Entity {
     name: row.name,
     type: row.type,
     abn: row.abn,
-    aliases: row.aliases ? row.aliases.split(",").map((s) => s.trim()).filter(Boolean) : [],
+    aliases: row.aliases
+      ? row.aliases
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : [],
     defaultTransactionType: row.default_transaction_type,
     defaultCategory: row.default_category,
     notes: row.notes,

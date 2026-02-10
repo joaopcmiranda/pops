@@ -1,0 +1,58 @@
+name: Finance API CI
+
+on:
+  pull_request:
+    paths:
+      - "services/finance-api/**"
+      - ".github/workflows/finance-api-ci.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "services/finance-api/**"
+      - ".github/workflows/finance-api-ci.yml"
+
+jobs:
+  quality-checks:
+    name: Quality Checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/finance-api
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "yarn"
+          cache-dependency-path: services/finance-api/yarn.lock
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Type check
+        run: yarn typecheck
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Format check
+        run: yarn format
+
+      - name: Run tests
+        run: yarn test
+
+      - name: Build
+        run: yarn build
+
+      - name: Upload build artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: finance-api-build
+          path: services/finance-api/dist
+          retention-days: 7

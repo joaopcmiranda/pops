@@ -181,9 +181,7 @@ describe("GET /wishlist/:id", () => {
 
 describe("POST /wishlist", () => {
   it("creates an item with required fields only", async () => {
-    const res = await withAuth(
-      request(app).post("/wishlist").send({ item: "MacBook Pro" })
-    );
+    const res = await withAuth(request(app).post("/wishlist").send({ item: "MacBook Pro" }));
 
     expect(res.status).toBe(201);
     expect(res.body.message).toBe("Wish list item created");
@@ -220,17 +218,13 @@ describe("POST /wishlist", () => {
   });
 
   it("rejects missing item field", async () => {
-    const res = await withAuth(
-      request(app).post("/wishlist").send({})
-    );
+    const res = await withAuth(request(app).post("/wishlist").send({}));
 
     expect(res.status).toBe(400);
   });
 
   it("rejects empty item field", async () => {
-    const res = await withAuth(
-      request(app).post("/wishlist").send({ item: "" })
-    );
+    const res = await withAuth(request(app).post("/wishlist").send({ item: "" }));
 
     expect(res.status).toBe(400);
     expect(res.body.error).toMatch(/validation/i);
@@ -255,9 +249,7 @@ describe("POST /wishlist", () => {
   });
 
   it("persists to the database", async () => {
-    await withAuth(
-      request(app).post("/wishlist").send({ item: "New Item" })
-    );
+    await withAuth(request(app).post("/wishlist").send({ item: "New Item" }));
 
     const row = db.prepare("SELECT * FROM wish_list WHERE item = ?").get("New Item");
     expect(row).toBeDefined();
@@ -267,7 +259,9 @@ describe("POST /wishlist", () => {
     const priorities = ["Needing", "Soon", "One Day", "Dreaming"];
     for (const priority of priorities) {
       const res = await withAuth(
-        request(app).post("/wishlist").send({ item: `Item ${priority}`, priority })
+        request(app)
+          .post("/wishlist")
+          .send({ item: `Item ${priority}`, priority })
       );
       expect(res.status).toBe(201);
       expect(res.body.data.priority).toBe(priority);
@@ -279,9 +273,7 @@ describe("PUT /wishlist/:id", () => {
   it("updates a single field", async () => {
     const id = seedWishListItem(db, { item: "MacBook Pro" });
 
-    const res = await withAuth(
-      request(app).put(`/wishlist/${id}`).send({ priority: "Needing" })
-    );
+    const res = await withAuth(request(app).put(`/wishlist/${id}`).send({ priority: "Needing" }));
 
     expect(res.status).toBe(200);
     expect(res.body.message).toBe("Wish list item updated");
@@ -312,9 +304,7 @@ describe("PUT /wishlist/:id", () => {
   it("clears a field by setting to null", async () => {
     const id = seedWishListItem(db, { item: "MacBook Pro", priority: "Needing" });
 
-    const res = await withAuth(
-      request(app).put(`/wishlist/${id}`).send({ priority: null })
-    );
+    const res = await withAuth(request(app).put(`/wishlist/${id}`).send({ priority: null }));
 
     expect(res.status).toBe(200);
     expect(res.body.data.priority).toBeNull();
@@ -326,11 +316,11 @@ describe("PUT /wishlist/:id", () => {
       last_edited_time: "2020-01-01T00:00:00.000Z",
     });
 
-    await withAuth(
-      request(app).put(`/wishlist/${id}`).send({ priority: "Needing" })
-    );
+    await withAuth(request(app).put(`/wishlist/${id}`).send({ priority: "Needing" }));
 
-    const row = db.prepare("SELECT last_edited_time FROM wish_list WHERE notion_id = ?").get(id) as { last_edited_time: string };
+    const row = db
+      .prepare("SELECT last_edited_time FROM wish_list WHERE notion_id = ?")
+      .get(id) as { last_edited_time: string };
     expect(row.last_edited_time).not.toBe("2020-01-01T00:00:00.000Z");
   });
 
@@ -345,9 +335,7 @@ describe("PUT /wishlist/:id", () => {
   it("rejects empty item", async () => {
     const id = seedWishListItem(db, { item: "MacBook Pro" });
 
-    const res = await withAuth(
-      request(app).put(`/wishlist/${id}`).send({ item: "" })
-    );
+    const res = await withAuth(request(app).put(`/wishlist/${id}`).send({ item: "" }));
 
     expect(res.status).toBe(400);
   });
@@ -355,9 +343,7 @@ describe("PUT /wishlist/:id", () => {
   it("rejects invalid priority on update", async () => {
     const id = seedWishListItem(db, { item: "MacBook Pro" });
 
-    const res = await withAuth(
-      request(app).put(`/wishlist/${id}`).send({ priority: "Invalid" })
-    );
+    const res = await withAuth(request(app).put(`/wishlist/${id}`).send({ priority: "Invalid" }));
 
     expect(res.status).toBe(400);
   });

@@ -39,9 +39,9 @@ export function listWishListItems(
     .prepare(`SELECT * FROM wish_list ${where} ORDER BY item LIMIT @limit OFFSET @offset`)
     .all({ ...params, limit, offset }) as WishListRow[];
 
-  const countRow = db
-    .prepare(`SELECT COUNT(*) as total FROM wish_list ${where}`)
-    .get(params) as { total: number };
+  const countRow = db.prepare(`SELECT COUNT(*) as total FROM wish_list ${where}`).get(params) as {
+    total: number;
+  };
 
   return { rows, total: countRow.total };
 }
@@ -49,9 +49,9 @@ export function listWishListItems(
 /** Get a single wish list item by notion_id. Throws NotFoundError if missing. */
 export function getWishListItem(id: string): WishListRow {
   const db = getDb();
-  const row = db
-    .prepare("SELECT * FROM wish_list WHERE notion_id = ?")
-    .get(id) as WishListRow | undefined;
+  const row = db.prepare("SELECT * FROM wish_list WHERE notion_id = ?").get(id) as
+    | WishListRow
+    | undefined;
 
   if (!row) throw new NotFoundError("Wish list item", id);
   return row;
@@ -63,10 +63,12 @@ export function createWishListItem(input: CreateWishListItemInput): WishListRow 
   const id = randomUUID();
   const now = new Date().toISOString();
 
-  db.prepare(`
+  db.prepare(
+    `
     INSERT INTO wish_list (notion_id, item, target_amount, saved, priority, url, notes, last_edited_time)
     VALUES (@notionId, @item, @targetAmount, @saved, @priority, @url, @notes, @lastEditedTime)
-  `).run({
+  `
+  ).run({
     notionId: id,
     item: input.item,
     targetAmount: input.targetAmount ?? null,
@@ -119,8 +121,7 @@ export function updateWishListItem(id: string, input: UpdateWishListItemInput): 
     fields.push("last_edited_time = @lastEditedTime");
     params["lastEditedTime"] = new Date().toISOString();
 
-    db.prepare(`UPDATE wish_list SET ${fields.join(", ")} WHERE notion_id = @notionId`)
-      .run(params);
+    db.prepare(`UPDATE wish_list SET ${fields.join(", ")} WHERE notion_id = @notionId`).run(params);
   }
 
   return getWishListItem(id);

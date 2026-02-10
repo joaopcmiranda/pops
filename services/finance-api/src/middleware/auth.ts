@@ -25,11 +25,7 @@ function getApiKey(): string {
  * Validate API key from Authorization header.
  * Skips auth for webhook routes (those use signature verification).
  */
-export function authMiddleware(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
+export function authMiddleware(req: Request, res: Response, next: NextFunction): void {
   // Webhook routes handle their own auth via signature verification
   if (req.path.startsWith("/webhooks/")) {
     next();

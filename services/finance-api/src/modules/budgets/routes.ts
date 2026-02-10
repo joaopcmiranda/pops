@@ -10,6 +10,8 @@ import {
   UpdateBudgetSchema,
   BudgetQuerySchema,
   toBudget,
+  type CreateBudgetInput,
+  type UpdateBudgetInput,
 } from "./types.js";
 import * as service from "./service.js";
 import type {
@@ -27,7 +29,8 @@ router.get("/budgets", validate(BudgetQuerySchema, "query"), (req, res) => {
   const query = req.query as Record<string, string | undefined>;
   const { limit, offset } = parsePagination(req.query as Record<string, unknown>);
 
-  const activeFilter = query["active"] === "true" ? true : query["active"] === "false" ? false : undefined;
+  const activeFilter =
+    query["active"] === "true" ? true : query["active"] === "false" ? false : undefined;
 
   const { rows, total } = service.listBudgets(
     query["search"],
@@ -54,7 +57,8 @@ router.get("/budgets/:id", (req, res) => {
 
 /** POST /budgets — create a new budget. */
 router.post("/budgets", validate(CreateBudgetSchema), (req, res) => {
-  const row = service.createBudget(req.body);
+  const input = req.body as CreateBudgetInput;
+  const row = service.createBudget(input);
   const body: MutationResponse<Budget> = {
     data: toBudget(row),
     message: "Budget created",
@@ -65,7 +69,8 @@ router.post("/budgets", validate(CreateBudgetSchema), (req, res) => {
 /** PUT /budgets/:id — update an existing budget. */
 router.put("/budgets/:id", validate(UpdateBudgetSchema), (req, res) => {
   const id = requireParam(req, "id");
-  const row = service.updateBudget(id, req.body);
+  const input = req.body as UpdateBudgetInput;
+  const row = service.updateBudget(id, input);
   const body: MutationResponse<Budget> = {
     data: toBudget(row),
     message: "Budget updated",

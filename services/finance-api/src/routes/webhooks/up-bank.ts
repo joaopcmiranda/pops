@@ -43,7 +43,10 @@ router.post("/webhooks/up", (req, res) => {
   }
 
   const payload = JSON.parse(rawBody.toString("utf-8")) as {
-    data?: { attributes?: { eventType?: string }; relationships?: { transaction?: { data?: { id?: string } } } };
+    data?: {
+      attributes?: { eventType?: string };
+      relationships?: { transaction?: { data?: { id?: string } } };
+    };
   };
 
   const eventType = payload.data?.attributes?.eventType;

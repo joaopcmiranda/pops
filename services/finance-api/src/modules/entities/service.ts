@@ -39,9 +39,9 @@ export function listEntities(
     .prepare(`SELECT * FROM entities ${where} ORDER BY name LIMIT @limit OFFSET @offset`)
     .all({ ...params, limit, offset }) as EntityRow[];
 
-  const countRow = db
-    .prepare(`SELECT COUNT(*) as total FROM entities ${where}`)
-    .get(params) as { total: number };
+  const countRow = db.prepare(`SELECT COUNT(*) as total FROM entities ${where}`).get(params) as {
+    total: number;
+  };
 
   return { rows, total: countRow.total };
 }
@@ -49,9 +49,9 @@ export function listEntities(
 /** Get a single entity by notion_id. Throws NotFoundError if missing. */
 export function getEntity(id: string): EntityRow {
   const db = getDb();
-  const row = db
-    .prepare("SELECT * FROM entities WHERE notion_id = ?")
-    .get(id) as EntityRow | undefined;
+  const row = db.prepare("SELECT * FROM entities WHERE notion_id = ?").get(id) as
+    | EntityRow
+    | undefined;
 
   if (!row) throw new NotFoundError("Entity", id);
   return row;
@@ -63,17 +63,19 @@ export function createEntity(input: CreateEntityInput): EntityRow {
   const id = randomUUID();
   const now = new Date().toISOString();
 
-  const existing = db
-    .prepare("SELECT notion_id FROM entities WHERE name = ?")
-    .get(input.name) as { notion_id: string } | undefined;
+  const existing = db.prepare("SELECT notion_id FROM entities WHERE name = ?").get(input.name) as
+    | { notion_id: string }
+    | undefined;
   if (existing) {
     throw new ConflictError(`Entity with name '${input.name}' already exists`);
   }
 
-  db.prepare(`
+  db.prepare(
+    `
     INSERT INTO entities (notion_id, name, type, abn, aliases, default_transaction_type, default_category, notes, last_edited_time)
     VALUES (@notionId, @name, @type, @abn, @aliases, @defaultTransactionType, @defaultCategory, @notes, @lastEditedTime)
-  `).run({
+  `
+  ).run({
     notionId: id,
     name: input.name,
     type: input.type ?? null,
@@ -131,8 +133,7 @@ export function updateEntity(id: string, input: UpdateEntityInput): EntityRow {
     fields.push("last_edited_time = @lastEditedTime");
     params["lastEditedTime"] = new Date().toISOString();
 
-    db.prepare(`UPDATE entities SET ${fields.join(", ")} WHERE notion_id = @notionId`)
-      .run(params);
+    db.prepare(`UPDATE entities SET ${fields.join(", ")} WHERE notion_id = @notionId`).run(params);
   }
 
   return getEntity(id);

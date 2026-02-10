@@ -69,9 +69,9 @@ export function listInventoryItems(
 /** Get a single inventory item by notion_id. Throws NotFoundError if missing. */
 export function getInventoryItem(id: string): InventoryRow {
   const db = getDb();
-  const row = db
-    .prepare("SELECT * FROM home_inventory WHERE notion_id = ?")
-    .get(id) as InventoryRow | undefined;
+  const row = db.prepare("SELECT * FROM home_inventory WHERE notion_id = ?").get(id) as
+    | InventoryRow
+    | undefined;
 
   if (!row) throw new NotFoundError("Inventory item", id);
   return row;
@@ -83,7 +83,8 @@ export function createInventoryItem(input: CreateInventoryItemInput): InventoryR
   const id = randomUUID();
   const now = new Date().toISOString();
 
-  db.prepare(`
+  db.prepare(
+    `
     INSERT INTO home_inventory (
       notion_id, item_name, brand, model, item_id, room, location, type, condition,
       in_use, deductible, purchase_date, warranty_expires, replacement_value, resale_value,
@@ -94,7 +95,8 @@ export function createInventoryItem(input: CreateInventoryItemInput): InventoryR
       @inUse, @deductible, @purchaseDate, @warrantyExpires, @replacementValue, @resaleValue,
       @purchaseTransactionId, @purchasedFromId, @purchasedFromName, @lastEditedTime
     )
-  `).run({
+  `
+  ).run({
     notionId: id,
     itemName: input.itemName,
     brand: input.brand ?? null,
@@ -202,8 +204,9 @@ export function updateInventoryItem(id: string, input: UpdateInventoryItemInput)
     fields.push("last_edited_time = @lastEditedTime");
     params["lastEditedTime"] = new Date().toISOString();
 
-    db.prepare(`UPDATE home_inventory SET ${fields.join(", ")} WHERE notion_id = @notionId`)
-      .run(params);
+    db.prepare(`UPDATE home_inventory SET ${fields.join(", ")} WHERE notion_id = @notionId`).run(
+      params
+    );
   }
 
   return getInventoryItem(id);

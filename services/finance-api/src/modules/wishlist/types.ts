@@ -35,9 +35,7 @@ export interface WishListItem {
  */
 export function toWishListItem(row: WishListRow): WishListItem {
   const remainingAmount =
-    row.target_amount !== null && row.saved !== null
-      ? row.target_amount - row.saved
-      : null;
+    row.target_amount !== null && row.saved !== null ? row.target_amount - row.saved : null;
 
   return {
     notionId: row.notion_id,

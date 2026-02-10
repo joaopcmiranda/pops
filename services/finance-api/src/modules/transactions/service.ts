@@ -5,7 +5,12 @@
 import { randomUUID } from "node:crypto";
 import { getDb } from "../../db.js";
 import { NotFoundError } from "../../shared/errors.js";
-import type { TransactionRow, CreateTransactionInput, UpdateTransactionInput, TransactionFilters } from "./types.js";
+import type {
+  TransactionRow,
+  CreateTransactionInput,
+  UpdateTransactionInput,
+  TransactionFilters,
+} from "./types.js";
 
 /** Count + rows for a paginated list. */
 export interface TransactionListResult {
@@ -80,9 +85,9 @@ export function listTransactions(
 /** Get a single transaction by notion_id. Throws NotFoundError if missing. */
 export function getTransaction(id: string): TransactionRow {
   const db = getDb();
-  const row = db
-    .prepare("SELECT * FROM transactions WHERE notion_id = ?")
-    .get(id) as TransactionRow | undefined;
+  const row = db.prepare("SELECT * FROM transactions WHERE notion_id = ?").get(id) as
+    | TransactionRow
+    | undefined;
 
   if (!row) throw new NotFoundError("Transaction", id);
   return row;
@@ -94,7 +99,8 @@ export function createTransaction(input: CreateTransactionInput): TransactionRow
   const id = randomUUID();
   const now = new Date().toISOString();
 
-  db.prepare(`
+  db.prepare(
+    `
     INSERT INTO transactions (
       notion_id, description, account, amount, date, type, categories,
       entity_id, entity_name, location, country, online, novated_lease,
@@ -105,7 +111,8 @@ export function createTransaction(input: CreateTransactionInput): TransactionRow
       @entityId, @entityName, @location, @country, @online, @novatedLease,
       @taxReturn, @relatedTransactionId, @notes, @lastEditedTime
     )
-  `).run({
+  `
+  ).run({
     notionId: id,
     description: input.description,
     account: input.account,
@@ -203,8 +210,9 @@ export function updateTransaction(id: string, input: UpdateTransactionInput): Tr
     fields.push("last_edited_time = @lastEditedTime");
     params["lastEditedTime"] = new Date().toISOString();
 
-    db.prepare(`UPDATE transactions SET ${fields.join(", ")} WHERE notion_id = @notionId`)
-      .run(params);
+    db.prepare(`UPDATE transactions SET ${fields.join(", ")} WHERE notion_id = @notionId`).run(
+      params
+    );
   }
 
   return getTransaction(id);
