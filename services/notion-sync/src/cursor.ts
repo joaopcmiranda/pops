@@ -1,5 +1,5 @@
-import type Database from "better-sqlite3";
-import type { SyncCursor } from "./types.js";
+import type Database from 'better-sqlite3';
+import type { SyncCursor } from './types.js';
 
 /** Create the sync_cursors table. Idempotent. */
 export function createCursorsTable(db: Database.Database): void {
@@ -12,25 +12,21 @@ export function createCursorsTable(db: Database.Database): void {
 }
 
 /** Save a sync cursor so the next run can resume incrementally. */
-export function saveCursor(
-  db: Database.Database,
-  cursor: SyncCursor
-): void {
-  db.prepare(`
+export function saveCursor(db: Database.Database, cursor: SyncCursor): void {
+  db.prepare(
+    `
     INSERT INTO sync_cursors (database_id, last_edited_time)
     VALUES (@databaseId, @lastEditedTime)
     ON CONFLICT(database_id) DO UPDATE SET
       last_edited_time = excluded.last_edited_time
-  `).run(cursor);
+  `
+  ).run(cursor);
 }
 
 /** Load the last sync cursor for a database. */
-export function loadCursor(
-  db: Database.Database,
-  databaseId: string
-): string | undefined {
+export function loadCursor(db: Database.Database, databaseId: string): string | undefined {
   const row = db
-    .prepare("SELECT last_edited_time FROM sync_cursors WHERE database_id = ?")
+    .prepare('SELECT last_edited_time FROM sync_cursors WHERE database_id = ?')
     .get(databaseId) as { last_edited_time: string } | undefined;
   return row?.last_edited_time;
 }

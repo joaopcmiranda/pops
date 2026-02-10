@@ -1,11 +1,8 @@
-import type Database from "better-sqlite3";
-import type { TransactionRow } from "./types.js";
+import type Database from 'better-sqlite3';
+import type { TransactionRow } from './types.js';
 
 /** Upsert a batch of transaction rows into SQLite. */
-export function upsertTransactions(
-  db: Database.Database,
-  rows: TransactionRow[]
-): void {
+export function upsertTransactions(db: Database.Database, rows: TransactionRow[]): void {
   const stmt = db.prepare(`
     INSERT INTO transactions (
       notion_id, description, account, amount, date, type, categories,

@@ -1,4 +1,4 @@
-import type Database from "better-sqlite3";
+import type Database from 'better-sqlite3';
 
 /** Create the budgets table and its indexes. Idempotent. */
 export function createBudgetsTable(db: Database.Database): void {

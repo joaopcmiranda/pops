@@ -1,11 +1,8 @@
-import type Database from "better-sqlite3";
-import type { BudgetRow } from "./types.js";
+import type Database from 'better-sqlite3';
+import type { BudgetRow } from './types.js';
 
 /** Upsert a batch of budget rows into SQLite. */
-export function upsertBudgets(
-  db: Database.Database,
-  rows: BudgetRow[]
-): void {
+export function upsertBudgets(db: Database.Database, rows: BudgetRow[]): void {
   const stmt = db.prepare(`
     INSERT INTO budgets (
       notion_id, category, period, amount, active, notes, last_edited_time

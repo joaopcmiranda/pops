@@ -1,10 +1,10 @@
-import type { NotionPage } from "./types.js";
+import type { NotionPage } from './types.js';
 
 /**
  * The properties record from a Notion page query result.
  * Each value is a discriminated union keyed on `type`.
  */
-type PageProperties = NotionPage["properties"];
+type PageProperties = NotionPage['properties'];
 type PageProperty = PageProperties[string];
 
 /**
@@ -20,8 +20,8 @@ function getProp(props: PageProperties, key: string): PageProperty | undefined {
  */
 export function getTitle(props: PageProperties, key: string): string {
   const prop = getProp(props, key);
-  if (!prop || prop.type !== "title") return "";
-  return prop.title.map((t) => t.plain_text).join("");
+  if (!prop || prop.type !== 'title') return '';
+  return prop.title.map((t) => t.plain_text).join('');
 }
 
 /**
@@ -30,8 +30,8 @@ export function getTitle(props: PageProperties, key: string): string {
  */
 export function getRichText(props: PageProperties, key: string): string | null {
   const prop = getProp(props, key);
-  if (!prop || prop.type !== "rich_text") return null;
-  const text = prop.rich_text.map((t) => t.plain_text).join("");
+  if (!prop || prop.type !== 'rich_text') return null;
+  const text = prop.rich_text.map((t) => t.plain_text).join('');
   return text || null;
 }
 
@@ -40,7 +40,7 @@ export function getRichText(props: PageProperties, key: string): string | null {
  */
 export function getNumber(props: PageProperties, key: string): number | null {
   const prop = getProp(props, key);
-  if (!prop || prop.type !== "number") return null;
+  if (!prop || prop.type !== 'number') return null;
   return prop.number;
 }
 
@@ -50,7 +50,7 @@ export function getNumber(props: PageProperties, key: string): number | null {
  */
 export function getSelect(props: PageProperties, key: string): string | null {
   const prop = getProp(props, key);
-  if (!prop || prop.type !== "select") return null;
+  if (!prop || prop.type !== 'select') return null;
   return prop.select?.name ?? null;
 }
 
@@ -60,7 +60,7 @@ export function getSelect(props: PageProperties, key: string): string | null {
  */
 export function getMultiSelect(props: PageProperties, key: string): string[] {
   const prop = getProp(props, key);
-  if (!prop || prop.type !== "multi_select") return [];
+  if (!prop || prop.type !== 'multi_select') return [];
   return prop.multi_select.map((s) => s.name);
 }
 
@@ -70,7 +70,7 @@ export function getMultiSelect(props: PageProperties, key: string): string[] {
  */
 export function getDate(props: PageProperties, key: string): string | null {
   const prop = getProp(props, key);
-  if (!prop || prop.type !== "date") return null;
+  if (!prop || prop.type !== 'date') return null;
   return prop.date?.start ?? null;
 }
 
@@ -79,7 +79,7 @@ export function getDate(props: PageProperties, key: string): string | null {
  */
 export function getCheckbox(props: PageProperties, key: string): boolean {
   const prop = getProp(props, key);
-  if (!prop || prop.type !== "checkbox") return false;
+  if (!prop || prop.type !== 'checkbox') return false;
   return prop.checkbox;
 }
 
@@ -89,7 +89,7 @@ export function getCheckbox(props: PageProperties, key: string): boolean {
  */
 export function getRelationIds(props: PageProperties, key: string): string[] {
   const prop = getProp(props, key);
-  if (!prop || prop.type !== "relation") return [];
+  if (!prop || prop.type !== 'relation') return [];
   return prop.relation.map((r) => r.id);
 }
 
@@ -99,6 +99,6 @@ export function getRelationIds(props: PageProperties, key: string): string[] {
  */
 export function getUrl(props: PageProperties, key: string): string | null {
   const prop = getProp(props, key);
-  if (!prop || prop.type !== "url") return null;
+  if (!prop || prop.type !== 'url') return null;
   return prop.url;
 }

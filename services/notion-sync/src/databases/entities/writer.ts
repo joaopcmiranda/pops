@@ -1,11 +1,8 @@
-import type Database from "better-sqlite3";
-import type { EntityRow } from "./types.js";
+import type Database from 'better-sqlite3';
+import type { EntityRow } from './types.js';
 
 /** Upsert a batch of entity rows into SQLite. */
-export function upsertEntities(
-  db: Database.Database,
-  rows: EntityRow[]
-): void {
+export function upsertEntities(db: Database.Database, rows: EntityRow[]): void {
   const stmt = db.prepare(`
     INSERT INTO entities (
       notion_id, name, type, abn, aliases,

@@ -1,4 +1,4 @@
-import type Database from "better-sqlite3";
+import type Database from 'better-sqlite3';
 
 /** Create the home_inventory table. Idempotent. */
 export function createInventoryTable(db: Database.Database): void {

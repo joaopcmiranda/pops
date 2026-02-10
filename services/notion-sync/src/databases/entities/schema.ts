@@ -1,4 +1,4 @@
-import type Database from "better-sqlite3";
+import type Database from 'better-sqlite3';
 
 /** Create the entities table and its indexes. Idempotent. */
 export function createEntitiesTable(db: Database.Database): void {

@@ -1,6 +1,6 @@
-import { Client } from "@notionhq/client";
-import { readFileSync } from "node:fs";
-import type { NotionPage } from "./types.js";
+import { Client } from '@notionhq/client';
+import { readFileSync } from 'node:fs';
+import type { NotionPage } from './types.js';
 
 /**
  * Read a Docker secret from /run/secrets/ or fall back to env var.
@@ -8,20 +8,18 @@ import type { NotionPage } from "./types.js";
 function readSecret(envFileKey: string, envDirectKey: string): string {
   const filePath = process.env[envFileKey];
   if (filePath) {
-    return readFileSync(filePath, "utf-8").trim();
+    return readFileSync(filePath, 'utf-8').trim();
   }
   const direct = process.env[envDirectKey];
   if (direct) {
     return direct;
   }
-  throw new Error(
-    `Missing secret: set ${envFileKey} (path) or ${envDirectKey} (value)`
-  );
+  throw new Error(`Missing secret: set ${envFileKey} (path) or ${envDirectKey} (value)`);
 }
 
 /** Create an authenticated Notion client using Docker secrets or env vars. */
 export function createNotionClient(): Client {
-  const token = readSecret("NOTION_TOKEN_FILE", "NOTION_API_TOKEN");
+  const token = readSecret('NOTION_TOKEN_FILE', 'NOTION_API_TOKEN');
   return new Client({ auth: token });
 }
 
@@ -45,16 +43,16 @@ export async function fetchDatabasePages(
       ...(since
         ? {
             filter: {
-              timestamp: "last_edited_time",
+              timestamp: 'last_edited_time',
               last_edited_time: { after: since },
             },
           }
         : {}),
-      sorts: [{ timestamp: "last_edited_time", direction: "ascending" }],
+      sorts: [{ timestamp: 'last_edited_time', direction: 'ascending' }],
     });
 
     for (const page of response.results) {
-      if ("properties" in page && "last_edited_time" in page) {
+      if ('properties' in page && 'last_edited_time' in page) {
         pages.push(page as NotionPage);
       }
     }

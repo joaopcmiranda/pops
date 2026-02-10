@@ -1,4 +1,4 @@
-import type Database from "better-sqlite3";
+import type Database from 'better-sqlite3';
 
 /** Create the transactions table and its indexes. Idempotent. */
 export function createTransactionsTable(db: Database.Database): void {

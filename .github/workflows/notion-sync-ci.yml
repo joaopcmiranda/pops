@@ -1,0 +1,52 @@
+name: Notion Sync CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'services/notion-sync/**'
+      - '.github/workflows/notion-sync-ci.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'services/notion-sync/**'
+      - '.github/workflows/notion-sync-ci.yml'
+
+jobs:
+  quality:
+    name: Quality Checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/notion-sync
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          cache-dependency-path: services/notion-sync/yarn.lock
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Type check
+        run: yarn typecheck
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Format check
+        run: yarn format
+
+      - name: Build
+        run: yarn build
+
+      - name: Run tests
+        run: yarn test
