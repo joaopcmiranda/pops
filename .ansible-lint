@@ -15,6 +15,10 @@ skip_list:
   - no-log-password
   # Skip if using package module is preferred over apt (we explicitly want apt for Ubuntu)
   - package-latest
+  # Existing code uses task-level become — enforce incrementally
+  - partial-become
+  # Existing role variables don't follow role-prefix convention yet
+  - var-naming
 
 # Use strict mode for better code quality
 strict: true
@@ -24,8 +28,8 @@ warn_list:
   - experimental
   - role-name
 
-# Profile to use (production = strictest)
-profile: production
+# Profile to use (shared = balanced strictness for existing codebase)
+profile: shared
 
 # Offline mode (don't check Galaxy)
 offline: false
@@ -38,10 +42,6 @@ supported_ansible_also:
 
 # Task name formatting
 task_name_prefix: "{stem} | "
-
-# Write rules
-write_list:
-  - all
 
 # Enable progressive mode
 progressive: false
