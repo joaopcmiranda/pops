@@ -200,3 +200,9 @@ Full project documentation lives in Notion under **POPS - Personal Ops** (`30240
 - Security Audit: `30240f45-3d91-81ea-a3ce-f38df117e7eb`
 - Phase 1 — Foundation: `30240f45-3d91-81e5-bfde-f14589113d62`
 - POPS Tracker (database): `a36c7a6b-be2f-4f94-8da5-c4c5ad9882b5`
+
+## Rules and Standards
+
+- Keep files small, modular and reusable. 
+- Aim for small, well named and well structured code.
+- REuse reuse reuse. DRY principles!
