@@ -1,66 +1,15 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import BetterSqlite3 from "better-sqlite3";
 import type Database from "better-sqlite3";
-import type { NotionPage } from "./types.js";
 import { initSchema } from "./schema.js";
 import { mapTransaction, mapEntity, mapInventoryItem, mapBudget, mapWishListItem } from "./sync.js";
-import {
-  upsertTransactions,
-  upsertEntities,
-  upsertInventory,
-  upsertBudgets,
-  upsertWishList,
-  saveCursor,
-  loadCursor,
-} from "./sqlite-writer.js";
-
-type PageProps = NotionPage["properties"];
-
-/** Build a rich text array from a plain string. */
-function richText(text: string): Array<{
-  type: "text";
-  text: { content: string; link: null };
-  annotations: {
-    bold: false; italic: false; strikethrough: false;
-    underline: false; code: false; color: "default";
-  };
-  plain_text: string;
-  href: null;
-}> {
-  if (!text) return [];
-  return [{
-    type: "text",
-    text: { content: text, link: null },
-    annotations: {
-      bold: false, italic: false, strikethrough: false,
-      underline: false, code: false, color: "default",
-    },
-    plain_text: text,
-    href: null,
-  }];
-}
-
-const STUB_USER = { id: "user-1", object: "user" as const };
-
-/** Construct a minimal NotionPage-compatible object for testing. */
-function makePage(id: string, props: PageProps, lastEdited: string): NotionPage {
-  return {
-    object: "page",
-    id,
-    created_time: "2024-01-01T00:00:00.000Z",
-    last_edited_time: lastEdited,
-    created_by: STUB_USER,
-    last_edited_by: STUB_USER,
-    archived: false,
-    in_trash: false,
-    url: `https://notion.so/${id}`,
-    public_url: null,
-    icon: null,
-    cover: null,
-    parent: { type: "database_id", database_id: "db-1" },
-    properties: props,
-  };
-}
+import { upsertTransactions } from "./databases/transactions/index.js";
+import { upsertEntities } from "./databases/entities/index.js";
+import { upsertInventory } from "./databases/inventory/index.js";
+import { upsertBudgets } from "./databases/budgets/index.js";
+import { upsertWishList } from "./databases/wish-list/index.js";
+import { saveCursor, loadCursor } from "./cursor.js";
+import { richText, makePage } from "./test-helpers.js";
 
 // ─── mapTransaction ──────────────────────────────────────────
 
