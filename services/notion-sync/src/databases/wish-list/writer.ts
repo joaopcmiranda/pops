@@ -1,11 +1,8 @@
-import type Database from "better-sqlite3";
-import type { WishListRow } from "./types.js";
+import type Database from 'better-sqlite3';
+import type { WishListRow } from './types.js';
 
 /** Upsert a batch of wish list rows into SQLite. */
-export function upsertWishList(
-  db: Database.Database,
-  rows: WishListRow[]
-): void {
+export function upsertWishList(db: Database.Database, rows: WishListRow[]): void {
   const stmt = db.prepare(`
     INSERT INTO wish_list (
       notion_id, item, target_amount, saved, priority, url, notes, last_edited_time

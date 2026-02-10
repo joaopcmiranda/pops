@@ -1,11 +1,8 @@
-import type Database from "better-sqlite3";
-import type { InventoryRow } from "./types.js";
+import type Database from 'better-sqlite3';
+import type { InventoryRow } from './types.js';
 
 /** Upsert a batch of home inventory rows into SQLite. */
-export function upsertInventory(
-  db: Database.Database,
-  rows: InventoryRow[]
-): void {
+export function upsertInventory(db: Database.Database, rows: InventoryRow[]): void {
   const stmt = db.prepare(`
     INSERT INTO home_inventory (
       notion_id, item_name, brand, model, item_id, room, location, type,

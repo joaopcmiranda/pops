@@ -1,4 +1,4 @@
-import type Database from "better-sqlite3";
+import type Database from 'better-sqlite3';
 
 /** Create the wish_list table. Idempotent. */
 export function createWishListTable(db: Database.Database): void {
