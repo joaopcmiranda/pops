@@ -6,13 +6,13 @@ on:
     branches:
       - main
     paths:
-      - 'ansible/**'
+      - 'infra/ansible/**'
       - '.ansible-lint'
       - '.yamllint'
       - '.github/workflows/ansible-ci.yml'
   pull_request:
     paths:
-      - 'ansible/**'
+      - 'infra/ansible/**'
       - '.ansible-lint'
       - '.yamllint'
       - '.github/workflows/ansible-ci.yml'
@@ -35,7 +35,7 @@ jobs:
         run: pip install yamllint
 
       - name: Run yamllint on Ansible files
-        run: yamllint ansible/
+        run: yamllint infra/ansible/
 
   ansible-lint:
     name: Ansible Lint
@@ -61,7 +61,7 @@ jobs:
           ansible-galaxy collection install ansible.posix
 
       - name: Run ansible-lint
-        working-directory: ansible
+        working-directory: infra/ansible
         run: ansible-lint .
 
   syntax-check:
@@ -70,9 +70,9 @@ jobs:
     strategy:
       matrix:
         playbook:
-          - ansible/playbooks/site.yml
-          - ansible/playbooks/deploy.yml
-          - ansible/playbooks/bootstrap.yml
+          - infra/ansible/playbooks/site.yml
+          - infra/ansible/playbooks/deploy.yml
+          - infra/ansible/playbooks/bootstrap.yml
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -97,10 +97,10 @@ jobs:
 
       - name: Run syntax check on ${{ matrix.playbook }}
         run: |
-          cd ansible
+          cd infra/ansible
           ansible-playbook --syntax-check \
             --vault-password-file=/tmp/vault-pass \
-            ../${{ matrix.playbook }}
+            playbooks/$(basename ${{ matrix.playbook }})
 
   security-check:
     name: Security Check
@@ -126,7 +126,7 @@ jobs:
             --exclude="*.enc" \
             --exclude="vault.yml" \
             -E '(password|secret|api[_-]?key|token|credential):\s*["\047][^"\047]{8,}["\047]' \
-            ansible/; then
+            infra/ansible/; then
             echo "Potential hardcoded secrets found!"
             exit 1
           else
@@ -135,8 +135,8 @@ jobs:
 
       - name: Check vault file is encrypted
         run: |
-          if [ -f ansible/inventory/group_vars/pops_servers/vault.yml ]; then
-            if head -n 1 ansible/inventory/group_vars/pops_servers/vault.yml | grep -q '$ANSIBLE_VAULT'; then
+          if [ -f infra/ansible/inventory/group_vars/pops_servers/vault.yml ]; then
+            if head -n 1 infra/ansible/inventory/group_vars/pops_servers/vault.yml | grep -q '$ANSIBLE_VAULT'; then
               echo "Vault file is properly encrypted"
             else
               echo "ERROR: vault.yml is not encrypted!"
@@ -157,7 +157,7 @@ jobs:
         run: |
           echo "Checking for proper privilege escalation..."
           # Ensure we're not using sudo directly
-          if grep -r "sudo:" ansible/roles/; then
+          if grep -r "sudo:" infra/ansible/roles/; then
             echo "WARNING: Direct sudo usage found. Use 'become' instead."
             exit 1
           fi
@@ -167,7 +167,7 @@ jobs:
         run: |
           echo "Checking for shell module best practices..."
           # Prefer command module over shell when possible
-          shell_count=$(grep -r "ansible.builtin.shell:" ansible/roles/ | wc -l || echo "0")
+          shell_count=$(grep -r "ansible.builtin.shell:" infra/ansible/roles/ | wc -l || echo "0")
           echo "Shell module usage count: $shell_count"
           if [ "$shell_count" -gt 10 ]; then
             echo "WARNING: High shell module usage. Consider using specific modules."
@@ -177,7 +177,7 @@ jobs:
         run: |
           echo "Checking for FQCN usage..."
           # Ensure using FQCNs like ansible.builtin.* instead of bare module names
-          if grep -r -E "^[[:space:]]+-[[:space:]]+[a-z_]+:" ansible/roles/ | \
+          if grep -r -E "^[[:space:]]+-[[:space:]]+[a-z_]+:" infra/ansible/roles/ | \
              grep -v "ansible.builtin." | \
              grep -v "community.general." | \
              grep -v "community.docker." | \
