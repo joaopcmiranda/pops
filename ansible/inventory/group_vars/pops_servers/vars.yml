@@ -23,9 +23,9 @@ ssh_port: 2222
 
 # Cloudflare Tunnel subdomains
 cf_subdomain_pwa: pops
-cf_subdomain_api: api.pops
-cf_subdomain_metabase: metabase.pops
-cf_subdomain_paperless: paperless.pops
+cf_subdomain_api: pops-api
+cf_subdomain_metabase: pops-metabase
+cf_subdomain_paperless: pops-paperless
 
 # Docker image versions (pin for security)
 metabase_version: "v0.52.5"

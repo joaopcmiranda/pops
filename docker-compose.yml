@@ -89,7 +89,7 @@ services:
       - paperless_admin_password
     environment:
       PAPERLESS_SECRET_KEY_FILE: /run/secrets/paperless_secret_key
-      PAPERLESS_URL: https://paperless.pops.example.com
+      PAPERLESS_URL: https://pops-paperless.jmiranda.dev
       PAPERLESS_TIME_ZONE: Australia/Melbourne
       PAPERLESS_OCR_LANGUAGE: eng
       PAPERLESS_ADMIN_USER: admin
