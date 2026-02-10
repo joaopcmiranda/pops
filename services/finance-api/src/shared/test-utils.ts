@@ -199,6 +199,67 @@ export function seedTransaction(
   return id;
 }
 
+/** Seed a single inventory item row into the test DB. Returns the notion_id. */
+export function seedInventoryItem(
+  db: Database,
+  overrides: Partial<{
+    notion_id: string;
+    item_name: string;
+    brand: string | null;
+    model: string | null;
+    item_id: string | null;
+    room: string | null;
+    location: string | null;
+    type: string | null;
+    condition: string | null;
+    in_use: number;
+    deductible: number;
+    purchase_date: string | null;
+    warranty_expires: string | null;
+    replacement_value: number | null;
+    resale_value: number | null;
+    purchase_transaction_id: string | null;
+    purchased_from_id: string | null;
+    purchased_from_name: string | null;
+    last_edited_time: string;
+  }> = {}
+): string {
+  const id = overrides.notion_id ?? crypto.randomUUID();
+  db.prepare(`
+    INSERT INTO home_inventory (
+      notion_id, item_name, brand, model, item_id, room, location, type, condition,
+      in_use, deductible, purchase_date, warranty_expires, replacement_value, resale_value,
+      purchase_transaction_id, purchased_from_id, purchased_from_name, last_edited_time
+    )
+    VALUES (
+      @notion_id, @item_name, @brand, @model, @item_id, @room, @location, @type, @condition,
+      @in_use, @deductible, @purchase_date, @warranty_expires, @replacement_value, @resale_value,
+      @purchase_transaction_id, @purchased_from_id, @purchased_from_name, @last_edited_time
+    )
+  `).run({
+    notion_id: id,
+    item_name: overrides.item_name ?? "Test Item",
+    brand: overrides.brand ?? null,
+    model: overrides.model ?? null,
+    item_id: overrides.item_id ?? null,
+    room: overrides.room ?? null,
+    location: overrides.location ?? null,
+    type: overrides.type ?? null,
+    condition: overrides.condition ?? null,
+    in_use: overrides.in_use ?? 0,
+    deductible: overrides.deductible ?? 0,
+    purchase_date: overrides.purchase_date ?? null,
+    warranty_expires: overrides.warranty_expires ?? null,
+    replacement_value: overrides.replacement_value ?? null,
+    resale_value: overrides.resale_value ?? null,
+    purchase_transaction_id: overrides.purchase_transaction_id ?? null,
+    purchased_from_id: overrides.purchased_from_id ?? null,
+    purchased_from_name: overrides.purchased_from_name ?? null,
+    last_edited_time: overrides.last_edited_time ?? "2025-01-01T00:00:00.000Z",
+  });
+  return id;
+}
+
 /**
  * Setup helper for test suites. Call in beforeEach/afterEach.
  * Returns the test DB and an Express app wired to it.

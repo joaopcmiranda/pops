@@ -9,6 +9,7 @@ import wishlistRouter from "./routes/wishlist.js";
 import upBankRouter from "./routes/webhooks/up-bank.js";
 import { entitiesRouter } from "./modules/entities/index.js";
 import { transactionsRouter } from "./modules/transactions/index.js";
+import { inventoryRouter } from "./modules/inventory/index.js";
 
 /**
  * Create and configure the Express application.
@@ -29,6 +30,7 @@ export function createApp(): express.Express {
   // Module routes (CRUD)
   app.use(entitiesRouter);
   app.use(transactionsRouter);
+  app.use(inventoryRouter);
 
   // Legacy routes (to be migrated to modules in Phase 2)
   app.use(healthRouter);
