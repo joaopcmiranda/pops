@@ -121,8 +121,8 @@ export const InventoryQuerySchema = z.object({
   room: z.string().optional(),
   type: z.string().optional(),
   condition: z.string().optional(),
-  inUse: z.coerce.boolean().optional(),
-  deductible: z.coerce.boolean().optional(),
+  inUse: z.enum(["true", "false"]).optional(),
+  deductible: z.enum(["true", "false"]).optional(),
   limit: z.coerce.number().positive().optional(),
   offset: z.coerce.number().nonnegative().optional(),
 });
