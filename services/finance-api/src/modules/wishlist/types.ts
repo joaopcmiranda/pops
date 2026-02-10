@@ -1,0 +1,84 @@
+import { z } from "zod/v4";
+
+/** SQLite row shape returned by queries (snake_case columns). */
+export interface WishListRow {
+  notion_id: string;
+  item: string;
+  target_amount: number | null;
+  saved: number | null;
+  priority: string | null;
+  url: string | null;
+  notes: string | null;
+  last_edited_time: string;
+}
+
+/** Valid priority values for wish list items. */
+export const WISH_LIST_PRIORITIES = ["Needing", "Soon", "One Day", "Dreaming"] as const;
+export type WishListPriority = (typeof WISH_LIST_PRIORITIES)[number];
+
+/** API response shape (camelCase). */
+export interface WishListItem {
+  notionId: string;
+  item: string;
+  targetAmount: number | null;
+  saved: number | null;
+  remainingAmount: number | null;
+  priority: string | null;
+  url: string | null;
+  notes: string | null;
+  lastEditedTime: string;
+}
+
+/**
+ * Map a SQLite row to the API response shape.
+ * Computes remainingAmount as targetAmount - saved, or null if either is null.
+ */
+export function toWishListItem(row: WishListRow): WishListItem {
+  const remainingAmount =
+    row.target_amount !== null && row.saved !== null
+      ? row.target_amount - row.saved
+      : null;
+
+  return {
+    notionId: row.notion_id,
+    item: row.item,
+    targetAmount: row.target_amount,
+    saved: row.saved,
+    remainingAmount,
+    priority: row.priority,
+    url: row.url,
+    notes: row.notes,
+    lastEditedTime: row.last_edited_time,
+  };
+}
+
+/** Zod schema for creating a wish list item. */
+export const CreateWishListItemSchema = z.object({
+  item: z.string().min(1, "Item is required"),
+  targetAmount: z.number().nullable().optional(),
+  saved: z.number().nullable().optional(),
+  priority: z.enum(WISH_LIST_PRIORITIES).nullable().optional(),
+  url: z.string().url("Invalid URL").nullable().optional(),
+  notes: z.string().nullable().optional(),
+});
+export type CreateWishListItemInput = z.infer<typeof CreateWishListItemSchema>;
+
+/** Zod schema for updating a wish list item (all fields optional). */
+export const UpdateWishListItemSchema = z.object({
+  item: z.string().min(1, "Item cannot be empty").optional(),
+  targetAmount: z.number().nullable().optional(),
+  saved: z.number().nullable().optional(),
+  priority: z.enum(WISH_LIST_PRIORITIES).nullable().optional(),
+  url: z.string().url("Invalid URL").nullable().optional(),
+  notes: z.string().nullable().optional(),
+});
+export type UpdateWishListItemInput = z.infer<typeof UpdateWishListItemSchema>;
+
+/** Zod schema for wish list query params. */
+export const WishListQuerySchema = z.object({
+  search: z.string().optional(),
+  priority: z.string().optional(),
+  limit: z.coerce.number().positive().optional(),
+  offset: z.coerce.number().nonnegative().optional(),
+});
+export type WishListQuery = z.infer<typeof WishListQuerySchema>;
