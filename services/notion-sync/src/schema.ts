@@ -25,6 +25,7 @@ export function initSchema(db: Database.Database): void {
       novated_lease   INTEGER NOT NULL DEFAULT 0,
       tax_return      INTEGER NOT NULL DEFAULT 0,
       related_transaction_id TEXT,
+      notes           TEXT,
       last_edited_time TEXT NOT NULL
     );
 
@@ -34,30 +35,62 @@ export function initSchema(db: Database.Database): void {
     CREATE INDEX IF NOT EXISTS idx_transactions_last_edited ON transactions(last_edited_time);
 
     CREATE TABLE IF NOT EXISTS entities (
-      notion_id        TEXT PRIMARY KEY,
-      name             TEXT NOT NULL,
-      last_edited_time TEXT NOT NULL
+      notion_id                TEXT PRIMARY KEY,
+      name                     TEXT NOT NULL,
+      type                     TEXT,
+      abn                      TEXT,
+      aliases                  TEXT,
+      default_transaction_type TEXT,
+      default_category         TEXT,
+      notes                    TEXT,
+      last_edited_time         TEXT NOT NULL
     );
 
     CREATE INDEX IF NOT EXISTS idx_entities_name ON entities(name);
 
     CREATE TABLE IF NOT EXISTS home_inventory (
-      notion_id         TEXT PRIMARY KEY,
-      item_name         TEXT NOT NULL,
-      brand             TEXT,
-      model             TEXT,
-      item_id           TEXT,
-      room              TEXT,
-      location          TEXT,
-      type              TEXT,
-      condition         TEXT,
-      in_use            INTEGER NOT NULL DEFAULT 0,
-      deductible        INTEGER NOT NULL DEFAULT 0,
-      purchase_date     TEXT,
-      warranty_expires  TEXT,
-      replacement_value REAL,
-      resale_value      REAL,
-      last_edited_time  TEXT NOT NULL
+      notion_id              TEXT PRIMARY KEY,
+      item_name              TEXT NOT NULL,
+      brand                  TEXT,
+      model                  TEXT,
+      item_id                TEXT,
+      room                   TEXT,
+      location               TEXT,
+      type                   TEXT,
+      condition              TEXT,
+      in_use                 INTEGER NOT NULL DEFAULT 0,
+      deductible             INTEGER NOT NULL DEFAULT 0,
+      purchase_date          TEXT,
+      warranty_expires       TEXT,
+      replacement_value      REAL,
+      resale_value           REAL,
+      purchase_transaction_id TEXT,
+      purchased_from_id      TEXT,
+      purchased_from_name    TEXT,
+      last_edited_time       TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS budgets (
+      notion_id        TEXT PRIMARY KEY,
+      category         TEXT NOT NULL,
+      period           TEXT,
+      amount           REAL,
+      active           INTEGER NOT NULL DEFAULT 0,
+      notes            TEXT,
+      last_edited_time TEXT NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_budgets_category ON budgets(category);
+
+    CREATE TABLE IF NOT EXISTS wish_list (
+      notion_id        TEXT PRIMARY KEY,
+      item             TEXT NOT NULL,
+      target_amount    REAL,
+      saved            REAL,
+      priority         TEXT,
+      url              TEXT,
+      notes            TEXT,
+      last_edited_time TEXT NOT NULL
     );
 
     CREATE TABLE IF NOT EXISTS sync_cursors (
