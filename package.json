@@ -1,13 +1,19 @@
 {
   "name": "@pops/monorepo",
   "private": true,
+  "packageManager": "yarn@1.22.22",
   "workspaces": [
     "packages/db-types",
     "apps/*"
   ],
   "scripts": {
-    "typecheck": "yarn workspaces foreach -A run typecheck",
-    "test": "yarn workspaces foreach -A run test",
-    "lint": "yarn workspaces foreach -A run lint"
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "typecheck": "turbo typecheck",
+    "test": "turbo test",
+    "lint": "turbo lint"
+  },
+  "devDependencies": {
+    "turbo": "^2.8.3"
   }
 }
