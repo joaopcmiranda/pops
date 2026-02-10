@@ -59,7 +59,7 @@ A unified platform for financial tracking, asset management, budgeting, AI-power
 | Phase | Target | Description | Status |
 |---|---|---|---|
 | 0 — Data Import | Feb 2026 | All bank accounts imported to Notion Balance Sheet | **Done** |
-| 1 — Foundation | Mar 2026 | Infrastructure, sync layer, AI imports, new Notion DBs | Not Started |
+| 1 — Foundation | Mar 2026 | Infrastructure, sync layer, AI imports, new Notion DBs | **In Progress** |
 | 2 — Intelligence | Apr 2026 | Moltbot, dashboards, proactive alerts | Not Started |
 | 3 — Receipts & Inventory | May 2026 | Document management, receipt OCR, inventory linking | Not Started |
 | 4 — Mobile | Jun 2026 | PWA, quick-add, push notifications | Not Started |
@@ -79,9 +79,10 @@ A unified platform for financial tracking, asset management, budgeting, AI-power
 ## Infrastructure
 
 ### N95 Mini PC (POPS Server)
-- **OS:** Linux (Docker Compose)
+- **OS:** Ubuntu 24.04 (Docker Compose, provisioned via Ansible)
 - **Services:** notion-sync, finance-api, metabase, moltbot, paperless-ngx, pops-pwa
 - **Exposure:** Cloudflare Tunnel (free, zero port forwarding)
+- **URLs:** `pops.jmiranda.dev` (PWA), `pops-api.jmiranda.dev` (API), `pops-metabase.jmiranda.dev`, `pops-paperless.jmiranda.dev`
 
 ### External Services
 - **Cloudflare Tunnel** — Secure exposure, free

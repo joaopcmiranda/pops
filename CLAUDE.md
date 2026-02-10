@@ -144,14 +144,16 @@ Bank Feeds:
 ### Home Inventory
 - **ID:** `542bb48c-740c-4848-93ad-eb91c86a612e`
 - **Data source:** `collection://7784d712-0114-4371-90c1-cb15ea003fe2`
-- **Properties:** Item Name (title), Brand/Manufacturer, Model, ID, Room, Location, Type, Condition, In-use, Deductible, Purchase Date, Warranty Expires, Est. Replacement Value, Est. Resale Value
-- **Missing:** Relations to Balance Sheet and Entities, receipt attachment
+- **Properties:** Item Name (title), Brand/Manufacturer, Model, ID, Room, Location, Type, Condition, In-use, Deductible, Purchase Date, Warranty Expires, Est. Replacement Value, Est. Resale Value, Purchase Transaction (relation → Balance Sheet), Purchased From (relation → Entities)
+- **Missing:** Receipt attachment
 
-### Budget (To Be Created — Phase 1)
-- Category, Period, Amount, Active
+### Budget
+- **ID:** `1a640f45-3d91-80e8-9a88-c94dc05fba23`
+- **Properties:** Category (title), Period (select), Amount (number), Active (checkbox), Notes (rich_text)
 
-### Wish List (To Be Created — Phase 1)
-- Item, Target Amount, Saved, Priority tier (Needing / Soon / One Day / Dreaming)
+### Wish List
+- **ID:** `1a640f45-3d91-808a-a84b-d79acbe56acb`
+- **Properties:** Item (title), Target Amount (number), Saved (number), Priority (select: Needing/Soon/One Day/Dreaming), URL (url), Notes (rich_text)
 
 ## Import Tools
 
@@ -185,7 +187,7 @@ Hit rate: ~95-100% with aliases. AI fallback handles the rest and caches results
 | Phase | Target | Status |
 |---|---|---|
 | 0 — Data Import | Feb 2026 | **Done** |
-| 1 — Foundation | Mar 2026 | Not Started |
+| 1 — Foundation | Mar 2026 | **In Progress** |
 | 2 — Intelligence | Apr 2026 | Not Started |
 | 3 — Receipts & Inventory | May 2026 | Not Started |
 | 4 — Mobile | Jun 2026 | Not Started |
