@@ -5,7 +5,7 @@
 import { randomUUID } from "node:crypto";
 import { getDb } from "../../db.js";
 import { NotFoundError } from "../../shared/errors.js";
-import type { TransactionRow, CreateTransactionInput, UpdateTransactionInput, TransactionQuery } from "./types.js";
+import type { TransactionRow, CreateTransactionInput, UpdateTransactionInput, TransactionFilters } from "./types.js";
 
 /** Count + rows for a paginated list. */
 export interface TransactionListResult {
@@ -15,7 +15,7 @@ export interface TransactionListResult {
 
 /** List transactions with optional filters. */
 export function listTransactions(
-  filters: TransactionQuery,
+  filters: TransactionFilters,
   limit: number,
   offset: number
 ): TransactionListResult {

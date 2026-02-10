@@ -178,6 +178,15 @@ describe("GET /transactions", () => {
     expect(res.body.data[0].description).toBe("Online");
   });
 
+  it("filters by online=false", async () => {
+    seedTransaction(db, { description: "Online", account: "Up", online: 1 });
+    seedTransaction(db, { description: "In-store", account: "Up", online: 0 });
+
+    const res = await withAuth(request(app).get("/transactions?online=false"));
+    expect(res.body.data).toHaveLength(1);
+    expect(res.body.data[0].description).toBe("In-store");
+  });
+
   it("filters by novatedLease=true", async () => {
     seedTransaction(db, { description: "Novated", account: "Up", novated_lease: 1 });
     seedTransaction(db, { description: "Regular", account: "Up", novated_lease: 0 });
@@ -187,6 +196,15 @@ describe("GET /transactions", () => {
     expect(res.body.data[0].description).toBe("Novated");
   });
 
+  it("filters by novatedLease=false", async () => {
+    seedTransaction(db, { description: "Novated", account: "Up", novated_lease: 1 });
+    seedTransaction(db, { description: "Regular", account: "Up", novated_lease: 0 });
+
+    const res = await withAuth(request(app).get("/transactions?novatedLease=false"));
+    expect(res.body.data).toHaveLength(1);
+    expect(res.body.data[0].description).toBe("Regular");
+  });
+
   it("filters by taxReturn=true", async () => {
     seedTransaction(db, { description: "Deductible", account: "Up", tax_return: 1 });
     seedTransaction(db, { description: "Non-deductible", account: "Up", tax_return: 0 });
@@ -194,6 +212,15 @@ describe("GET /transactions", () => {
     const res = await withAuth(request(app).get("/transactions?taxReturn=true"));
     expect(res.body.data).toHaveLength(1);
     expect(res.body.data[0].description).toBe("Deductible");
+  });
+
+  it("filters by taxReturn=false", async () => {
+    seedTransaction(db, { description: "Deductible", account: "Up", tax_return: 1 });
+    seedTransaction(db, { description: "Non-deductible", account: "Up", tax_return: 0 });
+
+    const res = await withAuth(request(app).get("/transactions?taxReturn=false"));
+    expect(res.body.data).toHaveLength(1);
+    expect(res.body.data[0].description).toBe("Non-deductible");
   });
 
   it("combines multiple filters", async () => {

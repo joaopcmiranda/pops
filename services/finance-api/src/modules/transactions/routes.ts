@@ -18,7 +18,7 @@ import type {
   MutationResponse,
   DeleteResponse,
 } from "../../shared/types.js";
-import type { Transaction, TransactionQuery } from "./types.js";
+import type { Transaction, TransactionFilters } from "./types.js";
 
 const router = Router();
 
@@ -27,7 +27,7 @@ router.get("/transactions", validate(TransactionQuerySchema, "query"), (req, res
   const query = req.query as Record<string, string | undefined>;
   const { limit, offset } = parsePagination(req.query as Record<string, unknown>);
 
-  const filters: TransactionQuery = {
+  const filters: TransactionFilters = {
     search: query["search"],
     account: query["account"],
     startDate: query["startDate"],

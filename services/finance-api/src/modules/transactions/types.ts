@@ -114,10 +114,24 @@ export const TransactionQuerySchema = z.object({
   category: z.string().optional(),
   entityId: z.string().optional(),
   type: z.string().optional(),
-  online: z.coerce.boolean().optional(),
-  novatedLease: z.coerce.boolean().optional(),
-  taxReturn: z.coerce.boolean().optional(),
+  online: z.enum(["true", "false"]).optional(),
+  novatedLease: z.enum(["true", "false"]).optional(),
+  taxReturn: z.enum(["true", "false"]).optional(),
   limit: z.coerce.number().positive().optional(),
   offset: z.coerce.number().nonnegative().optional(),
 });
-export type TransactionQuery = z.infer<typeof TransactionQuerySchema>;
+export type TransactionQueryRaw = z.infer<typeof TransactionQuerySchema>;
+
+/** Parsed filter params passed to the service layer (booleans resolved from strings). */
+export interface TransactionFilters {
+  search?: string;
+  account?: string;
+  startDate?: string;
+  endDate?: string;
+  category?: string;
+  entityId?: string;
+  type?: string;
+  online?: boolean;
+  novatedLease?: boolean;
+  taxReturn?: boolean;
+}
