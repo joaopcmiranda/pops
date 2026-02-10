@@ -63,6 +63,6 @@
   ansible.builtin.file:
     path: "{{ docker_compose_dir }}"
     state: directory
-    owner: pops
-    group: pops
+    owner: "{{ pops_user }}"
+    group: "{{ pops_user }}"
     mode: "0750"

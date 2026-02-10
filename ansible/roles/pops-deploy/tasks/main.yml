@@ -3,8 +3,8 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    owner: pops
-    group: pops
+    owner: "{{ pops_user }}"
+    group: "{{ pops_user }}"
     mode: "0750"
   loop:
     - "{{ docker_compose_dir }}"
@@ -18,15 +18,15 @@
     dest: "{{ docker_compose_dir }}/repo"
     version: "{{ pops_branch }}"
     force: true
-  become_user: pops
+  become_user: "{{ pops_user }}"
   when: pops_repo_url | length > 0
 
 - name: Template production docker-compose.yml
   ansible.builtin.template:
     src: docker-compose.yml.j2
     dest: "{{ docker_compose_dir }}/docker-compose.yml"
-    owner: pops
-    group: pops
+    owner: "{{ pops_user }}"
+    group: "{{ pops_user }}"
     mode: "0640"
 
 - name: Build custom service images
@@ -57,7 +57,7 @@
 
       [Service]
       Type=oneshot
-      User=pops
+      User={{ pops_user }}
       ExecStart=/usr/bin/docker compose -f {{ docker_compose_dir }}/docker-compose.yml run --rm notion-sync
       TimeoutStartSec=300
     dest: /etc/systemd/system/pops-notion-sync.service
