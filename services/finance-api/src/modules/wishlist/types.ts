@@ -1,20 +1,7 @@
 import { z } from "zod/v4";
+import { WISH_LIST_PRIORITIES, type WishListRow, type WishListPriority } from "@pops/db-types";
 
-/** SQLite row shape returned by queries (snake_case columns). */
-export interface WishListRow {
-  notion_id: string;
-  item: string;
-  target_amount: number | null;
-  saved: number | null;
-  priority: string | null;
-  url: string | null;
-  notes: string | null;
-  last_edited_time: string;
-}
-
-/** Valid priority values for wish list items. */
-export const WISH_LIST_PRIORITIES = ["Needing", "Soon", "One Day", "Dreaming"] as const;
-export type WishListPriority = (typeof WISH_LIST_PRIORITIES)[number];
+export { WISH_LIST_PRIORITIES, type WishListPriority, type WishListRow };
 
 /** API response shape (camelCase). */
 export interface WishListItem {

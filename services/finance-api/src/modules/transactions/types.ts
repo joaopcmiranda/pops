@@ -1,25 +1,7 @@
 import { z } from "zod/v4";
+import type { TransactionRow } from "@pops/db-types";
 
-/** SQLite row shape returned by queries (snake_case columns). */
-export interface TransactionRow {
-  notion_id: string;
-  description: string;
-  account: string;
-  amount: number;
-  date: string;
-  type: string;
-  categories: string;
-  entity_id: string | null;
-  entity_name: string | null;
-  location: string | null;
-  country: string | null;
-  online: number;
-  novated_lease: number;
-  tax_return: number;
-  related_transaction_id: string | null;
-  notes: string | null;
-  last_edited_time: string;
-}
+export type { TransactionRow };
 
 /** API response shape (camelCase). */
 export interface Transaction {

@@ -1,15 +1,7 @@
 import { z } from "zod/v4";
+import type { BudgetRow } from "@pops/db-types";
 
-/** SQLite row shape returned by queries (snake_case columns). */
-export interface BudgetRow {
-  notion_id: string;
-  category: string;
-  period: string | null;
-  amount: number | null;
-  active: number;
-  notes: string | null;
-  last_edited_time: string;
-}
+export type { BudgetRow };
 
 /** API response shape (camelCase). */
 export interface Budget {

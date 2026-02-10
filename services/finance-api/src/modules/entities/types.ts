@@ -1,17 +1,7 @@
 import { z } from "zod/v4";
+import type { EntityRow } from "@pops/db-types";
 
-/** SQLite row shape returned by queries (snake_case columns). */
-export interface EntityRow {
-  notion_id: string;
-  name: string;
-  type: string | null;
-  abn: string | null;
-  aliases: string | null;
-  default_transaction_type: string | null;
-  default_category: string | null;
-  notes: string | null;
-  last_edited_time: string;
-}
+export type { EntityRow };
 
 /** API response shape (camelCase). */
 export interface Entity {
