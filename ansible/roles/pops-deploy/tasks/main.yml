@@ -47,6 +47,23 @@
     chdir: "{{ docker_compose_dir }}"
   changed_when: true
 
+- name: Check if SQLite database exists in volume
+  ansible.builtin.command:
+    cmd: docker run --rm -v pops-sqlite-data:/data/sqlite alpine test -f /data/sqlite/pops.db
+  register: sqlite_db_check
+  failed_when: false
+  changed_when: false
+
+- name: Run initial Notion sync (first deploy only)
+  ansible.builtin.command:
+    cmd: docker compose run --rm notion-sync
+    chdir: "{{ docker_compose_dir }}"
+  become: true
+  become_user: "{{ pops_user }}"
+  when: sqlite_db_check.rc != 0
+  async: 600
+  poll: 30
+
 - name: Create notion-sync systemd service
   ansible.builtin.copy:
     content: |
