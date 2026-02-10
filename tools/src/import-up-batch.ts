@@ -2,7 +2,7 @@
  * Up Bank API batch import script.
  * Fetches transactions from Up Bank API and imports to Notion.
  *
- * Usage: npm run import:up [-- --since 2026-01-01] [--execute]
+ * Usage: yarn import:up [--since 2026-01-01] [--execute]
  */
 
 import type { RunMode } from "./lib/types.js";

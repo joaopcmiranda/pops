@@ -1,7 +1,7 @@
 /**
  * Audit Notion databases — print statistics and data quality checks.
  *
- * Usage: npm run audit
+ * Usage: yarn audit
  */
 
 async function main(): Promise<void> {

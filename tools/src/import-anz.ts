@@ -2,7 +2,7 @@
  * ANZ CSV import script.
  * Imports transactions from ANZ Everyday and ANZ Frequent Flyer Black accounts.
  *
- * Usage: npm run import:anz -- --csv path/to/anz-export.csv [--execute]
+ * Usage: yarn import:anz --csv path/to/anz-export.csv [--execute]
  * Without --execute, runs in dry-run mode (no writes to Notion).
  */
 
@@ -15,7 +15,7 @@ function parseArgs(): { csvPath: string; mode: RunMode } {
   const mode: RunMode = args.includes("--execute") ? "execute" : "dry-run";
 
   if (!csvPath) {
-    console.error("Usage: npm run import:anz -- --csv <path> [--execute]");
+    console.error("Usage: yarn import:anz --csv <path> [--execute]");
     process.exit(1);
   }
 
