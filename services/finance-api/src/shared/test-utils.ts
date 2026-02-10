@@ -1,18 +1,24 @@
 /**
  * Shared test utilities for finance-api.
- * Provides in-memory SQLite setup, app factory, and seed helpers.
+ * Provides in-memory SQLite setup, tRPC caller factory, and seed helpers.
  */
 import type { Database } from "better-sqlite3";
-import type { Test } from "supertest";
 import BetterSqlite3 from "better-sqlite3";
 import { setDb, closeDb } from "../db.js";
-import { createApp } from "../app.js";
+import { appRouter } from "../router.js";
+import type { Context } from "../trpc.js";
 
 const TEST_API_KEY = "test-api-key-for-tests";
 
-/** Wrap a supertest request with the test auth header. */
-export function withAuth(req: Test): Test {
-  return req.set("Authorization", `Bearer ${TEST_API_KEY}`);
+/**
+ * Create a tRPC caller with authentication.
+ * Use this in tests to call procedures directly.
+ */
+export function createCaller(authenticated = true): ReturnType<typeof appRouter.createCaller> {
+  const ctx: Context = {
+    authHeader: authenticated ? `Bearer ${TEST_API_KEY}` : undefined,
+  };
+  return appRouter.createCaller(ctx);
 }
 
 /**
@@ -332,16 +338,16 @@ export function seedWishListItem(
 
 /**
  * Setup helper for test suites. Call in beforeEach/afterEach.
- * Returns the test DB and an Express app wired to it.
+ * Returns the test DB and a tRPC caller.
  */
 export function setupTestContext() {
   let db: Database;
 
-  function setup(): { db: Database; app: ReturnType<typeof createApp> } {
+  function setup(): { db: Database; caller: ReturnType<typeof createCaller> } {
     process.env["FINANCE_API_KEY"] = TEST_API_KEY;
     db = createTestDb();
     setDb(db);
-    return { db, app: createApp() };
+    return { db, caller: createCaller(true) };
   }
 
   function teardown() {

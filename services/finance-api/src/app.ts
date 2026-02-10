@@ -1,15 +1,11 @@
 import express from "express";
 import helmet from "helmet";
-import { authMiddleware } from "./middleware/auth.js";
+import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { rateLimiter } from "./middleware/rate-limit.js";
-import { errorHandler } from "./middleware/error-handler.js";
 import healthRouter from "./routes/health.js";
 import upBankRouter from "./routes/webhooks/up-bank.js";
-import { entitiesRouter } from "./modules/entities/index.js";
-import { transactionsRouter } from "./modules/transactions/index.js";
-import { inventoryRouter } from "./modules/inventory/index.js";
-import { budgetsRouter } from "./modules/budgets/index.js";
-import { wishlistRouter } from "./modules/wishlist/index.js";
+import { appRouter } from "./router.js";
+import { createContext } from "./trpc.js";
 
 /**
  * Create and configure the Express application.
@@ -18,28 +14,29 @@ import { wishlistRouter } from "./modules/wishlist/index.js";
 export function createApp(): express.Express {
   const app = express();
 
-  // Webhook route needs raw body for signature verification
+  // Security headers
+  app.use(helmet());
+
+  // Rate limiting
+  app.use(rateLimiter);
+
+  // Webhook route needs raw body for signature verification (must be before express.json())
   app.use("/webhooks/up", express.raw({ type: "application/json" }));
 
-  // Standard middleware for all other routes
-  app.use(express.json());
-  app.use(helmet());
-  app.use(rateLimiter);
-  app.use(authMiddleware);
-
-  // Module routes (CRUD)
-  app.use(entitiesRouter);
-  app.use(transactionsRouter);
-  app.use(inventoryRouter);
-  app.use(budgetsRouter);
-  app.use(wishlistRouter);
-
-  // Legacy routes (to be migrated to modules)
+  // Health check (public, no auth)
   app.use(healthRouter);
+
+  // Up Bank webhook (handles its own signature verification)
   app.use(upBankRouter);
 
-  // Error handler (must be last)
-  app.use(errorHandler);
+  // tRPC handler (includes auth in context/procedures)
+  app.use(
+    "/trpc",
+    createExpressMiddleware({
+      router: appRouter,
+      createContext,
+    })
+  );
 
   return app;
 }

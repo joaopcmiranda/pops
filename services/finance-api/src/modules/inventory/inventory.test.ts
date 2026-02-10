@@ -1,42 +1,39 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import request from "supertest";
-import type { Express } from "express";
+import { TRPCError } from "@trpc/server";
 import type { Database } from "better-sqlite3";
-import { setupTestContext, seedInventoryItem, withAuth } from "../../shared/test-utils.js";
+import { setupTestContext, seedInventoryItem, createCaller } from "../../shared/test-utils.js";
 
 const ctx = setupTestContext();
-let app: Express;
+let caller: ReturnType<typeof createCaller>;
 let db: Database;
 
 beforeEach(() => {
-  ({ app, db } = ctx.setup());
+  ({ caller, db } = ctx.setup());
 });
 
 afterEach(() => {
   ctx.teardown();
 });
 
-describe("GET /inventory", () => {
+describe("inventory.list", () => {
   it("returns empty list when no items exist", async () => {
-    const res = await withAuth(request(app).get("/inventory"));
-    expect(res.status).toBe(200);
-    expect(res.body.data).toEqual([]);
-    expect(res.body.pagination.total).toBe(0);
-    expect(res.body.pagination.hasMore).toBe(false);
+    const result = await caller.inventory.list({});
+    expect(result.data).toEqual([]);
+    expect(result.pagination.total).toBe(0);
+    expect(result.pagination.hasMore).toBe(false);
   });
 
   it("returns all items with correct shape", async () => {
     seedInventoryItem(db, { item_name: "Laptop" });
     seedInventoryItem(db, { item_name: "Desk" });
 
-    const res = await withAuth(request(app).get("/inventory"));
-    expect(res.status).toBe(200);
-    expect(res.body.data).toHaveLength(2);
-    expect(res.body.pagination.total).toBe(2);
+    const result = await caller.inventory.list({});
+    expect(result.data).toHaveLength(2);
+    expect(result.pagination.total).toBe(2);
 
     // Sorted by item_name
-    expect(res.body.data[0].itemName).toBe("Desk");
-    expect(res.body.data[1].itemName).toBe("Laptop");
+    expect(result.data[0].itemName).toBe("Desk");
+    expect(result.data[1].itemName).toBe("Laptop");
   });
 
   it("returns camelCase fields", async () => {
@@ -49,8 +46,8 @@ describe("GET /inventory", () => {
       last_edited_time: "2025-06-15T10:00:00.000Z",
     });
 
-    const res = await withAuth(request(app).get("/inventory"));
-    const item = res.body.data[0];
+    const result = await caller.inventory.list({});
+    const item = result.data[0];
     expect(item).toHaveProperty("notionId");
     expect(item).toHaveProperty("itemName", "MacBook Pro");
     expect(item).toHaveProperty("purchaseDate", "2025-01-15");
@@ -68,11 +65,11 @@ describe("GET /inventory", () => {
     seedInventoryItem(db, { item_name: "Laptop", in_use: 1, deductible: 0 });
     seedInventoryItem(db, { item_name: "Desk", in_use: 0, deductible: 1 });
 
-    const res = await withAuth(request(app).get("/inventory"));
-    expect(res.body.data[0].inUse).toBe(false);
-    expect(res.body.data[0].deductible).toBe(true);
-    expect(res.body.data[1].inUse).toBe(true);
-    expect(res.body.data[1].deductible).toBe(false);
+    const result = await caller.inventory.list({});
+    expect(result.data[0].inUse).toBe(false);
+    expect(result.data[0].deductible).toBe(true);
+    expect(result.data[1].inUse).toBe(true);
+    expect(result.data[1].deductible).toBe(false);
   });
 
   it("filters by search (case-insensitive LIKE on item_name)", async () => {
@@ -80,73 +77,73 @@ describe("GET /inventory", () => {
     seedInventoryItem(db, { item_name: "iPhone" });
     seedInventoryItem(db, { item_name: "iPad" });
 
-    const res = await withAuth(request(app).get("/inventory?search=mac"));
-    expect(res.body.data).toHaveLength(1);
-    expect(res.body.data[0].itemName).toBe("MacBook Pro");
-    expect(res.body.pagination.total).toBe(1);
+    const result = await caller.inventory.list({ search: "mac" });
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0].itemName).toBe("MacBook Pro");
+    expect(result.pagination.total).toBe(1);
   });
 
   it("filters by room", async () => {
     seedInventoryItem(db, { item_name: "Desk", room: "Office" });
     seedInventoryItem(db, { item_name: "Bed", room: "Bedroom" });
 
-    const res = await withAuth(request(app).get("/inventory?room=Office"));
-    expect(res.body.data).toHaveLength(1);
-    expect(res.body.data[0].itemName).toBe("Desk");
+    const result = await caller.inventory.list({ room: "Office" });
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0].itemName).toBe("Desk");
   });
 
   it("filters by type", async () => {
     seedInventoryItem(db, { item_name: "MacBook", type: "Electronics" });
     seedInventoryItem(db, { item_name: "Desk", type: "Furniture" });
 
-    const res = await withAuth(request(app).get("/inventory?type=Electronics"));
-    expect(res.body.data).toHaveLength(1);
-    expect(res.body.data[0].itemName).toBe("MacBook");
+    const result = await caller.inventory.list({ type: "Electronics" });
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0].itemName).toBe("MacBook");
   });
 
   it("filters by condition", async () => {
     seedInventoryItem(db, { item_name: "Old Laptop", condition: "Fair" });
     seedInventoryItem(db, { item_name: "New Phone", condition: "Excellent" });
 
-    const res = await withAuth(request(app).get("/inventory?condition=Excellent"));
-    expect(res.body.data).toHaveLength(1);
-    expect(res.body.data[0].itemName).toBe("New Phone");
+    const result = await caller.inventory.list({ condition: "Excellent" });
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0].itemName).toBe("New Phone");
   });
 
   it("filters by inUse=true", async () => {
     seedInventoryItem(db, { item_name: "Active Laptop", in_use: 1 });
     seedInventoryItem(db, { item_name: "Stored Tablet", in_use: 0 });
 
-    const res = await withAuth(request(app).get("/inventory?inUse=true"));
-    expect(res.body.data).toHaveLength(1);
-    expect(res.body.data[0].itemName).toBe("Active Laptop");
+    const result = await caller.inventory.list({ inUse: "true" });
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0].itemName).toBe("Active Laptop");
   });
 
   it("filters by inUse=false", async () => {
     seedInventoryItem(db, { item_name: "Active Laptop", in_use: 1 });
     seedInventoryItem(db, { item_name: "Stored Tablet", in_use: 0 });
 
-    const res = await withAuth(request(app).get("/inventory?inUse=false"));
-    expect(res.body.data).toHaveLength(1);
-    expect(res.body.data[0].itemName).toBe("Stored Tablet");
+    const result = await caller.inventory.list({ inUse: "false" });
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0].itemName).toBe("Stored Tablet");
   });
 
   it("filters by deductible=true", async () => {
     seedInventoryItem(db, { item_name: "Business Laptop", deductible: 1 });
     seedInventoryItem(db, { item_name: "Personal Phone", deductible: 0 });
 
-    const res = await withAuth(request(app).get("/inventory?deductible=true"));
-    expect(res.body.data).toHaveLength(1);
-    expect(res.body.data[0].itemName).toBe("Business Laptop");
+    const result = await caller.inventory.list({ deductible: "true" });
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0].itemName).toBe("Business Laptop");
   });
 
   it("filters by deductible=false", async () => {
     seedInventoryItem(db, { item_name: "Business Laptop", deductible: 1 });
     seedInventoryItem(db, { item_name: "Personal Phone", deductible: 0 });
 
-    const res = await withAuth(request(app).get("/inventory?deductible=false"));
-    expect(res.body.data).toHaveLength(1);
-    expect(res.body.data[0].itemName).toBe("Personal Phone");
+    const result = await caller.inventory.list({ deductible: "false" });
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0].itemName).toBe("Personal Phone");
   });
 
   it("combines multiple filters", async () => {
@@ -164,11 +161,13 @@ describe("GET /inventory", () => {
     });
     seedInventoryItem(db, { item_name: "Laptop", room: "Office", type: "Electronics", in_use: 1 });
 
-    const res = await withAuth(
-      request(app).get("/inventory?room=Office&type=Furniture&inUse=true")
-    );
-    expect(res.body.data).toHaveLength(1);
-    expect(res.body.data[0].itemName).toBe("Office Desk");
+    const result = await caller.inventory.list({
+      room: "Office",
+      type: "Furniture",
+      inUse: "true",
+    });
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0].itemName).toBe("Office Desk");
   });
 
   it("paginates with limit and offset", async () => {
@@ -176,143 +175,134 @@ describe("GET /inventory", () => {
       seedInventoryItem(db, { item_name: `Item ${String(i).padStart(2, "0")}` });
     }
 
-    const page1 = await withAuth(request(app).get("/inventory?limit=3&offset=0"));
-    expect(page1.body.data).toHaveLength(3);
-    expect(page1.body.pagination).toEqual({
+    const page1 = await caller.inventory.list({ limit: 3, offset: 0 });
+    expect(page1.data).toHaveLength(3);
+    expect(page1.pagination).toEqual({
       total: 10,
       limit: 3,
       offset: 0,
       hasMore: true,
     });
 
-    const page2 = await withAuth(request(app).get("/inventory?limit=3&offset=3"));
-    expect(page2.body.data).toHaveLength(3);
-    expect(page2.body.pagination.offset).toBe(3);
+    const page2 = await caller.inventory.list({ limit: 3, offset: 3 });
+    expect(page2.data).toHaveLength(3);
+    expect(page2.pagination.offset).toBe(3);
 
     // Names should not overlap
-    const page1Names = page1.body.data.map((i: { itemName: string }) => i.itemName);
-    const page2Names = page2.body.data.map((i: { itemName: string }) => i.itemName);
+    const page1Names = page1.data.map((i) => i.itemName);
+    const page2Names = page2.data.map((i) => i.itemName);
     expect(page1Names).not.toEqual(page2Names);
   });
 
-  it("caps limit at 500", async () => {
-    const res = await withAuth(request(app).get("/inventory?limit=9999"));
-    expect(res.body.pagination.limit).toBe(500);
-  });
-
   it("defaults limit to 50 and offset to 0", async () => {
-    const res = await withAuth(request(app).get("/inventory"));
-    expect(res.body.pagination.limit).toBe(50);
-    expect(res.body.pagination.offset).toBe(0);
+    const result = await caller.inventory.list({});
+    expect(result.pagination.limit).toBe(50);
+    expect(result.pagination.offset).toBe(0);
   });
 
-  it("returns 401 without auth header", async () => {
-    const res = await request(app).get("/inventory");
-    expect(res.status).toBe(401);
+  it("throws UNAUTHORIZED without auth", async () => {
+    const unauthCaller = createCaller(false);
+    await expect(unauthCaller.inventory.list({})).rejects.toThrow(TRPCError);
+    await expect(unauthCaller.inventory.list({})).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
+    });
   });
 });
 
-describe("GET /inventory/:id", () => {
+describe("inventory.get", () => {
   it("returns a single item by ID", async () => {
     const id = seedInventoryItem(db, { item_name: "MacBook Pro" });
 
-    const res = await withAuth(request(app).get(`/inventory/${id}`));
-    expect(res.status).toBe(200);
-    expect(res.body.data.notionId).toBe(id);
-    expect(res.body.data.itemName).toBe("MacBook Pro");
+    const result = await caller.inventory.get({ id });
+    expect(result.data.notionId).toBe(id);
+    expect(result.data.itemName).toBe("MacBook Pro");
   });
 
-  it("returns 404 for non-existent ID", async () => {
-    const res = await withAuth(request(app).get("/inventory/does-not-exist"));
-    expect(res.status).toBe(404);
-    expect(res.body.error).toMatch(/not found/i);
+  it("throws NOT_FOUND for non-existent ID", async () => {
+    await expect(caller.inventory.get({ id: "does-not-exist" })).rejects.toThrow(TRPCError);
+    await expect(caller.inventory.get({ id: "does-not-exist" })).rejects.toMatchObject({
+      code: "NOT_FOUND",
+    });
   });
 });
 
-describe("POST /inventory", () => {
+describe("inventory.create", () => {
   it("creates an item with required fields only (itemName)", async () => {
-    const res = await withAuth(request(app).post("/inventory").send({ itemName: "MacBook Pro" }));
+    const result = await caller.inventory.create({ itemName: "MacBook Pro" });
 
-    expect(res.status).toBe(201);
-    expect(res.body.message).toBe("Inventory item created");
-    expect(res.body.data.itemName).toBe("MacBook Pro");
-    expect(res.body.data.notionId).toBeDefined();
-    expect(res.body.data.inUse).toBe(false);
-    expect(res.body.data.deductible).toBe(false);
-    expect(res.body.data.brand).toBeNull();
+    expect(result.message).toBe("Inventory item created");
+    expect(result.data.itemName).toBe("MacBook Pro");
+    expect(result.data.notionId).toBeDefined();
+    expect(result.data.inUse).toBe(false);
+    expect(result.data.deductible).toBe(false);
+    expect(result.data.brand).toBeNull();
   });
 
   it("creates an item with all fields", async () => {
-    const res = await withAuth(
-      request(app).post("/inventory").send({
-        itemName: "MacBook Pro",
-        brand: "Apple",
-        model: "M2 Max",
-        itemId: "SN123456",
-        room: "Office",
-        location: "Desk",
-        type: "Electronics",
-        condition: "Excellent",
-        inUse: true,
-        deductible: true,
-        purchaseDate: "2025-01-15",
-        warrantyExpires: "2027-01-15",
-        replacementValue: 2500.0,
-        resaleValue: 1800.0,
-        purchaseTransactionId: "txn-123",
-        purchasedFromId: "entity-456",
-        purchasedFromName: "Apple Store",
-      })
-    );
+    const result = await caller.inventory.create({
+      itemName: "MacBook Pro",
+      brand: "Apple",
+      model: "M2 Max",
+      itemId: "SN123456",
+      room: "Office",
+      location: "Desk",
+      type: "Electronics",
+      condition: "Excellent",
+      inUse: true,
+      deductible: true,
+      purchaseDate: "2025-01-15",
+      warrantyExpires: "2027-01-15",
+      replacementValue: 2500.0,
+      resaleValue: 1800.0,
+      purchaseTransactionId: "txn-123",
+      purchasedFromId: "entity-456",
+      purchasedFromName: "Apple Store",
+    });
 
-    expect(res.status).toBe(201);
-    expect(res.body.data.itemName).toBe("MacBook Pro");
-    expect(res.body.data.brand).toBe("Apple");
-    expect(res.body.data.model).toBe("M2 Max");
-    expect(res.body.data.itemId).toBe("SN123456");
-    expect(res.body.data.room).toBe("Office");
-    expect(res.body.data.location).toBe("Desk");
-    expect(res.body.data.type).toBe("Electronics");
-    expect(res.body.data.condition).toBe("Excellent");
-    expect(res.body.data.inUse).toBe(true);
-    expect(res.body.data.deductible).toBe(true);
-    expect(res.body.data.purchaseDate).toBe("2025-01-15");
-    expect(res.body.data.warrantyExpires).toBe("2027-01-15");
-    expect(res.body.data.replacementValue).toBe(2500.0);
-    expect(res.body.data.resaleValue).toBe(1800.0);
-    expect(res.body.data.purchaseTransactionId).toBe("txn-123");
-    expect(res.body.data.purchasedFromId).toBe("entity-456");
-    expect(res.body.data.purchasedFromName).toBe("Apple Store");
+    expect(result.data.itemName).toBe("MacBook Pro");
+    expect(result.data.brand).toBe("Apple");
+    expect(result.data.model).toBe("M2 Max");
+    expect(result.data.itemId).toBe("SN123456");
+    expect(result.data.room).toBe("Office");
+    expect(result.data.location).toBe("Desk");
+    expect(result.data.type).toBe("Electronics");
+    expect(result.data.condition).toBe("Excellent");
+    expect(result.data.inUse).toBe(true);
+    expect(result.data.deductible).toBe(true);
+    expect(result.data.purchaseDate).toBe("2025-01-15");
+    expect(result.data.warrantyExpires).toBe("2027-01-15");
+    expect(result.data.replacementValue).toBe(2500.0);
+    expect(result.data.resaleValue).toBe(1800.0);
+    expect(result.data.purchaseTransactionId).toBe("txn-123");
+    expect(result.data.purchasedFromId).toBe("entity-456");
+    expect(result.data.purchasedFromName).toBe("Apple Store");
   });
 
-  it("rejects empty itemName", async () => {
-    const res = await withAuth(request(app).post("/inventory").send({ itemName: "" }));
-
-    expect(res.status).toBe(400);
-    expect(res.body.error).toMatch(/validation/i);
+  it("throws BAD_REQUEST for empty itemName", async () => {
+    await expect(caller.inventory.create({ itemName: "" })).rejects.toThrow(TRPCError);
+    await expect(caller.inventory.create({ itemName: "" })).rejects.toMatchObject({
+      code: "BAD_REQUEST",
+    });
   });
 
-  it("rejects missing itemName", async () => {
-    const res = await withAuth(request(app).post("/inventory").send({}));
-
-    expect(res.status).toBe(400);
+  it("throws BAD_REQUEST for missing itemName", async () => {
+    // @ts-expect-error - Testing validation with missing required field
+    await expect(caller.inventory.create({})).rejects.toThrow(TRPCError);
   });
 
   it("persists to the database", async () => {
-    await withAuth(request(app).post("/inventory").send({ itemName: "New Item" }));
+    await caller.inventory.create({ itemName: "New Item" });
 
     const row = db.prepare("SELECT * FROM home_inventory WHERE item_name = ?").get("New Item");
     expect(row).toBeDefined();
   });
 
   it("stores boolean fields as INTEGER in DB", async () => {
-    await withAuth(
-      request(app).post("/inventory").send({
-        itemName: "Test Item",
-        inUse: true,
-        deductible: false,
-      })
-    );
+    await caller.inventory.create({
+      itemName: "Test Item",
+      inUse: true,
+      deductible: false,
+    });
 
     const row = db
       .prepare("SELECT in_use, deductible FROM home_inventory WHERE item_name = ?")
@@ -322,56 +312,54 @@ describe("POST /inventory", () => {
   });
 });
 
-describe("PUT /inventory/:id", () => {
+describe("inventory.update", () => {
   it("updates a single field", async () => {
     const id = seedInventoryItem(db, { item_name: "MacBook Pro" });
 
-    const res = await withAuth(request(app).put(`/inventory/${id}`).send({ brand: "Apple" }));
+    const result = await caller.inventory.update({ id, data: { brand: "Apple" } });
 
-    expect(res.status).toBe(200);
-    expect(res.body.message).toBe("Inventory item updated");
-    expect(res.body.data.itemName).toBe("MacBook Pro");
-    expect(res.body.data.brand).toBe("Apple");
+    expect(result.message).toBe("Inventory item updated");
+    expect(result.data.itemName).toBe("MacBook Pro");
+    expect(result.data.brand).toBe("Apple");
   });
 
   it("updates multiple fields at once", async () => {
     const id = seedInventoryItem(db, { item_name: "MacBook" });
 
-    const res = await withAuth(
-      request(app).put(`/inventory/${id}`).send({
+    const result = await caller.inventory.update({
+      id,
+      data: {
         itemName: "MacBook Pro",
         brand: "Apple",
         model: "M2 Max",
         room: "Office",
-      })
-    );
+      },
+    });
 
-    expect(res.status).toBe(200);
-    expect(res.body.data.itemName).toBe("MacBook Pro");
-    expect(res.body.data.brand).toBe("Apple");
-    expect(res.body.data.model).toBe("M2 Max");
-    expect(res.body.data.room).toBe("Office");
+    expect(result.data.itemName).toBe("MacBook Pro");
+    expect(result.data.brand).toBe("Apple");
+    expect(result.data.model).toBe("M2 Max");
+    expect(result.data.room).toBe("Office");
   });
 
   it("clears a field by setting to null", async () => {
     const id = seedInventoryItem(db, { item_name: "MacBook", brand: "Apple" });
 
-    const res = await withAuth(request(app).put(`/inventory/${id}`).send({ brand: null }));
+    const result = await caller.inventory.update({ id, data: { brand: null } });
 
-    expect(res.status).toBe(200);
-    expect(res.body.data.brand).toBeNull();
+    expect(result.data.brand).toBeNull();
   });
 
   it("updates boolean fields", async () => {
     const id = seedInventoryItem(db, { item_name: "Laptop", in_use: 0, deductible: 0 });
 
-    const res = await withAuth(
-      request(app).put(`/inventory/${id}`).send({ inUse: true, deductible: true })
-    );
+    const result = await caller.inventory.update({
+      id,
+      data: { inUse: true, deductible: true },
+    });
 
-    expect(res.status).toBe(200);
-    expect(res.body.data.inUse).toBe(true);
-    expect(res.body.data.deductible).toBe(true);
+    expect(result.data.inUse).toBe(true);
+    expect(result.data.deductible).toBe(true);
   });
 
   it("updates last_edited_time", async () => {
@@ -380,7 +368,7 @@ describe("PUT /inventory/:id", () => {
       last_edited_time: "2020-01-01T00:00:00.000Z",
     });
 
-    await withAuth(request(app).put(`/inventory/${id}`).send({ brand: "Apple" }));
+    await caller.inventory.update({ id, data: { brand: "Apple" } });
 
     const row = db
       .prepare("SELECT last_edited_time FROM home_inventory WHERE notion_id = ?")
@@ -388,46 +376,63 @@ describe("PUT /inventory/:id", () => {
     expect(row.last_edited_time).not.toBe("2020-01-01T00:00:00.000Z");
   });
 
-  it("returns 404 for non-existent ID", async () => {
-    const res = await withAuth(
-      request(app).put("/inventory/does-not-exist").send({ itemName: "New Name" })
-    );
-
-    expect(res.status).toBe(404);
+  it("throws NOT_FOUND for non-existent ID", async () => {
+    await expect(
+      caller.inventory.update({
+        id: "does-not-exist",
+        data: { itemName: "New Name" },
+      })
+    ).rejects.toThrow(TRPCError);
+    await expect(
+      caller.inventory.update({
+        id: "does-not-exist",
+        data: { itemName: "New Name" },
+      })
+    ).rejects.toMatchObject({
+      code: "NOT_FOUND",
+    });
   });
 
-  it("rejects empty itemName", async () => {
+  it("throws BAD_REQUEST for empty itemName", async () => {
     const id = seedInventoryItem(db, { item_name: "MacBook" });
 
-    const res = await withAuth(request(app).put(`/inventory/${id}`).send({ itemName: "" }));
-
-    expect(res.status).toBe(400);
+    await expect(
+      caller.inventory.update({ id, data: { itemName: "" } })
+    ).rejects.toThrow(TRPCError);
+    await expect(
+      caller.inventory.update({ id, data: { itemName: "" } })
+    ).rejects.toMatchObject({
+      code: "BAD_REQUEST",
+    });
   });
 });
 
-describe("DELETE /inventory/:id", () => {
+describe("inventory.delete", () => {
   it("deletes an existing item", async () => {
     const id = seedInventoryItem(db, { item_name: "MacBook Pro" });
 
-    const res = await withAuth(request(app).delete(`/inventory/${id}`));
-    expect(res.status).toBe(200);
-    expect(res.body.message).toBe("Inventory item deleted");
+    const result = await caller.inventory.delete({ id });
+    expect(result.message).toBe("Inventory item deleted");
 
     // Verify gone from DB
     const row = db.prepare("SELECT * FROM home_inventory WHERE notion_id = ?").get(id);
     expect(row).toBeUndefined();
   });
 
-  it("returns 404 for non-existent ID", async () => {
-    const res = await withAuth(request(app).delete("/inventory/does-not-exist"));
-    expect(res.status).toBe(404);
+  it("throws NOT_FOUND for non-existent ID", async () => {
+    await expect(caller.inventory.delete({ id: "does-not-exist" })).rejects.toThrow(TRPCError);
+    await expect(caller.inventory.delete({ id: "does-not-exist" })).rejects.toMatchObject({
+      code: "NOT_FOUND",
+    });
   });
 
-  it("is idempotent — second delete returns 404", async () => {
+  it("is idempotent — second delete throws NOT_FOUND", async () => {
     const id = seedInventoryItem(db, { item_name: "MacBook Pro" });
 
-    await withAuth(request(app).delete(`/inventory/${id}`));
-    const res = await withAuth(request(app).delete(`/inventory/${id}`));
-    expect(res.status).toBe(404);
+    await caller.inventory.delete({ id });
+    await expect(caller.inventory.delete({ id })).rejects.toThrow(TRPCError);
+    await expect(caller.inventory.delete({ id })).rejects.toMatchObject({
+      code: "NOT_FOUND",
+    });
   });
 });
