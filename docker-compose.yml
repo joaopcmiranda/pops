@@ -1,7 +1,9 @@
 services:
   # ── BACKEND ──────────────────────────────────────────────────────
   notion-sync:
-    build: ./services/notion-sync
+    build:
+      context: .
+      dockerfile: services/notion-sync/Dockerfile
     container_name: pops-notion-sync
     restart: "no"
     networks:
@@ -16,7 +18,9 @@ services:
       NOTION_TOKEN_FILE: /run/secrets/notion_api_token
 
   finance-api:
-    build: ./services/finance-api
+    build:
+      context: .
+      dockerfile: services/finance-api/Dockerfile
     container_name: pops-finance-api
     restart: unless-stopped
     networks:
@@ -44,7 +48,9 @@ services:
 
   # ── FRONTEND ─────────────────────────────────────────────────────
   pops-pwa:
-    build: ./services/pops-pwa
+    build:
+      context: .
+      dockerfile: services/pops-pwa/Dockerfile
     container_name: pops-pwa
     restart: unless-stopped
     networks:

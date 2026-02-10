@@ -184,7 +184,7 @@ fi
 echo -e "${YELLOW}Running Ansible deployment...${NC}"
 echo ""
 
-ANSIBLE_ARGS="-i ansible/inventory/hosts.yml --vault-password-file ~/.ansible/pops-vault-password"
+ANSIBLE_ARGS="-i inventory/hosts.yml --vault-password-file ~/.ansible/pops-vault-password"
 
 if [ "$DRY_RUN" = true ]; then
     ANSIBLE_ARGS="$ANSIBLE_ARGS --check"
@@ -194,7 +194,7 @@ if [ "$VERBOSE" = true ]; then
     ANSIBLE_ARGS="$ANSIBLE_ARGS -vv"
 fi
 
-if ansible-playbook ansible/playbooks/deploy.yml $ANSIBLE_ARGS; then
+if (cd ansible && ansible-playbook playbooks/deploy.yml $ANSIBLE_ARGS); then
     echo ""
     echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo -e "${GREEN}✓ Deployment successful!${NC}"
