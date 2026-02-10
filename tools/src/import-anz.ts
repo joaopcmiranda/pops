@@ -6,16 +6,16 @@
  * Without --execute, runs in dry-run mode (no writes to Notion).
  */
 
-import type { RunMode } from "./lib/types.js";
+import type { RunMode } from './lib/types.js';
 
 function parseArgs(): { csvPath: string; mode: RunMode } {
   const args = process.argv.slice(2);
-  const csvIndex = args.indexOf("--csv");
+  const csvIndex = args.indexOf('--csv');
   const csvPath = csvIndex >= 0 ? args[csvIndex + 1] : undefined;
-  const mode: RunMode = args.includes("--execute") ? "execute" : "dry-run";
+  const mode: RunMode = args.includes('--execute') ? 'execute' : 'dry-run';
 
   if (!csvPath) {
-    console.error("Usage: yarn import:anz --csv <path> [--execute]");
+    console.error('Usage: yarn import:anz --csv <path> [--execute]');
     process.exit(1);
   }
 
@@ -33,10 +33,10 @@ async function main(): Promise<void> {
   // 4. Deduplicate against existing Notion records
   // 5. Write new transactions to Notion (if --execute)
 
-  console.log("[import-anz] Not yet implemented — migrate from import_anz.js");
+  console.log('[import-anz] Not yet implemented — migrate from import_anz.js');
 }
 
 main().catch((err: unknown) => {
-  console.error("[import-anz] Fatal:", err);
+  console.error('[import-anz] Fatal:', err);
   process.exit(1);
 });
