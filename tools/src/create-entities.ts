@@ -2,7 +2,7 @@
  * Batch create entities in Notion Entities database.
  * Also regenerates entity_lookup.json after creation.
  *
- * Usage: npm run entities:create [-- --execute]
+ * Usage: yarn entities:create [--execute]
  */
 
 async function main(): Promise<void> {

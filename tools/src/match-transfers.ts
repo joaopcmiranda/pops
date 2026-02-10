@@ -2,7 +2,7 @@
  * Match inter-account transfer pairs in Notion Balance Sheet.
  * Links matching debit/credit transactions across accounts via Related Transaction relation.
  *
- * Usage: npm run match:transfers [-- --execute]
+ * Usage: yarn match:transfers [--execute]
  */
 
 async function main(): Promise<void> {

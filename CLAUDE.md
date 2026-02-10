@@ -12,33 +12,48 @@ Phase 0 (data import) is complete. Phase 1 (Foundation) targets March 2026.
 
 ### Services (each has its own package.json)
 ```bash
-cd services/notion-sync && npm install && npm run dev      # Run sync locally
-cd services/finance-api && npm install && npm run dev      # API with watch mode
-cd services/pops-pwa && npm install && npm run dev         # Vite dev server
+cd services/notion-sync && yarn install && yarn dev        # Run sync locally
+cd services/finance-api && yarn install && yarn dev        # API with watch mode
+cd services/pops-pwa && yarn install && yarn dev           # Vite dev server
 
 # Typecheck a service
-cd services/<service> && npm run typecheck
+cd services/<service> && yarn typecheck
 
 # Run tests
-cd services/<service> && npm run test              # single run
-cd services/<service> && npm run test:watch        # watch mode
+cd services/<service> && yarn test                 # single run
+cd services/<service> && yarn test:watch           # watch mode
 ```
 
 ### Tools (import scripts)
 ```bash
-cd tools && npm install
+cd tools && yarn install
 
-npm run import:anz -- --csv path/to/file.csv --execute    # ANZ import
-npm run import:amex -- --csv path/to/file.csv --execute   # Amex import
-npm run import:ing -- --csv path/to/file.csv --execute    # ING import
-npm run import:up -- --since 2026-01-01 --execute         # Up Bank batch
-npm run match:transfers -- --execute                       # Link transfer pairs
-npm run match:novated -- --execute                         # Link novated pairs
-npm run entities:create -- --execute                       # Batch create entities
-npm run entities:lookup                                    # Rebuild entity lookup
-npm run audit                                              # DB statistics
+yarn import:anz --csv path/to/file.csv --execute           # ANZ import
+yarn import:amex --csv path/to/file.csv --execute          # Amex import
+yarn import:ing --csv path/to/file.csv --execute           # ING import
+yarn import:up --since 2026-01-01 --execute                # Up Bank batch
+yarn match:transfers --execute                              # Link transfer pairs
+yarn match:novated --execute                                # Link novated pairs
+yarn entities:create --execute                              # Batch create entities
+yarn entities:lookup                                        # Rebuild entity lookup
+yarn audit                                                  # DB statistics
 ```
 Omit `--execute` for dry-run mode (no writes to Notion).
+
+### Git Worktrees
+```bash
+# Create a new worktree (branches off main, copies files)
+worktree-branch <branch-name>
+
+# With dependency installation (slower, for manual use)
+worktree-branch <branch-name> --install-deps
+
+# The worktree is created at ../<branch-name> relative to the repo root
+# e.g. from /Volumes/knox/helix/dev/pops → /Volumes/knox/helix/dev/<branch-name>
+
+# Clean up when done
+git worktree remove ../<branch-name> && git branch -d <branch-name>
+```
 
 ### Docker
 ```bash
@@ -203,8 +218,45 @@ Full project documentation lives in Notion under **POPS - Personal Ops** (`30240
 - Phase 1 — Foundation: `30240f45-3d91-81e5-bfde-f14589113d62`
 - POPS Tracker (database): `a36c7a6b-be2f-4f94-8da5-c4c5ad9882b5`
 
+## Development Workflow
+
+All non-trivial work happens in git worktrees. The main conversation orchestrates; background agents execute.
+
+### Process
+
+1. **Create worktree:** `worktree-branch <branch-name>` from the repo root
+2. **Launch background agent** targeting the worktree at `../<branch-name>` (absolute path: `/Volumes/knox/helix/dev/<branch-name>`)
+3. **Agent completes autonomously:** implements, tests, commits, pushes, and opens a PR
+4. **Main conversation reviews** agent output, checks PR, requests changes if needed
+5. **Cleanup after merge:** `git worktree remove ../<branch-name> && git branch -d <branch-name>`
+
+### Branch Naming
+
+- `feature/<name>` — new functionality
+- `fix/<name>` — bug fixes
+- `refactor/<name>` — code restructuring
+- `docs/<name>` — documentation changes
+
+### Rules
+
+- **Never commit directly to `main`** — all changes go through PRs
+- Each worktree = one focused task = one PR
+- Background agents must include full context in their prompt (they start fresh — no conversation history)
+- Agents must run tests and typecheck before committing
+- Multiple worktrees can run in parallel for independent tasks
+- Trivial fixes (typos, single-line changes) can skip worktrees and go direct to a branch + PR
+
+### Agent Prompt Template
+
+When launching a background agent, include:
+- The absolute worktree path
+- What to implement (with enough detail to work autonomously)
+- Which files to read first for context
+- The branch name (already created by `worktree-branch`)
+- Instruction to commit, push, and create a PR when done
+
 ## Rules and Standards
 
-- Keep files small, modular and reusable. 
+- Keep files small, modular and reusable.
 - Aim for small, well named and well structured code.
 - REuse reuse reuse. DRY principles!

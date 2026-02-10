@@ -2,7 +2,7 @@
  * Match novated lease reimbursement pairs in Notion Balance Sheet.
  * Links payroll deductions to the original lease charges.
  *
- * Usage: npm run match:novated [-- --execute]
+ * Usage: yarn match:novated [--execute]
  */
 
 async function main(): Promise<void> {

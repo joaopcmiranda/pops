@@ -2,7 +2,7 @@
  * Rebuild entity_lookup.json from the Notion Entities database.
  * Maps entity name -> Notion page URL for use by import scripts.
  *
- * Usage: npm run entities:lookup
+ * Usage: yarn entities:lookup
  */
 
 async function main(): Promise<void> {
