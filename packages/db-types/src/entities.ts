@@ -1,0 +1,19 @@
+/**
+ * SQLite schema for entities table (snake_case columns).
+ * Used by both notion-sync (writes) and finance-api (reads).
+ */
+import { z } from "zod/v4";
+
+export const EntityRowSchema = z.object({
+  notion_id: z.string(),
+  name: z.string(),
+  type: z.string().nullable(),
+  abn: z.string().nullable(),
+  aliases: z.string().nullable(),
+  default_transaction_type: z.string().nullable(),
+  default_category: z.string().nullable(),
+  notes: z.string().nullable(),
+  last_edited_time: z.string(),
+});
+
+export type EntityRow = z.infer<typeof EntityRowSchema>;

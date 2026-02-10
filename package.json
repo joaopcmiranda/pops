@@ -1,0 +1,13 @@
+{
+  "name": "@pops/monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "services/*"
+  ],
+  "scripts": {
+    "typecheck": "yarn workspaces foreach -A run typecheck",
+    "test": "yarn workspaces foreach -A run test",
+    "lint": "yarn workspaces foreach -A run lint"
+  }
+}

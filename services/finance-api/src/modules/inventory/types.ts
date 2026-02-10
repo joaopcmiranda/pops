@@ -1,27 +1,7 @@
 import { z } from "zod/v4";
+import type { InventoryRow } from "@pops/db-types";
 
-/** SQLite row shape returned by queries (snake_case columns). */
-export interface InventoryRow {
-  notion_id: string;
-  item_name: string;
-  brand: string | null;
-  model: string | null;
-  item_id: string | null;
-  room: string | null;
-  location: string | null;
-  type: string | null;
-  condition: string | null;
-  in_use: number;
-  deductible: number;
-  purchase_date: string | null;
-  warranty_expires: string | null;
-  replacement_value: number | null;
-  resale_value: number | null;
-  purchase_transaction_id: string | null;
-  purchased_from_id: string | null;
-  purchased_from_name: string | null;
-  last_edited_time: string;
-}
+export type { InventoryRow };
 
 /** API response shape (camelCase). */
 export interface InventoryItem {
