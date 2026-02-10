@@ -135,10 +135,7 @@ services:
     networks:
       - frontend
       - documents
-    secrets:
-      - cloudflare_tunnel_token
-    entrypoint: /bin/sh
-    command: -c 'exec cloudflared tunnel --no-autoupdate run --token $$(cat /run/secrets/cloudflare_tunnel_token)'
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
 
   # ── TOOLS (on-demand) ───────────────────────────────────────────
   tools:
@@ -196,8 +193,6 @@ secrets:
     file: ./secrets/telegram_bot_token
   finance_api_key:
     file: ./secrets/finance_api_key
-  cloudflare_tunnel_token:
-    file: ./secrets/cloudflare_tunnel_token
   paperless_secret_key:
     file: ./secrets/paperless_secret_key
   paperless_admin_password:
