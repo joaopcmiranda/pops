@@ -24,9 +24,7 @@ export interface Context {
  * Create tRPC context from Express request.
  * Validates Cloudflare Access JWT and extracts user info.
  */
-export async function createContext({
-  req,
-}: CreateExpressContextOptions): Promise<Context> {
+export async function createContext({ req }: CreateExpressContextOptions): Promise<Context> {
   const token = req.headers["cf-access-jwt-assertion"];
 
   if (typeof token === "string") {

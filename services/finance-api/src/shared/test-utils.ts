@@ -14,7 +14,7 @@ import type { Context } from "../trpc.js";
  */
 export function createCaller(authenticated = true): ReturnType<typeof appRouter.createCaller> {
   const ctx: Context = {
-    user: authenticated ? { email: 'test@example.com' } : null,
+    user: authenticated ? { email: "test@example.com" } : null,
   };
   return appRouter.createCaller(ctx);
 }

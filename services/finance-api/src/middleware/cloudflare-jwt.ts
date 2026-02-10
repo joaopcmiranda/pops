@@ -3,8 +3,8 @@
  * Validates Cf-Access-Jwt-Assertion header and extracts user email
  */
 
-import jwt from 'jsonwebtoken';
-import type { JwtPayload } from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
+import type { JwtPayload } from "jsonwebtoken";
 
 /**
  * Cloudflare Access JWT payload structure
@@ -36,9 +36,9 @@ async function getCloudflarePublicKeys(): Promise<Record<string, string>> {
     return keyCache.keys;
   }
 
-  const teamName = process.env['CLOUDFLARE_ACCESS_TEAM_NAME'];
+  const teamName = process.env["CLOUDFLARE_ACCESS_TEAM_NAME"];
   if (!teamName) {
-    throw new Error('CLOUDFLARE_ACCESS_TEAM_NAME not configured');
+    throw new Error("CLOUDFLARE_ACCESS_TEAM_NAME not configured");
   }
 
   const certsUrl = `https://${teamName}.cloudflareaccess.com/cdn-cgi/access/certs`;
@@ -71,18 +71,16 @@ async function getCloudflarePublicKeys(): Promise<Record<string, string>> {
  * @returns Decoded JWT payload with user email
  * @throws Error if token is invalid or verification fails
  */
-export async function verifyCloudflareJWT(
-  token: string
-): Promise<CloudflareJWTPayload> {
+export async function verifyCloudflareJWT(token: string): Promise<CloudflareJWTPayload> {
   // Decode header to get kid (key ID)
   const decoded = jwt.decode(token, { complete: true });
-  if (!decoded || typeof decoded === 'string') {
-    throw new Error('Invalid JWT: Unable to decode header');
+  if (!decoded || typeof decoded === "string") {
+    throw new Error("Invalid JWT: Unable to decode header");
   }
 
   const kid = decoded.header.kid;
   if (!kid) {
-    throw new Error('Invalid JWT: Missing kid in header');
+    throw new Error("Invalid JWT: Missing kid in header");
   }
 
   // Fetch public keys
@@ -95,18 +93,18 @@ export async function verifyCloudflareJWT(
 
   // Verify token signature
   const payload = jwt.verify(token, publicKey, {
-    algorithms: ['RS256'],
+    algorithms: ["RS256"],
   }) as CloudflareJWTPayload;
 
   // Validate audience (application AUD)
-  const expectedAud = process.env['CLOUDFLARE_ACCESS_AUD'];
+  const expectedAud = process.env["CLOUDFLARE_ACCESS_AUD"];
   if (expectedAud && !payload.aud.includes(expectedAud)) {
-    throw new Error('Invalid JWT: Audience mismatch');
+    throw new Error("Invalid JWT: Audience mismatch");
   }
 
   // Validate email exists
   if (!payload.email) {
-    throw new Error('Invalid JWT: Missing email claim');
+    throw new Error("Invalid JWT: Missing email claim");
   }
 
   return payload;
