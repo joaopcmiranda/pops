@@ -16,6 +16,12 @@ rules:
   # Comments - require space after # but allow stand-alone comments
   comments:
     min-spaces-from-content: 1
+  comments-indentation: disable
+
+  # Octal values - required by ansible-lint compatibility
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true
 
   # Truthy values - allow yes/no/true/false (common in Ansible)
   truthy:

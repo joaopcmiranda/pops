@@ -58,6 +58,7 @@ jobs:
         run: |
           ansible-galaxy collection install community.general
           ansible-galaxy collection install community.docker
+          ansible-galaxy collection install ansible.posix
 
       - name: Run ansible-lint
         run: ansible-lint ansible/
@@ -88,6 +89,7 @@ jobs:
         run: |
           ansible-galaxy collection install community.general
           ansible-galaxy collection install community.docker
+          ansible-galaxy collection install ansible.posix
 
       - name: Create dummy vault password file
         run: echo "dummy-password-for-ci" > /tmp/vault-pass
