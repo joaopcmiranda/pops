@@ -10,6 +10,8 @@ import {
   UpdateInventoryItemSchema,
   InventoryQuerySchema,
   toInventoryItem,
+  type CreateInventoryItemInput,
+  type UpdateInventoryItemInput,
 } from "./types.js";
 import * as service from "./service.js";
 import type {
@@ -29,7 +31,8 @@ router.get("/inventory", validate(InventoryQuerySchema, "query"), (req, res) => 
 
   // Parse boolean filters from query strings
   const inUse = query["inUse"] === "true" ? true : query["inUse"] === "false" ? false : undefined;
-  const deductible = query["deductible"] === "true" ? true : query["deductible"] === "false" ? false : undefined;
+  const deductible =
+    query["deductible"] === "true" ? true : query["deductible"] === "false" ? false : undefined;
 
   const { rows, total } = service.listInventoryItems(
     query["search"],
@@ -59,7 +62,8 @@ router.get("/inventory/:id", (req, res) => {
 
 /** POST /inventory — create a new inventory item. */
 router.post("/inventory", validate(CreateInventoryItemSchema), (req, res) => {
-  const row = service.createInventoryItem(req.body);
+  const input = req.body as CreateInventoryItemInput;
+  const row = service.createInventoryItem(input);
   const body: MutationResponse<InventoryItem> = {
     data: toInventoryItem(row),
     message: "Inventory item created",
@@ -70,7 +74,8 @@ router.post("/inventory", validate(CreateInventoryItemSchema), (req, res) => {
 /** PUT /inventory/:id — update an existing inventory item. */
 router.put("/inventory/:id", validate(UpdateInventoryItemSchema), (req, res) => {
   const id = requireParam(req, "id");
-  const row = service.updateInventoryItem(id, req.body);
+  const input = req.body as UpdateInventoryItemInput;
+  const row = service.updateInventoryItem(id, input);
   const body: MutationResponse<InventoryItem> = {
     data: toInventoryItem(row),
     message: "Inventory item updated",

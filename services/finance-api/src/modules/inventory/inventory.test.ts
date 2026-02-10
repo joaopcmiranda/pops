@@ -44,8 +44,8 @@ describe("GET /inventory", () => {
       item_name: "MacBook Pro",
       purchase_date: "2025-01-15",
       warranty_expires: "2027-01-15",
-      replacement_value: 2500.00,
-      resale_value: 1800.00,
+      replacement_value: 2500.0,
+      resale_value: 1800.0,
       last_edited_time: "2025-06-15T10:00:00.000Z",
     });
 
@@ -55,8 +55,8 @@ describe("GET /inventory", () => {
     expect(item).toHaveProperty("itemName", "MacBook Pro");
     expect(item).toHaveProperty("purchaseDate", "2025-01-15");
     expect(item).toHaveProperty("warrantyExpires", "2027-01-15");
-    expect(item).toHaveProperty("replacementValue", 2500.00);
-    expect(item).toHaveProperty("resaleValue", 1800.00);
+    expect(item).toHaveProperty("replacementValue", 2500.0);
+    expect(item).toHaveProperty("resaleValue", 1800.0);
     expect(item).toHaveProperty("lastEditedTime", "2025-06-15T10:00:00.000Z");
     // No snake_case leaking
     expect(item).not.toHaveProperty("notion_id");
@@ -150,11 +150,23 @@ describe("GET /inventory", () => {
   });
 
   it("combines multiple filters", async () => {
-    seedInventoryItem(db, { item_name: "Office Desk", room: "Office", type: "Furniture", in_use: 1 });
-    seedInventoryItem(db, { item_name: "Office Chair", room: "Office", type: "Furniture", in_use: 0 });
+    seedInventoryItem(db, {
+      item_name: "Office Desk",
+      room: "Office",
+      type: "Furniture",
+      in_use: 1,
+    });
+    seedInventoryItem(db, {
+      item_name: "Office Chair",
+      room: "Office",
+      type: "Furniture",
+      in_use: 0,
+    });
     seedInventoryItem(db, { item_name: "Laptop", room: "Office", type: "Electronics", in_use: 1 });
 
-    const res = await withAuth(request(app).get("/inventory?room=Office&type=Furniture&inUse=true"));
+    const res = await withAuth(
+      request(app).get("/inventory?room=Office&type=Furniture&inUse=true")
+    );
     expect(res.body.data).toHaveLength(1);
     expect(res.body.data[0].itemName).toBe("Office Desk");
   });
@@ -219,9 +231,7 @@ describe("GET /inventory/:id", () => {
 
 describe("POST /inventory", () => {
   it("creates an item with required fields only (itemName)", async () => {
-    const res = await withAuth(
-      request(app).post("/inventory").send({ itemName: "MacBook Pro" })
-    );
+    const res = await withAuth(request(app).post("/inventory").send({ itemName: "MacBook Pro" }));
 
     expect(res.status).toBe(201);
     expect(res.body.message).toBe("Inventory item created");
@@ -247,8 +257,8 @@ describe("POST /inventory", () => {
         deductible: true,
         purchaseDate: "2025-01-15",
         warrantyExpires: "2027-01-15",
-        replacementValue: 2500.00,
-        resaleValue: 1800.00,
+        replacementValue: 2500.0,
+        resaleValue: 1800.0,
         purchaseTransactionId: "txn-123",
         purchasedFromId: "entity-456",
         purchasedFromName: "Apple Store",
@@ -268,34 +278,28 @@ describe("POST /inventory", () => {
     expect(res.body.data.deductible).toBe(true);
     expect(res.body.data.purchaseDate).toBe("2025-01-15");
     expect(res.body.data.warrantyExpires).toBe("2027-01-15");
-    expect(res.body.data.replacementValue).toBe(2500.00);
-    expect(res.body.data.resaleValue).toBe(1800.00);
+    expect(res.body.data.replacementValue).toBe(2500.0);
+    expect(res.body.data.resaleValue).toBe(1800.0);
     expect(res.body.data.purchaseTransactionId).toBe("txn-123");
     expect(res.body.data.purchasedFromId).toBe("entity-456");
     expect(res.body.data.purchasedFromName).toBe("Apple Store");
   });
 
   it("rejects empty itemName", async () => {
-    const res = await withAuth(
-      request(app).post("/inventory").send({ itemName: "" })
-    );
+    const res = await withAuth(request(app).post("/inventory").send({ itemName: "" }));
 
     expect(res.status).toBe(400);
     expect(res.body.error).toMatch(/validation/i);
   });
 
   it("rejects missing itemName", async () => {
-    const res = await withAuth(
-      request(app).post("/inventory").send({})
-    );
+    const res = await withAuth(request(app).post("/inventory").send({}));
 
     expect(res.status).toBe(400);
   });
 
   it("persists to the database", async () => {
-    await withAuth(
-      request(app).post("/inventory").send({ itemName: "New Item" })
-    );
+    await withAuth(request(app).post("/inventory").send({ itemName: "New Item" }));
 
     const row = db.prepare("SELECT * FROM home_inventory WHERE item_name = ?").get("New Item");
     expect(row).toBeDefined();
@@ -310,7 +314,8 @@ describe("POST /inventory", () => {
       })
     );
 
-    const row = db.prepare("SELECT in_use, deductible FROM home_inventory WHERE item_name = ?")
+    const row = db
+      .prepare("SELECT in_use, deductible FROM home_inventory WHERE item_name = ?")
       .get("Test Item") as { in_use: number; deductible: number };
     expect(row.in_use).toBe(1);
     expect(row.deductible).toBe(0);
@@ -321,9 +326,7 @@ describe("PUT /inventory/:id", () => {
   it("updates a single field", async () => {
     const id = seedInventoryItem(db, { item_name: "MacBook Pro" });
 
-    const res = await withAuth(
-      request(app).put(`/inventory/${id}`).send({ brand: "Apple" })
-    );
+    const res = await withAuth(request(app).put(`/inventory/${id}`).send({ brand: "Apple" }));
 
     expect(res.status).toBe(200);
     expect(res.body.message).toBe("Inventory item updated");
@@ -353,9 +356,7 @@ describe("PUT /inventory/:id", () => {
   it("clears a field by setting to null", async () => {
     const id = seedInventoryItem(db, { item_name: "MacBook", brand: "Apple" });
 
-    const res = await withAuth(
-      request(app).put(`/inventory/${id}`).send({ brand: null })
-    );
+    const res = await withAuth(request(app).put(`/inventory/${id}`).send({ brand: null }));
 
     expect(res.status).toBe(200);
     expect(res.body.data.brand).toBeNull();
@@ -379,11 +380,10 @@ describe("PUT /inventory/:id", () => {
       last_edited_time: "2020-01-01T00:00:00.000Z",
     });
 
-    await withAuth(
-      request(app).put(`/inventory/${id}`).send({ brand: "Apple" })
-    );
+    await withAuth(request(app).put(`/inventory/${id}`).send({ brand: "Apple" }));
 
-    const row = db.prepare("SELECT last_edited_time FROM home_inventory WHERE notion_id = ?")
+    const row = db
+      .prepare("SELECT last_edited_time FROM home_inventory WHERE notion_id = ?")
       .get(id) as { last_edited_time: string };
     expect(row.last_edited_time).not.toBe("2020-01-01T00:00:00.000Z");
   });
@@ -399,9 +399,7 @@ describe("PUT /inventory/:id", () => {
   it("rejects empty itemName", async () => {
     const id = seedInventoryItem(db, { item_name: "MacBook" });
 
-    const res = await withAuth(
-      request(app).put(`/inventory/${id}`).send({ itemName: "" })
-    );
+    const res = await withAuth(request(app).put(`/inventory/${id}`).send({ itemName: "" }));
 
     expect(res.status).toBe(400);
   });

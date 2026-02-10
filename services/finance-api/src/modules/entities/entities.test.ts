@@ -153,9 +153,7 @@ describe("GET /entities/:id", () => {
 
 describe("POST /entities", () => {
   it("creates an entity with required fields only", async () => {
-    const res = await withAuth(
-      request(app).post("/entities").send({ name: "Woolworths" })
-    );
+    const res = await withAuth(request(app).post("/entities").send({ name: "Woolworths" }));
 
     expect(res.status).toBe(201);
     expect(res.body.message).toBe("Entity created");
@@ -167,15 +165,17 @@ describe("POST /entities", () => {
 
   it("creates an entity with all fields", async () => {
     const res = await withAuth(
-      request(app).post("/entities").send({
-        name: "Woolworths",
-        type: "Retailer",
-        abn: "88000014675",
-        aliases: ["Woolies", "WW"],
-        defaultTransactionType: "Purchase",
-        defaultCategory: "Groceries",
-        notes: "Supermarket chain",
-      })
+      request(app)
+        .post("/entities")
+        .send({
+          name: "Woolworths",
+          type: "Retailer",
+          abn: "88000014675",
+          aliases: ["Woolies", "WW"],
+          defaultTransactionType: "Purchase",
+          defaultCategory: "Groceries",
+          notes: "Supermarket chain",
+        })
     );
 
     expect(res.status).toBe(201);
@@ -191,35 +191,27 @@ describe("POST /entities", () => {
   it("rejects duplicate entity name", async () => {
     seedEntity(db, { name: "Woolworths" });
 
-    const res = await withAuth(
-      request(app).post("/entities").send({ name: "Woolworths" })
-    );
+    const res = await withAuth(request(app).post("/entities").send({ name: "Woolworths" }));
 
     expect(res.status).toBe(409);
     expect(res.body.error).toMatch(/already exists/i);
   });
 
   it("rejects empty name", async () => {
-    const res = await withAuth(
-      request(app).post("/entities").send({ name: "" })
-    );
+    const res = await withAuth(request(app).post("/entities").send({ name: "" }));
 
     expect(res.status).toBe(400);
     expect(res.body.error).toMatch(/validation/i);
   });
 
   it("rejects missing name", async () => {
-    const res = await withAuth(
-      request(app).post("/entities").send({})
-    );
+    const res = await withAuth(request(app).post("/entities").send({}));
 
     expect(res.status).toBe(400);
   });
 
   it("persists to the database", async () => {
-    await withAuth(
-      request(app).post("/entities").send({ name: "New Entity" })
-    );
+    await withAuth(request(app).post("/entities").send({ name: "New Entity" }));
 
     const row = db.prepare("SELECT * FROM entities WHERE name = ?").get("New Entity");
     expect(row).toBeDefined();
@@ -230,9 +222,7 @@ describe("PUT /entities/:id", () => {
   it("updates a single field", async () => {
     const id = seedEntity(db, { name: "Woolworths" });
 
-    const res = await withAuth(
-      request(app).put(`/entities/${id}`).send({ type: "Retailer" })
-    );
+    const res = await withAuth(request(app).put(`/entities/${id}`).send({ type: "Retailer" }));
 
     expect(res.status).toBe(200);
     expect(res.body.message).toBe("Entity updated");
@@ -244,11 +234,13 @@ describe("PUT /entities/:id", () => {
     const id = seedEntity(db, { name: "Woolworths" });
 
     const res = await withAuth(
-      request(app).put(`/entities/${id}`).send({
-        name: "Woolworths Group",
-        type: "Retailer",
-        aliases: ["Woolies", "WW"],
-      })
+      request(app)
+        .put(`/entities/${id}`)
+        .send({
+          name: "Woolworths Group",
+          type: "Retailer",
+          aliases: ["Woolies", "WW"],
+        })
     );
 
     expect(res.status).toBe(200);
@@ -260,9 +252,7 @@ describe("PUT /entities/:id", () => {
   it("clears a field by setting to null", async () => {
     const id = seedEntity(db, { name: "Woolworths", type: "Retailer" });
 
-    const res = await withAuth(
-      request(app).put(`/entities/${id}`).send({ type: null })
-    );
+    const res = await withAuth(request(app).put(`/entities/${id}`).send({ type: null }));
 
     expect(res.status).toBe(200);
     expect(res.body.data.type).toBeNull();
@@ -274,11 +264,11 @@ describe("PUT /entities/:id", () => {
       last_edited_time: "2020-01-01T00:00:00.000Z",
     });
 
-    await withAuth(
-      request(app).put(`/entities/${id}`).send({ type: "Retailer" })
-    );
+    await withAuth(request(app).put(`/entities/${id}`).send({ type: "Retailer" }));
 
-    const row = db.prepare("SELECT last_edited_time FROM entities WHERE notion_id = ?").get(id) as { last_edited_time: string };
+    const row = db.prepare("SELECT last_edited_time FROM entities WHERE notion_id = ?").get(id) as {
+      last_edited_time: string;
+    };
     expect(row.last_edited_time).not.toBe("2020-01-01T00:00:00.000Z");
   });
 
@@ -293,9 +283,7 @@ describe("PUT /entities/:id", () => {
   it("rejects empty name", async () => {
     const id = seedEntity(db, { name: "Woolworths" });
 
-    const res = await withAuth(
-      request(app).put(`/entities/${id}`).send({ name: "" })
-    );
+    const res = await withAuth(request(app).put(`/entities/${id}`).send({ name: "" }));
 
     expect(res.status).toBe(400);
   });

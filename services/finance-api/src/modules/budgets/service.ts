@@ -49,9 +49,9 @@ export function listBudgets(
     .prepare(`SELECT * FROM budgets ${where} ORDER BY category LIMIT @limit OFFSET @offset`)
     .all({ ...params, limit, offset }) as BudgetRow[];
 
-  const countRow = db
-    .prepare(`SELECT COUNT(*) as total FROM budgets ${where}`)
-    .get(params) as { total: number };
+  const countRow = db.prepare(`SELECT COUNT(*) as total FROM budgets ${where}`).get(params) as {
+    total: number;
+  };
 
   return { rows, total: countRow.total };
 }
@@ -59,9 +59,9 @@ export function listBudgets(
 /** Get a single budget by notion_id. Throws NotFoundError if missing. */
 export function getBudget(id: string): BudgetRow {
   const db = getDb();
-  const row = db
-    .prepare("SELECT * FROM budgets WHERE notion_id = ?")
-    .get(id) as BudgetRow | undefined;
+  const row = db.prepare("SELECT * FROM budgets WHERE notion_id = ?").get(id) as
+    | BudgetRow
+    | undefined;
 
   if (!row) throw new NotFoundError("Budget", id);
   return row;
@@ -78,18 +78,26 @@ export function createBudget(input: CreateBudgetInput): BudgetRow {
 
   // Check for duplicate category+period combination
   const existing = db
-    .prepare("SELECT notion_id FROM budgets WHERE category = ? AND (period = ? OR (period IS NULL AND ? IS NULL))")
-    .get(input.category, input.period ?? null, input.period ?? null) as { notion_id: string } | undefined;
+    .prepare(
+      "SELECT notion_id FROM budgets WHERE category = ? AND (period = ? OR (period IS NULL AND ? IS NULL))"
+    )
+    .get(input.category, input.period ?? null, input.period ?? null) as
+    | { notion_id: string }
+    | undefined;
 
   if (existing) {
     const periodDesc = input.period ? `'${input.period}'` : "null";
-    throw new ConflictError(`Budget with category '${input.category}' and period ${periodDesc} already exists`);
+    throw new ConflictError(
+      `Budget with category '${input.category}' and period ${periodDesc} already exists`
+    );
   }
 
-  db.prepare(`
+  db.prepare(
+    `
     INSERT INTO budgets (notion_id, category, period, amount, active, notes, last_edited_time)
     VALUES (@notionId, @category, @period, @amount, @active, @notes, @lastEditedTime)
-  `).run({
+  `
+  ).run({
     notionId: id,
     category: input.category,
     period: input.period ?? null,
@@ -137,8 +145,7 @@ export function updateBudget(id: string, input: UpdateBudgetInput): BudgetRow {
     fields.push("last_edited_time = @lastEditedTime");
     params["lastEditedTime"] = new Date().toISOString();
 
-    db.prepare(`UPDATE budgets SET ${fields.join(", ")} WHERE notion_id = @notionId`)
-      .run(params);
+    db.prepare(`UPDATE budgets SET ${fields.join(", ")} WHERE notion_id = @notionId`).run(params);
   }
 
   return getBudget(id);

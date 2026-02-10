@@ -10,6 +10,8 @@ import {
   UpdateTransactionSchema,
   TransactionQuerySchema,
   toTransaction,
+  type CreateTransactionInput,
+  type UpdateTransactionInput,
 } from "./types.js";
 import * as service from "./service.js";
 import type {
@@ -36,8 +38,14 @@ router.get("/transactions", validate(TransactionQuerySchema, "query"), (req, res
     entityId: query["entityId"],
     type: query["type"],
     online: query["online"] === "true" ? true : query["online"] === "false" ? false : undefined,
-    novatedLease: query["novatedLease"] === "true" ? true : query["novatedLease"] === "false" ? false : undefined,
-    taxReturn: query["taxReturn"] === "true" ? true : query["taxReturn"] === "false" ? false : undefined,
+    novatedLease:
+      query["novatedLease"] === "true"
+        ? true
+        : query["novatedLease"] === "false"
+          ? false
+          : undefined,
+    taxReturn:
+      query["taxReturn"] === "true" ? true : query["taxReturn"] === "false" ? false : undefined,
   };
 
   const { rows, total } = service.listTransactions(filters, limit, offset);
@@ -59,7 +67,8 @@ router.get("/transactions/:id", (req, res) => {
 
 /** POST /transactions — create a new transaction. */
 router.post("/transactions", validate(CreateTransactionSchema), (req, res) => {
-  const row = service.createTransaction(req.body);
+  const input = req.body as CreateTransactionInput;
+  const row = service.createTransaction(input);
   const body: MutationResponse<Transaction> = {
     data: toTransaction(row),
     message: "Transaction created",
@@ -70,7 +79,8 @@ router.post("/transactions", validate(CreateTransactionSchema), (req, res) => {
 /** PUT /transactions/:id — update an existing transaction. */
 router.put("/transactions/:id", validate(UpdateTransactionSchema), (req, res) => {
   const id = requireParam(req, "id");
-  const row = service.updateTransaction(id, req.body);
+  const input = req.body as UpdateTransactionInput;
+  const row = service.updateTransaction(id, input);
   const body: MutationResponse<Transaction> = {
     data: toTransaction(row),
     message: "Transaction updated",

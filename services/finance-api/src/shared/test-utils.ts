@@ -125,10 +125,12 @@ export function seedEntity(
   }> = {}
 ): string {
   const id = overrides.notion_id ?? crypto.randomUUID();
-  db.prepare(`
+  db.prepare(
+    `
     INSERT INTO entities (notion_id, name, type, abn, aliases, default_transaction_type, default_category, notes, last_edited_time)
     VALUES (@notion_id, @name, @type, @abn, @aliases, @default_transaction_type, @default_category, @notes, @last_edited_time)
-  `).run({
+  `
+  ).run({
     notion_id: id,
     name: overrides.name ?? "Test Entity",
     type: overrides.type ?? null,
@@ -166,7 +168,8 @@ export function seedTransaction(
   }> = {}
 ): string {
   const id = overrides.notion_id ?? crypto.randomUUID();
-  db.prepare(`
+  db.prepare(
+    `
     INSERT INTO transactions (
       notion_id, description, account, amount, date, type, categories,
       entity_id, entity_name, location, country, online, novated_lease,
@@ -177,7 +180,8 @@ export function seedTransaction(
       @entity_id, @entity_name, @location, @country, @online, @novated_lease,
       @tax_return, @related_transaction_id, @notes, @last_edited_time
     )
-  `).run({
+  `
+  ).run({
     notion_id: id,
     description: overrides.description ?? "Test Transaction",
     account: overrides.account ?? "Test Account",
@@ -225,7 +229,8 @@ export function seedInventoryItem(
   }> = {}
 ): string {
   const id = overrides.notion_id ?? crypto.randomUUID();
-  db.prepare(`
+  db.prepare(
+    `
     INSERT INTO home_inventory (
       notion_id, item_name, brand, model, item_id, room, location, type, condition,
       in_use, deductible, purchase_date, warranty_expires, replacement_value, resale_value,
@@ -236,7 +241,8 @@ export function seedInventoryItem(
       @in_use, @deductible, @purchase_date, @warranty_expires, @replacement_value, @resale_value,
       @purchase_transaction_id, @purchased_from_id, @purchased_from_name, @last_edited_time
     )
-  `).run({
+  `
+  ).run({
     notion_id: id,
     item_name: overrides.item_name ?? "Test Item",
     brand: overrides.brand ?? null,
@@ -274,10 +280,12 @@ export function seedBudget(
   }> = {}
 ): string {
   const id = overrides.notion_id ?? crypto.randomUUID();
-  db.prepare(`
+  db.prepare(
+    `
     INSERT INTO budgets (notion_id, category, period, amount, active, notes, last_edited_time)
     VALUES (@notion_id, @category, @period, @amount, @active, @notes, @last_edited_time)
-  `).run({
+  `
+  ).run({
     notion_id: id,
     category: overrides.category ?? "Test Category",
     period: overrides.period ?? null,
@@ -304,10 +312,12 @@ export function seedWishListItem(
   }> = {}
 ): string {
   const id = overrides.notion_id ?? crypto.randomUUID();
-  db.prepare(`
+  db.prepare(
+    `
     INSERT INTO wish_list (notion_id, item, target_amount, saved, priority, url, notes, last_edited_time)
     VALUES (@notion_id, @item, @target_amount, @saved, @priority, @url, @notes, @last_edited_time)
-  `).run({
+  `
+  ).run({
     notion_id: id,
     item: overrides.item ?? "Test Wish List Item",
     target_amount: overrides.target_amount ?? null,

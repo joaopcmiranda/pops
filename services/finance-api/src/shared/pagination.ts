@@ -27,6 +27,10 @@ export function parsePagination(query: Record<string, unknown>): PaginationParam
 }
 
 /** Build the pagination metadata for a response. */
-export function paginationMeta(total: number, limit: number, offset: number) {
+export function paginationMeta(
+  total: number,
+  limit: number,
+  offset: number
+): { total: number; limit: number; offset: number; hasMore: boolean } {
   return { total, limit, offset, hasMore: offset + limit < total };
 }

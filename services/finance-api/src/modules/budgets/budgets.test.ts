@@ -125,7 +125,9 @@ describe("GET /budgets", () => {
     seedBudget(db, { category: "Groceries Monthly", period: "2025-06", active: 0 });
     seedBudget(db, { category: "Entertainment", period: "2025-06", active: 1 });
 
-    const res = await withAuth(request(app).get("/budgets?search=grocer&period=2025-06&active=true"));
+    const res = await withAuth(
+      request(app).get("/budgets?search=grocer&period=2025-06&active=true")
+    );
     expect(res.body.data).toHaveLength(1);
     expect(res.body.data[0].category).toBe("Groceries Weekly");
   });
@@ -191,9 +193,7 @@ describe("GET /budgets/:id", () => {
 
 describe("POST /budgets", () => {
   it("creates a budget with required fields only (just category)", async () => {
-    const res = await withAuth(
-      request(app).post("/budgets").send({ category: "Groceries" })
-    );
+    const res = await withAuth(request(app).post("/budgets").send({ category: "Groceries" }));
 
     expect(res.status).toBe(201);
     expect(res.body.message).toBe("Budget created");
@@ -267,26 +267,20 @@ describe("POST /budgets", () => {
   });
 
   it("rejects missing category", async () => {
-    const res = await withAuth(
-      request(app).post("/budgets").send({})
-    );
+    const res = await withAuth(request(app).post("/budgets").send({}));
 
     expect(res.status).toBe(400);
   });
 
   it("rejects empty category", async () => {
-    const res = await withAuth(
-      request(app).post("/budgets").send({ category: "" })
-    );
+    const res = await withAuth(request(app).post("/budgets").send({ category: "" }));
 
     expect(res.status).toBe(400);
     expect(res.body.error).toMatch(/validation/i);
   });
 
   it("persists to the database", async () => {
-    await withAuth(
-      request(app).post("/budgets").send({ category: "New Budget" })
-    );
+    await withAuth(request(app).post("/budgets").send({ category: "New Budget" }));
 
     const row = db.prepare("SELECT * FROM budgets WHERE category = ?").get("New Budget");
     expect(row).toBeDefined();
@@ -297,9 +291,7 @@ describe("PUT /budgets/:id", () => {
   it("updates a single field", async () => {
     const id = seedBudget(db, { category: "Groceries" });
 
-    const res = await withAuth(
-      request(app).put(`/budgets/${id}`).send({ amount: 600 })
-    );
+    const res = await withAuth(request(app).put(`/budgets/${id}`).send({ amount: 600 }));
 
     expect(res.status).toBe(200);
     expect(res.body.message).toBe("Budget updated");
@@ -327,9 +319,7 @@ describe("PUT /budgets/:id", () => {
   it("clears a field by setting to null", async () => {
     const id = seedBudget(db, { category: "Groceries", amount: 500 });
 
-    const res = await withAuth(
-      request(app).put(`/budgets/${id}`).send({ amount: null })
-    );
+    const res = await withAuth(request(app).put(`/budgets/${id}`).send({ amount: null }));
 
     expect(res.status).toBe(200);
     expect(res.body.data.amount).toBeNull();
@@ -338,9 +328,7 @@ describe("PUT /budgets/:id", () => {
   it("toggles active from false to true", async () => {
     const id = seedBudget(db, { category: "Groceries", active: 0 });
 
-    const res = await withAuth(
-      request(app).put(`/budgets/${id}`).send({ active: true })
-    );
+    const res = await withAuth(request(app).put(`/budgets/${id}`).send({ active: true }));
 
     expect(res.status).toBe(200);
     expect(res.body.data.active).toBe(true);
@@ -349,9 +337,7 @@ describe("PUT /budgets/:id", () => {
   it("toggles active from true to false", async () => {
     const id = seedBudget(db, { category: "Groceries", active: 1 });
 
-    const res = await withAuth(
-      request(app).put(`/budgets/${id}`).send({ active: false })
-    );
+    const res = await withAuth(request(app).put(`/budgets/${id}`).send({ active: false }));
 
     expect(res.status).toBe(200);
     expect(res.body.data.active).toBe(false);
@@ -363,11 +349,11 @@ describe("PUT /budgets/:id", () => {
       last_edited_time: "2020-01-01T00:00:00.000Z",
     });
 
-    await withAuth(
-      request(app).put(`/budgets/${id}`).send({ amount: 500 })
-    );
+    await withAuth(request(app).put(`/budgets/${id}`).send({ amount: 500 }));
 
-    const row = db.prepare("SELECT last_edited_time FROM budgets WHERE notion_id = ?").get(id) as { last_edited_time: string };
+    const row = db.prepare("SELECT last_edited_time FROM budgets WHERE notion_id = ?").get(id) as {
+      last_edited_time: string;
+    };
     expect(row.last_edited_time).not.toBe("2020-01-01T00:00:00.000Z");
   });
 
@@ -382,9 +368,7 @@ describe("PUT /budgets/:id", () => {
   it("rejects empty category", async () => {
     const id = seedBudget(db, { category: "Groceries" });
 
-    const res = await withAuth(
-      request(app).put(`/budgets/${id}`).send({ category: "" })
-    );
+    const res = await withAuth(request(app).put(`/budgets/${id}`).send({ category: "" }));
 
     expect(res.status).toBe(400);
   });

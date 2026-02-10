@@ -10,6 +10,8 @@ import {
   UpdateWishListItemSchema,
   WishListQuerySchema,
   toWishListItem,
+  type CreateWishListItemInput,
+  type UpdateWishListItemInput,
 } from "./types.js";
 import * as service from "./service.js";
 import type {
@@ -27,7 +29,12 @@ router.get("/wishlist", validate(WishListQuerySchema, "query"), (req, res) => {
   const query = req.query as Record<string, string | undefined>;
   const { limit, offset } = parsePagination(req.query as Record<string, unknown>);
 
-  const { rows, total } = service.listWishListItems(query["search"], query["priority"], limit, offset);
+  const { rows, total } = service.listWishListItems(
+    query["search"],
+    query["priority"],
+    limit,
+    offset
+  );
 
   const body: PaginatedResponse<WishListItem> = {
     data: rows.map(toWishListItem),
@@ -46,7 +53,8 @@ router.get("/wishlist/:id", (req, res) => {
 
 /** POST /wishlist — create a new wish list item. */
 router.post("/wishlist", validate(CreateWishListItemSchema), (req, res) => {
-  const row = service.createWishListItem(req.body);
+  const input = req.body as CreateWishListItemInput;
+  const row = service.createWishListItem(input);
   const body: MutationResponse<WishListItem> = {
     data: toWishListItem(row),
     message: "Wish list item created",
@@ -57,7 +65,8 @@ router.post("/wishlist", validate(CreateWishListItemSchema), (req, res) => {
 /** PUT /wishlist/:id — update an existing wish list item. */
 router.put("/wishlist/:id", validate(UpdateWishListItemSchema), (req, res) => {
   const id = requireParam(req, "id");
-  const row = service.updateWishListItem(id, req.body);
+  const input = req.body as UpdateWishListItemInput;
+  const row = service.updateWishListItem(id, input);
   const body: MutationResponse<WishListItem> = {
     data: toWishListItem(row),
     message: "Wish list item updated",

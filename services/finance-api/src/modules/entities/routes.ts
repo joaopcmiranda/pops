@@ -10,6 +10,8 @@ import {
   UpdateEntitySchema,
   EntityQuerySchema,
   toEntity,
+  type CreateEntityInput,
+  type UpdateEntityInput,
 } from "./types.js";
 import * as service from "./service.js";
 import type {
@@ -46,7 +48,8 @@ router.get("/entities/:id", (req, res) => {
 
 /** POST /entities — create a new entity. */
 router.post("/entities", validate(CreateEntitySchema), (req, res) => {
-  const row = service.createEntity(req.body);
+  const input = req.body as CreateEntityInput;
+  const row = service.createEntity(input);
   const body: MutationResponse<Entity> = {
     data: toEntity(row),
     message: "Entity created",
@@ -57,7 +60,8 @@ router.post("/entities", validate(CreateEntitySchema), (req, res) => {
 /** PUT /entities/:id — update an existing entity. */
 router.put("/entities/:id", validate(UpdateEntitySchema), (req, res) => {
   const id = requireParam(req, "id");
-  const row = service.updateEntity(id, req.body);
+  const input = req.body as UpdateEntityInput;
+  const row = service.updateEntity(id, input);
   const body: MutationResponse<Entity> = {
     data: toEntity(row),
     message: "Entity updated",
