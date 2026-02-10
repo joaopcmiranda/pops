@@ -23,7 +23,11 @@ COPY services/pops-pwa/vite.config.ts ./services/pops-pwa/
 COPY services/pops-pwa/index.html ./services/pops-pwa/
 COPY services/pops-pwa/nginx.conf ./services/pops-pwa/
 
-# Build
+# Build db-types first (required by finance-api types, which pops-pwa references)
+WORKDIR /app/packages/db-types
+RUN yarn build
+
+# Build pops-pwa
 WORKDIR /app/services/pops-pwa
 RUN yarn build
 

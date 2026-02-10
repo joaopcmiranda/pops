@@ -5,10 +5,12 @@ on:
     branches: [main]
     paths:
       - "services/pops-pwa/**"
+      - "packages/db-types/**"
       - ".github/workflows/pwa-ci.yml"
   pull_request:
     paths:
       - "services/pops-pwa/**"
+      - "packages/db-types/**"
       - ".github/workflows/pwa-ci.yml"
 
 jobs:
@@ -24,6 +26,9 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+
+      - name: Build shared packages
+        run: cd packages/db-types && yarn build
 
       - name: Type check
         run: cd services/pops-pwa && yarn typecheck
