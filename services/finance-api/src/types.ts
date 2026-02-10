@@ -28,12 +28,6 @@ export interface Transaction {
   taxReturn: boolean;
 }
 
-/** Entity row returned by the API */
-export interface Entity {
-  notionId: string;
-  name: string;
-}
-
 /** Budget summary row */
 export interface BudgetSummary {
   category: string;
