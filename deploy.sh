@@ -21,6 +21,7 @@ NC='\033[0m' # No Color
 DRY_RUN=false
 VERBOSE=false
 SKIP_CHECKS=false
+AUTO_CONFIRM=false
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -37,6 +38,10 @@ while [[ $# -gt 0 ]]; do
             SKIP_CHECKS=true
             shift
             ;;
+        -y|--yes)
+            AUTO_CONFIRM=true
+            shift
+            ;;
         -h|--help)
             echo "Usage: ./deploy.sh [options]"
             echo ""
@@ -44,6 +49,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --dry-run, --check    Run in check mode (no changes)"
             echo "  -v, --verbose         Verbose Ansible output"
             echo "  --skip-checks         Skip pre-deployment quality checks"
+            echo "  -y, --yes             Skip confirmation prompt"
             echo "  -h, --help           Show this help"
             echo ""
             echo "Examples:"
@@ -170,7 +176,7 @@ echo "  Mode: $([ "$DRY_RUN" = true ] && echo "DRY RUN (check only)" || echo "PR
 echo ""
 
 # Confirm deployment
-if [ "$DRY_RUN" = false ]; then
+if [ "$DRY_RUN" = false ] && [ "$AUTO_CONFIRM" = false ]; then
     read -p "Deploy $NEXT_VERSION to production? (y/N) " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
