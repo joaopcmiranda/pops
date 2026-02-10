@@ -33,3 +33,4 @@ ai_entity_cache.json
 # Ansible
 *.retry
 .ansible/
+.turbo/
