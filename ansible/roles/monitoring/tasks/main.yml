@@ -3,26 +3,8 @@
 # Replace with Uptime Kuma when ready (Phase 2+).
 
 - name: Create health check script
-  ansible.builtin.copy:
-    content: |
-      #!/usr/bin/env bash
-      set -euo pipefail
-
-      SERVICES=("pops-finance-api" "pops-pwa" "pops-metabase" "pops-paperless" "pops-cloudflared" "pops-moltbot")
-      FAILED=()
-
-      for svc in "${SERVICES[@]}"; do
-        if ! docker inspect --format='{{ '{{' }}.State.Running{{ '}}' }}' "$svc" 2>/dev/null | grep -q true; then
-          FAILED+=("$svc")
-        fi
-      done
-
-      if [ ${#FAILED[@]} -gt 0 ]; then
-        echo "UNHEALTHY: ${FAILED[*]}" >&2
-        exit 1
-      fi
-
-      echo "All services healthy."
+  ansible.builtin.template:
+    src: healthcheck.sh.j2
     dest: /opt/pops/healthcheck.sh
     owner: root
     group: root

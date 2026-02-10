@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SERVICES=("pops-finance-api" "pops-pwa" "pops-metabase" "pops-paperless" "pops-cloudflared" "pops-moltbot")
+FAILED=()
+
+for svc in "${SERVICES[@]}"; do
+  if ! docker inspect --format='{% raw %}{{.State.Running}}{% endraw %}' "$svc" 2>/dev/null | grep -q true; then
+    FAILED+=("$svc")
+  fi
+done
+
+if [ ${#FAILED[@]} -gt 0 ]; then
+  echo "UNHEALTHY: ${FAILED[*]}" >&2
+  exit 1
+fi
+
+echo "All services healthy."
