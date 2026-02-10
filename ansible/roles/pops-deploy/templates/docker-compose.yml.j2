@@ -128,11 +128,10 @@ services:
     networks:
       - frontend
       - documents
-    command: tunnel --no-autoupdate run
     secrets:
       - cloudflare_tunnel_token
-    environment:
-      TUNNEL_TOKEN_FILE: /run/secrets/cloudflare_tunnel_token
+    entrypoint: /bin/sh
+    command: -c 'exec cloudflared tunnel --no-autoupdate run --token $$(cat /run/secrets/cloudflare_tunnel_token)'
 
 networks:
   frontend:
