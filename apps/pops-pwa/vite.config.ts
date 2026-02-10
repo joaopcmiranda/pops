@@ -11,6 +11,13 @@ export default defineConfig({
     },
   },
   server: {
+    port: 5566,
+    strictPort: true,
+    host: true,
+    hmr: {
+      port: 5566,
+      host: "localhost",
+    },
     proxy: {
       "/trpc": {
         target: "http://localhost:3000",
