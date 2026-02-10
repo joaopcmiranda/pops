@@ -30,7 +30,7 @@ export function validate(schema: ZodType, field: RequestField = "body") {
     }
     // Only replace body — query/params have readonly-ish Express types
     if (field === "body") {
-      req.body = result.data;
+      req.body = result.data as typeof req.body;
     }
     next();
   };

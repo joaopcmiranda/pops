@@ -1,0 +1,121 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "services/**"
+      - "ansible/**"
+      - "docker-compose.yml"
+      - ".github/workflows/deploy.yml"
+
+  # Allow manual deployment trigger
+  workflow_dispatch:
+
+jobs:
+  # Run all quality checks before deploying
+  quality-checks:
+    name: Quality Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Type check all services
+        run: |
+          cd services/finance-api && yarn typecheck
+          cd ../pops-pwa && yarn typecheck
+
+      - name: Lint all services
+        run: |
+          cd services/finance-api && yarn lint
+          cd ../pops-pwa && yarn lint
+
+      - name: Test finance-api
+        run: cd services/finance-api && yarn test
+
+      - name: Build all services
+        run: |
+          cd services/finance-api && yarn build
+          cd ../pops-pwa && yarn build
+
+  # Deploy to N95 server
+  # Note: This job expects a self-hosted runner on the N95 server
+  # See docs/DEPLOYMENT.md for setup instructions
+  deploy:
+    name: Deploy to N95
+    runs-on: self-hosted
+    needs: quality-checks
+    environment:
+      name: production
+      url: https://pops.jmiranda.dev
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Verify Ansible is installed
+        run: |
+          if ! command -v ansible-playbook &> /dev/null; then
+            echo "❌ Ansible not found. Please install: sudo apt-get install -y ansible"
+            exit 1
+          fi
+          ansible-playbook --version
+
+      - name: Verify Ansible vault password exists
+        run: |
+          if [ ! -f ~/.ansible/pops-vault-password ]; then
+            echo "❌ Ansible vault password not found at ~/.ansible/pops-vault-password"
+            echo "Create it with: echo 'your-password' > ~/.ansible/pops-vault-password && chmod 600 ~/.ansible/pops-vault-password"
+            exit 1
+          fi
+
+      - name: Run Ansible deployment
+        run: |
+          cd ansible
+          ansible-playbook playbooks/deploy.yml \
+            -i inventory/hosts.yml \
+            --vault-password-file ~/.ansible/pops-vault-password \
+            -v
+
+      - name: Wait for services to stabilize
+        run: sleep 30
+
+      - name: Verify deployment health
+        run: |
+          # Check Docker services are running
+          cd /opt/pops
+          docker compose ps
+
+          # Check finance-api health endpoint
+          if ! docker exec pops-finance-api wget -qO- http://localhost:3000/health > /dev/null 2>&1; then
+            echo "❌ Health check failed"
+            docker compose logs --tail=50 finance-api
+            exit 1
+          fi
+
+          echo "✅ All services healthy"
+
+      - name: Show deployment summary
+        if: always()
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Deployment Status: ${{ job.status }}"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          cd /opt/pops
+          docker compose ps
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: Upload logs on failure
+        if: failure()
+        run: |
+          cd /opt/pops
+          docker compose logs --tail=200 > /tmp/deployment-logs.txt
+          cat /tmp/deployment-logs.txt

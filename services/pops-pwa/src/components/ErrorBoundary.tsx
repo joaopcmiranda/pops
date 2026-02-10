@@ -2,7 +2,7 @@
  * React Error Boundary
  * Catches errors in component tree and displays fallback UI
  */
-import { Component, ReactNode } from "react";
+import { Component, type ReactNode } from "react";
 
 interface Props {
   children: ReactNode;

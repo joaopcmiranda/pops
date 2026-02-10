@@ -2,7 +2,7 @@
  * tRPC client configuration for the PWA
  * Provides type-safe API access to the finance-api backend
  */
-import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import { httpBatchLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import type { AppRouter } from "@pops/finance-api";
 
