@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-function Dashboard(): JSX.Element {
+function Dashboard() {
   return <h1>POPS Dashboard</h1>;
 }
 
-export function App(): JSX.Element {
+export function App() {
   return (
     <BrowserRouter>
       <Routes>
