@@ -4,12 +4,12 @@ on:
   push:
     branches: [main]
     paths:
-      - "services/pops-pwa/**"
+      - "apps/pops-pwa/**"
       - "packages/db-types/**"
       - ".github/workflows/pwa-ci.yml"
   pull_request:
     paths:
-      - "services/pops-pwa/**"
+      - "apps/pops-pwa/**"
       - "packages/db-types/**"
       - ".github/workflows/pwa-ci.yml"
 
@@ -31,10 +31,10 @@ jobs:
         run: cd packages/db-types && yarn build
 
       - name: Type check
-        run: cd services/pops-pwa && yarn typecheck
+        run: cd apps/pops-pwa && yarn typecheck
 
       - name: Lint
-        run: cd services/pops-pwa && yarn lint
+        run: cd apps/pops-pwa && yarn lint
 
       - name: Build
-        run: cd services/pops-pwa && yarn build
+        run: cd apps/pops-pwa && yarn build

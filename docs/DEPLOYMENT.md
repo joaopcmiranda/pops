@@ -80,7 +80,7 @@ sudo tailscale up
 tailscale ip -4
 ```
 
-Update `ansible/inventory/hosts.yml`:
+Update `infra/ansible/inventory/hosts.yml`:
 ```yaml
 n95:
   ansible_host: 100.x.x.x  # Tailscale IP
@@ -140,7 +140,7 @@ If automated deployment isn't set up yet, deploy manually:
 
 ```bash
 # From your local machine
-cd ansible
+cd infra/ansible
 ansible-playbook playbooks/deploy.yml \
   -i inventory/hosts.yml \
   --vault-password-file ~/.ansible/pops-vault-password
@@ -192,7 +192,7 @@ curl http://localhost:3000/health
 
 Deployment happens automatically on:
 - Push to `main` branch
-- Changes to `services/**`, `ansible/**`, or `docker-compose.yml`
+- Changes to `apps/**`, `infra/ansible/**`, or `infra/docker-compose.yml`
 
 Manual deployment:
 - Go to Actions → Deploy to Production → Run workflow
@@ -200,7 +200,7 @@ Manual deployment:
 ## Environment Variables
 
 Production environment variables are managed via Ansible Vault:
-- `ansible/inventory/group_vars/pops_servers/vault.yml` (encrypted)
+- `infra/ansible/inventory/group_vars/pops_servers/vault.yml` (encrypted)
 
 After updating vault variables:
 ```bash

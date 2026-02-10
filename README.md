@@ -155,7 +155,7 @@ All code changes are validated automatically via GitHub Actions before merge:
 - **Security Scanning** - Checks for hardcoded secrets and vault encryption
 - **Best Practices** - Validates FQCN usage, become patterns, minimal shell usage
 
-See [ansible/README.md](ansible/README.md) for detailed Ansible documentation.
+See [infra/ansible/README.md](infra/ansible/README.md) for detailed Ansible documentation.
 
 ### Pre-commit Hooks
 
@@ -185,16 +185,17 @@ Hooks include:
 
 ```bash
 # Install Ansible tools
-pip install -r ansible/requirements.txt
+pip install -r infra/ansible/requirements.txt
 
 # Install Ansible Galaxy collections
 ansible-galaxy collection install community.general
 ansible-galaxy collection install community.docker
 
 # Run Ansible linting locally
-yamllint ansible/
-ansible-lint ansible/
+yamllint infra/ansible/
+ansible-lint infra/ansible/
 
 # Syntax check playbooks
-ansible-playbook --syntax-check ansible/playbooks/site.yml
+cd infra/ansible
+ansible-playbook --syntax-check playbooks/site.yml
 ```
