@@ -2,13 +2,11 @@
  * DataTableFilters - Filter components for DataTable
  * Supports text, select, multi-select, date range, and number range filters
  */
-import { Column } from "@tanstack/react-table";
+import type { Column, Row, Table } from "@tanstack/react-table";
 import { X } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { TextInput } from "./TextInput";
 import { Select, type SelectOption } from "./Select";
 import { Button } from "./Button";
-import { DateTimeInput } from "./DateTimeInput";
 import { NumberInput } from "./NumberInput";
 import { ComboboxSelect } from "./ComboboxSelect";
 
@@ -21,7 +19,7 @@ export interface ColumnFilter {
 }
 
 interface TextFilterProps {
-  column: Column<any, unknown>;
+  column: Column<unknown, unknown>;
   placeholder?: string;
 }
 
@@ -39,7 +37,7 @@ export function TextFilter({ column, placeholder }: TextFilterProps) {
 }
 
 interface SelectFilterProps {
-  column: Column<any, unknown>;
+  column: Column<unknown, unknown>;
   options: SelectOption[];
   placeholder?: string;
 }
@@ -61,7 +59,7 @@ export function SelectFilter({
 }
 
 interface MultiSelectFilterProps {
-  column: Column<any, unknown>;
+  column: Column<unknown, unknown>;
   options: SelectOption[];
   placeholder?: string;
 }
@@ -90,7 +88,7 @@ export function MultiSelectFilter({
 }
 
 interface DateRangeFilterProps {
-  column: Column<any, unknown>;
+  column: Column<unknown, unknown>;
 }
 
 export function DateRangeFilter({ column }: DateRangeFilterProps) {
@@ -122,7 +120,7 @@ export function DateRangeFilter({ column }: DateRangeFilterProps) {
 }
 
 interface NumberRangeFilterProps {
-  column: Column<any, unknown>;
+  column: Column<unknown, unknown>;
   minPlaceholder?: string;
   maxPlaceholder?: string;
 }
@@ -162,17 +160,17 @@ export function NumberRangeFilter({
 
 interface FilterBarProps {
   filters: ColumnFilter[];
-  table: any; // ReactTable instance
+  table: Table<unknown>;
   onClearAll?: () => void;
 }
 
 export function FilterBar({ filters, table, onClearAll }: FilterBarProps) {
   const activeFiltersCount = table
     .getState()
-    .columnFilters.filter((f: any) => {
+    .columnFilters.filter((f) => {
       const value = f.value;
       if (Array.isArray(value)) {
-        return value.length > 0 && value.some((v: any) => v !== "" && v !== undefined);
+        return value.length > 0 && value.some((v) => v !== "" && v !== undefined);
       }
       return value !== "" && value !== undefined;
     }).length;
@@ -246,13 +244,13 @@ export function FilterBar({ filters, table, onClearAll }: FilterBarProps) {
 }
 
 // Custom filter functions for TanStack Table
-export const dateRangeFilter = (
-  row: any,
+export const dateRangeFilter = <TData,>(
+  row: TData,
   columnId: string,
-  filterValue: [string, string]
+  filterValue: unknown
 ) => {
-  const [start, end] = filterValue;
-  const cellValue = row.getValue(columnId) as string;
+  const [start, end] = filterValue as [string, string];
+  const cellValue = (row as Row<unknown>).getValue(columnId) as string;
 
   if (!start && !end) return true;
   if (!cellValue) return false;
@@ -267,13 +265,13 @@ export const dateRangeFilter = (
   return true;
 };
 
-export const numberRangeFilter = (
-  row: any,
+export const numberRangeFilter = <TData,>(
+  row: TData,
   columnId: string,
-  filterValue: [number, number]
+  filterValue: unknown
 ) => {
-  const [min, max] = filterValue;
-  const cellValue = row.getValue(columnId) as number;
+  const [min, max] = filterValue as [number, number];
+  const cellValue = (row as Row<unknown>).getValue(columnId) as number;
 
   if (min === undefined && max === undefined) return true;
   if (cellValue === undefined || cellValue === null) return false;
@@ -284,12 +282,13 @@ export const numberRangeFilter = (
   return true;
 };
 
-export const multiSelectFilter = (
-  row: any,
+export const multiSelectFilter = <TData,>(
+  row: TData,
   columnId: string,
-  filterValue: string[]
+  filterValue: unknown
 ) => {
-  if (!filterValue || filterValue.length === 0) return true;
-  const cellValue = row.getValue(columnId);
-  return filterValue.includes(String(cellValue));
+  const values = filterValue as string[];
+  if (!values || values.length === 0) return true;
+  const cellValue = (row as Row<unknown>).getValue(columnId);
+  return values.includes(String(cellValue));
 };

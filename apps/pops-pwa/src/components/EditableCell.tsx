@@ -12,7 +12,7 @@ import { Select, type SelectOption } from "./Select";
 
 export type CellType = "text" | "number" | "date" | "select" | "custom";
 
-export interface EditableCellProps<T = any> {
+export interface EditableCellProps<T = unknown> {
   /**
    * Current value
    */
@@ -88,7 +88,7 @@ export interface EditableCellProps<T = any> {
  * />
  * ```
  */
-export function EditableCell<T = any>({
+export function EditableCell<T = unknown>({
   value: initialValue,
   onSave,
   type = "text",
@@ -203,7 +203,7 @@ export function EditableCell<T = any>({
           />
         ) : type === "text" ? (
           <TextInput
-            ref={inputRef as any}
+            ref={inputRef}
             value={value as string}
             onChange={(e) => setValue(e.target.value as T)}
             onKeyDown={handleKeyDown}
@@ -213,7 +213,7 @@ export function EditableCell<T = any>({
           />
         ) : type === "number" ? (
           <NumberInput
-            ref={inputRef as any}
+            ref={inputRef}
             value={value as number}
             onChange={(val) => setValue(val as T)}
             onKeyDown={handleKeyDown}

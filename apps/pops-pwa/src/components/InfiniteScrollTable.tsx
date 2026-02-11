@@ -3,7 +3,7 @@
  * Built on TanStack Table with virtual scrolling
  */
 import { useEffect, useRef, useCallback } from "react";
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "./DataTable";
 
 export interface InfiniteScrollTableProps<TData, TValue = unknown> {

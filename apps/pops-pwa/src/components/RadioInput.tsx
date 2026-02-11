@@ -2,7 +2,7 @@
  * RadioInput component - Radio group with labels using shadcn primitives
  * Built on @radix-ui/react-radio-group
  */
-import { forwardRef, type ReactNode } from "react";
+import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 

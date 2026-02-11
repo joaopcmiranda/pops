@@ -88,7 +88,7 @@ interface BaseInputProps
 }
 
 // Date Input
-export interface DateInputProps extends BaseInputProps {}
+export type DateInputProps = BaseInputProps;
 
 export const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
   (
@@ -156,7 +156,7 @@ export const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
 DateInput.displayName = "DateInput";
 
 // Time Input
-export interface TimeInputProps extends BaseInputProps {}
+export type TimeInputProps = BaseInputProps;
 
 export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
   (
@@ -224,7 +224,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
 TimeInput.displayName = "TimeInput";
 
 // DateTime Input
-export interface DateTimeInputProps extends BaseInputProps {}
+export type DateTimeInputProps = BaseInputProps;
 
 export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
   (

@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { DataTable, SortableHeader } from "./DataTable";
+import type { ColumnFilter } from "./DataTableFilters";
 import {
   dateRangeFilter,
   numberRangeFilter,
   multiSelectFilter,
-  type ColumnFilter,
 } from "./DataTableFilters";
 
 const meta: Meta<typeof DataTable> = {
@@ -51,7 +51,7 @@ const sampleTransactions: Transaction[] = Array.from({ length: 100 }, (_, i) => 
     i % 5
   ],
   account: ["Checking", "Savings", "Credit Card"][i % 3],
-  status: ["pending", "completed", "failed"][i % 3] as any,
+  status: (["pending", "completed", "failed"] as const)[i % 3],
 }));
 
 const transactionColumns: ColumnDef<Transaction>[] = [

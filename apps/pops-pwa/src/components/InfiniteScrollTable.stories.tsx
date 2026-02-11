@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { InfiniteScrollTable } from "./InfiniteScrollTable";
 import { SortableHeader } from "./DataTable";
 

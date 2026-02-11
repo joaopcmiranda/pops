@@ -1,13 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { DataTable, SortableHeader } from "./DataTable";
 import { EditableCell } from "./EditableCell";
-import {
-  dateRangeFilter,
-  numberRangeFilter,
-  multiSelectFilter,
-} from "./DataTableFilters";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "./Button";
 
@@ -275,7 +270,7 @@ export const WithEditableCells: Story = {
   render: () => {
     const [users, setUsers] = useState(sampleUsers);
 
-    const updateUser = (id: number, field: keyof User, value: any) => {
+    const updateUser = (id: number, field: keyof User, value: User[keyof User]) => {
       setUsers((prev) =>
         prev.map((user) => (user.id === id ? { ...user, [field]: value } : user))
       );

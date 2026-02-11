@@ -3,11 +3,14 @@
  * Built on TanStack Table and shadcn primitives
  */
 import { useState, useMemo } from "react";
-import {
+import type {
   ColumnDef,
   ColumnFiltersState,
   SortingState,
   VisibilityState,
+  Table as TanStackTable,
+} from "@tanstack/react-table";
+import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -103,7 +106,7 @@ export interface DataTableProps<TData, TValue = unknown> {
   /**
    * Custom filter functions
    */
-  filterFns?: Record<string, any>;
+  filterFns?: Record<string, <TData>(row: TData, columnId: string, filterValue: unknown) => boolean>;
 }
 
 /**
@@ -196,7 +199,7 @@ export function DataTable<TData, TValue>({
     <div className={cn("space-y-4", className)}>
       {/* Filters */}
       {filters && filters.length > 0 && (
-        <FilterBar filters={filters} table={table} />
+        <FilterBar filters={filters} table={table as unknown as TanStackTable<unknown>} />
       )}
 
       {/* Toolbar */}
@@ -373,11 +376,11 @@ export function DataTable<TData, TValue>({
 /**
  * Helper to create a sortable column header
  */
-export function SortableHeader<TData>({
+export function SortableHeader({
   column,
   children,
 }: {
-  column: any;
+  column: { toggleSorting: (desc?: boolean) => void; getIsSorted: () => false | "asc" | "desc" };
   children: React.ReactNode;
 }) {
   return (

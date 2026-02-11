@@ -8,7 +8,7 @@ import {
   BreadcrumbSeparator,
   BreadcrumbEllipsis,
 } from "./ui/breadcrumb";
-import { HomeIcon, ChevronRightIcon, SlashIcon } from "lucide-react";
+import { HomeIcon, SlashIcon } from "lucide-react";
 
 const meta: Meta = {
   title: "Navigation/Breadcrumb",

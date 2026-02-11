@@ -2,7 +2,7 @@
  * ComboboxSelect - Advanced select with filtering using shadcn primitives
  * Built on Popover + Command for proper positioning and filtering
  */
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./Button";

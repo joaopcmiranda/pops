@@ -211,20 +211,6 @@ export const DateRange: Story = {
   args: {},
   render: () => {
     const [days, setDays] = useState([7, 30]);
-    const months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
 
     return (
       <div className="space-y-6 w-96">
