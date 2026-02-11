@@ -68,7 +68,7 @@ export function TransactionsPage() {
     {
       accessorKey: "amount",
       header: ({ column }) => (
-        <div className="text-right">
+        <div className="flex justify-end">
           <SortableHeader column={column}>Amount</SortableHeader>
         </div>
       ),
