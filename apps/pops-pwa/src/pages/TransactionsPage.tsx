@@ -133,12 +133,6 @@ export function TransactionsPage() {
   // Define filters for the table
   const tableFilters: ColumnFilter[] = [
     {
-      id: "search",
-      type: "text",
-      label: "Search",
-      placeholder: "Description or entity...",
-    },
-    {
       id: "account",
       type: "select",
       label: "Account",
@@ -203,6 +197,7 @@ export function TransactionsPage() {
           columns={columns}
           data={data.data}
           searchable
+          searchColumn="description"
           searchPlaceholder="Search transactions..."
           paginated
           defaultPageSize={50}

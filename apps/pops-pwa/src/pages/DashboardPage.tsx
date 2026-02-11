@@ -202,33 +202,31 @@ export function DashboardPage() {
       </div>
 
       {/* Active Budgets */}
-      {budgets && budgets.data.length > 0 && (
-        <div className="space-y-4">
-          <h2 className="text-2xl font-bold">Active Budgets</h2>
-          {budgetsLoading ? (
-            <Skeleton className="h-32" />
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {budgets.data.slice(0, 3).map((budget) => (
-                <Card key={budget.notionId} className="p-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold">{budget.category}</h3>
-                      <Badge variant={budget.active ? "default" : "secondary"}>
-                        {budget.active ? "Active" : "Inactive"}
-                      </Badge>
-                    </div>
-                    <p className="text-2xl font-bold">
-                      ${budget.amount ? budget.amount.toFixed(2) : "0.00"}
-                    </p>
-                    <p className="text-sm text-muted-foreground">{budget.period}</p>
+      <div className="space-y-4">
+        <h2 className="text-2xl font-bold">Active Budgets</h2>
+        {budgetsLoading ? (
+          <Skeleton className="h-32" />
+        ) : budgets && budgets.data.length > 0 ? (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {budgets.data.slice(0, 3).map((budget) => (
+              <Card key={budget.notionId} className="p-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold">{budget.category}</h3>
+                    <Badge variant={budget.active ? "default" : "secondary"}>
+                      {budget.active ? "Active" : "Inactive"}
+                    </Badge>
                   </div>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+                  <p className="text-2xl font-bold">
+                    ${budget.amount ? budget.amount.toFixed(2) : "0.00"}
+                  </p>
+                  <p className="text-sm text-muted-foreground">{budget.period}</p>
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
