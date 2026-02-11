@@ -99,7 +99,9 @@ export function TransactionsPage() {
       header: "Categories",
       cell: ({ row }) => {
         const categories = row.original.categories;
-        if (categories.length === 0) return <span className="text-muted-foreground">—</span>;
+        if (!categories || categories.length === 0) {
+          return <span className="text-muted-foreground">—</span>;
+        }
         return (
           <div className="flex flex-wrap gap-1">
             {categories.slice(0, 2).map((cat) => (
