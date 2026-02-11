@@ -30,13 +30,13 @@ export function Sidebar({ open }: SidebarProps) {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center gap-3 px-4 py-2 rounded transition-colors ${
+              className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors font-medium ${
                 isActive
                   ? "bg-primary text-primary-foreground"
-                  : "hover:bg-muted"
+                  : "text-foreground hover:bg-muted hover:text-foreground"
               }`}
             >
-              <span>{item.icon}</span>
+              <span className="text-lg">{item.icon}</span>
               <span>{item.label}</span>
             </Link>
           );

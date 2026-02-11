@@ -23,8 +23,18 @@ export interface Context {
 /**
  * Create tRPC context from Express request.
  * Validates Cloudflare Access JWT and extracts user info.
+ * In development, bypasses JWT check for local testing.
  */
 export async function createContext({ req }: CreateExpressContextOptions): Promise<Context> {
+  // In development, skip JWT validation and use mock user
+  if (process.env["NODE_ENV"] !== "production") {
+    return {
+      user: {
+        email: "dev@example.com",
+      },
+    };
+  }
+
   const token = req.headers["cf-access-jwt-assertion"];
 
   if (typeof token === "string") {
