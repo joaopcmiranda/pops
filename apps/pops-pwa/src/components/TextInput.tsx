@@ -57,9 +57,14 @@ const inputVariants = cva(
         default: "text-sm",
         lg: "text-base",
       },
+      centered: {
+        true: "text-center",
+        false: "",
+      },
     },
     defaultVariants: {
       size: "default",
+      centered: false,
     },
   }
 );
@@ -83,6 +88,10 @@ export interface TextInputProps
    * Callback when the clear button is clicked
    */
   onClear?: () => void;
+  /**
+   * Whether to center the text
+   */
+  centered?: boolean;
   /**
    * Container class name for styling the wrapper
    */
@@ -112,6 +121,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
       suffix,
       clearable = false,
       onClear,
+      centered = false,
       value: controlledValue,
       defaultValue,
       onChange,
@@ -180,7 +190,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
         )}
         <input
           ref={ref}
-          className={cn(inputVariants({ size, className }))}
+          className={cn(inputVariants({ size, centered, className }))}
           style={{ outline: 'none', boxShadow: 'none' }}
           value={value}
           onChange={handleChange}
