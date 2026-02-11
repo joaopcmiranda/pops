@@ -34,3 +34,6 @@ ai_entity_cache.json
 *.retry
 .ansible/
 .turbo/
+
+*storybook.log
+storybook-static
