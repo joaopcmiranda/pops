@@ -36,7 +36,11 @@ export function toTransaction(row: TransactionRow): Transaction {
     categories: row.categories
       ? (() => {
           try {
-            return JSON.parse(row.categories);
+            const parsed = JSON.parse(row.categories) as unknown;
+            if (Array.isArray(parsed)) {
+              return parsed.filter((item): item is string => typeof item === "string");
+            }
+            return [];
           } catch {
             // Fallback to comma-separated if not JSON
             return row.categories
