@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import BetterSqlite3 from 'better-sqlite3';
 import { createNotionClient } from './notion-client.js';
 import { initSchema } from './schema.js';
