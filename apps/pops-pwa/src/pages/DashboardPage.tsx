@@ -3,7 +3,7 @@
  */
 import { trpc } from "@/lib/trpc";
 import { Card } from "@/components/ui/card";
-import { Alert } from "@/components/ui/alert";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 
@@ -71,8 +71,20 @@ export function DashboardPage() {
       <div className="p-6 space-y-6">
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <Alert variant="destructive">
-          <p className="font-semibold">Failed to load dashboard data</p>
-          <p className="text-sm">{transactionsError.message}</p>
+          <AlertTitle>Unable to load dashboard</AlertTitle>
+          <AlertDescription>
+            <p className="mb-2">
+              The backend API is not responding. Make sure the finance-api server is running.
+            </p>
+            <details className="mt-3">
+              <summary className="cursor-pointer hover:underline font-medium text-sm">
+                Show technical details
+              </summary>
+              <code className="block mt-2 p-3 bg-black/10 dark:bg-black/20 rounded text-xs font-mono whitespace-pre-wrap break-all">
+                {transactionsError.message}
+              </code>
+            </details>
+          </AlertDescription>
         </Alert>
       </div>
     );
