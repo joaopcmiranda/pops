@@ -19,6 +19,7 @@ export default defineConfig({
     port: 5566,
     strictPort: true,
     host: true,
+    clearScreen: false,
     hmr: {
       port: 5566,
       host: "localhost"

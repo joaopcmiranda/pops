@@ -1,0 +1,102 @@
+/**
+ * Initialize empty database for local development
+ * Run with: tsx scripts/init-db.ts
+ */
+import BetterSqlite3 from "better-sqlite3";
+import { mkdirSync } from "node:fs";
+import { dirname } from "node:path";
+
+const DB_PATH = "./data/pops.db";
+
+// Create data directory if it doesn't exist
+mkdirSync(dirname(DB_PATH), { recursive: true });
+
+// Create database
+const db = new BetterSqlite3(DB_PATH);
+
+// Set pragmas
+db.pragma("journal_mode = WAL");
+db.pragma("busy_timeout = 5000");
+
+// Create tables
+db.exec(`
+  CREATE TABLE IF NOT EXISTS transactions (
+    notion_id TEXT PRIMARY KEY,
+    description TEXT NOT NULL,
+    account TEXT NOT NULL,
+    amount REAL NOT NULL,
+    date TEXT NOT NULL,
+    type TEXT NOT NULL,
+    categories TEXT,
+    entity_id TEXT,
+    entity_name TEXT,
+    location TEXT,
+    country TEXT,
+    online INTEGER NOT NULL DEFAULT 0,
+    novated_lease INTEGER NOT NULL DEFAULT 0,
+    tax_return INTEGER NOT NULL DEFAULT 0,
+    related_transaction_id TEXT,
+    notes TEXT,
+    last_edited_time TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS entities (
+    notion_id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    last_edited_time TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS budgets (
+    notion_id TEXT PRIMARY KEY,
+    category TEXT NOT NULL,
+    period TEXT NOT NULL,
+    amount REAL,
+    active INTEGER NOT NULL DEFAULT 1,
+    notes TEXT,
+    last_edited_time TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS inventory (
+    notion_id TEXT PRIMARY KEY,
+    item_name TEXT NOT NULL,
+    brand TEXT,
+    model TEXT,
+    item_id TEXT,
+    room TEXT,
+    location TEXT,
+    type TEXT,
+    condition TEXT,
+    in_use INTEGER,
+    deductible INTEGER,
+    purchase_date TEXT,
+    warranty_expires TEXT,
+    replacement_value REAL,
+    resale_value REAL,
+    purchase_transaction_id TEXT,
+    purchased_from_id TEXT,
+    purchased_from_name TEXT,
+    last_edited_time TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS wish_list (
+    notion_id TEXT PRIMARY KEY,
+    item TEXT NOT NULL,
+    target_amount REAL,
+    saved REAL,
+    priority TEXT,
+    url TEXT,
+    notes TEXT,
+    last_edited_time TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS sync_cursors (
+    database_name TEXT PRIMARY KEY,
+    cursor TEXT NOT NULL,
+    last_sync_time TEXT NOT NULL
+  );
+`);
+
+console.log(`✅ Database initialized at ${DB_PATH}`);
+console.log("📝 Note: Database is empty. Run notion-sync to populate with real data.");
+
+db.close();
