@@ -7,7 +7,7 @@ import {
 } from "./ui/accordion";
 
 const meta: Meta = {
-  title: "Components/Layout/Accordion",
+  title: "Layout/Accordion",
   parameters: {
     layout: "padded",
   },

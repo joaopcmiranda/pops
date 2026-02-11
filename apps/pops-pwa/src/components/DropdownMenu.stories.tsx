@@ -3,7 +3,7 @@ import { DropdownMenu } from "./DropdownMenu";
 import { Button } from "./Button";
 
 const meta: Meta<typeof DropdownMenu> = {
-  title: "Components/DropdownMenu",
+  title: "Navigation/DropdownMenu",
   component: DropdownMenu,
   parameters: {
     layout: "centered",

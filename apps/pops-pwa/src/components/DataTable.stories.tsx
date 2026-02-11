@@ -12,7 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "./Button";
 
 const meta: Meta<typeof DataTable> = {
-  title: "Components/DataTable",
+  title: "Data Display/Table",
   component: DataTable,
   parameters: {
     layout: "padded",

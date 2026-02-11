@@ -10,7 +10,7 @@ import {
 import { CheckIcon, UserIcon } from "lucide-react";
 
 const meta: Meta<typeof Avatar> = {
-  title: "Components/Status/Avatar",
+  title: "Data Display/Avatar",
   component: Avatar,
   parameters: {
     layout: "centered",

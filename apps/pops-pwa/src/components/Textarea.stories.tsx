@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Textarea } from "./ui/textarea";
 
 const meta: Meta<typeof Textarea> = {
-  title: "Components/Forms/Textarea",
+  title: "Inputs/Textarea",
   component: Textarea,
   parameters: {
     layout: "padded",

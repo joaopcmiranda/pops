@@ -8,7 +8,7 @@ import { ChipInput } from "./ChipInput";
 
 const meta: Meta<typeof ChipInput> = {
   component: ChipInput,
-  title: "Components/ChipInput",
+  title: "Inputs/Chips",
   tags: ["autodocs"],
   argTypes: {
     variant: {

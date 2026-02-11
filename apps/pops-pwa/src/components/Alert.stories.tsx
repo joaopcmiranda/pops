@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 
 const meta: Meta<typeof Alert> = {
-  title: "Components/Feedback/Alert",
+  title: "Feedback/Alert",
   component: Alert,
   parameters: {
     layout: "padded",

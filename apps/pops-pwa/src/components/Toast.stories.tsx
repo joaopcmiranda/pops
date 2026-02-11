@@ -4,7 +4,7 @@ import { Button } from "./Button";
 import { Toaster } from "./ui/sonner";
 
 const meta: Meta = {
-  title: "Components/Feedback/Toast",
+  title: "Feedback/Toast",
   parameters: {
     layout: "centered",
   },

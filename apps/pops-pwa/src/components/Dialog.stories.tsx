@@ -16,7 +16,7 @@ import { DateTimeInput } from "./DateTimeInput";
 import { Select } from "./Select";
 
 const meta: Meta<typeof Dialog> = {
-  title: "Components/Feedback/Dialog",
+  title: "Feedback/Dialog",
   component: Dialog,
   parameters: {
     layout: "centered",

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { RadioInput } from "./RadioInput";
 
 const meta: Meta<typeof RadioInput> = {
-  title: "Components/RadioInput",
+  title: "Inputs/Radio",
   component: RadioInput,
   parameters: {
     layout: "centered",

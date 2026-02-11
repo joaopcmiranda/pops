@@ -9,7 +9,7 @@ import { DateInput, TimeInput, DateTimeInput } from "./DateTimeInput";
 // DateInput stories
 const dateInputMeta: Meta<typeof DateInput> = {
   component: DateInput,
-  title: "Components/DateTimeInput/DateInput",
+  title: "Inputs/DateTime",
   tags: ["autodocs"],
   argTypes: {
     variant: {

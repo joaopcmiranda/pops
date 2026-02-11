@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Slider } from "./ui/slider";
 
 const meta: Meta<typeof Slider> = {
-  title: "Components/Forms/Slider",
+  title: "Inputs/Slider",
   component: Slider,
   parameters: {
     layout: "padded",

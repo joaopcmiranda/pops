@@ -8,7 +8,7 @@ import { NumberInput } from "./NumberInput";
 
 const meta: Meta<typeof NumberInput> = {
   component: NumberInput,
-  title: "Components/NumberInput",
+  title: "Inputs/Number",
   tags: ["autodocs"],
   argTypes: {
     variant: {

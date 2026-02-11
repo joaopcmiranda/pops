@@ -4,7 +4,7 @@ import { Progress } from "./ui/progress";
 import { Button } from "./Button";
 
 const meta: Meta<typeof Progress> = {
-  title: "Components/Status/Progress",
+  title: "Data Display/Progress",
   component: Progress,
   parameters: {
     layout: "padded",

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ComboboxSelect } from "./ComboboxSelect";
 
 const meta: Meta<typeof ComboboxSelect> = {
-  title: "Components/ComboboxSelect",
+  title: "Inputs/Select",
   component: ComboboxSelect,
   parameters: {
     layout: "centered",

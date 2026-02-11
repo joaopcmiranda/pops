@@ -8,7 +8,7 @@ import { Chip } from "./Chip";
 
 const meta: Meta<typeof Chip> = {
   component: Chip,
-  title: "Components/Chip",
+  title: "Data Display/Chip",
   tags: ["autodocs"],
   argTypes: {
     variant: {

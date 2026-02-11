@@ -8,7 +8,7 @@ import { TextInput } from "./TextInput";
 
 const meta: Meta<typeof TextInput> = {
   component: TextInput,
-  title: "Components/TextInput",
+  title: "Inputs/Text",
   tags: ["autodocs"],
   argTypes: {
     variant: {

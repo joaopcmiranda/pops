@@ -5,7 +5,7 @@ import { InfiniteScrollTable } from "./InfiniteScrollTable";
 import { SortableHeader } from "./DataTable";
 
 const meta: Meta<typeof InfiniteScrollTable> = {
-  title: "Components/InfiniteScrollTable",
+  title: "Data Display/Table/Infinite Scroll",
   component: InfiniteScrollTable,
   parameters: {
     layout: "padded",

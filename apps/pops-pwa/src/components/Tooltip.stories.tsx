@@ -9,7 +9,7 @@ import { Button } from "./Button";
 import { InfoIcon, HelpCircleIcon } from "lucide-react";
 
 const meta: Meta<typeof Tooltip> = {
-  title: "Components/Feedback/Tooltip",
+  title: "Feedback/Tooltip",
   component: Tooltip,
   parameters: {
     layout: "centered",

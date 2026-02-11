@@ -9,7 +9,7 @@ import {
 } from "./DataTableFilters";
 
 const meta: Meta<typeof DataTable> = {
-  title: "Components/DataTable/Filtering",
+  title: "Data Display/Table/Filtering",
   component: DataTable,
   parameters: {
     layout: "padded",
