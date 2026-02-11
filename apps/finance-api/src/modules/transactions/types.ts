@@ -34,10 +34,17 @@ export function toTransaction(row: TransactionRow): Transaction {
     date: row.date,
     type: row.type,
     categories: row.categories
-      ? row.categories
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean)
+      ? (() => {
+          try {
+            return JSON.parse(row.categories);
+          } catch {
+            // Fallback to comma-separated if not JSON
+            return row.categories
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean);
+          }
+        })()
       : [],
     entityId: row.entity_id,
     entityName: row.entity_name,
