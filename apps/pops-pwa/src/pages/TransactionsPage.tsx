@@ -68,17 +68,17 @@ export function TransactionsPage() {
     {
       accessorKey: "amount",
       header: ({ column }) => (
-        <SortableHeader column={column}>
-          <span className="text-right block">Amount</span>
-        </SortableHeader>
+        <div className="text-right">
+          <SortableHeader column={column}>Amount</SortableHeader>
+        </div>
       ),
       cell: ({ row }) => {
         const amount = row.original.amount;
         const isNegative = amount < 0;
         return (
-          <div className="text-right font-mono font-medium">
-            <span className={isNegative ? "text-red-600" : "text-green-600"}>
-              {isNegative ? "-" : ""}$
+          <div className="text-right font-mono font-medium tabular-nums">
+            <span className={isNegative ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"}>
+              {isNegative ? "-" : "+"}$
               {Math.abs(amount).toFixed(2)}
             </span>
           </div>
