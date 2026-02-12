@@ -31,6 +31,14 @@ mise lint             # Lint all packages
 mise setup            # Initial project setup
 ```
 
+**Database Management:**
+```bash
+mise db:init          # Initialize empty database with schema
+mise db:clear         # Clear all data (preserves schema)
+mise db:seed          # Seed with comprehensive test data (44 records)
+mise db:pull          # Pull fresh from Notion (full sync, source of truth)
+```
+
 **Import Tools:**
 ```bash
 CSV_PATH=file.csv mise import:anz --execute
@@ -292,6 +300,35 @@ Full project documentation lives in Notion under **POPS - Personal Ops** (`30240
 - POPS Tracker (database): `a36c7a6b-be2f-4f94-8da5-c4c5ad9882b5`
 
 ## Development Workflow
+
+### Database Management
+
+**For Local Development:**
+```bash
+mise db:init     # First time: Initialize empty database
+mise db:seed     # Seed with test data (44 records)
+mise dev:api     # Start API server
+mise dev:pwa     # Start PWA
+```
+
+**To Reset to Production State:**
+```bash
+mise db:pull     # Pull fresh data from Notion (source of truth)
+```
+
+**For E2E Testing:**
+```bash
+mise db:seed     # Reset to known test state
+# Run tests
+mise db:seed     # Reset between test runs
+```
+
+**Test Data Includes:**
+- 10 entities (Woolworths, Coles, Netflix, Spotify, Shell, Amazon AU, JB Hi-Fi, Apple, Bunnings, Employer)
+- 16 transactions (income, expenses, transfers across multiple accounts/categories)
+- 8 budgets (monthly and yearly)
+- 5 inventory items (MacBook, headphones, TV, vacuum, coffee machine)
+- 5 wish list items (gaming PC, desk, Japan trip, chair, camera)
 
 ### Process
 

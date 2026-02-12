@@ -100,6 +100,38 @@ description = "Build all packages"
 run = "turbo build"
 
 # ============================================================================
+# Database Management
+# ============================================================================
+
+[tasks."db:init"]
+description = "Initialize empty database with schema"
+dir = "apps/finance-api"
+run = "yarn dev:init"
+
+[tasks."db:clear"]
+description = "Clear all data from database (preserves schema)"
+dir = "apps/finance-api"
+run = "yarn db:clear"
+
+[tasks."db:seed"]
+description = "Clear and seed database with comprehensive test data"
+dir = "apps/finance-api"
+run = "yarn db:seed"
+
+[tasks."db:pull"]
+description = "Pull fresh data from Notion (full sync, clears local first)"
+run = """
+echo "🧹 Clearing local database..."
+cd apps/finance-api && yarn db:clear
+echo ""
+echo "📥 Pulling from Notion (source of truth)..."
+cd ../notion-sync
+export SQLITE_PATH=../finance-api/data/pops.db
+yarn install
+yarn dev
+"""
+
+# ============================================================================
 # Import Tools (run from packages/import-tools)
 # ============================================================================
 
