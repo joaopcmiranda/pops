@@ -82,9 +82,12 @@ export function EntitiesPage() {
         );
       },
       filterFn: (row, columnId, filterValue) => {
+        const searchTerm = String(filterValue ?? "").toLowerCase().trim();
+        if (!searchTerm) {
+          return true;
+        }
         const aliases = row.getValue<string[]>(columnId);
         if (!aliases || aliases.length === 0) return false;
-        const searchTerm = String(filterValue).toLowerCase();
         return aliases.some((alias) => alias.toLowerCase().includes(searchTerm));
       },
     },
@@ -127,10 +130,13 @@ export function EntitiesPage() {
       label: "Type",
       options: [
         { label: "All Types", value: "" },
-        { label: "Merchant", value: "Merchant" },
-        { label: "Individual", value: "Individual" },
-        { label: "Government", value: "Government" },
-        { label: "Financial Institution", value: "Financial Institution" },
+        { label: "Supermarket", value: "Supermarket" },
+        { label: "Subscription", value: "Subscription" },
+        { label: "Fuel Station", value: "Fuel Station" },
+        { label: "Retailer", value: "Retailer" },
+        { label: "Employer", value: "Employer" },
+        { label: "Technology", value: "Technology" },
+        { label: "Hardware", value: "Hardware" },
       ],
     },
   ];

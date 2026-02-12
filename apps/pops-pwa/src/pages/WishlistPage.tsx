@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import type { ColumnFilter } from "@/components/DataTableFilters";
 
-interface WishListItem {
+interface WishlistItem {
   notionId: string;
   item: string;
   targetAmount: number | null;
@@ -27,7 +27,7 @@ export function WishlistPage() {
     limit: 100,
   });
 
-  const columns: ColumnDef<WishListItem>[] = [
+  const columns: ColumnDef<WishlistItem>[] = [
     {
       accessorKey: "item",
       header: ({ column }) => <SortableHeader column={column}>Item</SortableHeader>,

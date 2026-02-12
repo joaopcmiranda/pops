@@ -138,6 +138,14 @@ export function InventoryPage() {
           </Badge>
         ) : null
       ),
+      filterFn: (row, columnId, filterValue) => {
+        if (filterValue === undefined || filterValue === null || filterValue === "") {
+          return true;
+        }
+        const value = row.getValue<boolean>(columnId);
+        const filterBool = filterValue === "true";
+        return value === filterBool;
+      },
     },
     {
       accessorKey: "deductible",
@@ -149,6 +157,14 @@ export function InventoryPage() {
           </Badge>
         ) : null
       ),
+      filterFn: (row, columnId, filterValue) => {
+        if (filterValue === undefined || filterValue === null || filterValue === "") {
+          return true;
+        }
+        const value = row.getValue<boolean>(columnId);
+        const filterBool = filterValue === "true";
+        return value === filterBool;
+      },
     },
   ];
 

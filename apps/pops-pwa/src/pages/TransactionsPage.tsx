@@ -118,9 +118,12 @@ export function TransactionsPage() {
         );
       },
       filterFn: (row, columnId, filterValue) => {
+        const searchTerm = String(filterValue ?? "").toLowerCase().trim();
+        if (!searchTerm) {
+          return true;
+        }
         const categories = row.getValue<string[]>(columnId);
         if (!categories || categories.length === 0) return false;
-        const searchTerm = String(filterValue).toLowerCase();
         return categories.some((cat) => cat.toLowerCase().includes(searchTerm));
       },
     },

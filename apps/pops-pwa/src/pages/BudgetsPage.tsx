@@ -70,6 +70,14 @@ export function BudgetsPage() {
           {row.original.active ? "Active" : "Inactive"}
         </Badge>
       ),
+      filterFn: (row, columnId, filterValue) => {
+        if (filterValue === undefined || filterValue === null || filterValue === "") {
+          return true;
+        }
+        const value = row.getValue<boolean>(columnId);
+        const filterBool = filterValue === "true";
+        return value === filterBool;
+      },
     },
     {
       accessorKey: "notes",
