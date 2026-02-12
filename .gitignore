@@ -35,5 +35,8 @@ ai_entity_cache.json
 .ansible/
 .turbo/
 
+# Mise
+.mise/
+
 *storybook.log
 storybook-static

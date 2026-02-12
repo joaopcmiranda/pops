@@ -181,6 +181,33 @@ Hooks include:
 - `end-of-file-fixer` - Ensure files end with newline
 - `check-added-large-files` - Prevent large file commits
 
+### Task Runner (mise)
+
+POPS uses [mise](https://mise.jdx.dev/) for task running and tool version management.
+
+**Installation:**
+```bash
+curl https://mise.run | sh
+echo 'eval "$(/Users/helix/.local/bin/mise activate zsh)"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+**Common Tasks:**
+```bash
+mise dev              # Run all dev servers
+mise dev:api          # Run finance-api only
+mise dev:pwa          # Run pops-pwa only
+
+mise test             # Run all tests
+mise typecheck        # Type check all packages
+mise build            # Build all packages
+
+mise setup            # Initial project setup
+mise tasks            # List all available tasks
+```
+
+See `mise.toml` for all available tasks and [CLAUDE.md](CLAUDE.md) for detailed command reference.
+
 ### Local Development Setup
 
 ```bash
