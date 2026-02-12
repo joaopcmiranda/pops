@@ -10,6 +10,59 @@ Phase 0 (data import) is complete. Phase 1 (Foundation) targets March 2026.
 
 ## Commands
 
+### Mise Task Runner (Recommended)
+
+POPS uses [mise](https://mise.jdx.dev/) for task running and tool version management. Run `mise tasks` to see all available tasks.
+
+**Quick Start:**
+```bash
+mise dev              # Run all dev servers (excludes notion-sync)
+mise dev:full         # Run all dev servers including notion-sync
+mise dev:api          # Run finance-api only
+mise dev:pwa          # Run pops-pwa only
+mise dev:storybook    # Run Storybook
+
+mise test             # Run all tests
+mise test:watch       # Run tests in watch mode
+mise typecheck        # Type check all packages
+
+mise build            # Build all packages
+mise lint             # Lint all packages
+mise setup            # Initial project setup
+```
+
+**Import Tools:**
+```bash
+CSV_PATH=file.csv mise import:anz --execute
+CSV_PATH=file.csv mise import:amex --execute
+SINCE_DATE=2026-01-01 mise import:up --execute
+
+mise entities:lookup  # Rebuild entity cache
+mise audit            # Show DB stats
+```
+
+**Docker:**
+```bash
+mise docker:build     # Build images
+mise docker:up        # Start services
+mise docker:logs      # Show logs
+```
+
+**Ansible:**
+```bash
+mise ansible:provision  # Full N95 provision
+mise ansible:deploy     # Deploy services only
+mise ansible:check      # Syntax check
+```
+
+**Git Worktrees:**
+```bash
+BRANCH=feat/name mise worktree:create
+BRANCH=feat/name mise worktree:remove
+```
+
+Run `mise tasks` for the full list. All tasks are defined in `mise.toml`.
+
 ### Services (each has its own package.json)
 ```bash
 cd apps/notion-sync && yarn install && yarn dev        # Run sync locally

@@ -1,0 +1,292 @@
+# POPS mise configuration
+# Run `mise tasks` to see all available tasks
+# Run `mise run <task>` or `mise <task>` to execute
+
+[tools]
+node = "24.5.0"
+
+[env]
+# Add common environment variables here if needed
+# Sensitive vars should still use .env files
+
+# ============================================================================
+# Development Servers
+# ============================================================================
+
+[tasks."dev:api"]
+description = "Run finance-api in dev mode with watch"
+dir = "apps/finance-api"
+run = """
+yarn install
+yarn dev
+"""
+
+[tasks."dev:pwa"]
+description = "Run pops-pwa Vite dev server"
+dir = "apps/pops-pwa"
+run = """
+yarn install
+yarn dev
+"""
+
+[tasks."dev:sync"]
+description = "Run notion-sync locally"
+dir = "apps/notion-sync"
+run = """
+yarn install
+yarn dev
+"""
+
+[tasks."dev"]
+description = "Run all dev servers (using turbo)"
+run = "turbo dev --filter=!@pops/notion-sync"
+
+[tasks."dev:full"]
+description = "Run all dev servers including notion-sync"
+run = "turbo dev"
+
+[tasks."dev:storybook"]
+description = "Run Storybook for pops-pwa"
+dir = "apps/pops-pwa"
+run = "yarn storybook"
+
+# ============================================================================
+# Quality Checks
+# ============================================================================
+
+[tasks.typecheck]
+description = "Type check all packages"
+run = "turbo typecheck"
+
+[tasks."typecheck:api"]
+description = "Type check finance-api"
+dir = "apps/finance-api"
+run = "yarn typecheck"
+
+[tasks."typecheck:pwa"]
+description = "Type check pops-pwa"
+dir = "apps/pops-pwa"
+run = "yarn typecheck"
+
+[tasks."typecheck:sync"]
+description = "Type check notion-sync"
+dir = "apps/notion-sync"
+run = "yarn typecheck"
+
+[tasks.test]
+description = "Run all tests"
+run = "turbo test"
+
+[tasks."test:watch"]
+description = "Run all tests in watch mode"
+run = "turbo test:watch"
+
+[tasks."test:api"]
+description = "Run finance-api tests"
+dir = "apps/finance-api"
+run = "yarn test"
+
+[tasks."test:pwa"]
+description = "Run pops-pwa tests"
+dir = "apps/pops-pwa"
+run = "yarn test"
+
+[tasks.lint]
+description = "Lint all packages"
+run = "turbo lint"
+
+[tasks.build]
+description = "Build all packages"
+run = "turbo build"
+
+# ============================================================================
+# Import Tools (run from packages/import-tools)
+# ============================================================================
+
+[tasks."import:anz"]
+description = "Import ANZ CSV (dry-run by default, add --execute to write)"
+dir = "packages/import-tools"
+run = """
+if [ -z "$CSV_PATH" ]; then
+  echo "Error: CSV_PATH not set. Usage: CSV_PATH=path/to/file.csv mise import:anz [--execute]"
+  exit 1
+fi
+yarn import:anz --csv "$CSV_PATH" "$@"
+"""
+
+[tasks."import:amex"]
+description = "Import Amex CSV (dry-run by default, add --execute to write)"
+dir = "packages/import-tools"
+run = """
+if [ -z "$CSV_PATH" ]; then
+  echo "Error: CSV_PATH not set. Usage: CSV_PATH=path/to/file.csv mise import:amex [--execute]"
+  exit 1
+fi
+yarn import:amex --csv "$CSV_PATH" "$@"
+"""
+
+[tasks."import:ing"]
+description = "Import ING CSV (dry-run by default, add --execute to write)"
+dir = "packages/import-tools"
+run = """
+if [ -z "$CSV_PATH" ]; then
+  echo "Error: CSV_PATH not set. Usage: CSV_PATH=path/to/file.csv mise import:ing [--execute]"
+  exit 1
+fi
+yarn import:ing --csv "$CSV_PATH" "$@"
+"""
+
+[tasks."import:up"]
+description = "Import Up Bank batch since date (dry-run by default, add --execute to write)"
+dir = "packages/import-tools"
+run = """
+if [ -z "$SINCE_DATE" ]; then
+  echo "Error: SINCE_DATE not set. Usage: SINCE_DATE=2026-01-01 mise import:up [--execute]"
+  exit 1
+fi
+yarn import:up --since "$SINCE_DATE" "$@"
+"""
+
+[tasks."match:transfers"]
+description = "Link transfer pairs (dry-run by default, add --execute to write)"
+dir = "packages/import-tools"
+run = "yarn match:transfers $@"
+
+[tasks."match:novated"]
+description = "Link novated lease pairs (dry-run by default, add --execute to write)"
+dir = "packages/import-tools"
+run = "yarn match:novated $@"
+
+[tasks."entities:create"]
+description = "Batch create entities (dry-run by default, add --execute to write)"
+dir = "packages/import-tools"
+run = "yarn entities:create $@"
+
+[tasks."entities:lookup"]
+description = "Rebuild entity lookup cache"
+dir = "packages/import-tools"
+run = "yarn entities:lookup"
+
+[tasks.audit]
+description = "Show database statistics"
+dir = "packages/import-tools"
+run = "yarn audit"
+
+# ============================================================================
+# Docker Operations
+# ============================================================================
+
+[tasks."docker:build"]
+description = "Build all Docker images"
+run = "docker compose -f infra/docker-compose.yml build"
+
+[tasks."docker:up"]
+description = "Start all Docker services"
+run = "docker compose -f infra/docker-compose.yml up -d"
+
+[tasks."docker:down"]
+description = "Stop all Docker services"
+run = "docker compose -f infra/docker-compose.yml down"
+
+[tasks."docker:logs"]
+description = "Show Docker logs (pass service name as arg)"
+run = "docker compose -f infra/docker-compose.yml logs -f $@"
+
+[tasks."docker:config"]
+description = "Validate Docker Compose configuration"
+run = "docker compose -f infra/docker-compose.yml config"
+
+[tasks."docker:import"]
+description = "Run import tool via Docker (e.g., mise docker:import src/import-anz.ts /data/imports/anz.csv)"
+run = "docker compose -f infra/docker-compose.yml --profile tools run --rm tools $@"
+
+# ============================================================================
+# Ansible Operations (must run from infra/ansible/ directory)
+# ============================================================================
+
+[tasks."ansible:provision"]
+description = "Provision fresh N95 (full run)"
+dir = "infra/ansible"
+run = "ansible-playbook playbooks/site.yml"
+
+[tasks."ansible:deploy"]
+description = "Deploy/update services only (skip OS hardening)"
+dir = "infra/ansible"
+run = "ansible-playbook playbooks/deploy.yml"
+
+[tasks."ansible:check"]
+description = "Syntax check Ansible playbooks"
+dir = "infra/ansible"
+run = "ansible-playbook playbooks/site.yml --syntax-check"
+
+[tasks."ansible:encrypt"]
+description = "Encrypt Ansible vault file"
+dir = "infra/ansible"
+run = """
+if [ -z "$VAULT_FILE" ]; then
+  echo "Error: VAULT_FILE not set. Usage: VAULT_FILE=inventory/group_vars/pops_servers/vault.yml mise ansible:encrypt"
+  exit 1
+fi
+ansible-vault encrypt "$VAULT_FILE"
+"""
+
+# ============================================================================
+# Git Worktree Helpers
+# ============================================================================
+
+[tasks."worktree:create"]
+description = "Create a new git worktree (usage: BRANCH=feat/my-feature mise worktree:create)"
+run = """
+if [ -z "$BRANCH" ]; then
+  echo "Error: BRANCH not set. Usage: BRANCH=feat/my-feature mise worktree:create"
+  exit 1
+fi
+worktree-branch "$BRANCH"
+"""
+
+[tasks."worktree:create:deps"]
+description = "Create worktree with dependency installation"
+run = """
+if [ -z "$BRANCH" ]; then
+  echo "Error: BRANCH not set. Usage: BRANCH=feat/my-feature mise worktree:create:deps"
+  exit 1
+fi
+worktree-branch "$BRANCH" --install-deps
+"""
+
+[tasks."worktree:remove"]
+description = "Remove a git worktree (usage: BRANCH=feat/my-feature mise worktree:remove)"
+run = """
+if [ -z "$BRANCH" ]; then
+  echo "Error: BRANCH not set. Usage: BRANCH=feat/my-feature mise worktree:remove"
+  exit 1
+fi
+git worktree remove "../$BRANCH" && git branch -d "$BRANCH"
+"""
+
+# ============================================================================
+# Utility Tasks
+# ============================================================================
+
+[tasks.clean]
+description = "Clean build artifacts and dependencies"
+run = """
+echo "Cleaning build artifacts..."
+rm -rf dist/ .turbo/
+find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +
+echo "Done. Run 'yarn install' to reinstall dependencies."
+"""
+
+[tasks.install]
+description = "Install all dependencies"
+run = "yarn install"
+
+[tasks.setup]
+description = "Initial project setup (install deps + typecheck)"
+run = """
+echo "Installing dependencies..."
+yarn install
+echo "Type checking..."
+turbo typecheck
+echo "Setup complete! Run 'mise dev:all' to start development."
+"""
