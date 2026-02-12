@@ -5,7 +5,7 @@
 import BetterSqlite3 from "better-sqlite3";
 import { existsSync } from "node:fs";
 
-const DB_PATH = "./data/pops.db";
+const DB_PATH = process.env.SQLITE_PATH ?? "./data/pops.db";
 
 if (!existsSync(DB_PATH)) {
   console.error(`❌ Database not found at ${DB_PATH}`);
@@ -21,20 +21,19 @@ db.pragma("busy_timeout = 5000");
 
 console.log("🌱 Seeding database with test data...\n");
 
-// Clear existing data first
-console.log("🧹 Clearing existing data...");
-const clearTransaction = db.transaction(() => {
+// Seed data
+const now = new Date().toISOString();
+
+// Wrap everything in one atomic transaction (clear + all inserts)
+const seedDatabase = db.transaction(() => {
+  // Clear existing data first
+  console.log("🧹 Clearing existing data...");
   db.exec(`DELETE FROM transactions`);
   db.exec(`DELETE FROM entities`);
   db.exec(`DELETE FROM budgets`);
-  db.exec(`DELETE FROM inventory`);
+  db.exec(`DELETE FROM home_inventory`);
   db.exec(`DELETE FROM wish_list`);
   db.exec(`DELETE FROM sync_cursors`);
-});
-clearTransaction();
-
-// Seed data
-const now = new Date().toISOString();
 
 // =============================================================================
 // Entities (merchants/payees)
@@ -162,7 +161,7 @@ const insertEntity = db.prepare(`
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 `);
 
-const seedEntities = db.transaction(() => {
+  // Seed entities
   for (const entity of entities) {
     insertEntity.run(
       entity.notion_id,
@@ -176,10 +175,7 @@ const seedEntities = db.transaction(() => {
       entity.last_edited_time
     );
   }
-});
-
-seedEntities();
-console.log(`  ✓ Inserted ${entities.length} entities`);
+  console.log(`  ✓ Inserted ${entities.length} entities`);
 
 // =============================================================================
 // Transactions
@@ -515,7 +511,7 @@ const insertTransaction = db.prepare(`
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `);
 
-const seedTransactions = db.transaction(() => {
+  // Seed transactions
   for (const txn of transactions) {
     insertTransaction.run(
       txn.notion_id,
@@ -537,10 +533,7 @@ const seedTransactions = db.transaction(() => {
       txn.last_edited_time
     );
   }
-});
-
-seedTransactions();
-console.log(`  ✓ Inserted ${transactions.length} transactions`);
+  console.log(`  ✓ Inserted ${transactions.length} transactions`);
 
 // =============================================================================
 // Budgets
@@ -629,7 +622,7 @@ const insertBudget = db.prepare(`
   ) VALUES (?, ?, ?, ?, ?, ?, ?)
 `);
 
-const seedBudgets = db.transaction(() => {
+  // Seed budgets
   for (const budget of budgets) {
     insertBudget.run(
       budget.notion_id,
@@ -641,18 +634,15 @@ const seedBudgets = db.transaction(() => {
       budget.last_edited_time
     );
   }
-});
-
-seedBudgets();
-console.log(`  ✓ Inserted ${budgets.length} budgets`);
+  console.log(`  ✓ Inserted ${budgets.length} budgets`);
 
 // =============================================================================
 // Home Inventory
 // =============================================================================
 
-console.log("🏠 Seeding inventory...");
+console.log("🏠 Seeding home_inventory...");
 
-const inventory = [
+const home_inventory = [
   {
     notion_id: "inv-001",
     item_name: "MacBook Pro 16-inch",
@@ -761,7 +751,7 @@ const inventory = [
 ];
 
 const insertInventory = db.prepare(`
-  INSERT INTO inventory (
+  INSERT INTO home_inventory (
     notion_id, item_name, brand, model, item_id, room, location, type, condition,
     in_use, deductible, purchase_date, warranty_expires, replacement_value,
     resale_value, purchase_transaction_id, purchased_from_id, purchased_from_name,
@@ -769,8 +759,8 @@ const insertInventory = db.prepare(`
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `);
 
-const seedInventory = db.transaction(() => {
-  for (const item of inventory) {
+  // Seed home_inventory
+  for (const item of home_inventory) {
     insertInventory.run(
       item.notion_id,
       item.item_name,
@@ -793,10 +783,7 @@ const seedInventory = db.transaction(() => {
       item.last_edited_time
     );
   }
-});
-
-seedInventory();
-console.log(`  ✓ Inserted ${inventory.length} inventory items`);
+  console.log(`  ✓ Inserted ${home_inventory.length} home_inventory items`);
 
 // =============================================================================
 // Wish List
@@ -863,7 +850,7 @@ const insertWishList = db.prepare(`
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 `);
 
-const seedWishList = db.transaction(() => {
+  // Seed wish list
   for (const wish of wishList) {
     insertWishList.run(
       wish.notion_id,
@@ -876,10 +863,11 @@ const seedWishList = db.transaction(() => {
       wish.last_edited_time
     );
   }
+  console.log(`  ✓ Inserted ${wishList.length} wish list items`);
 });
 
-seedWishList();
-console.log(`  ✓ Inserted ${wishList.length} wish list items`);
+// Execute the atomic seeding transaction
+seedDatabase();
 
 // =============================================================================
 // Summary
@@ -889,7 +877,7 @@ const counts = {
   transactions: db.prepare("SELECT COUNT(*) as count FROM transactions").get() as { count: number },
   entities: db.prepare("SELECT COUNT(*) as count FROM entities").get() as { count: number },
   budgets: db.prepare("SELECT COUNT(*) as count FROM budgets").get() as { count: number },
-  inventory: db.prepare("SELECT COUNT(*) as count FROM inventory").get() as { count: number },
+  home_inventory: db.prepare("SELECT COUNT(*) as count FROM home_inventory").get() as { count: number },
   wish_list: db.prepare("SELECT COUNT(*) as count FROM wish_list").get() as { count: number },
 };
 
@@ -898,7 +886,7 @@ console.log("📊 Final counts:");
 console.log(`  transactions:  ${counts.transactions.count}`);
 console.log(`  entities:      ${counts.entities.count}`);
 console.log(`  budgets:       ${counts.budgets.count}`);
-console.log(`  inventory:     ${counts.inventory.count}`);
+console.log(`  home_inventory:     ${counts.home_inventory.count}`);
 console.log(`  wish_list:     ${counts.wish_list.count}`);
 console.log("\n💡 Use this data for development and E2E testing");
 
