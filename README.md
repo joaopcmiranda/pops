@@ -206,6 +206,14 @@ mise setup            # Initial project setup
 mise tasks            # List all available tasks
 ```
 
+**Database Management:**
+```bash
+mise db:init          # Initialize empty database with schema
+mise db:clear         # Clear all data (preserves schema)
+mise db:seed          # Seed with comprehensive test data
+mise db:pull          # Pull fresh from Notion (full sync)
+```
+
 See `mise.toml` for all available tasks and [CLAUDE.md](CLAUDE.md) for detailed command reference.
 
 ### Local Development Setup
