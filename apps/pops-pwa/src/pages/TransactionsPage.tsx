@@ -117,6 +117,12 @@ export function TransactionsPage() {
           </div>
         );
       },
+      filterFn: (row, columnId, filterValue) => {
+        const categories = row.getValue<string[]>(columnId);
+        if (!categories || categories.length === 0) return false;
+        const searchTerm = String(filterValue).toLowerCase();
+        return categories.some((cat) => cat.toLowerCase().includes(searchTerm));
+      },
     },
     {
       accessorKey: "online",

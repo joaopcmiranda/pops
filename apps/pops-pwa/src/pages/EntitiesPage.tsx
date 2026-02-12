@@ -1,11 +1,187 @@
 /**
  * Entities page - manage merchants/payees
  */
+import type { ColumnDef } from "@tanstack/react-table";
+import { trpc } from "@/lib/trpc";
+import { DataTable, SortableHeader } from "@/components/DataTable";
+import { Badge } from "@/components/ui/badge";
+import { Alert } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { ColumnFilter } from "@/components/DataTableFilters";
+
+interface Entity {
+  notionId: string;
+  name: string;
+  type: string | null;
+  abn: string | null;
+  aliases: string[];
+  defaultTransactionType: string | null;
+  defaultCategory: string | null;
+  notes: string | null;
+  lastEditedTime: string;
+}
+
 export function EntitiesPage() {
+  const { data, isLoading, error, refetch } = trpc.entities.list.useQuery({
+    limit: 100,
+  });
+
+  const columns: ColumnDef<Entity>[] = [
+    {
+      accessorKey: "name",
+      header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
+      cell: ({ row }) => (
+        <div className="font-medium">{row.original.name}</div>
+      ),
+    },
+    {
+      accessorKey: "type",
+      header: "Type",
+      cell: ({ row }) => {
+        const type = row.original.type;
+        if (!type) {
+          return <span className="text-muted-foreground">—</span>;
+        }
+        return (
+          <Badge variant="outline" className="text-xs">
+            {type}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "abn",
+      header: "ABN",
+      cell: ({ row }) => (
+        <span className="text-sm font-mono">
+          {row.original.abn || <span className="text-muted-foreground">—</span>}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "aliases",
+      header: "Aliases",
+      cell: ({ row }) => {
+        const aliases = row.original.aliases;
+        if (!aliases || aliases.length === 0) {
+          return <span className="text-muted-foreground">—</span>;
+        }
+        return (
+          <div className="flex flex-wrap gap-1">
+            {aliases.slice(0, 2).map((alias) => (
+              <Badge key={alias} variant="secondary" className="text-xs">
+                {alias}
+              </Badge>
+            ))}
+            {aliases.length > 2 && (
+              <Badge variant="secondary" className="text-xs">
+                +{aliases.length - 2}
+              </Badge>
+            )}
+          </div>
+        );
+      },
+      filterFn: (row, columnId, filterValue) => {
+        const aliases = row.getValue<string[]>(columnId);
+        if (!aliases || aliases.length === 0) return false;
+        const searchTerm = String(filterValue).toLowerCase();
+        return aliases.some((alias) => alias.toLowerCase().includes(searchTerm));
+      },
+    },
+    {
+      accessorKey: "defaultTransactionType",
+      header: "Default Type",
+      cell: ({ row }) => {
+        const defaultType = row.original.defaultTransactionType;
+        if (!defaultType) {
+          return <span className="text-muted-foreground">—</span>;
+        }
+        return (
+          <Badge variant="outline" className="text-xs">
+            {defaultType}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "defaultCategory",
+      header: "Default Category",
+      cell: ({ row }) => {
+        const category = row.original.defaultCategory;
+        if (!category) {
+          return <span className="text-muted-foreground">—</span>;
+        }
+        return (
+          <Badge variant="secondary" className="text-xs">
+            {category}
+          </Badge>
+        );
+      },
+    },
+  ];
+
+  const tableFilters: ColumnFilter[] = [
+    {
+      id: "type",
+      type: "select",
+      label: "Type",
+      options: [
+        { label: "All Types", value: "" },
+        { label: "Merchant", value: "Merchant" },
+        { label: "Individual", value: "Individual" },
+        { label: "Government", value: "Government" },
+        { label: "Financial Institution", value: "Financial Institution" },
+      ],
+    },
+  ];
+
+  if (error) {
+    return (
+      <div className="p-6 space-y-6">
+        <h1 className="text-3xl font-bold">Entities</h1>
+        <Alert variant="destructive">
+          <p className="font-semibold">Failed to load entities</p>
+          <p className="text-sm">{error.message}</p>
+          <button
+            onClick={() => refetch()}
+            className="mt-2 text-sm underline"
+          >
+            Try again
+          </button>
+        </Alert>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-3xl font-bold">Entities</h1>
-      <p>Entity list will appear here.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Entities</h1>
+          <p className="text-muted-foreground">
+            {data && `${data.pagination.total} total entities`}
+          </p>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="space-y-4">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-64 w-full" />
+        </div>
+      ) : data ? (
+        <DataTable
+          columns={columns}
+          data={data.data}
+          searchable
+          searchColumn="name"
+          searchPlaceholder="Search entities..."
+          paginated
+          defaultPageSize={50}
+          pageSizeOptions={[25, 50, 100]}
+          filters={tableFilters}
+        />
+      ) : null}
     </div>
   );
 }
