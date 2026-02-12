@@ -6,7 +6,7 @@ import BetterSqlite3 from "better-sqlite3";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 
-const DB_PATH = "./data/pops.db";
+const DB_PATH = process.env.SQLITE_PATH ?? "./data/pops.db";
 
 // Create data directory if it doesn't exist
 mkdirSync(dirname(DB_PATH), { recursive: true });
@@ -62,7 +62,7 @@ db.exec(`
     last_edited_time TEXT NOT NULL
   );
 
-  CREATE TABLE IF NOT EXISTS inventory (
+  CREATE TABLE IF NOT EXISTS home_inventory (
     notion_id TEXT PRIMARY KEY,
     item_name TEXT NOT NULL,
     brand TEXT,
