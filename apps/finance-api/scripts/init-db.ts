@@ -100,6 +100,22 @@ db.exec(`
     cursor TEXT NOT NULL,
     last_sync_time TEXT NOT NULL
   );
+
+  CREATE TABLE IF NOT EXISTS ai_usage (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    description TEXT NOT NULL,
+    entity_name TEXT,
+    category TEXT,
+    input_tokens INTEGER NOT NULL,
+    output_tokens INTEGER NOT NULL,
+    cost_usd REAL NOT NULL,
+    cached INTEGER NOT NULL DEFAULT 0,
+    import_batch_id TEXT,
+    created_at TEXT NOT NULL
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_ai_usage_created_at ON ai_usage(created_at);
+  CREATE INDEX IF NOT EXISTS idx_ai_usage_batch ON ai_usage(import_batch_id);
 `);
 
 console.log(`✅ Database initialized at ${DB_PATH}`);

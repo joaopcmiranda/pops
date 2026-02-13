@@ -45,7 +45,7 @@ export function toTransaction(row: TransactionRow): Transaction {
             // Fallback to comma-separated if not JSON
             return row.categories
               .split(",")
-              .map((s) => s.trim())
+              .map((s: string) => s.trim())
               .filter(Boolean);
           }
         })()
