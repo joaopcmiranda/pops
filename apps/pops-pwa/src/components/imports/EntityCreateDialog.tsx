@@ -1,0 +1,115 @@
+import { useState, useCallback } from "react";
+import { trpc } from "../../lib/trpc";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Button } from "../ui/button";
+
+interface EntityCreateDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onEntityCreated: (entity: { entityId: string; entityName: string; entityUrl: string }) => void;
+  suggestedName?: string;
+}
+
+/**
+ * Dialog for creating a new entity during import
+ */
+export function EntityCreateDialog({
+  open,
+  onOpenChange,
+  onEntityCreated,
+  suggestedName = "",
+}: EntityCreateDialogProps) {
+  const [name, setName] = useState(suggestedName);
+
+  const createEntityMutation = trpc.imports.createEntity.useMutation({
+    onSuccess: (data) => {
+      onEntityCreated(data);
+      onOpenChange(false);
+      setName("");
+    },
+  });
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+
+      if (!name.trim()) {
+        return;
+      }
+
+      createEntityMutation.mutate({ name: name.trim() });
+    },
+    [name, createEntityMutation]
+  );
+
+  const handleOpenChange = useCallback(
+    (newOpen: boolean) => {
+      if (!createEntityMutation.isPending) {
+        onOpenChange(newOpen);
+        if (!newOpen) {
+          setName("");
+          createEntityMutation.reset();
+        }
+      }
+    },
+    [onOpenChange, createEntityMutation]
+  );
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent>
+        <form onSubmit={handleSubmit}>
+          <DialogHeader>
+            <DialogTitle>Create New Entity</DialogTitle>
+            <DialogDescription>
+              Add a new merchant or payee to your entities database.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-4 space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="entity-name">Entity Name</Label>
+              <Input
+                id="entity-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g., Woolworths"
+                disabled={createEntityMutation.isPending}
+                autoFocus
+              />
+            </div>
+
+            {createEntityMutation.isError && (
+              <div className="p-3 text-sm text-red-700 bg-red-100 dark:bg-red-900 dark:text-red-200 rounded-md">
+                {createEntityMutation.error.message}
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleOpenChange(false)}
+              disabled={createEntityMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={!name.trim() || createEntityMutation.isPending}>
+              {createEntityMutation.isPending ? "Creating..." : "Create Entity"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
