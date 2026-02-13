@@ -1,12 +1,24 @@
 import type { Client } from '@notionhq/client';
 
+/**
+ * Notion database IDs for POPS.
+ * Loaded from environment variables to avoid committing workspace-specific IDs.
+ */
+function requireEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`${name} environment variable not set`);
+  }
+  return value;
+}
+
 /** Notion database IDs for POPS */
 export const NOTION_DB = {
-  BALANCE_SHEET: '9ad27001-d723-4a3f-8b3a-cf19cf715eec',
-  ENTITIES: '3062f475-7765-406e-bde5-117f3e0a473f',
-  HOME_INVENTORY: '542bb48c-740c-4848-93ad-eb91c86a612e',
-  BUDGET: '8fdf1583-4b0c-4314-9377-b1cee4cc9e63',
-  WISH_LIST: '9e13e606-92d1-4316-aad4-f837a9e8cb9f',
+  BALANCE_SHEET: requireEnv('NOTION_BALANCE_SHEET_ID'),
+  ENTITIES: requireEnv('NOTION_ENTITIES_DB_ID'),
+  HOME_INVENTORY: requireEnv('NOTION_HOME_INVENTORY_ID'),
+  BUDGET: requireEnv('NOTION_BUDGET_ID'),
+  WISH_LIST: requireEnv('NOTION_WISH_LIST_ID'),
 } as const;
 
 /** Extract the page type from the Notion client's query response */
