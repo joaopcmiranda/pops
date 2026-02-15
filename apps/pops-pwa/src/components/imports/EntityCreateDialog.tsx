@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { trpc } from "../../lib/trpc";
 import {
   Dialog,
@@ -30,8 +30,18 @@ export function EntityCreateDialog({
 }: EntityCreateDialogProps) {
   const [name, setName] = useState(suggestedName);
 
+  // Sync name with suggestedName when dialog opens or suggestedName changes
+  useEffect(() => {
+    if (open) {
+      setName(suggestedName);
+    }
+  }, [open, suggestedName]);
+
+  const utils = trpc.useUtils();
   const createEntityMutation = trpc.imports.createEntity.useMutation({
     onSuccess: (data) => {
+      // Refresh entities list
+      utils.entities.list.invalidate();
       onEntityCreated(data);
       onOpenChange(false);
       setName("");

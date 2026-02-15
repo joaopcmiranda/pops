@@ -44,6 +44,7 @@ export function ReviewStep() {
   const [localTransactions, setLocalTransactions] = useState(processedTransactions);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<ProcessedTransaction | null>(null);
+  const [pendingBulkTransactions, setPendingBulkTransactions] = useState<ProcessedTransaction[] | null>(null);
   const [pollingEnabled, setPollingEnabled] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<ProcessedTransaction | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("grouped");
@@ -179,6 +180,11 @@ export function ReviewStep() {
     [localTransactions]
   );
 
+  const handleCreateEntity = useCallback((transaction: ProcessedTransaction) => {
+    setSelectedTransaction(transaction);
+    setShowCreateDialog(true);
+  }, []);
+
   /**
    * Accept AI suggestion for a single transaction
    */
@@ -186,61 +192,56 @@ export function ReviewStep() {
     (transaction: ProcessedTransaction) => {
       if (!transaction.entity?.entityName) return;
 
+      // Try to find entity by name if entityId is missing
+      let entityId = transaction.entity.entityId;
+      if (!entityId && entities?.data) {
+        const matchingEntity = entities.data.find(
+          (e) => e.name.toLowerCase() === transaction.entity?.entityName?.toLowerCase()
+        );
+        if (matchingEntity) {
+          entityId = matchingEntity.notionId;
+        }
+      }
+
       // Entity doesn't exist yet, need to create it first
-      if (!transaction.entity.entityId) {
+      if (!entityId) {
         handleCreateEntity(transaction);
         return;
       }
 
       handleEntitySelect(
         transaction,
-        transaction.entity.entityId,
+        entityId,
         transaction.entity.entityName
       );
     },
-    [handleEntitySelect]
+    [handleEntitySelect, entities, handleCreateEntity]
   );
 
   /**
-   * Accept all transactions in a group
+   * Accept all transactions in a group (create entity if needed)
    */
   const handleAcceptAll = useCallback(
-    (transactions: ProcessedTransaction[]) => {
-      for (const transaction of transactions) {
-        if (transaction.entity?.entityId && transaction.entity?.entityName) {
-          // Remove from uncertain/failed, add to matched (no toast for bulk)
-          const updated = {
-            ...localTransactions,
-            uncertain: localTransactions.uncertain.filter((t: ProcessedTransaction) => t !== transaction),
-            failed: localTransactions.failed.filter((t: ProcessedTransaction) => t !== transaction),
-            matched: [
-              ...localTransactions.matched,
-              {
-                ...transaction,
-                entity: {
-                  ...transaction.entity,
-                  matchType: "ai" as const,
-                },
-                status: "matched" as const,
-              } as ProcessedTransaction,
-            ],
-          };
-          setLocalTransactions(updated);
-        }
+    async (transactions: ProcessedTransaction[]) => {
+      if (transactions.length === 0) return;
+
+      const entityName = transactions[0].entity?.entityName;
+      if (!entityName) {
+        toast.error("No entity name found");
+        return;
       }
 
-      toast.success(`Accepted ${transactions.length} transaction${transactions.length !== 1 ? "s" : ""}`);
-    },
-    [localTransactions]
-  );
-
-  /**
-   * Create entity and assign to all transactions in group
-   */
-  const handleCreateAndAssignAll = useCallback(
-    async (transactions: ProcessedTransaction[], entityName: string) => {
       try {
-        const result = await createEntityMutation.mutateAsync({ name: entityName });
+        // Check if entity exists
+        let entityId = entities?.data?.find(
+          (e) => e.name.toLowerCase() === entityName.toLowerCase()
+        )?.notionId;
+
+        // Create entity if it doesn't exist
+        if (!entityId) {
+          const result = await createEntityMutation.mutateAsync({ name: entityName });
+          entityId = result.data.notionId;
+        }
 
         // Assign to all transactions
         const updated = { ...localTransactions };
@@ -251,9 +252,9 @@ export function ReviewStep() {
           updated.matched.push({
             ...transaction,
             entity: {
-              entityId: result.data.notionId,
-              entityName: result.data.name,
-              entityUrl: `https://www.notion.so/${result.data.notionId.replace(/-/g, "")}`,
+              entityId,
+              entityName,
+              entityUrl: `https://www.notion.so/${entityId.replace(/-/g, "")}`,
               matchType: "ai" as const,
               confidence: 1,
             },
@@ -262,35 +263,71 @@ export function ReviewStep() {
         }
 
         setLocalTransactions(updated);
-        toast.success(`Created "${entityName}" and assigned to ${transactions.length} transaction${transactions.length !== 1 ? "s" : ""}`);
+        toast.success(`Accepted ${transactions.length} transaction${transactions.length !== 1 ? "s" : ""}`);
       } catch (error) {
-        toast.error(`Failed to create entity: ${error instanceof Error ? error.message : "Unknown error"}`);
+        toast.error(`Failed to accept: ${error instanceof Error ? error.message : "Unknown error"}`);
       }
     },
-    [localTransactions, createEntityMutation]
+    [localTransactions, entities, createEntityMutation]
   );
 
-  const handleCreateEntity = useCallback((transaction: ProcessedTransaction) => {
-    setSelectedTransaction(transaction);
-    setShowCreateDialog(true);
-  }, []);
+  /**
+   * Open dialog to create entity and assign to all transactions in group
+   */
+  const handleCreateAndAssignAll = useCallback(
+    (transactions: ProcessedTransaction[], entityName: string) => {
+      // Store transactions for bulk assignment after creation
+      setPendingBulkTransactions(transactions);
+      // Use first transaction as the "selected" one to get the suggested name
+      setSelectedTransaction(transactions[0]);
+      setShowCreateDialog(true);
+    },
+    []
+  );
 
   const handleEntityCreated = useCallback(
     (entity: { entityId: string; entityName: string; entityUrl: string }) => {
-      if (selectedTransaction) {
+      // Handle bulk assignment if pending
+      if (pendingBulkTransactions && pendingBulkTransactions.length > 0) {
+        const updated = { ...localTransactions };
+
+        for (const transaction of pendingBulkTransactions) {
+          updated.uncertain = updated.uncertain.filter((t: ProcessedTransaction) => t !== transaction);
+          updated.failed = updated.failed.filter((t: ProcessedTransaction) => t !== transaction);
+          updated.matched.push({
+            ...transaction,
+            entity: {
+              entityId: entity.entityId,
+              entityName: entity.entityName,
+              entityUrl: entity.entityUrl,
+              matchType: "ai" as const,
+              confidence: 1,
+            },
+            status: "matched" as const,
+          } as ProcessedTransaction);
+        }
+
+        setLocalTransactions(updated);
+        setPendingBulkTransactions(null);
+        setSelectedTransaction(null);
+        toast.success(`Created "${entity.entityName}" and assigned to ${pendingBulkTransactions.length} transaction${pendingBulkTransactions.length !== 1 ? "s" : ""}`);
+      } else if (selectedTransaction) {
+        // Handle single transaction assignment
         handleEntitySelect(selectedTransaction, entity.entityId, entity.entityName);
         setSelectedTransaction(null);
       }
     },
-    [selectedTransaction, handleEntitySelect]
+    [selectedTransaction, pendingBulkTransactions, handleEntitySelect, localTransactions]
   );
 
   const handleEdit = useCallback((transaction: ProcessedTransaction) => {
     setEditingTransaction(transaction);
   }, []);
 
+  const createCorrectionMutation = trpc.corrections.createOrUpdate.useMutation();
+
   const handleSaveEdit = useCallback(
-    (transaction: ProcessedTransaction, editedFields: Partial<ProcessedTransaction>) => {
+    (transaction: ProcessedTransaction, editedFields: Partial<ProcessedTransaction>, shouldLearn: boolean = false) => {
       const updated = {
         ...localTransactions,
         matched: localTransactions.matched.map((t: ProcessedTransaction) =>
@@ -309,9 +346,49 @@ export function ReviewStep() {
 
       setLocalTransactions(updated);
       setEditingTransaction(null);
-      toast.success("Transaction updated");
+
+      // Detect what changed
+      const hasChanges =
+        editedFields.entity?.entityId !== transaction.entity?.entityId ||
+        editedFields.location !== transaction.location ||
+        editedFields.online !== transaction.online;
+
+      if (shouldLearn && hasChanges) {
+        // Save correction pattern
+        createCorrectionMutation.mutate({
+          descriptionPattern: transaction.description,
+          matchType: "exact",
+          entityId: editedFields.entity?.entityId ?? transaction.entity?.entityId,
+          entityName: editedFields.entity?.entityName ?? transaction.entity?.entityName,
+          location: editedFields.location ?? transaction.location,
+          online: editedFields.online ?? transaction.online,
+        });
+        toast.success("Transaction updated and pattern learned!");
+      } else if (hasChanges && !shouldLearn) {
+        // Show toast asking if they want to learn
+        toast.info("Apply this correction to future imports?", {
+          description: "This will help auto-match similar transactions next time.",
+          action: {
+            label: "Yes, learn it",
+            onClick: () => {
+              createCorrectionMutation.mutate({
+                descriptionPattern: transaction.description,
+                matchType: "exact",
+                entityId: editedFields.entity?.entityId ?? transaction.entity?.entityId,
+                entityName: editedFields.entity?.entityName ?? transaction.entity?.entityName,
+                location: editedFields.location ?? transaction.location,
+                online: editedFields.online ?? transaction.online,
+              });
+              toast.success("Pattern learned for future imports!");
+            },
+          },
+        });
+        toast.success("Transaction updated");
+      } else {
+        toast.success("Transaction updated");
+      }
     },
-    [localTransactions]
+    [localTransactions, createCorrectionMutation]
   );
 
   const handleCancelEdit = useCallback(() => {
@@ -443,6 +520,8 @@ export function ReviewStep() {
           <MatchedTab
             transactions={localTransactions.matched}
             onEdit={handleEdit}
+            onEntitySelect={handleEntitySelect}
+            onCreateEntity={handleCreateEntity}
             editingTransaction={editingTransaction}
             onSaveEdit={handleSaveEdit}
             onCancelEdit={handleCancelEdit}
@@ -572,7 +651,14 @@ export function ReviewStep() {
 
       <EntityCreateDialog
         open={showCreateDialog}
-        onOpenChange={setShowCreateDialog}
+        onOpenChange={(open) => {
+          setShowCreateDialog(open);
+          if (!open) {
+            // Clear pending state when dialog is closed
+            setPendingBulkTransactions(null);
+            setSelectedTransaction(null);
+          }
+        }}
         onEntityCreated={handleEntityCreated}
         suggestedName={selectedTransaction?.entity?.entityName}
       />
@@ -586,6 +672,8 @@ export function ReviewStep() {
 function MatchedTab({
   transactions,
   onEdit,
+  onEntitySelect,
+  onCreateEntity,
   editingTransaction,
   onSaveEdit,
   onCancelEdit,
@@ -593,6 +681,8 @@ function MatchedTab({
 }: {
   transactions: ProcessedTransaction[];
   onEdit: (t: ProcessedTransaction) => void;
+  onEntitySelect: (t: ProcessedTransaction, entityId: string, entityName: string) => void;
+  onCreateEntity: (t: ProcessedTransaction) => void;
   editingTransaction: ProcessedTransaction | null;
   onSaveEdit: (t: ProcessedTransaction, edited: Partial<ProcessedTransaction>) => void;
   onCancelEdit: () => void;
@@ -618,7 +708,10 @@ function MatchedTab({
             key={idx}
             transaction={t}
             onEdit={onEdit}
-            readonly={true}
+            onEntitySelect={onEntitySelect}
+            onCreateEntity={onCreateEntity}
+            entities={entities}
+            readonly={false}
             showMatchType={true}
             variant="matched"
           />
@@ -701,6 +794,9 @@ function UncertainTab({
               onCreateEntity={onCreateEntity}
               onAcceptAiSuggestion={onAcceptAiSuggestion}
               onEdit={onEdit}
+              editingTransaction={editingTransaction}
+              onSaveEdit={onSaveEdit}
+              onCancelEdit={onCancelEdit}
               entities={entities}
               variant="uncertain"
             />
@@ -810,6 +906,9 @@ function FailedTab({
               onCreateEntity={onCreateEntity}
               onAcceptAiSuggestion={onAcceptAiSuggestion}
               onEdit={onEdit}
+              editingTransaction={editingTransaction}
+              onSaveEdit={onSaveEdit}
+              onCancelEdit={onCancelEdit}
               entities={entities}
               variant="failed"
             />

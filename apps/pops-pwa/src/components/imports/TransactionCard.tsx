@@ -14,6 +14,12 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../ui/collapsible";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 import { LocationField } from "./LocationField";
 import type { ProcessedTransaction } from "@pops/finance-api/modules/imports";
 
@@ -51,6 +57,12 @@ export function TransactionCard({
 
   const hasAiSuggestion =
     transaction.entity?.matchType === "ai" && transaction.entity?.entityName;
+
+  // Check if AI-suggested entity actually exists in the entities list
+  const aiSuggestedEntityExists = hasAiSuggestion && entities?.some(
+    (e) => e.name.toLowerCase() === transaction.entity?.entityName?.toLowerCase()
+  );
+
   const isAutoMatched = transaction.entity?.matchType === ("auto-matched" as never);
   const isEdited = (transaction as ProcessedTransaction & { manuallyEdited?: boolean }).manuallyEdited;
 
@@ -145,77 +157,72 @@ export function TransactionCard({
       {!readonly && (
         <div className="mb-3">
           {hasAiSuggestion && (
-            <div className="flex items-center gap-2 mb-2 p-2 bg-purple-50 dark:bg-purple-950 rounded-md border border-purple-200 dark:border-purple-800">
-              <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-              <span className="text-sm text-purple-700 dark:text-purple-300">
-                AI suggestion: {transaction.entity.entityName}
-              </span>
-              {onAcceptAiSuggestion && (
-                <Button
-                  variant="default"
-                  size="sm"
-                  onClick={() => onAcceptAiSuggestion(transaction)}
-                  className="ml-auto bg-purple-600 hover:bg-purple-700"
-                >
-                  Accept
-                </Button>
-              )}
-              {onCreateEntity && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onCreateEntity(transaction)}
-                >
-                  Create
-                </Button>
-              )}
+            <div className="mb-2 p-2 bg-purple-50 dark:bg-purple-950 rounded-md border border-purple-200 dark:border-purple-800">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                <span className="text-sm text-purple-700 dark:text-purple-300">
+                  AI suggestion: {transaction.entity.entityName}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                {onAcceptAiSuggestion && (
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={() => onAcceptAiSuggestion(transaction)}
+                    className="bg-purple-600 hover:bg-purple-700 flex-1"
+                  >
+                    {aiSuggestedEntityExists ? "✓" : "+"} Accept "{transaction.entity.entityName}"
+                  </Button>
+                )}
+                {onCreateEntity && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onCreateEntity(transaction)}
+                    className="flex-1"
+                  >
+                    Create new
+                  </Button>
+                )}
+              </div>
             </div>
           )}
 
-          <div className="flex gap-2">
-            <select
-              className="flex-1 px-3 py-2 border rounded-md bg-white dark:bg-gray-800"
-              onChange={(e) => {
-                const entity = entities?.find(
-                  (ent) => ent.notionId === e.target.value
-                );
-                if (entity && onEntitySelect) {
-                  onEntitySelect(transaction, entity.notionId, entity.name);
-                }
-              }}
-              defaultValue=""
+          {!hasAiSuggestion && onCreateEntity && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onCreateEntity(transaction)}
+              className="w-full mb-2"
             >
-              <option value="">Select entity...</option>
-              {hasAiSuggestion && (
-                <optgroup label="AI Suggestion">
-                  <option
-                    value={transaction.entity.entityId || ""}
-                    className="bg-purple-50 dark:bg-purple-950"
-                  >
-                    ⭐ {transaction.entity.entityName}
+              + Create new entity
+            </Button>
+          )}
+
+          <select
+            className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800"
+            value={transaction.entity?.entityId || ""}
+            onChange={(e) => {
+              const entity = entities?.find(
+                (ent) => ent.notionId === e.target.value
+              );
+              if (entity && onEntitySelect) {
+                onEntitySelect(transaction, entity.notionId, entity.name);
+              }
+            }}
+          >
+            <option value="">Choose existing entity...</option>
+            {entities && entities.length > 0 && (
+              <>
+                {entities.map((entity) => (
+                  <option key={entity.notionId} value={entity.notionId}>
+                    {entity.name}
                   </option>
-                </optgroup>
-              )}
-              {entities && entities.length > 0 && (
-                <optgroup label="All Entities">
-                  {entities.map((entity) => (
-                    <option key={entity.notionId} value={entity.notionId}>
-                      {entity.name}
-                    </option>
-                  ))}
-                </optgroup>
-              )}
-            </select>
-            {onCreateEntity && !hasAiSuggestion && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onCreateEntity(transaction)}
-              >
-                Create
-              </Button>
+                ))}
+              </>
             )}
-          </div>
+          </select>
         </div>
       )}
 

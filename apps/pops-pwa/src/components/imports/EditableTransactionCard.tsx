@@ -14,7 +14,8 @@ interface EditableTransactionCardProps {
   transaction: ProcessedTransaction;
   onSave: (
     transaction: ProcessedTransaction,
-    editedFields: Partial<ProcessedTransaction>
+    editedFields: Partial<ProcessedTransaction>,
+    shouldLearn?: boolean
   ) => void;
   onCancel: () => void;
   entities?: Array<{ notionId: string; name: string }>;
@@ -30,6 +31,7 @@ export function EditableTransactionCard({
   entities,
 }: EditableTransactionCardProps) {
   const [isRawDataExpanded, setIsRawDataExpanded] = useState(false);
+  const [transactionType, setTransactionType] = useState<"purchase" | "transfer" | "income">("purchase");
   const [editedFields, setEditedFields] = useState<
     Partial<ProcessedTransaction>
   >({
@@ -49,8 +51,8 @@ export function EditableTransactionCard({
     rawData = { error: "Failed to parse raw data" };
   }
 
-  const handleSave = () => {
-    onSave(transaction, editedFields);
+  const handleSave = (shouldLearn: boolean = false) => {
+    onSave(transaction, editedFields, shouldLearn);
   };
 
   return (
@@ -61,15 +63,48 @@ export function EditableTransactionCard({
           Edit Transaction
         </h3>
         <div className="flex gap-2">
-          <Button variant="default" size="sm" onClick={handleSave}>
+          <Button
+            variant="default"
+            size="sm"
+            onClick={() => handleSave(true)}
+            className="bg-purple-600 hover:bg-purple-700"
+          >
             <Save className="w-4 h-4 mr-1" />
-            Save
+            Save & Learn
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => handleSave(false)}>
+            <Save className="w-4 h-4 mr-1" />
+            Save Once
           </Button>
           <Button variant="outline" size="sm" onClick={onCancel}>
             <X className="w-4 h-4 mr-1" />
             Cancel
           </Button>
         </div>
+      </div>
+
+      {/* Transaction Type */}
+      <div className="mb-4 p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
+        <Label htmlFor="transactionType" className="block mb-2 font-semibold">
+          Transaction Type
+        </Label>
+        <select
+          id="transactionType"
+          value={transactionType}
+          onChange={(e) =>
+            setTransactionType(e.target.value as "purchase" | "transfer" | "income")
+          }
+          className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800"
+        >
+          <option value="purchase">Purchase (requires entity)</option>
+          <option value="transfer">Transfer (between accounts, no entity)</option>
+          <option value="income">Income (salary, refund, etc.)</option>
+        </select>
+        <p className="text-xs mt-1 text-blue-700 dark:text-blue-300">
+          {transactionType === "transfer" && "Transfers don't need an entity - they move money between accounts"}
+          {transactionType === "income" && "Income transactions: salary, interest, refunds, etc."}
+          {transactionType === "purchase" && "Purchases require an entity (merchant/payee)"}
+        </p>
       </div>
 
       {/* Form fields */}
@@ -157,10 +192,10 @@ export function EditableTransactionCard({
         </div>
       </div>
 
-      {/* Entity selector */}
-      {entities && entities.length > 0 && (
+      {/* Entity selector - only show for purchases */}
+      {transactionType === "purchase" && entities && entities.length > 0 && (
         <div className="space-y-2 mb-4">
-          <Label htmlFor="entity">Entity</Label>
+          <Label htmlFor="entity">Entity (Merchant/Payee)</Label>
           <select
             id="entity"
             className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800"
@@ -177,6 +212,14 @@ export function EditableTransactionCard({
               </option>
             ))}
           </select>
+        </div>
+      )}
+
+      {transactionType === "transfer" && (
+        <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg mb-4 text-sm">
+          <p className="text-gray-700 dark:text-gray-300">
+            💡 <strong>Transfer transactions</strong> don't require an entity. They represent money moving between your accounts (e.g., credit card payments, savings transfers).
+          </p>
         </div>
       )}
 

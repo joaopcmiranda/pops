@@ -8,6 +8,7 @@ import {
   CollapsibleTrigger,
 } from "../ui/collapsible";
 import { TransactionCard } from "./TransactionCard";
+import { EditableTransactionCard } from "./EditableTransactionCard";
 import type { ProcessedTransaction } from "@pops/finance-api/modules/imports";
 import type { TransactionGroup as TransactionGroupType } from "../../lib/transaction-utils";
 
@@ -26,6 +27,9 @@ interface TransactionGroupProps {
   onCreateEntity: (transaction: ProcessedTransaction) => void;
   onAcceptAiSuggestion: (transaction: ProcessedTransaction) => void;
   onEdit: (transaction: ProcessedTransaction) => void;
+  editingTransaction?: ProcessedTransaction | null;
+  onSaveEdit?: (transaction: ProcessedTransaction, editedFields: Partial<ProcessedTransaction>) => void;
+  onCancelEdit?: () => void;
   entities?: Array<{ notionId: string; name: string }>;
   variant?: "uncertain" | "failed";
 }
@@ -41,14 +45,23 @@ export function TransactionGroup({
   onCreateEntity,
   onAcceptAiSuggestion,
   onEdit,
+  editingTransaction,
+  onSaveEdit,
+  onCancelEdit,
   entities,
   variant = "uncertain",
 }: TransactionGroupProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showEntitySelector, setShowEntitySelector] = useState(false);
 
   const totalAmount = group.transactions.reduce(
     (sum, t) => sum + Math.abs(t.amount),
     0
+  );
+
+  // Check if AI-suggested entity exists
+  const entityExists = group.aiSuggestion && entities?.some(
+    (e) => e.name.toLowerCase() === group.entityName.toLowerCase()
   );
 
   return (
@@ -100,16 +113,27 @@ export function TransactionGroup({
             {/* Bulk actions */}
             <div className="flex gap-2">
               {group.aiSuggestion && (
-                <Button
-                  variant="default"
-                  size="sm"
-                  onClick={() => onAcceptAll(group.transactions)}
-                  className="bg-purple-600 hover:bg-purple-700"
-                >
-                  Accept All
-                </Button>
+                <>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={() => onAcceptAll(group.transactions)}
+                    className="bg-purple-600 hover:bg-purple-700"
+                  >
+                    {entityExists ? "✓" : "+"} Accept All as "{group.entityName}"
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      onCreateAndAssignAll(group.transactions, group.entityName)
+                    }
+                  >
+                    Create new for all
+                  </Button>
+                </>
               )}
-              {group.entityName !== "Unknown" && (
+              {!group.aiSuggestion && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -117,27 +141,76 @@ export function TransactionGroup({
                     onCreateAndAssignAll(group.transactions, group.entityName)
                   }
                 >
-                  Create "{group.entityName}"
+                  + Create new for all
                 </Button>
               )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowEntitySelector(!showEntitySelector)}
+              >
+                Choose existing...
+              </Button>
             </div>
           </div>
         </div>
 
+        {/* Entity selector for bulk assignment */}
+        {showEntitySelector && entities && entities.length > 0 && (
+          <div className="mt-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600">
+            <label className="block text-sm font-medium mb-2">
+              Select entity to assign to all {group.transactions.length} transactions:
+            </label>
+            <select
+              className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800"
+              onChange={(e) => {
+                const selectedEntity = entities.find(
+                  (ent) => ent.notionId === e.target.value
+                );
+                if (selectedEntity) {
+                  // Apply selected entity to all transactions in group
+                  group.transactions.forEach((t) => {
+                    onEntitySelect(t, selectedEntity.notionId, selectedEntity.name);
+                  });
+                  setShowEntitySelector(false);
+                }
+              }}
+              defaultValue=""
+            >
+              <option value="">Choose entity...</option>
+              {entities.map((entity) => (
+                <option key={entity.notionId} value={entity.notionId}>
+                  {entity.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
         <CollapsibleContent>
           <div className="p-4 space-y-3 border-t dark:border-gray-700">
-            {group.transactions.map((transaction, idx) => (
-              <TransactionCard
-                key={idx}
-                transaction={transaction}
-                onEntitySelect={onEntitySelect}
-                onCreateEntity={onCreateEntity}
-                onAcceptAiSuggestion={onAcceptAiSuggestion}
-                onEdit={onEdit}
-                entities={entities}
-                variant={variant}
-              />
-            ))}
+            {group.transactions.map((transaction, idx) =>
+              editingTransaction === transaction && onSaveEdit && onCancelEdit ? (
+                <EditableTransactionCard
+                  key={idx}
+                  transaction={transaction}
+                  onSave={onSaveEdit}
+                  onCancel={onCancelEdit}
+                  entities={entities}
+                />
+              ) : (
+                <TransactionCard
+                  key={idx}
+                  transaction={transaction}
+                  onEntitySelect={onEntitySelect}
+                  onCreateEntity={onCreateEntity}
+                  onAcceptAiSuggestion={onAcceptAiSuggestion}
+                  onEdit={onEdit}
+                  entities={entities}
+                  variant={variant}
+                />
+              )
+            )}
           </div>
         </CollapsibleContent>
       </Collapsible>
