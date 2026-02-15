@@ -96,9 +96,8 @@ db.exec(`
   );
 
   CREATE TABLE IF NOT EXISTS sync_cursors (
-    database_name TEXT PRIMARY KEY,
-    cursor TEXT NOT NULL,
-    last_sync_time TEXT NOT NULL
+    database_id TEXT PRIMARY KEY,
+    last_edited_time TEXT NOT NULL
   );
 
   CREATE TABLE IF NOT EXISTS ai_usage (
