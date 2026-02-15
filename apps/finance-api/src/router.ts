@@ -4,6 +4,7 @@
 import { router } from "./trpc.js";
 import { aiUsageRouter } from "./modules/ai-usage/router.js";
 import { budgetsRouter } from "./modules/budgets/router.js";
+import { correctionsRouter } from "./modules/corrections/router.js";
 import { entitiesRouter } from "./modules/entities/router.js";
 import { importsRouter } from "./modules/imports/router.js";
 import { inventoryRouter } from "./modules/inventory/router.js";
@@ -17,6 +18,7 @@ import { wishlistRouter } from "./modules/wishlist/router.js";
 export const appRouter = router({
   aiUsage: aiUsageRouter,
   budgets: budgetsRouter,
+  corrections: correctionsRouter,
   entities: entitiesRouter,
   imports: importsRouter,
   inventory: inventoryRouter,

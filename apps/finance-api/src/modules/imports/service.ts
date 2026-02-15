@@ -15,6 +15,7 @@ import { formatImportError } from "../../lib/errors.js";
 import { matchEntity } from "./lib/entity-matcher.js";
 import { categorizeWithAi, AiCategorizationError } from "./lib/ai-categorizer.js";
 import { setProgress, updateProgress } from "./progress-store.js";
+import { findMatchingCorrection } from "../corrections/service.js";
 import type {
   ParsedTransaction,
   ProcessedTransaction,
@@ -215,7 +216,38 @@ export async function processImport(
     if (!transaction) continue;
 
     try {
-      // Try universal entity matching
+      // Step 1: Apply learned corrections (highest priority)
+      const correction = findMatchingCorrection(transaction.description, 0.7);
+
+      if (correction && correction.entity_id) {
+        logger.debug(
+          {
+            index: i + 1,
+            total: newTransactions.length,
+            description: transaction.description.substring(0, 50),
+            entityName: correction.entity_name,
+            confidence: correction.confidence,
+          },
+          "[Import] Applied learned correction"
+        );
+
+        matched.push({
+          ...transaction,
+          location: correction.location ?? transaction.location,
+          online: correction.online !== null ? correction.online === 1 : transaction.online,
+          entity: {
+            entityId: correction.entity_id,
+            entityName: correction.entity_name ?? "Unknown",
+            entityUrl: `https://www.notion.so/${correction.entity_id.replace(/-/g, "")}`,
+            matchType: "learned" as never, // UI-only matchType
+            confidence: correction.confidence,
+          },
+          status: correction.confidence >= 0.9 ? "matched" : "uncertain",
+        });
+        continue; // Skip to next transaction
+      }
+
+      // Step 2: Try universal entity matching
       const match = matchEntity(transaction.description, entityLookup, aliases);
 
       if (match) {
