@@ -1,10 +1,11 @@
 /**
- * Budget service — CRUD operations against the SQLite budgets table.
+ * Budget service — CRUD operations against Notion and SQLite.
+ * Notion is the source of truth. All writes go to Notion first, then sync to SQLite.
  * All SQL uses parameterized queries (no string interpolation).
  */
-import { randomUUID } from "node:crypto";
 import { getDb } from "../../db.js";
 import { NotFoundError, ConflictError } from "../../shared/errors.js";
+import { getNotionClient, getBudgetId } from "../../shared/notion-client.js";
 import type { BudgetRow, CreateBudgetInput, UpdateBudgetInput } from "./types.js";
 
 /** Count + rows for a paginated list. */
@@ -70,11 +71,15 @@ export function getBudget(id: string): BudgetRow {
 /**
  * Create a new budget. Returns the created row.
  * Throws ConflictError if a budget with the same category+period combination already exists.
+ *
+ * Flow:
+ * 1. Check for duplicates in SQLite
+ * 2. Create page in Notion
+ * 3. Insert into SQLite using Notion's response
+ * 4. Return created row
  */
-export function createBudget(input: CreateBudgetInput): BudgetRow {
+export async function createBudget(input: CreateBudgetInput): Promise<BudgetRow> {
   const db = getDb();
-  const id = randomUUID();
-  const now = new Date().toISOString();
 
   // Check for duplicate category+period combination
   const existing = db
@@ -92,13 +97,39 @@ export function createBudget(input: CreateBudgetInput): BudgetRow {
     );
   }
 
+  // 1. Create in Notion
+  const notion = getNotionClient();
+  const response = await notion.pages.create({
+    parent: { database_id: getBudgetId() },
+    properties: {
+      Category: {
+        title: [{ text: { content: input.category } }],
+      },
+      Period: input.period
+        ? { rich_text: [{ text: { content: input.period } }] }
+        : { rich_text: [] },
+      Amount: input.amount !== undefined && input.amount !== null
+        ? { number: input.amount }
+        : { number: null },
+      Active: {
+        checkbox: input.active ?? false,
+      },
+      Notes: input.notes
+        ? { rich_text: [{ text: { content: input.notes } }] }
+        : { rich_text: [] },
+    },
+  });
+
+  const now = new Date().toISOString();
+
+  // 2. Insert into SQLite using Notion's ID
   db.prepare(
     `
     INSERT INTO budgets (notion_id, category, period, amount, active, notes, last_edited_time)
     VALUES (@notionId, @category, @period, @amount, @active, @notes, @lastEditedTime)
   `
   ).run({
-    notionId: id,
+    notionId: response.id,
     category: input.category,
     period: input.period ?? null,
     amount: input.amount ?? null,
@@ -107,16 +138,61 @@ export function createBudget(input: CreateBudgetInput): BudgetRow {
     lastEditedTime: now,
   });
 
-  return getBudget(id);
+  return getBudget(response.id);
 }
 
-/** Update an existing budget. Returns the updated row. */
-export function updateBudget(id: string, input: UpdateBudgetInput): BudgetRow {
+/**
+ * Update an existing budget. Returns the updated row.
+ *
+ * Flow:
+ * 1. Verify budget exists in SQLite
+ * 2. Update page in Notion
+ * 3. Update SQLite with same data
+ * 4. Return updated row
+ */
+export async function updateBudget(id: string, input: UpdateBudgetInput): Promise<BudgetRow> {
   const db = getDb();
 
   // Verify it exists first
   getBudget(id);
 
+  // Build Notion properties update
+  const properties = {};
+
+  if (input.category !== undefined) {
+    properties.Category = {
+      title: [{ text: { content: input.category } }],
+    };
+  }
+  if (input.period !== undefined) {
+    properties.Period = input.period
+      ? { rich_text: [{ text: { content: input.period } }] }
+      : { rich_text: [] };
+  }
+  if (input.amount !== undefined) {
+    properties.Amount = input.amount !== null
+      ? { number: input.amount }
+      : { number: null };
+  }
+  if (input.active !== undefined) {
+    properties.Active = {
+      checkbox: input.active,
+    };
+  }
+  if (input.notes !== undefined) {
+    properties.Notes = input.notes
+      ? { rich_text: [{ text: { content: input.notes } }] }
+      : { rich_text: [] };
+  }
+
+  // 1. Update in Notion
+  const notion = getNotionClient();
+  await notion.pages.update({
+    page_id: id,
+    properties,
+  });
+
+  // 2. Update in SQLite
   const fields: string[] = [];
   const params: Record<string, string | number | null> = { notionId: id };
 
@@ -151,9 +227,27 @@ export function updateBudget(id: string, input: UpdateBudgetInput): BudgetRow {
   return getBudget(id);
 }
 
-/** Delete a budget by ID. Throws NotFoundError if missing. */
-export function deleteBudget(id: string): void {
+/**
+ * Delete a budget by ID. Throws NotFoundError if missing.
+ *
+ * Flow:
+ * 1. Archive page in Notion (Notion doesn't truly delete, it archives)
+ * 2. Delete from SQLite
+ */
+export async function deleteBudget(id: string): Promise<void> {
   const db = getDb();
+
+  // Verify it exists first
+  getBudget(id);
+
+  // 1. Archive in Notion
+  const notion = getNotionClient();
+  await notion.pages.update({
+    page_id: id,
+    archived: true,
+  });
+
+  // 2. Delete from SQLite
   const result = db.prepare("DELETE FROM budgets WHERE notion_id = ?").run(id);
   if (result.changes === 0) throw new NotFoundError("Budget", id);
 }

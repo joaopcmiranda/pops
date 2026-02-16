@@ -1,14 +1,16 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { TRPCError } from "@trpc/server";
 import type { Database } from "better-sqlite3";
-import { setupTestContext, seedBudget, createCaller } from "../../shared/test-utils.js";
+import type { Client } from "@notionhq/client";
+import { setupTestContext, seedBudget, createCaller, getMockPages } from "../../shared/test-utils.js";
 
 const ctx = setupTestContext();
 let caller: ReturnType<typeof createCaller>;
 let db: Database;
+let notionMock: Client;
 
 beforeEach(() => {
-  ({ caller, db } = ctx.setup());
+  ({ caller, db, notionMock } = ctx.setup());
 });
 
 afterEach(() => {
@@ -271,6 +273,28 @@ describe("budgets.create", () => {
     const row = db.prepare("SELECT * FROM budgets WHERE category = ?").get("New Budget");
     expect(row).toBeDefined();
   });
+
+  it("creates a page in Notion", async () => {
+    await caller.budgets.create({
+      category: "Groceries",
+      period: "2025-06",
+      amount: 500,
+      active: true,
+      notes: "Test notes",
+    });
+
+    // Verify Notion mock received the create call
+    const mockPages = getMockPages();
+    expect(mockPages.size).toBe(1);
+
+    const page = Array.from(mockPages.values())[0];
+    expect(page).toBeDefined();
+    expect(page.properties).toHaveProperty("Category");
+    expect(page.properties).toHaveProperty("Period");
+    expect(page.properties).toHaveProperty("Amount");
+    expect(page.properties).toHaveProperty("Active");
+    expect(page.properties).toHaveProperty("Notes");
+  });
 });
 
 describe("budgets.update", () => {
@@ -355,6 +379,23 @@ describe("budgets.update", () => {
       code: "NOT_FOUND",
     });
   });
+
+  it("updates the page in Notion", async () => {
+    const id = seedBudget(db, { category: "Groceries", amount: 500 });
+
+    // Create mock page for existing budget
+    await notionMock.pages.create({
+      parent: { database_id: "test-db" },
+      properties: { Category: { title: [{ text: { content: "Groceries" } }] } },
+    });
+
+    await caller.budgets.update({ id, data: { amount: 600 } });
+
+    // Verify Notion mock received the update call
+    const mockPages = getMockPages();
+    const page = mockPages.get(id);
+    expect(page).toBeDefined();
+  });
 });
 
 describe("budgets.delete", () => {
@@ -384,5 +425,23 @@ describe("budgets.delete", () => {
     await expect(caller.budgets.delete({ id })).rejects.toMatchObject({
       code: "NOT_FOUND",
     });
+  });
+
+  it("archives the page in Notion", async () => {
+    const id = seedBudget(db, { category: "Groceries" });
+
+    // Create mock page for existing budget
+    await notionMock.pages.create({
+      parent: { database_id: "test-db" },
+      properties: { Category: { title: [{ text: { content: "Groceries" } }] } },
+    });
+
+    await caller.budgets.delete({ id });
+
+    // Verify Notion mock received the archive call
+    const mockPages = getMockPages();
+    const page = mockPages.get(id);
+    expect(page).toBeDefined();
+    expect(page?.archived).toBe(true);
   });
 });
