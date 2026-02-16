@@ -11,7 +11,7 @@ import type { UpdateInventoryItemInput } from "./types.js";
 export function buildInventoryUpdateProperties(
   input: UpdateInventoryItemInput
 ){
-  const properties = {};
+  const properties: { [key: string]: unknown } = {};
 
   if (input.itemName !== undefined) {
     properties["Item Name"] = {

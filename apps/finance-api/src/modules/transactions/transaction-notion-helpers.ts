@@ -11,7 +11,7 @@ import type { UpdateTransactionInput } from "./types.js";
 export function buildTransactionUpdateProperties(
   input: UpdateTransactionInput
 ){
-  const properties = {};
+  const properties: { [key: string]: unknown } = {};
 
   if (input.description !== undefined) {
     properties.Description = {

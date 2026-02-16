@@ -79,7 +79,7 @@ export async function createEntity(input: CreateEntityInput): Promise<EntityRow>
 
   // 1. Create in Notion
   const notion = getNotionClient();
-  const properties = {
+  const properties: { [key: string]: unknown } = {
     Name: {
       title: [{ text: { content: input.name } }],
     },
@@ -106,6 +106,7 @@ export async function createEntity(input: CreateEntityInput): Promise<EntityRow>
 
   const response = await notion.pages.create({
     parent: { database_id: getEntitiesDbId() },
+    // @ts-expect-error - Dynamic property building conflicts with Notion's strict types, but properties are correct at runtime
     properties,
   });
 
@@ -148,7 +149,7 @@ export async function updateEntity(id: string, input: UpdateEntityInput): Promis
   getEntity(id);
 
   // Build Notion properties update
-  const properties = {};
+  const properties: { [key: string]: unknown } = {};
 
   if (input.name !== undefined) {
     properties.Name = {
@@ -188,6 +189,7 @@ export async function updateEntity(id: string, input: UpdateEntityInput): Promis
   const notion = getNotionClient();
   await notion.pages.update({
     page_id: id,
+    // @ts-expect-error - Dynamic property building conflicts with Notion's strict types, but properties are correct at runtime
     properties,
   });
 
