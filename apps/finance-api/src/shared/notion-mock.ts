@@ -33,6 +33,19 @@ export function getMockPages(): Map<string, MockPage> {
 }
 
 /**
+ * Seed a mock page directly into the store.
+ * Use this in test helpers to sync SQLite seeds with mock Notion pages.
+ */
+export function seedMockPage(id: string, properties: Record<string, unknown> = {}): void {
+  mockPages.set(id, {
+    id,
+    properties,
+    archived: false,
+    last_edited_time: new Date().toISOString(),
+  });
+}
+
+/**
  * Create a mock Notion client for testing.
  * Stores pages in memory instead of making API calls.
  */
