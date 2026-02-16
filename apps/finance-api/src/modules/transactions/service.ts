@@ -1,10 +1,12 @@
 /**
- * Transaction service — CRUD operations against the SQLite transactions table.
+ * Transaction service — CRUD operations against Notion and SQLite.
+ * Notion is the source of truth. All writes go to Notion first, then sync to SQLite.
  * All SQL uses parameterized queries (no string interpolation).
  */
-import { randomUUID } from "node:crypto";
 import { getDb } from "../../db.js";
 import { NotFoundError } from "../../shared/errors.js";
+import { getNotionClient, getBalanceSheetId } from "../../shared/notion-client.js";
+import { buildTransactionUpdateProperties } from "./transaction-notion-helpers.js";
 import type {
   TransactionRow,
   CreateTransactionInput,
@@ -93,12 +95,76 @@ export function getTransaction(id: string): TransactionRow {
   return row;
 }
 
-/** Create a new transaction. Returns the created row. */
-export function createTransaction(input: CreateTransactionInput): TransactionRow {
+/**
+ * Create a new transaction. Returns the created row.
+ *
+ * Flow:
+ * 1. Create page in Notion
+ * 2. Insert into SQLite using Notion's response
+ * 3. Return created row
+ */
+export async function createTransaction(input: CreateTransactionInput): Promise<TransactionRow> {
   const db = getDb();
-  const id = randomUUID();
+
+  // Build Notion properties
+  const properties = {
+    Description: {
+      title: [{ text: { content: input.description } }],
+    },
+    Account: {
+      select: { name: input.account },
+    },
+    Amount: {
+      number: input.amount,
+    },
+    Date: {
+      date: { start: input.date },
+    },
+    Type: {
+      select: { name: input.type || "Expense" },
+    },
+    Category: {
+      multi_select: input.categories?.length
+        ? input.categories.map((cat) => ({ name: cat }))
+        : [{ name: "Other" }],
+    },
+    Online: {
+      checkbox: input.online ?? false,
+    },
+    "Novated Lease": {
+      checkbox: input.novatedLease ?? false,
+    },
+    "Tax Return": {
+      checkbox: input.taxReturn ?? false,
+    },
+  };
+
+  if (input.entityId) {
+    properties.Entity = { relation: [{ id: input.entityId }] };
+  }
+  if (input.location) {
+    properties.Location = { select: { name: input.location } };
+  }
+  if (input.country) {
+    properties.Country = { select: { name: input.country } };
+  }
+  if (input.relatedTransactionId) {
+    properties["Related Transaction"] = { relation: [{ id: input.relatedTransactionId }] };
+  }
+  if (input.notes) {
+    properties.Notes = { rich_text: [{ text: { content: input.notes } }] };
+  }
+
+  // 1. Create in Notion
+  const notion = getNotionClient();
+  const response = await notion.pages.create({
+    parent: { database_id: getBalanceSheetId() },
+    properties,
+  });
+
   const now = new Date().toISOString();
 
+  // 2. Insert into SQLite using Notion's ID
   db.prepare(
     `
     INSERT INTO transactions (
@@ -113,12 +179,12 @@ export function createTransaction(input: CreateTransactionInput): TransactionRow
     )
   `
   ).run({
-    notionId: id,
+    notionId: response.id,
     description: input.description,
     account: input.account,
     amount: input.amount,
     date: input.date,
-    type: input.type,
+    type: input.type || "",
     categories: input.categories?.length ? input.categories.join(", ") : "",
     entityId: input.entityId ?? null,
     entityName: input.entityName ?? null,
@@ -132,16 +198,35 @@ export function createTransaction(input: CreateTransactionInput): TransactionRow
     lastEditedTime: now,
   });
 
-  return getTransaction(id);
+  return getTransaction(response.id);
 }
 
-/** Update an existing transaction. Returns the updated row. */
-export function updateTransaction(id: string, input: UpdateTransactionInput): TransactionRow {
+/**
+ * Update an existing transaction. Returns the updated row.
+ *
+ * Flow:
+ * 1. Verify transaction exists in SQLite
+ * 2. Update page in Notion
+ * 3. Update SQLite with same data
+ * 4. Return updated row
+ */
+export async function updateTransaction(id: string, input: UpdateTransactionInput): Promise<TransactionRow> {
   const db = getDb();
 
   // Verify it exists first
   getTransaction(id);
 
+  // Build Notion properties update
+  const properties = buildTransactionUpdateProperties(input);
+
+  // 1. Update in Notion
+  const notion = getNotionClient();
+  await notion.pages.update({
+    page_id: id,
+    properties,
+  });
+
+  // 2. Update in SQLite
   const fields: string[] = [];
   const params: Record<string, string | number | null> = { notionId: id };
 
@@ -218,9 +303,27 @@ export function updateTransaction(id: string, input: UpdateTransactionInput): Tr
   return getTransaction(id);
 }
 
-/** Delete a transaction by ID. Throws NotFoundError if missing. */
-export function deleteTransaction(id: string): void {
+/**
+ * Delete a transaction by ID. Throws NotFoundError if missing.
+ *
+ * Flow:
+ * 1. Archive page in Notion
+ * 2. Delete from SQLite
+ */
+export async function deleteTransaction(id: string): Promise<void> {
   const db = getDb();
+
+  // Verify it exists first
+  getTransaction(id);
+
+  // 1. Archive in Notion
+  const notion = getNotionClient();
+  await notion.pages.update({
+    page_id: id,
+    archived: true,
+  });
+
+  // 2. Delete from SQLite
   const result = db.prepare("DELETE FROM transactions WHERE notion_id = ?").run(id);
   if (result.changes === 0) throw new NotFoundError("Transaction", id);
 }
