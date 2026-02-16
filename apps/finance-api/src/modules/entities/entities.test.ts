@@ -1,14 +1,16 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { TRPCError } from "@trpc/server";
 import type { Database } from "better-sqlite3";
-import { setupTestContext, seedEntity, createCaller } from "../../shared/test-utils.js";
+import type { Client } from "@notionhq/client";
+import { setupTestContext, seedEntity, createCaller, getMockPages } from "../../shared/test-utils.js";
 
 const ctx = setupTestContext();
 let caller: ReturnType<typeof createCaller>;
 let db: Database;
+let notionMock: Client;
 
 beforeEach(() => {
-  ({ caller, db } = ctx.setup());
+  ({ caller, db, notionMock } = ctx.setup());
 });
 
 afterEach(() => {
