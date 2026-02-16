@@ -56,8 +56,13 @@ beforeEach(() => {
   mockCategorizeWithAi.mockClear();
   clearCache();
 
-  // Set Notion token
+  // Set Notion env vars
   process.env["NOTION_API_TOKEN"] = "test-notion-token";
+  process.env["NOTION_BALANCE_SHEET_ID"] = "test-balance-sheet-id";
+  process.env["NOTION_ENTITIES_DB_ID"] = "test-entities-db-id";
+  process.env["NOTION_HOME_INVENTORY_ID"] = "test-inventory-id";
+  process.env["NOTION_BUDGET_ID"] = "test-budget-id";
+  process.env["NOTION_WISH_LIST_ID"] = "test-wishlist-id";
 });
 
 afterEach(() => {
@@ -67,6 +72,12 @@ afterEach(() => {
   } else {
     process.env["NOTION_API_TOKEN"] = originalNotionToken;
   }
+  // Clean up other env vars
+  delete process.env["NOTION_BALANCE_SHEET_ID"];
+  delete process.env["NOTION_ENTITIES_DB_ID"];
+  delete process.env["NOTION_HOME_INVENTORY_ID"];
+  delete process.env["NOTION_BUDGET_ID"];
+  delete process.env["NOTION_WISH_LIST_ID"];
 });
 
 describe("processImport", () => {
