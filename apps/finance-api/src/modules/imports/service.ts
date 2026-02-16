@@ -7,15 +7,19 @@
  * - AI fallback with full row context
  * - Batch writes with rate limiting
  */
-import { Client } from "@notionhq/client";
 import { getDb } from "../../db.js";
-import { requireEnv } from "../../env.js";
 import { logger } from "../../lib/logger.js";
 import { formatImportError } from "../../lib/errors.js";
 import { matchEntity } from "./lib/entity-matcher.js";
 import { categorizeWithAi, AiCategorizationError } from "./lib/ai-categorizer.js";
 import { setProgress, updateProgress } from "./progress-store.js";
 import { findMatchingCorrection } from "../corrections/service.js";
+import {
+  getNotionClient,
+  getBalanceSheetId,
+  getEntitiesDbId,
+} from "../../shared/notion-client.js";
+import type { Client } from "@notionhq/client";
 import type {
   ParsedTransaction,
   ProcessedTransaction,
@@ -29,20 +33,8 @@ import type {
   AiUsageStats,
 } from "./types.js";
 
-// Notion database IDs (from environment variables)
-const getBalanceSheetId = () => requireEnv("NOTION_BALANCE_SHEET_ID");
-const getEntitiesDbId = () => requireEnv("NOTION_ENTITIES_DB_ID");
-
 const CONCURRENCY = 3;
 const DELAY_MS = 400;
-
-/**
- * Create Notion client from environment
- */
-function getNotionClient(): Client {
-  const token = requireEnv("NOTION_API_TOKEN");
-  return new Client({ auth: token });
-}
 
 /**
  * Load entity lookup from SQLite: name → notion_id
