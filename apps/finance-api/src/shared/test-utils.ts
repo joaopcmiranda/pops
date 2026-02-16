@@ -1,12 +1,49 @@
 /**
  * Shared test utilities for finance-api.
- * Provides in-memory SQLite setup, tRPC caller factory, and seed helpers.
+ * Provides in-memory SQLite setup, tRPC caller factory, Notion mocking, and seed helpers.
  */
 import type { Database } from "better-sqlite3";
 import BetterSqlite3 from "better-sqlite3";
 import { setDb, closeDb } from "../db.js";
 import { appRouter } from "../router.js";
 import type { Context } from "../trpc.js";
+import { createMockNotionClient, resetNotionMock, getMockPages } from "./notion-mock.js";
+import type { Client } from "@notionhq/client";
+
+/**
+ * Global mock Notion client instance.
+ * Used by all modules during testing.
+ */
+let mockNotionClient: Client | null = null;
+
+/**
+ * Set the global mock Notion client.
+ * Call this in test setup to enable Notion mocking.
+ */
+export function setMockNotionClient(client: Client): void {
+  mockNotionClient = client;
+}
+
+/**
+ * Get the global mock Notion client.
+ * Returns null if not set (used by modules to detect test mode).
+ */
+export function getMockNotionClient(): Client | null {
+  return mockNotionClient;
+}
+
+/**
+ * Clear the global mock Notion client.
+ * Call this in test teardown.
+ */
+export function clearMockNotionClient(): void {
+  mockNotionClient = null;
+}
+
+/**
+ * Re-export Notion mock utilities for use in tests.
+ */
+export { resetNotionMock, getMockPages };
 
 /**
  * Create a tRPC caller with authentication.
@@ -336,19 +373,28 @@ export function seedWishListItem(
 
 /**
  * Setup helper for test suites. Call in beforeEach/afterEach.
- * Returns the test DB and a tRPC caller.
+ * Returns the test DB, a tRPC caller, and the mock Notion client.
  */
 export function setupTestContext() {
   let db: Database;
+  let notionMock: Client;
 
-  function setup(): { db: Database; caller: ReturnType<typeof createCaller> } {
+  function setup(): { db: Database; caller: ReturnType<typeof createCaller>; notionMock: Client } {
     db = createTestDb();
     setDb(db);
-    return { db, caller: createCaller(true) };
+
+    // Initialize Notion mock
+    notionMock = createMockNotionClient();
+    setMockNotionClient(notionMock);
+    resetNotionMock();
+
+    return { db, caller: createCaller(true), notionMock };
   }
 
   function teardown() {
     closeDb();
+    clearMockNotionClient();
+    resetNotionMock();
   }
 
   return { setup, teardown };
