@@ -4,6 +4,7 @@
  */
 import { Client } from "@notionhq/client";
 import { requireEnv } from "../env.js";
+import { getMockNotionClient } from "./test-globals.js";
 
 /**
  * Create Notion client from environment.
@@ -12,16 +13,9 @@ import { requireEnv } from "../env.js";
  */
 export function getNotionClient(): Client {
   // Check if we're in test mode with a mock client
-  // This is a bit of a hack, but avoids circular dependencies
-  try {
-    // Dynamic import to avoid circular dependency
-    const testUtils = require("./test-utils.js");
-    const mockClient = testUtils.getMockNotionClient?.();
-    if (mockClient) {
-      return mockClient;
-    }
-  } catch {
-    // Not in test mode or test-utils not available
+  const mockClient = getMockNotionClient();
+  if (mockClient) {
+    return mockClient;
   }
 
   const token = requireEnv("NOTION_API_TOKEN");
