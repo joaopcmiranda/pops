@@ -11,8 +11,6 @@ import type {
 } from "./types.js";
 import { normalizeDescription } from "./types.js";
 
-const db = getDb();
-
 /**
  * Find the best matching correction for a description
  */
@@ -20,6 +18,7 @@ export function findMatchingCorrection(
   description: string,
   minConfidence: number = 0.7
 ): CorrectionRow | null {
+  const db = getDb();
   const normalized = normalizeDescription(description);
 
   // Try exact match first (highest priority)
@@ -66,6 +65,7 @@ export function listCorrections(
   limit: number = 50,
   offset: number = 0
 ): { rows: CorrectionRow[]; total: number } {
+  const db = getDb();
   const whereClause = minConfidence !== undefined ? "WHERE confidence >= ?" : "";
   const params = minConfidence !== undefined ? [minConfidence] : [];
 
@@ -93,6 +93,7 @@ export function listCorrections(
  * Get a single correction by ID
  */
 export function getCorrection(id: string): CorrectionRow {
+  const db = getDb();
   const row = db
     .prepare("SELECT * FROM transaction_corrections WHERE id = ?")
     .get(id) as CorrectionRow | undefined;
@@ -108,6 +109,7 @@ export function getCorrection(id: string): CorrectionRow {
  * Create a new correction or update existing one
  */
 export function createOrUpdateCorrection(input: CreateCorrectionInput): CorrectionRow {
+  const db = getDb();
   const normalized = normalizeDescription(input.descriptionPattern);
 
   // Check if pattern already exists
@@ -182,6 +184,7 @@ export function createOrUpdateCorrection(input: CreateCorrectionInput): Correcti
  * Update an existing correction
  */
 export function updateCorrection(id: string, input: UpdateCorrectionInput): CorrectionRow {
+  const db = getDb();
   const existing = getCorrection(id); // Throws if not found
 
   const updates: string[] = [];
@@ -229,6 +232,7 @@ export function updateCorrection(id: string, input: UpdateCorrectionInput): Corr
  * Delete a correction
  */
 export function deleteCorrection(id: string): void {
+  const db = getDb();
   const result = db
     .prepare("DELETE FROM transaction_corrections WHERE id = ?")
     .run(id);
@@ -242,6 +246,7 @@ export function deleteCorrection(id: string): void {
  * Increment usage stats for a correction
  */
 export function incrementCorrectionUsage(id: string): void {
+  const db = getDb();
   db.prepare(
     `
     UPDATE transaction_corrections
@@ -256,6 +261,7 @@ export function incrementCorrectionUsage(id: string): void {
  * Adjust confidence score
  */
 export function adjustConfidence(id: string, delta: number): void {
+  const db = getDb();
   const existing = getCorrection(id);
   const newConfidence = Math.max(0, Math.min(1, existing.confidence + delta));
 
