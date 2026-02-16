@@ -4,6 +4,7 @@
  */
 import type { Database } from "better-sqlite3";
 import BetterSqlite3 from "better-sqlite3";
+import type { Client } from "@notionhq/client";
 import { setDb, closeDb } from "../db.js";
 import { appRouter } from "../router.js";
 import type { Context } from "../trpc.js";
