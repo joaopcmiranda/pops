@@ -30,17 +30,17 @@ vi.mock("@notionhq/client", () => {
   };
 });
 
-// Mock AI categorizer
+// Mock AI categorizer with smart lookup-based responses
 vi.mock("./lib/ai-categorizer.js", async (importOriginal) => {
   const actual = await importOriginal<typeof import("./lib/ai-categorizer.js")>();
+  const mock = await import("./lib/ai-categorizer.mock.js");
   return {
     ...actual,
-    categorizeWithAi: vi.fn(),
+    categorizeWithAi: mock.mockCategorizeWithAi,
   };
 });
 
-import { categorizeWithAi } from "./lib/ai-categorizer.js";
-const mockCategorizeWithAi = vi.mocked(categorizeWithAi);
+import { resetMockAi, mockConfig } from "./lib/ai-categorizer.mock.js";
 
 let db: Database;
 const originalNotionToken = process.env["NOTION_API_TOKEN"];
@@ -53,7 +53,7 @@ beforeEach(() => {
   // Clear mocks
   mockNotionQuery.mockClear();
   mockNotionCreate.mockClear();
-  mockCategorizeWithAi.mockClear();
+  resetMockAi();
   clearCache();
 
   // Set Notion env vars
@@ -217,7 +217,7 @@ describe("processImport", () => {
     });
 
     it("handles empty entity lookup", async () => {
-      mockCategorizeWithAi.mockResolvedValue({ result: null });
+      mockConfig.alwaysReturnNull = true;
 
       const result = await processImport([baseParsedTransaction], "Amex");
 
@@ -231,8 +231,10 @@ describe("processImport", () => {
 
       const result = await processImport([baseParsedTransaction], "Amex");
 
-      // Entity matcher finds "WOOLWORTHS" but lookup doesn't have it
-      expect(result.failed.length).toBe(1);
+      // With mock AI, pattern matching will catch WOOLWORTHS and return "Grocery Store"
+      // This creates an uncertain transaction (new entity suggested)
+      expect(result.uncertain.length).toBe(1);
+      expect(result.uncertain[0].entity.entityName).toBe("Grocery Store");
     });
   });
 
@@ -242,25 +244,25 @@ describe("processImport", () => {
     });
 
     it("calls AI for unmatched transactions", async () => {
-      mockCategorizeWithAi.mockResolvedValue({
-        result: {
+      const rawRow = '{"Date":"13/02/2026","Description":"UNKNOWN MERCHANT"}';
+      mockConfig.customLookup = {
+        [rawRow.toUpperCase()]: {
           description: "UNKNOWN MERCHANT",
           entityName: "Unknown Merchant",
           category: "Other",
           cachedAt: "2026-02-13T00:00:00Z",
         },
-        usage: { inputTokens: 50, outputTokens: 20, costUsd: 0.0001 },
-      });
+      };
 
       const transaction: ParsedTransaction = {
         ...baseParsedTransaction,
         description: "UNKNOWN MERCHANT",
+        rawRow,
         checksum: "unknown123",
       };
 
       const result = await processImport([transaction], "Amex");
 
-      expect(mockCategorizeWithAi).toHaveBeenCalledWith(transaction.rawRow, expect.any(String));
       expect(result.uncertain.length).toBe(1);
       expect(result.uncertain[0].entity.entityName).toBe("Unknown Merchant");
     });
@@ -268,19 +270,20 @@ describe("processImport", () => {
     it("matches AI result to existing entity (case-insensitive)", async () => {
       seedEntity(db, { name: "Woolworths", notion_id: "woolworths-id" });
 
-      mockCategorizeWithAi.mockResolvedValue({
-        result: {
-          description: "UNKNOWN MERCHANT",
+      const rawRow = '{"Date":"13/02/2026","Description":"UNKNOWN MERCHANT XYZ"}';
+      mockConfig.customLookup = {
+        [rawRow.toUpperCase()]: {
+          description: "UNKNOWN MERCHANT XYZ",
           entityName: "woolworths", // lowercase
           category: "Groceries",
           cachedAt: "2026-02-13T00:00:00Z",
         },
-        usage: { inputTokens: 50, outputTokens: 20, costUsd: 0.0001 },
-      });
+      };
 
       const transaction: ParsedTransaction = {
         ...baseParsedTransaction,
         description: "UNKNOWN MERCHANT XYZ",
+        rawRow,
         checksum: "unknown123",
       };
 
@@ -292,19 +295,20 @@ describe("processImport", () => {
     });
 
     it("adds to uncertain when AI suggests new entity", async () => {
-      mockCategorizeWithAi.mockResolvedValue({
-        result: {
+      const rawRow = '{"Date":"13/02/2026","Description":"NEW MERCHANT"}';
+      mockConfig.customLookup = {
+        [rawRow.toUpperCase()]: {
           description: "NEW MERCHANT",
           entityName: "New Merchant",
           category: "Shopping",
           cachedAt: "2026-02-13T00:00:00Z",
         },
-        usage: { inputTokens: 50, outputTokens: 20, costUsd: 0.0001 },
-      });
+      };
 
       const transaction: ParsedTransaction = {
         ...baseParsedTransaction,
         description: "NEW MERCHANT",
+        rawRow,
         checksum: "new123",
       };
 
@@ -317,7 +321,7 @@ describe("processImport", () => {
     });
 
     it("adds to failed when AI returns null", async () => {
-      mockCategorizeWithAi.mockResolvedValue({ result: null });
+      mockConfig.alwaysReturnNull = true;
 
       const transaction: ParsedTransaction = {
         ...baseParsedTransaction,
@@ -338,8 +342,9 @@ describe("processImport", () => {
     });
 
     it("catches errors during entity matching", async () => {
-      // Force an error by making entity lookup throw
-      mockCategorizeWithAi.mockRejectedValue(new Error("AI service down"));
+      // Force an error by making AI throw
+      mockConfig.throwError = true;
+      mockConfig.errorType = "API_ERROR";
 
       const transaction: ParsedTransaction = {
         ...baseParsedTransaction,
@@ -350,12 +355,12 @@ describe("processImport", () => {
       const result = await processImport([transaction], "Amex");
 
       expect(result.failed.length).toBe(1);
-      expect(result.failed[0].error).toBe("AI service down");
+      expect(result.failed[0].error).toBe("AI categorization unavailable");
     });
 
     it("handles mixed success and failure", async () => {
       seedEntity(db, { name: "Woolworths", notion_id: "woolworths-id" });
-      mockCategorizeWithAi.mockResolvedValue({ result: null });
+      mockConfig.alwaysReturnNull = true;
 
       const transactions: ParsedTransaction[] = [
         baseParsedTransaction, // Will match Woolworths

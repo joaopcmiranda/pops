@@ -10,16 +10,18 @@ import type { ProcessImportOutput, ExecuteImportOutput } from "./types.js";
  * Tests input validation and service function integration with mocked Notion API.
  */
 
-// Mock AI categorizer
+// Mock AI categorizer with smart lookup-based responses
 vi.mock("./lib/ai-categorizer.js", async (importOriginal) => {
   const actual = await importOriginal<typeof import("./lib/ai-categorizer.js")>();
+  const mock = await import("./lib/ai-categorizer.mock.js");
   return {
     ...actual,
-    categorizeWithAi: vi.fn().mockResolvedValue(null),
+    categorizeWithAi: mock.mockCategorizeWithAi,
   };
 });
 
 import type { Client } from "@notionhq/client";
+import { resetMockAi } from "./lib/ai-categorizer.mock.js";
 
 const ctx = setupTestContext();
 let caller: ReturnType<typeof createCaller>;
@@ -49,6 +51,7 @@ async function waitForCompletion<T = any>(sessionId: string, maxAttempts = 50): 
 
 beforeEach(() => {
   ({ caller, db, notionMock } = ctx.setup());
+  resetMockAi();
   clearCache();
 });
 
@@ -172,7 +175,9 @@ describe("imports.processImport", () => {
 
     const result = await waitForCompletion<ProcessImportOutput>(sessionId);
     expect(result).toBeDefined();
-    expect(result.matched.length + result.failed.length + result.skipped.length).toBe(100);
+    // All categories combined should equal total transactions
+    const total = result.matched.length + result.uncertain.length + result.failed.length + result.skipped.length;
+    expect(total).toBe(100);
   });
 
   it("accepts optional fields (location, online)", async () => {

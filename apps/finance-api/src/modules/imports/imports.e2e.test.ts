@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import Papa from "papaparse";
 import type { Database } from "better-sqlite3";
-import { setupTestContext, seedEntity, createCaller } from "../../shared/test-utils.js";
+import { seedEntity, createCaller, createTestDb } from "../../shared/test-utils.js";
 import { transformAmex } from "./transformers/amex.js";
 import { clearCache } from "./lib/ai-categorizer.js";
 import type { ConfirmedTransaction } from "./types.js";
@@ -45,19 +45,19 @@ vi.mock("@notionhq/client", () => {
   };
 });
 
-// Mock AI categorizer
+// Mock AI categorizer with smart lookup-based responses
 vi.mock("./lib/ai-categorizer.js", async (importOriginal) => {
   const actual = await importOriginal<typeof import("./lib/ai-categorizer.js")>();
+  const mock = await import("./lib/ai-categorizer.mock.js");
   return {
     ...actual,
-    categorizeWithAi: vi.fn(),
+    categorizeWithAi: mock.mockCategorizeWithAi,
   };
 });
 
-import { categorizeWithAi } from "./lib/ai-categorizer.js";
-const mockCategorizeWithAi = vi.mocked(categorizeWithAi);
+import { resetMockAi, mockConfig } from "./lib/ai-categorizer.mock.js";
+import { setDb, closeDb } from "../../db.js";
 
-const ctx = setupTestContext();
 let caller: ReturnType<typeof createCaller>;
 let db: Database;
 const originalNotionToken = process.env["NOTION_API_TOKEN"];
@@ -84,21 +84,38 @@ async function waitForCompletion<T = any>(sessionId: string, maxAttempts = 100):
 }
 
 beforeEach(() => {
-  ({ caller, db } = ctx.setup());
+  db = createTestDb();
+  setDb(db);
+  caller = createCaller(true);
+
   mockNotionQuery.mockClear();
   mockNotionCreate.mockClear();
-  mockCategorizeWithAi.mockClear();
+  resetMockAi();
   clearCache();
+
+  // Set all required Notion env vars
   process.env["NOTION_API_TOKEN"] = "test-notion-token";
+  process.env["NOTION_BALANCE_SHEET_ID"] = "test-balance-sheet-id";
+  process.env["NOTION_ENTITIES_DB_ID"] = "test-entities-db-id";
+  process.env["NOTION_HOME_INVENTORY_ID"] = "test-inventory-id";
+  process.env["NOTION_BUDGET_ID"] = "test-budget-id";
+  process.env["NOTION_WISH_LIST_ID"] = "test-wishlist-id";
 });
 
 afterEach(() => {
-  ctx.teardown();
+  closeDb();
   if (originalNotionToken === undefined) {
     delete process.env["NOTION_API_TOKEN"];
   } else {
     process.env["NOTION_API_TOKEN"] = originalNotionToken;
   }
+
+  // Clean up other env vars
+  delete process.env["NOTION_BALANCE_SHEET_ID"];
+  delete process.env["NOTION_ENTITIES_DB_ID"];
+  delete process.env["NOTION_HOME_INVENTORY_ID"];
+  delete process.env["NOTION_BUDGET_ID"];
+  delete process.env["NOTION_WISH_LIST_ID"];
 });
 
 describe("E2E: Complete Import Flow", () => {
@@ -162,16 +179,8 @@ describe("E2E: Complete Import Flow", () => {
       ],
     });
 
-    // Step 4: Mock AI to categorize unknown merchant (row 6)
-    mockCategorizeWithAi.mockResolvedValue({
-      result: {
-        description: "UNKNOWN MERCHANT XYZ",
-        entityName: "Unknown Merchant",
-        category: "Other",
-        cachedAt: "2026-02-13T00:00:00Z",
-      },
-      usage: { inputTokens: 50, outputTokens: 20, costUsd: 0.0001 },
-    });
+    // Step 4: Pattern matching in mock will categorize unknown merchant
+    // (no explicit setup needed - default fallback returns "Unknown Merchant")
 
     // Step 5: Process import (dedup + entity match)
     const { sessionId: processSessionId } = await caller.imports.processImport({
@@ -231,7 +240,8 @@ describe("E2E: Complete Import Flow", () => {
       transactions: confirmed,
     });
 
-    const result = await waitForCompletion(executeSessionId);
+    // executeImport has 400ms rate limit per transaction, so increase timeout
+    const result = await waitForCompletion(executeSessionId, 500); // 5 second timeout
     expect(result).toBeDefined();
 
     // Step 9: Verify results
@@ -342,7 +352,7 @@ describe("E2E: Complete Import Flow", () => {
     mockNotionQuery.mockResolvedValue({ results: [] });
 
     // Mock AI to return null (failed categorization)
-    mockCategorizeWithAi.mockResolvedValue({ result: null });
+    mockConfig.alwaysReturnNull = true;
 
     const transactions = [
       {
@@ -415,7 +425,7 @@ describe("E2E: Complete Import Flow", () => {
       transactions: [confirmed],
     });
 
-    await waitForCompletion(executeSessionId);
+    await waitForCompletion(executeSessionId, 500); // 5 second timeout for rate limiting
 
     // Verify data preservation in Notion call
     const notionCall = mockNotionCreate.mock.calls[0][0];
