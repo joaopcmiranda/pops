@@ -1,0 +1,129 @@
+/**
+ * Mock Notion client for testing.
+ * Simulates Notion API responses without making actual HTTP requests.
+ */
+import type { Client } from "@notionhq/client";
+
+interface MockPage {
+  id: string;
+  properties: Record<string, unknown>;
+  archived: boolean;
+  last_edited_time: string;
+}
+
+/**
+ * In-memory store for mock Notion pages.
+ * Keyed by page ID, stores page data for testing.
+ */
+const mockPages = new Map<string, MockPage>();
+
+/**
+ * Reset the mock store.
+ * Call this in test setup to ensure clean state.
+ */
+export function resetNotionMock(): void {
+  mockPages.clear();
+}
+
+/**
+ * Get all mock pages for inspection in tests.
+ */
+export function getMockPages(): Map<string, MockPage> {
+  return mockPages;
+}
+
+/**
+ * Create a mock Notion client for testing.
+ * Stores pages in memory instead of making API calls.
+ */
+export function createMockNotionClient(): Client {
+  const mock = {
+    pages: {
+      /**
+       * Mock pages.create()
+       * Returns a mock page with generated ID and copies properties from input.
+       */
+      create: async (args: {
+        parent: { database_id: string };
+        properties: Record<string, unknown>;
+      }): Promise<MockPage> => {
+        const pageId = crypto.randomUUID();
+        const now = new Date().toISOString();
+
+        const page: MockPage = {
+          id: pageId,
+          properties: args.properties,
+          archived: false,
+          last_edited_time: now,
+        };
+
+        mockPages.set(pageId, page);
+        return page;
+      },
+
+      /**
+       * Mock pages.update()
+       * Updates properties of existing mock page.
+       */
+      update: async (args: {
+        page_id: string;
+        properties?: Record<string, unknown>;
+        archived?: boolean;
+      }): Promise<MockPage> => {
+        const existing = mockPages.get(args.page_id);
+        if (!existing) {
+          throw new Error(`Mock Notion page not found: ${args.page_id}`);
+        }
+
+        const now = new Date().toISOString();
+
+        const updated: MockPage = {
+          id: args.page_id,
+          properties: args.properties ? { ...existing.properties, ...args.properties } : existing.properties,
+          archived: args.archived ?? existing.archived,
+          last_edited_time: now,
+        };
+
+        mockPages.set(args.page_id, updated);
+        return updated;
+      },
+
+      /**
+       * Mock pages.retrieve()
+       * Returns existing mock page by ID.
+       */
+      retrieve: async (args: { page_id: string }): Promise<MockPage> => {
+        const page = mockPages.get(args.page_id);
+        if (!page) {
+          throw new Error(`Mock Notion page not found: ${args.page_id}`);
+        }
+        return page;
+      },
+    },
+
+    databases: {
+      /**
+       * Mock databases.query()
+       * Returns all pages in the mock store (simplified - no filtering).
+       */
+      query: async (args: {
+        database_id: string;
+        filter?: unknown;
+      }): Promise<{ results: MockPage[] }> => {
+        // Simplified: return all pages
+        // Real implementation would apply filters
+        const results = Array.from(mockPages.values()).filter((p) => !p.archived);
+        return { results };
+      },
+    },
+  };
+
+  return mock as unknown as Client;
+}
+
+/**
+ * Type guard to check if a Notion client is a mock.
+ */
+export function isMockNotionClient(client: Client): boolean {
+  return typeof client === "object" && "pages" in client && typeof (client as unknown as { pages: { create: unknown } }).pages.create === "function";
+}
