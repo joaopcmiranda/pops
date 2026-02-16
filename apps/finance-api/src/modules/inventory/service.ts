@@ -1,10 +1,12 @@
 /**
- * Inventory service — CRUD operations against the SQLite home_inventory table.
+ * Inventory service — CRUD operations against Notion and SQLite.
+ * Notion is the source of truth. All writes go to Notion first, then sync to SQLite.
  * All SQL uses parameterized queries (no string interpolation).
  */
-import { randomUUID } from "node:crypto";
 import { getDb } from "../../db.js";
 import { NotFoundError } from "../../shared/errors.js";
+import { getNotionClient, getHomeInventoryId } from "../../shared/notion-client.js";
+import { buildInventoryUpdateProperties } from "./inventory-notion-helpers.js";
 import type { InventoryRow, CreateInventoryItemInput, UpdateInventoryItemInput } from "./types.js";
 
 /** Count + rows for a paginated list. */
@@ -77,12 +79,80 @@ export function getInventoryItem(id: string): InventoryRow {
   return row;
 }
 
-/** Create a new inventory item. Returns the created row. */
-export function createInventoryItem(input: CreateInventoryItemInput): InventoryRow {
+/**
+ * Create a new inventory item. Returns the created row.
+ *
+ * Flow:
+ * 1. Create page in Notion
+ * 2. Insert into SQLite using Notion's response
+ * 3. Return created row
+ */
+export async function createInventoryItem(input: CreateInventoryItemInput): Promise<InventoryRow> {
   const db = getDb();
-  const id = randomUUID();
+
+  // Build Notion properties
+  const properties = {
+    "Item Name": {
+      title: [{ text: { content: input.itemName } }],
+    },
+    "In-use": {
+      checkbox: input.inUse ?? false,
+    },
+    Deductible: {
+      checkbox: input.deductible ?? false,
+    },
+  };
+
+  if (input.brand) {
+    properties["Brand/Manufacturer"] = { rich_text: [{ text: { content: input.brand } }] };
+  }
+  if (input.model) {
+    properties.Model = { rich_text: [{ text: { content: input.model } }] };
+  }
+  if (input.itemId) {
+    properties.ID = { rich_text: [{ text: { content: input.itemId } }] };
+  }
+  if (input.room) {
+    properties.Room = { select: { name: input.room } };
+  }
+  if (input.location) {
+    properties.Location = { select: { name: input.location } };
+  }
+  if (input.type) {
+    properties.Type = { select: { name: input.type } };
+  }
+  if (input.condition) {
+    properties.Condition = { select: { name: input.condition } };
+  }
+  if (input.purchaseDate) {
+    properties["Purchase Date"] = { date: { start: input.purchaseDate } };
+  }
+  if (input.warrantyExpires) {
+    properties["Warranty Expires"] = { date: { start: input.warrantyExpires } };
+  }
+  if (input.replacementValue !== undefined && input.replacementValue !== null) {
+    properties["Est. Replacement Value"] = { number: input.replacementValue };
+  }
+  if (input.resaleValue !== undefined && input.resaleValue !== null) {
+    properties["Est. Resale Value"] = { number: input.resaleValue };
+  }
+  if (input.purchaseTransactionId) {
+    properties["Purchase Transaction"] = { relation: [{ id: input.purchaseTransactionId }] };
+  }
+  if (input.purchasedFromId) {
+    properties["Purchased From"] = { relation: [{ id: input.purchasedFromId }] };
+  }
+
+  // 1. Create in Notion
+  const notion = getNotionClient();
+  const response = await notion.pages.create({
+    parent: { database_id: getHomeInventoryId() },
+    properties,
+  });
+
   const now = new Date().toISOString();
 
+  // 2. Insert into SQLite using Notion's ID
   db.prepare(
     `
     INSERT INTO home_inventory (
@@ -97,7 +167,7 @@ export function createInventoryItem(input: CreateInventoryItemInput): InventoryR
     )
   `
   ).run({
-    notionId: id,
+    notionId: response.id,
     itemName: input.itemName,
     brand: input.brand ?? null,
     model: input.model ?? null,
@@ -118,16 +188,35 @@ export function createInventoryItem(input: CreateInventoryItemInput): InventoryR
     lastEditedTime: now,
   });
 
-  return getInventoryItem(id);
+  return getInventoryItem(response.id);
 }
 
-/** Update an existing inventory item. Returns the updated row. */
-export function updateInventoryItem(id: string, input: UpdateInventoryItemInput): InventoryRow {
+/**
+ * Update an existing inventory item. Returns the updated row.
+ *
+ * Flow:
+ * 1. Verify item exists in SQLite
+ * 2. Update page in Notion
+ * 3. Update SQLite with same data
+ * 4. Return updated row
+ */
+export async function updateInventoryItem(id: string, input: UpdateInventoryItemInput): Promise<InventoryRow> {
   const db = getDb();
 
   // Verify it exists first
   getInventoryItem(id);
 
+  // Build Notion properties update
+  const properties = buildInventoryUpdateProperties(input);
+
+  // 1. Update in Notion
+  const notion = getNotionClient();
+  await notion.pages.update({
+    page_id: id,
+    properties,
+  });
+
+  // 2. Update in SQLite
   const fields: string[] = [];
   const params: Record<string, string | number | null> = { notionId: id };
 
@@ -212,9 +301,27 @@ export function updateInventoryItem(id: string, input: UpdateInventoryItemInput)
   return getInventoryItem(id);
 }
 
-/** Delete an inventory item by ID. Throws NotFoundError if missing. */
-export function deleteInventoryItem(id: string): void {
+/**
+ * Delete an inventory item by ID. Throws NotFoundError if missing.
+ *
+ * Flow:
+ * 1. Archive page in Notion
+ * 2. Delete from SQLite
+ */
+export async function deleteInventoryItem(id: string): Promise<void> {
   const db = getDb();
+
+  // Verify it exists first
+  getInventoryItem(id);
+
+  // 1. Archive in Notion
+  const notion = getNotionClient();
+  await notion.pages.update({
+    page_id: id,
+    archived: true,
+  });
+
+  // 2. Delete from SQLite
   const result = db.prepare("DELETE FROM home_inventory WHERE notion_id = ?").run(id);
   if (result.changes === 0) throw new NotFoundError("Inventory item", id);
 }
