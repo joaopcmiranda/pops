@@ -102,6 +102,41 @@ export function ReviewStep() {
   );
 
   /**
+   * Auto-match similar transactions
+   */
+  const handleAutoMatchSimilar = useCallback(
+    (transactions: ProcessedTransaction[], entityId: string, entityName: string) => {
+      setLocalTransactions((prev) => {
+        let updated = { ...prev };
+        for (const transaction of transactions) {
+          updated = {
+            ...updated,
+            uncertain: updated.uncertain.filter((t: ProcessedTransaction) => t !== transaction),
+            failed: updated.failed.filter((t: ProcessedTransaction) => t !== transaction),
+            matched: [
+              ...updated.matched,
+              {
+                ...transaction,
+                entity: {
+                  entityId,
+                  entityName,
+                  entityUrl: `https://www.notion.so/${entityId.replace(/-/g, "")}`,
+                  matchType: "auto-matched" as never, // UI-only matchType
+                  confidence: 1,
+                },
+                status: "matched" as const,
+              } as ProcessedTransaction,
+            ],
+          };
+        }
+        return updated;
+      });
+      toast.success(`Applied entity to ${transactions.length} transaction${transactions.length !== 1 ? "s" : ""}`);
+    },
+    []
+  );
+
+  /**
    * Handle entity selection with auto-matching for similar transactions
    */
   const handleEntitySelect = useCallback(
@@ -109,13 +144,13 @@ export function ReviewStep() {
       // Find similar transactions before updating
       const similar = findSimilar(transaction);
 
-      // Move transaction from uncertain/failed to matched
-      const updated = {
-        ...localTransactions,
-        uncertain: localTransactions.uncertain.filter((t: ProcessedTransaction) => t !== transaction),
-        failed: localTransactions.failed.filter((t: ProcessedTransaction) => t !== transaction),
+      // Move transaction from uncertain/failed to matched (functional setState avoids stale closure)
+      setLocalTransactions((prev) => ({
+        ...prev,
+        uncertain: prev.uncertain.filter((t: ProcessedTransaction) => t !== transaction),
+        failed: prev.failed.filter((t: ProcessedTransaction) => t !== transaction),
         matched: [
-          ...localTransactions.matched,
+          ...prev.matched,
           {
             ...transaction,
             entity: {
@@ -128,9 +163,7 @@ export function ReviewStep() {
             status: "matched" as const,
           } as ProcessedTransaction,
         ],
-      };
-
-      setLocalTransactions(updated);
+      }));
 
       // Show toast with option to apply to similar transactions
       if (similar.length > 0) {
@@ -145,39 +178,7 @@ export function ReviewStep() {
         });
       }
     },
-    [localTransactions, findSimilar]
-  );
-
-  /**
-   * Auto-match similar transactions
-   */
-  const handleAutoMatchSimilar = useCallback(
-    (transactions: ProcessedTransaction[], entityId: string, entityName: string) => {
-      const updated = { ...localTransactions };
-
-      for (const transaction of transactions) {
-        // Remove from uncertain/failed
-        updated.uncertain = updated.uncertain.filter((t: ProcessedTransaction) => t !== transaction);
-        updated.failed = updated.failed.filter((t: ProcessedTransaction) => t !== transaction);
-
-        // Add to matched with auto-matched type
-        updated.matched.push({
-          ...transaction,
-          entity: {
-            entityId,
-            entityName,
-            entityUrl: `https://www.notion.so/${entityId.replace(/-/g, "")}`,
-            matchType: "auto-matched" as never, // UI-only matchType
-            confidence: 1,
-          },
-          status: "matched" as const,
-        } as ProcessedTransaction);
-      }
-
-      setLocalTransactions(updated);
-      toast.success(`Applied entity to ${transactions.length} transaction${transactions.length !== 1 ? "s" : ""}`);
-    },
-    [localTransactions]
+    [findSimilar, handleAutoMatchSimilar]
   );
 
   const handleCreateEntity = useCallback((transaction: ProcessedTransaction) => {
@@ -243,32 +244,40 @@ export function ReviewStep() {
           entityId = result.data.notionId;
         }
 
-        // Assign to all transactions
-        const updated = { ...localTransactions };
+        const resolvedEntityId = entityId;
 
-        for (const transaction of transactions) {
-          updated.uncertain = updated.uncertain.filter((t: ProcessedTransaction) => t !== transaction);
-          updated.failed = updated.failed.filter((t: ProcessedTransaction) => t !== transaction);
-          updated.matched.push({
-            ...transaction,
-            entity: {
-              entityId,
-              entityName,
-              entityUrl: `https://www.notion.so/${entityId.replace(/-/g, "")}`,
-              matchType: "ai" as const,
-              confidence: 1,
-            },
-            status: "matched" as const,
-          } as ProcessedTransaction);
-        }
-
-        setLocalTransactions(updated);
+        // Assign to all transactions (functional setState avoids stale closure)
+        setLocalTransactions((prev) => {
+          let updated = { ...prev };
+          for (const transaction of transactions) {
+            updated = {
+              ...updated,
+              uncertain: updated.uncertain.filter((t: ProcessedTransaction) => t !== transaction),
+              failed: updated.failed.filter((t: ProcessedTransaction) => t !== transaction),
+              matched: [
+                ...updated.matched,
+                {
+                  ...transaction,
+                  entity: {
+                    entityId: resolvedEntityId,
+                    entityName,
+                    entityUrl: `https://www.notion.so/${resolvedEntityId.replace(/-/g, "")}`,
+                    matchType: "ai" as const,
+                    confidence: 1,
+                  },
+                  status: "matched" as const,
+                } as ProcessedTransaction,
+              ],
+            };
+          }
+          return updated;
+        });
         toast.success(`Accepted ${transactions.length} transaction${transactions.length !== 1 ? "s" : ""}`);
       } catch (error) {
         toast.error(`Failed to accept: ${error instanceof Error ? error.message : "Unknown error"}`);
       }
     },
-    [localTransactions, entities, createEntityMutation]
+    [entities, createEntityMutation]
   );
 
   /**
@@ -289,35 +298,42 @@ export function ReviewStep() {
     (entity: { entityId: string; entityName: string; entityUrl: string }) => {
       // Handle bulk assignment if pending
       if (pendingBulkTransactions && pendingBulkTransactions.length > 0) {
-        const updated = { ...localTransactions };
-
-        for (const transaction of pendingBulkTransactions) {
-          updated.uncertain = updated.uncertain.filter((t: ProcessedTransaction) => t !== transaction);
-          updated.failed = updated.failed.filter((t: ProcessedTransaction) => t !== transaction);
-          updated.matched.push({
-            ...transaction,
-            entity: {
-              entityId: entity.entityId,
-              entityName: entity.entityName,
-              entityUrl: entity.entityUrl,
-              matchType: "ai" as const,
-              confidence: 1,
-            },
-            status: "matched" as const,
-          } as ProcessedTransaction);
-        }
-
-        setLocalTransactions(updated);
+        const bulkCount = pendingBulkTransactions.length;
+        setLocalTransactions((prev) => {
+          let updated = { ...prev };
+          for (const transaction of pendingBulkTransactions) {
+            updated = {
+              ...updated,
+              uncertain: updated.uncertain.filter((t: ProcessedTransaction) => t !== transaction),
+              failed: updated.failed.filter((t: ProcessedTransaction) => t !== transaction),
+              matched: [
+                ...updated.matched,
+                {
+                  ...transaction,
+                  entity: {
+                    entityId: entity.entityId,
+                    entityName: entity.entityName,
+                    entityUrl: entity.entityUrl,
+                    matchType: "ai" as const,
+                    confidence: 1,
+                  },
+                  status: "matched" as const,
+                } as ProcessedTransaction,
+              ],
+            };
+          }
+          return updated;
+        });
         setPendingBulkTransactions(null);
         setSelectedTransaction(null);
-        toast.success(`Created "${entity.entityName}" and assigned to ${pendingBulkTransactions.length} transaction${pendingBulkTransactions.length !== 1 ? "s" : ""}`);
+        toast.success(`Created "${entity.entityName}" and assigned to ${bulkCount} transaction${bulkCount !== 1 ? "s" : ""}`);
       } else if (selectedTransaction) {
         // Handle single transaction assignment
         handleEntitySelect(selectedTransaction, entity.entityId, entity.entityName);
         setSelectedTransaction(null);
       }
     },
-    [selectedTransaction, pendingBulkTransactions, handleEntitySelect, localTransactions]
+    [selectedTransaction, pendingBulkTransactions, handleEntitySelect]
   );
 
   const handleEdit = useCallback((transaction: ProcessedTransaction) => {
@@ -328,23 +344,21 @@ export function ReviewStep() {
 
   const handleSaveEdit = useCallback(
     (transaction: ProcessedTransaction, editedFields: Partial<ProcessedTransaction>, shouldLearn: boolean = false) => {
-      const updated = {
-        ...localTransactions,
-        matched: localTransactions.matched.map((t: ProcessedTransaction) =>
+      setLocalTransactions((prev) => ({
+        ...prev,
+        matched: prev.matched.map((t: ProcessedTransaction) =>
           t === transaction ? { ...t, ...editedFields, manuallyEdited: true } : t
         ),
-        uncertain: localTransactions.uncertain.map((t: ProcessedTransaction) =>
+        uncertain: prev.uncertain.map((t: ProcessedTransaction) =>
           t === transaction ? { ...t, ...editedFields, manuallyEdited: true } : t
         ),
-        failed: localTransactions.failed.map((t: ProcessedTransaction) =>
+        failed: prev.failed.map((t: ProcessedTransaction) =>
           t === transaction ? { ...t, ...editedFields, manuallyEdited: true } : t
         ),
-        skipped: localTransactions.skipped.map((t: ProcessedTransaction) =>
+        skipped: prev.skipped.map((t: ProcessedTransaction) =>
           t === transaction ? { ...t, ...editedFields, manuallyEdited: true } : t
         ),
-      };
-
-      setLocalTransactions(updated);
+      }));
       setEditingTransaction(null);
 
       // Detect what changed
@@ -363,13 +377,13 @@ export function ReviewStep() {
           location: editedFields.location ?? transaction.location,
           online: editedFields.online ?? transaction.online,
         });
-        toast.success("Transaction updated and pattern learned!");
+        toast.success("Correction saved!");
       } else if (hasChanges && !shouldLearn) {
         // Show toast asking if they want to learn
         toast.info("Apply this correction to future imports?", {
           description: "This will help auto-match similar transactions next time.",
           action: {
-            label: "Yes, learn it",
+            label: "Learn Pattern",
             onClick: () => {
               createCorrectionMutation.mutate({
                 descriptionPattern: transaction.description,
@@ -379,7 +393,7 @@ export function ReviewStep() {
                 location: editedFields.location ?? transaction.location,
                 online: editedFields.online ?? transaction.online,
               });
-              toast.success("Pattern learned for future imports!");
+              toast.success("Pattern saved!");
             },
           },
         });
@@ -388,7 +402,7 @@ export function ReviewStep() {
         toast.success("Transaction updated");
       }
     },
-    [localTransactions, createCorrectionMutation]
+    [createCorrectionMutation]
   );
 
   const handleCancelEdit = useCallback(() => {
@@ -655,6 +669,22 @@ export function ReviewStep() {
           </Button>
         </div>
       </div>
+
+      {/* Execute error state */}
+      {executeImportMutation.isError && (
+        <div className="p-4 text-sm text-red-700 bg-red-100 dark:bg-red-900 dark:text-red-200 rounded-lg border border-red-200 dark:border-red-800">
+          <p className="font-medium">Import failed</p>
+          <p className="mt-1">{executeImportMutation.error.message}</p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-2"
+            onClick={() => executeImportMutation.reset()}
+          >
+            Retry
+          </Button>
+        </div>
+      )}
 
       <EntityCreateDialog
         open={showCreateDialog}
