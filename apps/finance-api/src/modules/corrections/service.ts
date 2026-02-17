@@ -175,9 +175,17 @@ export function createOrUpdateCorrection(input: CreateCorrectionInput): Correcti
       input.transactionType ?? null
     );
 
-  // Convert lastInsertRowid to string (can be number or bigint)
-  const newId = String(result.lastInsertRowid);
-  return getCorrection(newId);
+  // lastInsertRowid is the integer rowid, not the UUID text primary key.
+  // Look up by rowid to retrieve the auto-generated UUID.
+  const inserted = db
+    .prepare("SELECT * FROM transaction_corrections WHERE rowid = ?")
+    .get(result.lastInsertRowid) as CorrectionRow | undefined;
+
+  if (!inserted) {
+    throw new NotFoundError("Correction", String(result.lastInsertRowid));
+  }
+
+  return inserted;
 }
 
 /**
