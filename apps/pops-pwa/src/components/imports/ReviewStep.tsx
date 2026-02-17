@@ -344,21 +344,40 @@ export function ReviewStep() {
 
   const handleSaveEdit = useCallback(
     (transaction: ProcessedTransaction, editedFields: Partial<ProcessedTransaction>, shouldLearn: boolean = false) => {
-      setLocalTransactions((prev) => ({
-        ...prev,
-        matched: prev.matched.map((t: ProcessedTransaction) =>
-          t === transaction ? { ...t, ...editedFields, manuallyEdited: true } : t
-        ),
-        uncertain: prev.uncertain.map((t: ProcessedTransaction) =>
-          t === transaction ? { ...t, ...editedFields, manuallyEdited: true } : t
-        ),
-        failed: prev.failed.map((t: ProcessedTransaction) =>
-          t === transaction ? { ...t, ...editedFields, manuallyEdited: true } : t
-        ),
-        skipped: prev.skipped.map((t: ProcessedTransaction) =>
-          t === transaction ? { ...t, ...editedFields, manuallyEdited: true } : t
-        ),
-      }));
+      const updatedTx: ProcessedTransaction = { ...transaction, ...editedFields, manuallyEdited: true };
+      const isNoEntityType =
+        updatedTx.transactionType === "transfer" || updatedTx.transactionType === "income";
+
+      setLocalTransactions((prev) => {
+        // Transfers and income don't need an entity — promote them straight to matched.
+        if (isNoEntityType) {
+          return {
+            ...prev,
+            matched: prev.matched.some((t) => t === transaction)
+              ? prev.matched.map((t) => (t === transaction ? { ...updatedTx, status: "matched" as const } : t))
+              : [...prev.matched, { ...updatedTx, status: "matched" as const }],
+            uncertain: prev.uncertain.filter((t) => t !== transaction),
+            failed: prev.failed.filter((t) => t !== transaction),
+            skipped: prev.skipped.filter((t) => t !== transaction),
+          };
+        }
+
+        return {
+          ...prev,
+          matched: prev.matched.map((t: ProcessedTransaction) =>
+            t === transaction ? { ...t, ...editedFields, manuallyEdited: true } : t
+          ),
+          uncertain: prev.uncertain.map((t: ProcessedTransaction) =>
+            t === transaction ? { ...t, ...editedFields, manuallyEdited: true } : t
+          ),
+          failed: prev.failed.map((t: ProcessedTransaction) =>
+            t === transaction ? { ...t, ...editedFields, manuallyEdited: true } : t
+          ),
+          skipped: prev.skipped.map((t: ProcessedTransaction) =>
+            t === transaction ? { ...t, ...editedFields, manuallyEdited: true } : t
+          ),
+        };
+      });
       setEditingTransaction(null);
 
       // Detect what changed (include description/amount changes so Save & Learn works for any edit)
@@ -412,9 +431,11 @@ export function ReviewStep() {
   }, []);
 
   const handleImport = useCallback(() => {
-    // Convert matched transactions to confirmed format
     const confirmed: ConfirmedTransaction[] = localTransactions.matched
-      .filter((t: ProcessedTransaction) => t.entity?.entityId && t.entity?.entityName)
+      .filter((t: ProcessedTransaction) => {
+        const isNoEntityType = t.transactionType === "transfer" || t.transactionType === "income";
+        return isNoEntityType || (t.entity?.entityId && t.entity?.entityName);
+      })
       .map((t: ProcessedTransaction) => ({
         date: t.date,
         description: t.description,
@@ -424,9 +445,10 @@ export function ReviewStep() {
         online: t.online,
         rawRow: t.rawRow,
         checksum: t.checksum,
-        entityId: t.entity.entityId!,
-        entityName: t.entity.entityName!,
-        entityUrl: t.entity.entityUrl!,
+        transactionType: t.transactionType,
+        entityId: t.entity?.entityId,
+        entityName: t.entity?.entityName,
+        entityUrl: t.entity?.entityUrl,
       }));
 
     setConfirmedTransactions(confirmed);

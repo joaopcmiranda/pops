@@ -31,7 +31,6 @@ export function EditableTransactionCard({
   entities,
 }: EditableTransactionCardProps) {
   const [isRawDataExpanded, setIsRawDataExpanded] = useState(false);
-  const [transactionType, setTransactionType] = useState<"purchase" | "transfer" | "income">("purchase");
   const [editedFields, setEditedFields] = useState<
     Partial<ProcessedTransaction>
   >({
@@ -41,7 +40,10 @@ export function EditableTransactionCard({
     location: transaction.location || "",
     online: transaction.online ?? false,
     account: transaction.account,
+    transactionType: transaction.transactionType ?? "purchase",
   });
+
+  const transactionType = editedFields.transactionType ?? "purchase";
 
   // Parse raw row for reference
   let rawData: Record<string, string> = {};
@@ -102,7 +104,7 @@ export function EditableTransactionCard({
           name="type"
           value={transactionType}
           onChange={(e) =>
-            setTransactionType(e.target.value as "purchase" | "transfer" | "income")
+            setEditedFields({ ...editedFields, transactionType: e.target.value as "purchase" | "transfer" | "income" })
           }
           className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800"
         >
