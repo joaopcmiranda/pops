@@ -33,22 +33,28 @@ export type EntityMatch = z.infer<typeof entityMatchSchema>;
 /**
  * Transaction after entity matching
  */
+export const transactionTypeSchema = z.enum(["purchase", "transfer", "income"]);
+export type TransactionType = z.infer<typeof transactionTypeSchema>;
+
 export const processedTransactionSchema = parsedTransactionSchema.extend({
   entity: entityMatchSchema,
   status: z.enum(["matched", "uncertain", "failed", "skipped"]),
   skipReason: z.string().optional(), // For skipped transactions (e.g., "Duplicate")
   error: z.string().optional(), // For failed transactions
+  transactionType: transactionTypeSchema.optional(), // User-set type; undefined = purchase (default)
 });
 
 export type ProcessedTransaction = z.infer<typeof processedTransactionSchema>;
 
 /**
  * Transaction confirmed by user (after review)
+ * entityId/entityName/entityUrl are omitted for transfers and income.
  */
 export const confirmedTransactionSchema = parsedTransactionSchema.extend({
-  entityId: z.string(),
-  entityName: z.string(),
-  entityUrl: z.string(),
+  transactionType: transactionTypeSchema.optional(),
+  entityId: z.string().optional(),
+  entityName: z.string().optional(),
+  entityUrl: z.string().optional(),
 });
 
 export type ConfirmedTransaction = z.infer<typeof confirmedTransactionSchema>;
