@@ -595,6 +595,114 @@ test.describe('Import Wizard - Transaction Editing', () => {
   });
 });
 
+test.describe('Import Wizard - Transfer and Income Transactions', () => {
+  test.beforeEach(async ({ page }) => {
+    await setupMockAPIs(page, { scenario: 'realistic' });
+    await page.goto('/import');
+  });
+
+  test('should promote uncertain transaction to matched when marked as transfer', async ({ page }) => {
+    await navigateToReviewStep(page, realisticCSV);
+
+    // Record initial matched count from the tab label
+    const matchedTab = page.getByRole('tab', { name: /matched/i });
+    const initialMatchedText = await matchedTab.textContent();
+    const initialMatchedCount = parseInt(initialMatchedText?.match(/\((\d+)\)/)?.[1] ?? '0', 10);
+
+    await page.getByRole('tab', { name: /uncertain/i }).click();
+    await page.getByRole('button', { name: /list/i }).click();
+
+    // Edit first uncertain transaction and mark as transfer
+    await page.getByRole('button', { name: /edit/i }).first().click();
+    await page.locator('select[name="type"]').selectOption('transfer');
+    await expect(page.getByLabel(/entity/i)).not.toBeVisible();
+    await page.getByRole('button', { name: /save once/i }).click();
+
+    // Matched tab should now have one more transaction
+    await expect(matchedTab).toContainText(`(${initialMatchedCount + 1})`);
+  });
+
+  test('should promote uncertain transaction to matched when marked as income', async ({ page }) => {
+    await navigateToReviewStep(page, realisticCSV);
+
+    const matchedTab = page.getByRole('tab', { name: /matched/i });
+    const initialMatchedText = await matchedTab.textContent();
+    const initialMatchedCount = parseInt(initialMatchedText?.match(/\((\d+)\)/)?.[1] ?? '0', 10);
+
+    await page.getByRole('tab', { name: /uncertain/i }).click();
+    await page.getByRole('button', { name: /list/i }).click();
+
+    await page.getByRole('button', { name: /edit/i }).first().click();
+    await page.locator('select[name="type"]').selectOption('income');
+    await expect(page.getByLabel(/entity/i)).not.toBeVisible();
+    await page.getByRole('button', { name: /save once/i }).click();
+
+    await expect(matchedTab).toContainText(`(${initialMatchedCount + 1})`);
+  });
+
+  test('should allow import after the only uncertain transaction is resolved as a transfer', async ({ page }) => {
+    // Use the simple scenario: 1 matched + 1 uncertain, no failed — so resolving the
+    // one uncertain as a transfer is sufficient to enable the Import button.
+    await setupMockAPIs(page);
+    await navigateToReviewStep(page, simpleCSV);
+
+    await page.getByRole('tab', { name: /uncertain/i }).click();
+    await page.getByRole('button', { name: /list/i }).click();
+
+    await page.getByRole('button', { name: /edit/i }).first().click();
+    await page.locator('select[name="type"]').selectOption('transfer');
+    await page.getByRole('button', { name: /save once/i }).click();
+
+    // Uncertain count should now be 0 and Import button enabled
+    await expect(page.getByRole('tab', { name: /uncertain/i })).toContainText('(0)');
+    await expect(page.getByRole('button', { name: /import/i })).toBeEnabled({ timeout: 5000 });
+  });
+
+  test('should include transfer in import payload without entityId', async ({ page }) => {
+    let capturedTransactions: Array<Record<string, unknown>> = [];
+
+    // Simple scenario: 1 matched + 1 uncertain, no failed
+    await setupMockAPIs(page);
+
+    // Override executeImport AFTER setupMockAPIs so this handler runs first (last-registered wins)
+    await page.route(/\/trpc\/imports\.executeImport/, async (route) => {
+      const body = JSON.parse(route.request().postData() || '{}') as Record<string, unknown>;
+      // tRPC batch body format: {"0": {"transactions": [...]}} (no .json wrapper in this client version)
+      const item = body['0'] as { json?: { transactions?: unknown[] }; transactions?: unknown[] } | undefined;
+      const txns = item?.json?.transactions ?? item?.transactions ?? [];
+      capturedTransactions = txns as Array<Record<string, unknown>>;
+
+      const url = new URL(route.request().url());
+      const responseData = { result: { data: { sessionId: 'execute-session-456' } } };
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(url.searchParams.has('batch') ? [responseData] : responseData),
+      });
+    });
+
+    await navigateToReviewStep(page, simpleCSV);
+
+    // Mark the single uncertain transaction as a transfer
+    await page.getByRole('tab', { name: /uncertain/i }).click();
+    await page.getByRole('button', { name: /list/i }).click();
+    await page.getByRole('button', { name: /edit/i }).first().click();
+    await page.locator('select[name="type"]').selectOption('transfer');
+    await page.getByRole('button', { name: /save once/i }).click();
+
+    // Click Import (should be enabled now)
+    await page.getByRole('tab', { name: /matched/i }).click();
+    await page.getByRole('button', { name: /import/i }).click();
+
+    await page.waitForTimeout(1000);
+
+    // The transfer should appear in the payload without an entityId
+    const transfer = capturedTransactions.find((t) => t['transactionType'] === 'transfer');
+    expect(transfer).toBeDefined();
+    expect(transfer?.['entityId']).toBeFalsy();
+  });
+});
+
 test.describe('Import Wizard - AI Suggestions', () => {
   test.beforeEach(async ({ page }) => {
     await setupMockAPIs(page, { scenario: 'realistic' });
