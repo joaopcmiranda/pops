@@ -19,6 +19,7 @@ import {
   getBalanceSheetId,
   getEntitiesDbId,
 } from "../../shared/notion-client.js";
+import { createTransaction } from "../transactions/service.js";
 import type { Client } from "@notionhq/client";
 import type {
   ParsedTransaction,
@@ -419,7 +420,6 @@ export async function executeImport(
 ): Promise<ExecuteImportOutput> {
   logger.info({ totalCount: transactions.length }, "[Import] Starting executeImport");
 
-  const client = getNotionClient();
   const results: ImportResult[] = [];
   let imported = 0;
   let skipped = 0;
@@ -434,7 +434,29 @@ export async function executeImport(
       if (!transaction) continue;
 
       try {
-        const pageId = await createNotionTransaction(client, transaction);
+        const notionType =
+          transaction.transactionType === "transfer"
+            ? "Transfer"
+            : transaction.transactionType === "income"
+              ? "Income"
+              : "Expense";
+        const row = await createTransaction({
+          description: transaction.description,
+          account: transaction.account,
+          amount: transaction.amount,
+          date: transaction.date,
+          type: notionType,
+          categories: ["Other"],
+          entityId: transaction.entityId ?? null,
+          entityName: transaction.entityName ?? null,
+          location: transaction.location ?? null,
+          online: transaction.online ?? false,
+          novatedLease: false,
+          taxReturn: false,
+          rawRow: transaction.rawRow,
+          checksum: transaction.checksum,
+        });
+        const pageId = row.notion_id;
         logger.debug(
           { index: i + 1, total: transactions.length, description: transaction.description.substring(0, 50), pageId },
           "[Import] Transaction written"
@@ -476,71 +498,6 @@ export async function executeImport(
   logger.info({ imported, failedCount: failed.length, skipped }, "[Import] executeImport complete");
 
   return { imported, failed, skipped };
-}
-
-/**
- * Create a transaction page in Notion Balance Sheet
- */
-async function createNotionTransaction(
-  client: Client,
-  transaction: ConfirmedTransaction
-): Promise<string> {
-  const baseProperties = {
-    Description: {
-      title: [{ text: { content: transaction.description } }],
-    },
-    Account: {
-      select: { name: transaction.account },
-    },
-    Amount: {
-      number: transaction.amount,
-    },
-    Date: {
-      date: { start: transaction.date },
-    },
-    Type: {
-      select: { name: "Expense" },
-    },
-    Category: {
-      multi_select: [{ name: "Other" }],
-    },
-    Online: {
-      checkbox: transaction.online ?? false,
-    },
-    "Novated Lease": {
-      checkbox: false,
-    },
-    "Tax Return": {
-      checkbox: false,
-    },
-    Entity: {
-      relation: [{ id: transaction.entityId }],
-    },
-    // Store rawRow and checksum for audit trail and deduplication
-    "Raw Row": {
-      rich_text: [{ text: { content: transaction.rawRow.substring(0, 2000) } }],
-    },
-    Checksum: {
-      rich_text: [{ text: { content: transaction.checksum } }],
-    },
-  };
-
-  // Add location if present
-  const properties = transaction.location
-    ? {
-        ...baseProperties,
-        Location: {
-          select: { name: transaction.location },
-        },
-      }
-    : baseProperties;
-
-  const response = await client.pages.create({
-    parent: { database_id: getBalanceSheetId() },
-    properties,
-  });
-
-  return response.id;
 }
 
 /**
@@ -869,7 +826,6 @@ export async function executeImportWithProgress(sessionId: string, transactions:
       errors: [],
     });
 
-    const client = getNotionClient();
     const results: ImportResult[] = [];
     let imported = 0;
     let skipped = 0;
@@ -900,7 +856,29 @@ export async function executeImportWithProgress(sessionId: string, transactions:
         });
 
         try {
-          const pageId = await createNotionTransaction(client, transaction);
+          const notionType =
+          transaction.transactionType === "transfer"
+            ? "Transfer"
+            : transaction.transactionType === "income"
+              ? "Income"
+              : "Expense";
+        const row = await createTransaction({
+          description: transaction.description,
+          account: transaction.account,
+          amount: transaction.amount,
+          date: transaction.date,
+          type: notionType,
+          categories: ["Other"],
+          entityId: transaction.entityId ?? null,
+          entityName: transaction.entityName ?? null,
+          location: transaction.location ?? null,
+          online: transaction.online ?? false,
+          novatedLease: false,
+          taxReturn: false,
+          rawRow: transaction.rawRow,
+          checksum: transaction.checksum,
+        });
+        const pageId = row.notion_id;
           logger.debug(
             { index: i + 1, total: transactions.length, description: transaction.description.substring(0, 50), pageId },
             "[Import] Transaction written"
