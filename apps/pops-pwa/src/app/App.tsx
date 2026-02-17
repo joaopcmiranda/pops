@@ -8,6 +8,7 @@ import { trpc, trpcClient } from "@/lib/trpc";
 import { router } from "./router";
 import { RouterProvider } from "react-router";
 import { useThemeStore } from "@/store/themeStore";
+import { Toaster } from "@/components/ui/sonner";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,6 +32,7 @@ export function App() {
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
         <ReactQueryDevtools initialIsOpen={false} />
+        <Toaster />
       </QueryClientProvider>
     </trpc.Provider>
   );

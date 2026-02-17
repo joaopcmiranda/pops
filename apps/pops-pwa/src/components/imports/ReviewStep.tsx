@@ -361,8 +361,10 @@ export function ReviewStep() {
       }));
       setEditingTransaction(null);
 
-      // Detect what changed
+      // Detect what changed (include description/amount changes so Save & Learn works for any edit)
       const hasChanges =
+        editedFields.description !== transaction.description ||
+        editedFields.amount !== transaction.amount ||
         editedFields.entity?.entityId !== transaction.entity?.entityId ||
         editedFields.location !== transaction.location ||
         editedFields.online !== transaction.online;

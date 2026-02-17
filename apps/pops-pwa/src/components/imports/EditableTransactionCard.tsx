@@ -55,8 +55,17 @@ export function EditableTransactionCard({
     onSave(transaction, editedFields, shouldLearn);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      onCancel();
+    }
+  };
+
   return (
-    <div className="border-2 border-blue-500 rounded-lg p-4 bg-blue-50 dark:bg-blue-950">
+    <div
+      className="border-2 border-blue-500 rounded-lg p-4 bg-blue-50 dark:bg-blue-950"
+      onKeyDown={handleKeyDown}
+    >
       {/* Header */}
       <div className="flex justify-between items-center mb-4 pb-2 border-b border-blue-200 dark:border-blue-800">
         <h3 className="font-semibold text-blue-900 dark:text-blue-100">
