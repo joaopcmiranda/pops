@@ -360,6 +360,8 @@ test.describe('Import Wizard - Complete Flow', () => {
 
       // Switch to uncertain tab
       await page.getByRole('tab', { name: /uncertain/i }).click();
+      // Switch to list view to access per-card controls
+      await page.getByRole('button', { name: /list/i }).click();
       await expect(page.getByText('UNKNOWN MERCHANT')).toBeVisible();
 
       // Resolve uncertain transaction
@@ -565,17 +567,18 @@ test.describe('Import Wizard - AI Suggestions', () => {
   test('should accept AI suggestion for existing entity', async ({ page }) => {
     await navigateToReviewStep(page, realisticCSV);
 
-    // Go to Uncertain tab
+    // Go to Uncertain tab and switch to list view for per-card access
     await page.getByRole('tab', { name: /uncertain/i }).click();
+    await page.getByRole('button', { name: /list/i }).click();
 
-    // Find transaction with AI suggestion (green "Accept" button)
+    // Find transaction with AI suggestion (Accept button with entity name)
     const acceptButton = page.getByRole('button', { name: /accept.*unknown cafe/i }).first();
     await acceptButton.click();
 
-    // Verify transaction moved to Matched tab
+    // Verify transaction moved to Matched tab (3 original + 1 = 4)
     await expect(page.getByRole('tab', { name: /matched/i })).toContainText(/matched.*\(4\)/i);
 
-    // Verify similarity toast shown
+    // Verify similarity toast shown (other numbered cafe transactions are similar)
     await expect(page.getByText(/found.*similar/i)).toBeVisible({ timeout: 5000 });
   });
 
@@ -583,10 +586,12 @@ test.describe('Import Wizard - AI Suggestions', () => {
     await navigateToReviewStep(page, realisticCSV);
 
     await page.getByRole('tab', { name: /uncertain/i }).click();
+    // Switch to list view to access per-card "Create new" button
+    await page.getByRole('button', { name: /list/i }).click();
 
-    // Find AI suggestion button with "+" icon (entity doesn't exist)
-    const acceptNewButton = page.getByRole('button', { name: /accept.*\+/i }).first();
-    await acceptNewButton.click();
+    // Click "Create new" button on first AI-suggestion card to open EntityCreateDialog
+    const createNewButton = page.getByRole('button', { name: /^create new$/i }).first();
+    await createNewButton.click();
 
     // Verify EntityCreateDialog opens with pre-filled name
     await expect(page.getByRole('dialog')).toBeVisible();
@@ -603,6 +608,8 @@ test.describe('Import Wizard - AI Suggestions', () => {
     await navigateToReviewStep(page, realisticCSV);
 
     await page.getByRole('tab', { name: /uncertain/i }).click();
+    // Switch to list view to accept individual transactions
+    await page.getByRole('button', { name: /list/i }).click();
 
     // Accept first "Unknown Cafe" suggestion
     const acceptButton = page.getByRole('button', { name: /accept.*unknown cafe/i }).first();
@@ -759,8 +766,9 @@ test.describe('Import Wizard - Progress Polling', () => {
 
     await navigateToReviewStep(page);
 
-    // Resolve uncertain transaction
+    // Resolve uncertain transaction - switch to list view for per-card select
     await page.getByRole('tab', { name: /uncertain/i }).click();
+    await page.getByRole('button', { name: /list/i }).click();
     const entitySelect = page.locator('select').first();
     await entitySelect.selectOption('woolworths-id');
 
@@ -803,16 +811,18 @@ test.describe('Import Wizard - Entity Creation During Review', () => {
     await navigateToReviewStep(page, realisticCSV);
 
     await page.getByRole('tab', { name: /uncertain/i }).click();
+    // Switch to list view so per-card "Create new entity" buttons are accessible
+    await page.getByRole('button', { name: /list/i }).click();
 
-    // Click "+ Create new entity" button
-    const createButton = page.getByRole('button', { name: /create.*entity/i }).first();
+    // Click "Create new" button on first AI-suggestion uncertain card
+    const createButton = page.getByRole('button', { name: /^create new$/i }).first();
     await createButton.click();
 
     // EntityCreateDialog opens
     await expect(page.getByRole('dialog')).toBeVisible();
     await expect(page.getByText('Create New Entity')).toBeVisible();
 
-    // Enter entity name
+    // Enter entity name (override the AI suggestion pre-fill)
     await page.getByLabel(/entity name/i).fill('New Coffee Shop');
 
     // Create
@@ -828,6 +838,8 @@ test.describe('Import Wizard - Entity Creation During Review', () => {
     await navigateToReviewStep(page, realisticCSV);
 
     await page.getByRole('tab', { name: /failed/i }).click();
+    // Switch to list view so per-card "Create new entity" buttons are accessible
+    await page.getByRole('button', { name: /list/i }).click();
 
     // Click "+ Create new entity"
     const createButton = page.getByRole('button', { name: /create.*entity/i }).first();
@@ -847,12 +859,16 @@ test.describe('Import Wizard - Entity Creation During Review', () => {
     await navigateToReviewStep(page, realisticCSV);
 
     await page.getByRole('tab', { name: /uncertain/i }).click();
+    // Switch to list view to access per-card "Create new" button
+    await page.getByRole('button', { name: /list/i }).click();
 
-    const createButton = page.getByRole('button', { name: /create.*entity/i }).first();
+    const createButton = page.getByRole('button', { name: /^create new$/i }).first();
     await createButton.click();
 
-    // Leave name field empty
     const createButtonInDialog = page.getByRole('dialog').getByRole('button', { name: /create/i });
+
+    // Clear the pre-filled AI suggestion name, then check button disabled
+    await page.getByLabel(/entity name/i).clear();
     await expect(createButtonInDialog).toBeDisabled();
 
     // Enter whitespace only
@@ -907,8 +923,9 @@ test.describe('Import Wizard - Warnings and Errors', () => {
 
     await navigateToReviewStep(page);
 
-    // Resolve uncertain
+    // Resolve uncertain - switch to list view for per-card select
     await page.getByRole('tab', { name: /uncertain/i }).click();
+    await page.getByRole('button', { name: /list/i }).click();
     const entitySelect = page.locator('select').first();
     await entitySelect.selectOption('woolworths-id');
 
@@ -936,8 +953,9 @@ test.describe('Import Wizard - Review Tab Navigation', () => {
     // Verify Failed tab shows count
     await expect(page.getByRole('tab', { name: /failed.*\(2\)/i })).toBeVisible();
 
-    // Resolve 2 uncertain transactions
+    // Resolve 2 uncertain transactions - switch to list view for per-card selects
     await page.getByRole('tab', { name: /uncertain/i }).click();
+    await page.getByRole('button', { name: /list/i }).click();
     const selects = page.locator('select');
     await selects.nth(0).selectOption('woolworths-id');
     await selects.nth(1).selectOption('coles-id');
@@ -957,15 +975,17 @@ test.describe('Import Wizard - Review Tab Navigation', () => {
     // Verify tooltip or text shown
     await expect(page.getByText(/resolve all/i)).toBeVisible();
 
-    // Resolve all uncertain
+    // Resolve all uncertain - switch to list view for per-card selects
     await page.getByRole('tab', { name: /uncertain/i }).click();
+    await page.getByRole('button', { name: /list/i }).click();
     const selects = page.locator('select');
     for (let i = 0; i < 6; i++) {
       await selects.nth(i).selectOption('woolworths-id');
     }
 
-    // Resolve all failed
+    // Resolve all failed - switch to list view for per-card create buttons
     await page.getByRole('tab', { name: /failed/i }).click();
+    await page.getByRole('button', { name: /list/i }).click();
     const createButtons = page.getByRole('button', { name: /create.*entity/i });
     for (let i = 0; i < 2; i++) {
       await createButtons.nth(i).click();
@@ -988,13 +1008,15 @@ test.describe('Import Wizard - Review Tab Navigation', () => {
     await page.getByRole('tab', { name: /matched/i }).click();
     await expect(page.getByText('WOOLWORTHS 1234')).toBeVisible();
 
-    // Click Uncertain tab
+    // Click Uncertain tab - switch to list view to see individual card descriptions
     await page.getByRole('tab', { name: /uncertain/i }).click();
-    await expect(page.getByText('UNKNOWN CAFE')).toBeVisible();
+    await page.getByRole('button', { name: /list/i }).click();
+    await expect(page.getByText(/UNKNOWN CAFE/)).toBeVisible();
 
-    // Click Failed tab
+    // Click Failed tab - switch to list view to see individual card descriptions
     await page.getByRole('tab', { name: /failed/i }).click();
-    await expect(page.getByText('RANDOM MERCHANT')).toBeVisible();
+    await page.getByRole('button', { name: /list/i }).click();
+    await expect(page.getByText('RANDOM MERCHANT 123')).toBeVisible();
 
     // Click Skipped tab
     await page.getByRole('tab', { name: /skipped/i }).click();
@@ -1020,6 +1042,8 @@ test.describe('Import Wizard - Complete Import Flows', () => {
 
     // 6 uncertain (AI suggestions) - accept 4, manually select 2
     await page.getByRole('tab', { name: /uncertain/i }).click();
+    // Switch to list view for per-card accept buttons and selects
+    await page.getByRole('button', { name: /list/i }).click();
 
     // Accept AI suggestions for first 4 (Unknown Cafe)
     for (let i = 0; i < 4; i++) {
@@ -1034,8 +1058,9 @@ test.describe('Import Wizard - Complete Import Flows', () => {
     await page.waitForTimeout(300);
     await selects.first().selectOption('acme-corp-id');
 
-    // 2 failed - create entities
+    // 2 failed - create entities - switch to list view for per-card create buttons
     await page.getByRole('tab', { name: /failed/i }).click();
+    await page.getByRole('button', { name: /list/i }).click();
 
     const createButtons = page.getByRole('button', { name: /create.*entity/i });
     await createButtons.first().click();
@@ -1218,8 +1243,10 @@ test.describe('Import Wizard - Error Recovery', () => {
     await navigateToReviewStep(page, realisticCSV);
 
     await page.getByRole('tab', { name: /uncertain/i }).click();
+    // Switch to list view to access per-card "Create new" button
+    await page.getByRole('button', { name: /list/i }).click();
 
-    const createButton = page.getByRole('button', { name: /create.*entity/i }).first();
+    const createButton = page.getByRole('button', { name: /^create new$/i }).first();
     await createButton.click();
 
     await page.getByLabel(/entity name/i).fill('Retry Entity');
@@ -1240,8 +1267,9 @@ test.describe('Import Wizard - Error Recovery', () => {
 
     await navigateToReviewStep(page);
 
-    // Resolve uncertain
+    // Resolve uncertain - switch to list view for per-card select
     await page.getByRole('tab', { name: /uncertain/i }).click();
+    await page.getByRole('button', { name: /list/i }).click();
     const entitySelect = page.locator('select').first();
     await entitySelect.selectOption('woolworths-id');
 

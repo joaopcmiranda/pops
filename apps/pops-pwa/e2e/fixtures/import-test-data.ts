@@ -144,7 +144,7 @@ export const createRealisticMockData = (): MockImportResult => ({
   uncertain: [
     {
       date: '2026-02-13',
-      description: 'UNKNOWN CAFE BONDI',
+      description: 'UNKNOWN CAFE 001',
       amount: -15.50,
       account: 'Amex',
       location: 'Bondi',
@@ -159,7 +159,7 @@ export const createRealisticMockData = (): MockImportResult => ({
     },
     {
       date: '2026-02-13',
-      description: 'UNKNOWN CAFE MANLY',
+      description: 'UNKNOWN CAFE 002',
       amount: -16.00,
       account: 'Amex',
       location: 'Manly',
@@ -174,7 +174,7 @@ export const createRealisticMockData = (): MockImportResult => ({
     },
     {
       date: '2026-02-14',
-      description: 'UNKNOWN CAFE SURRY HILLS',
+      description: 'UNKNOWN CAFE 003',
       amount: -14.75,
       account: 'Amex',
       location: 'Surry Hills',
@@ -189,7 +189,7 @@ export const createRealisticMockData = (): MockImportResult => ({
     },
     {
       date: '2026-02-14',
-      description: 'UNKNOWN CAFE CBD',
+      description: 'UNKNOWN CAFE 004',
       amount: -15.00,
       account: 'Amex',
       location: 'Sydney',
@@ -416,7 +416,7 @@ export const createErrorMockData = (): MockImportResult => ({
   skipped: [],
   warnings: [
     {
-      code: 'NOTION_DATABASE_NOT_FOUND',
+      type: 'NOTION_DATABASE_NOT_FOUND',
       message: 'Notion database not found. Check your .env configuration.',
     },
   ],
@@ -502,16 +502,16 @@ export const createWarningMockData = (warningType: 'deduplication' | 'ai' | 'not
 
   const warnings = {
     deduplication: {
-      code: 'DEDUPLICATION_DISABLED',
+      type: 'DEDUPLICATION_DISABLED',
       message: 'Deduplication is disabled. This is expected for new databases.',
     },
     ai: {
-      code: 'AI_CATEGORIZATION_UNAVAILABLE',
+      type: 'AI_CATEGORIZATION_UNAVAILABLE',
       message: 'AI categorization service unavailable. Manual review recommended.',
       affectedCount: 5,
     },
     notion: {
-      code: 'NOTION_DATABASE_NOT_FOUND',
+      type: 'NOTION_DATABASE_NOT_FOUND',
       message: 'Notion database not found. Check your .env configuration.',
     },
   };
