@@ -90,7 +90,11 @@ export function TransactionCard({
         : "bg-white dark:bg-gray-800";
 
   return (
-    <div className={`border rounded-lg p-4 ${borderColor} ${bgColor}`}>
+    <div
+      className={`border rounded-lg p-4 ${borderColor} ${bgColor}`}
+      data-testid="transaction-card"
+      aria-label={transaction.description}
+    >
       {/* Header row: date, amount, description */}
       <div className="flex justify-between items-start mb-3">
         <div className="flex-1">
@@ -119,8 +123,10 @@ export function TransactionCard({
             size="sm"
             onClick={() => onEdit(transaction)}
             className="ml-2"
+            aria-label={`Edit ${transaction.description}`}
           >
-            <Edit2 className="w-4 h-4" />
+            <Edit2 className="w-4 h-4" aria-hidden="true" />
+            <span className="sr-only">Edit</span>
           </Button>
         )}
       </div>

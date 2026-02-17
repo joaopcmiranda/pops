@@ -90,6 +90,7 @@ export function EditableTransactionCard({
         </Label>
         <select
           id="transactionType"
+          name="type"
           value={transactionType}
           onChange={(e) =>
             setTransactionType(e.target.value as "purchase" | "transfer" | "income")

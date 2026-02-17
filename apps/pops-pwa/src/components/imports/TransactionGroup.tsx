@@ -71,6 +71,7 @@ export function TransactionGroup({
           ? "border-purple-300 dark:border-purple-700"
           : "border-gray-200 dark:border-gray-700"
       }`}
+      data-testid="transaction-group"
     >
       <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
         <div
@@ -82,9 +83,13 @@ export function TransactionGroup({
         >
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <CollapsibleTrigger className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <CollapsibleTrigger
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                aria-label={isExpanded ? "Collapse" : "Expand"}
+              >
                 <ChevronRight
                   className={`w-5 h-5 transition-transform ${isExpanded ? "rotate-90" : ""}`}
+                  aria-hidden="true"
                 />
                 <div className="flex items-center gap-2">
                   {group.aiSuggestion && (

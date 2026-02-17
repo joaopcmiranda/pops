@@ -574,7 +574,7 @@ export function ReviewStep() {
 
       {/* Write progress overlay */}
       {isWriting && progress && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" data-testid="import-progress-overlay">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md w-full mx-4 space-y-4">
             <div className="flex items-center gap-3">
               <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
@@ -636,17 +636,24 @@ export function ReviewStep() {
         </div>
       )}
 
-      <div className="flex justify-between gap-3">
+      <div className="flex justify-between gap-3 items-center">
         <Button variant="outline" onClick={prevStep} disabled={executeImportMutation.isPending || isWriting}>
           Back
         </Button>
-        <Button onClick={handleImport} disabled={unresolvedCount > 0 || executeImportMutation.isPending || isWriting}>
-          {isWriting
-            ? `Writing ${progress?.processedCount}/${progress?.totalTransactions}...`
-            : executeImportMutation.isPending
-              ? "Starting..."
-              : `Import ${localTransactions.matched.length} Transactions`}
-        </Button>
+        <div className="flex flex-col items-end gap-1">
+          {unresolvedCount > 0 && (
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Resolve all uncertain/failed transactions to import
+            </p>
+          )}
+          <Button onClick={handleImport} disabled={unresolvedCount > 0 || executeImportMutation.isPending || isWriting}>
+            {isWriting
+              ? `Writing ${progress?.processedCount}/${progress?.totalTransactions}...`
+              : executeImportMutation.isPending
+                ? "Starting..."
+                : `Import ${localTransactions.matched.length} Transactions`}
+          </Button>
+        </div>
       </div>
 
       <EntityCreateDialog
@@ -767,16 +774,18 @@ function UncertainTab({
           variant={viewMode === "list" ? "default" : "outline"}
           size="sm"
           onClick={() => onViewModeChange("list")}
+          aria-pressed={viewMode === "list"}
         >
-          <List className="w-4 h-4 mr-1" />
+          <List className="w-4 h-4 mr-1" aria-hidden="true" />
           List
         </Button>
         <Button
           variant={viewMode === "grouped" ? "default" : "outline"}
           size="sm"
           onClick={() => onViewModeChange("grouped")}
+          aria-pressed={viewMode === "grouped"}
         >
-          <Layers className="w-4 h-4 mr-1" />
+          <Layers className="w-4 h-4 mr-1" aria-hidden="true" />
           Grouped
         </Button>
       </div>
@@ -879,16 +888,18 @@ function FailedTab({
           variant={viewMode === "list" ? "default" : "outline"}
           size="sm"
           onClick={() => onViewModeChange("list")}
+          aria-pressed={viewMode === "list"}
         >
-          <List className="w-4 h-4 mr-1" />
+          <List className="w-4 h-4 mr-1" aria-hidden="true" />
           List
         </Button>
         <Button
           variant={viewMode === "grouped" ? "default" : "outline"}
           size="sm"
           onClick={() => onViewModeChange("grouped")}
+          aria-pressed={viewMode === "grouped"}
         >
-          <Layers className="w-4 h-4 mr-1" />
+          <Layers className="w-4 h-4 mr-1" aria-hidden="true" />
           Grouped
         </Button>
       </div>
