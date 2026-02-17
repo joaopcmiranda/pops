@@ -44,6 +44,39 @@ export class AiCategorizationError extends Error {
   }
 }
 
+const MAX_RETRIES = 5;
+const BASE_DELAY_MS = 1000;
+
+/**
+ * Retry an async operation with exponential backoff + jitter on HTTP 429.
+ * All Anthropic API calls go through this to handle the 50 RPM rate limit.
+ */
+async function withRateLimitRetry<T>(fn: () => Promise<T>, description: string): Promise<T> {
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      const isRateLimit =
+        error instanceof Error &&
+        "status" in error &&
+        (error as { status: number }).status === 429;
+
+      if (!isRateLimit || attempt === MAX_RETRIES) {
+        throw error;
+      }
+
+      const delay = BASE_DELAY_MS * 2 ** attempt + Math.random() * 500;
+      logger.warn(
+        { description, attempt: attempt + 1, maxRetries: MAX_RETRIES, delayMs: Math.round(delay) },
+        "[AI] Rate limited (429) — retrying with backoff"
+      );
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+  // Unreachable, but satisfies TypeScript
+  throw new AiCategorizationError("Max retries exceeded", "API_ERROR");
+}
+
 export async function categorizeWithAi(
   rawRow: string,
   importBatchId?: string
@@ -75,26 +108,31 @@ export async function categorizeWithAi(
 
   const db = getDb();
 
-  const client = new Anthropic({ apiKey });
+  // maxRetries=0: SDK-level retries disabled — we handle retries ourselves via withRateLimitRetry
+  const client = new Anthropic({ apiKey, maxRetries: 0 });
 
   logger.debug({ description: sanitizedDescription }, "[AI] Calling API (cache miss)");
 
   try {
-    const response = await client.messages.create({
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: 200,
-      messages: [
-        {
-          role: "user",
-          content: `Given this bank transaction data, identify the merchant/entity name and a spending category.
+    const response = await withRateLimitRetry(
+      () =>
+        client.messages.create({
+          model: "claude-haiku-4-5-20251001",
+          max_tokens: 200,
+          messages: [
+            {
+              role: "user",
+              content: `Given this bank transaction data, identify the merchant/entity name and a spending category.
 
 Transaction data: ${rawRow}
 
 Reply in JSON only: {"entityName": "...", "category": "..."}
 Common categories: Groceries, Dining, Transport, Utilities, Entertainment, Shopping, Health, Insurance, Subscriptions, Income, Transfer, Government, Education, Travel, Rent, Other.`,
-        },
-      ],
-    });
+            },
+          ],
+        }),
+      sanitizedDescription
+    );
 
     const text = response.content[0]?.type === "text" ? response.content[0].text : null;
     if (!text) return { result: null };
