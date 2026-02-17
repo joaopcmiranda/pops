@@ -154,6 +154,12 @@ export async function createTransaction(input: CreateTransactionInput): Promise<
   if (input.notes) {
     properties.Notes = { rich_text: [{ text: { content: input.notes } }] };
   }
+  if (input.rawRow) {
+    properties["Raw Row"] = { rich_text: [{ text: { content: input.rawRow.substring(0, 2000) } }] };
+  }
+  if (input.checksum) {
+    properties.Checksum = { rich_text: [{ text: { content: input.checksum } }] };
+  }
 
   // 1. Create in Notion
   const notion = getNotionClient();
