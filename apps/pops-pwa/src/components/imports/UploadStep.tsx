@@ -73,7 +73,7 @@ export function UploadStep() {
         </p>
       </div>
 
-      <FileUpload onFileSelect={handleFileSelect} acceptedTypes=".csv" maxSizeMB={25} />
+      <FileUpload onFileSelect={handleFileSelect} acceptedTypes=".csv" maxSizeMB={25} initialFile={file} />
 
       <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
         <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">

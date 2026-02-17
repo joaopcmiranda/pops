@@ -29,11 +29,13 @@ export function EntityCreateDialog({
   suggestedName = "",
 }: EntityCreateDialogProps) {
   const [name, setName] = useState(suggestedName);
+  const [touched, setTouched] = useState(false);
 
   // Sync name with suggestedName when dialog opens or suggestedName changes
   useEffect(() => {
     if (open) {
       setName(suggestedName);
+      setTouched(false);
     }
   }, [open, suggestedName]);
 
@@ -67,12 +69,18 @@ export function EntityCreateDialog({
         onOpenChange(newOpen);
         if (!newOpen) {
           setName("");
+          setTouched(false);
           createEntityMutation.reset();
         }
       }
     },
     [onOpenChange, createEntityMutation]
   );
+
+  const handleRetry = useCallback(() => {
+    createEntityMutation.reset();
+    createEntityMutation.mutate({ name: name.trim() });
+  }, [name, createEntityMutation]);
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -91,16 +99,29 @@ export function EntityCreateDialog({
               <Input
                 id="entity-name"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => { setName(e.target.value); setTouched(true); }}
+                onBlur={() => setTouched(true)}
                 placeholder="e.g., Woolworths"
                 disabled={createEntityMutation.isPending}
                 autoFocus
               />
+              {touched && !name.trim() && (
+                <p className="text-xs text-red-600 dark:text-red-400 mt-1">Name is required</p>
+              )}
             </div>
 
             {createEntityMutation.isError && (
               <div className="p-3 text-sm text-red-700 bg-red-100 dark:bg-red-900 dark:text-red-200 rounded-md">
-                {createEntityMutation.error.message}
+                <p>{createEntityMutation.error.message}</p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="mt-2"
+                  onClick={handleRetry}
+                >
+                  Retry
+                </Button>
               </div>
             )}
           </div>

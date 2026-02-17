@@ -5,6 +5,7 @@ interface FileUploadProps {
   onFileSelect: (file: File | null) => void;
   acceptedTypes?: string;
   maxSizeMB?: number;
+  initialFile?: File | null;
 }
 
 /**
@@ -14,10 +15,11 @@ export function FileUpload({
   onFileSelect,
   acceptedTypes = ".csv",
   maxSizeMB = 25,
+  initialFile = null,
 }: FileUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(initialFile);
 
   const maxSizeBytes = maxSizeMB * 1024 * 1024;
 
