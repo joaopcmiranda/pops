@@ -634,18 +634,16 @@ test.describe('Import Wizard - Bulk Operations', () => {
 
     await page.getByRole('tab', { name: /uncertain/i }).click();
 
-    // Verify "List" button active by default
     const listButton = page.getByRole('button', { name: /list/i });
-    await expect(listButton).toHaveAttribute('aria-pressed', 'true');
-
-    // Click "Grouped" button
     const groupedButton = page.getByRole('button', { name: /grouped/i });
-    await groupedButton.click();
 
-    // Verify TransactionGroup components shown
+    // Verify "Grouped" button active by default
+    await expect(groupedButton).toHaveAttribute('aria-pressed', 'true');
+
+    // Verify TransactionGroup components shown (already in grouped mode)
     await expect(page.getByTestId('transaction-group')).toBeVisible();
 
-    // Click "List" button again
+    // Click "List" button
     await listButton.click();
 
     // Verify individual cards shown
