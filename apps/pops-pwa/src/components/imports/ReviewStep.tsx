@@ -37,16 +37,21 @@ export function ReviewStep() {
     executeSessionId,
     nextStep,
     prevStep,
-    updateTransaction,
     findSimilar,
   } = useImportStore();
 
-  const [localTransactions, setLocalTransactions] = useState(processedTransactions);
+  const [localTransactions, setLocalTransactions] = useState(
+    processedTransactions
+  );
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState<ProcessedTransaction | null>(null);
-  const [pendingBulkTransactions, setPendingBulkTransactions] = useState<ProcessedTransaction[] | null>(null);
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<ProcessedTransaction | null>(null);
+  const [pendingBulkTransactions, setPendingBulkTransactions] = useState<
+    ProcessedTransaction[] | null
+  >(null);
   const [pollingEnabled, setPollingEnabled] = useState(false);
-  const [editingTransaction, setEditingTransaction] = useState<ProcessedTransaction | null>(null);
+  const [editingTransaction, setEditingTransaction] =
+    useState<ProcessedTransaction | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("grouped");
 
   const { data: entities } = trpc.entities.list.useQuery({});
@@ -78,7 +83,10 @@ export function ReviewStep() {
 
   // Handle completion
   useEffect(() => {
-    if (progressQuery.data?.status === "completed" && progressQuery.data.result) {
+    if (
+      progressQuery.data?.status === "completed" &&
+      progressQuery.data.result
+    ) {
       setPollingEnabled(false);
       // Type assertion with proper type checking
       const result = progressQuery.data.result as ExecuteImportOutput;
@@ -105,14 +113,22 @@ export function ReviewStep() {
    * Auto-match similar transactions
    */
   const handleAutoMatchSimilar = useCallback(
-    (transactions: ProcessedTransaction[], entityId: string, entityName: string) => {
+    (
+      transactions: ProcessedTransaction[],
+      entityId: string,
+      entityName: string
+    ) => {
       setLocalTransactions((prev) => {
         let updated = { ...prev };
         for (const transaction of transactions) {
           updated = {
             ...updated,
-            uncertain: updated.uncertain.filter((t: ProcessedTransaction) => t !== transaction),
-            failed: updated.failed.filter((t: ProcessedTransaction) => t !== transaction),
+            uncertain: updated.uncertain.filter(
+              (t: ProcessedTransaction) => t !== transaction
+            ),
+            failed: updated.failed.filter(
+              (t: ProcessedTransaction) => t !== transaction
+            ),
             matched: [
               ...updated.matched,
               {
@@ -131,7 +147,9 @@ export function ReviewStep() {
         }
         return updated;
       });
-      toast.success(`Applied entity to ${transactions.length} transaction${transactions.length !== 1 ? "s" : ""}`);
+      toast.success(
+        `Applied entity to ${transactions.length} transaction${transactions.length !== 1 ? "s" : ""}`
+      );
     },
     []
   );
@@ -140,15 +158,23 @@ export function ReviewStep() {
    * Handle entity selection with auto-matching for similar transactions
    */
   const handleEntitySelect = useCallback(
-    (transaction: ProcessedTransaction, entityId: string, entityName: string) => {
+    (
+      transaction: ProcessedTransaction,
+      entityId: string,
+      entityName: string
+    ) => {
       // Find similar transactions before updating
       const similar = findSimilar(transaction);
 
       // Move transaction from uncertain/failed to matched (functional setState avoids stale closure)
       setLocalTransactions((prev) => ({
         ...prev,
-        uncertain: prev.uncertain.filter((t: ProcessedTransaction) => t !== transaction),
-        failed: prev.failed.filter((t: ProcessedTransaction) => t !== transaction),
+        uncertain: prev.uncertain.filter(
+          (t: ProcessedTransaction) => t !== transaction
+        ),
+        failed: prev.failed.filter(
+          (t: ProcessedTransaction) => t !== transaction
+        ),
         matched: [
           ...prev.matched,
           {
@@ -167,24 +193,31 @@ export function ReviewStep() {
 
       // Show toast with option to apply to similar transactions
       if (similar.length > 0) {
-        toast.info(`Found ${similar.length} similar transaction${similar.length !== 1 ? "s" : ""}`, {
-          description: "Would you like to apply this entity to all similar transactions?",
-          action: {
-            label: "Apply to All",
-            onClick: () => {
-              handleAutoMatchSimilar(similar, entityId, entityName);
+        toast.info(
+          `Found ${similar.length} similar transaction${similar.length !== 1 ? "s" : ""}`,
+          {
+            description:
+              "Would you like to apply this entity to all similar transactions?",
+            action: {
+              label: "Apply to All",
+              onClick: () => {
+                handleAutoMatchSimilar(similar, entityId, entityName);
+              },
             },
-          },
-        });
+          }
+        );
       }
     },
     [findSimilar, handleAutoMatchSimilar]
   );
 
-  const handleCreateEntity = useCallback((transaction: ProcessedTransaction) => {
-    setSelectedTransaction(transaction);
-    setShowCreateDialog(true);
-  }, []);
+  const handleCreateEntity = useCallback(
+    (transaction: ProcessedTransaction) => {
+      setSelectedTransaction(transaction);
+      setShowCreateDialog(true);
+    },
+    []
+  );
 
   /**
    * Accept AI suggestion for a single transaction
@@ -197,7 +230,9 @@ export function ReviewStep() {
       let entityId = transaction.entity.entityId;
       if (!entityId && entities?.data) {
         const matchingEntity = entities.data.find(
-          (e) => e.name.toLowerCase() === transaction.entity?.entityName?.toLowerCase()
+          (e) =>
+            e.name.toLowerCase() ===
+            transaction.entity?.entityName?.toLowerCase()
         );
         if (matchingEntity) {
           entityId = matchingEntity.notionId;
@@ -210,11 +245,7 @@ export function ReviewStep() {
         return;
       }
 
-      handleEntitySelect(
-        transaction,
-        entityId,
-        transaction.entity.entityName
-      );
+      handleEntitySelect(transaction, entityId, transaction.entity.entityName);
     },
     [handleEntitySelect, entities, handleCreateEntity]
   );
@@ -240,7 +271,9 @@ export function ReviewStep() {
 
         // Create entity if it doesn't exist
         if (!entityId) {
-          const result = await createEntityMutation.mutateAsync({ name: entityName });
+          const result = await createEntityMutation.mutateAsync({
+            name: entityName,
+          });
           entityId = result.data.notionId;
         }
 
@@ -252,8 +285,12 @@ export function ReviewStep() {
           for (const transaction of transactions) {
             updated = {
               ...updated,
-              uncertain: updated.uncertain.filter((t: ProcessedTransaction) => t !== transaction),
-              failed: updated.failed.filter((t: ProcessedTransaction) => t !== transaction),
+              uncertain: updated.uncertain.filter(
+                (t: ProcessedTransaction) => t !== transaction
+              ),
+              failed: updated.failed.filter(
+                (t: ProcessedTransaction) => t !== transaction
+              ),
               matched: [
                 ...updated.matched,
                 {
@@ -272,9 +309,13 @@ export function ReviewStep() {
           }
           return updated;
         });
-        toast.success(`Accepted ${transactions.length} transaction${transactions.length !== 1 ? "s" : ""}`);
+        toast.success(
+          `Accepted ${transactions.length} transaction${transactions.length !== 1 ? "s" : ""}`
+        );
       } catch (error) {
-        toast.error(`Failed to accept: ${error instanceof Error ? error.message : "Unknown error"}`);
+        toast.error(
+          `Failed to accept: ${error instanceof Error ? error.message : "Unknown error"}`
+        );
       }
     },
     [entities, createEntityMutation]
@@ -284,7 +325,7 @@ export function ReviewStep() {
    * Open dialog to create entity and assign to all transactions in group
    */
   const handleCreateAndAssignAll = useCallback(
-    (transactions: ProcessedTransaction[], entityName: string) => {
+    (transactions: ProcessedTransaction[], _entityName: string) => {
       // Store transactions for bulk assignment after creation
       setPendingBulkTransactions(transactions);
       // Use first transaction as the "selected" one to get the suggested name
@@ -304,8 +345,12 @@ export function ReviewStep() {
           for (const transaction of pendingBulkTransactions) {
             updated = {
               ...updated,
-              uncertain: updated.uncertain.filter((t: ProcessedTransaction) => t !== transaction),
-              failed: updated.failed.filter((t: ProcessedTransaction) => t !== transaction),
+              uncertain: updated.uncertain.filter(
+                (t: ProcessedTransaction) => t !== transaction
+              ),
+              failed: updated.failed.filter(
+                (t: ProcessedTransaction) => t !== transaction
+              ),
               matched: [
                 ...updated.matched,
                 {
@@ -326,10 +371,16 @@ export function ReviewStep() {
         });
         setPendingBulkTransactions(null);
         setSelectedTransaction(null);
-        toast.success(`Created "${entity.entityName}" and assigned to ${bulkCount} transaction${bulkCount !== 1 ? "s" : ""}`);
+        toast.success(
+          `Created "${entity.entityName}" and assigned to ${bulkCount} transaction${bulkCount !== 1 ? "s" : ""}`
+        );
       } else if (selectedTransaction) {
         // Handle single transaction assignment
-        handleEntitySelect(selectedTransaction, entity.entityId, entity.entityName);
+        handleEntitySelect(
+          selectedTransaction,
+          entity.entityId,
+          entity.entityName
+        );
         setSelectedTransaction(null);
       }
     },
@@ -340,13 +391,23 @@ export function ReviewStep() {
     setEditingTransaction(transaction);
   }, []);
 
-  const createCorrectionMutation = trpc.corrections.createOrUpdate.useMutation();
+  const createCorrectionMutation =
+    trpc.corrections.createOrUpdate.useMutation();
 
   const handleSaveEdit = useCallback(
-    (transaction: ProcessedTransaction, editedFields: Partial<ProcessedTransaction>, shouldLearn: boolean = false) => {
-      const updatedTx: ProcessedTransaction = { ...transaction, ...editedFields, manuallyEdited: true };
+    (
+      transaction: ProcessedTransaction,
+      editedFields: Partial<ProcessedTransaction>,
+      shouldLearn: boolean = false
+    ) => {
+      const updatedTx: ProcessedTransaction = {
+        ...transaction,
+        ...editedFields,
+        manuallyEdited: true,
+      };
       const isNoEntityType =
-        updatedTx.transactionType === "transfer" || updatedTx.transactionType === "income";
+        updatedTx.transactionType === "transfer" ||
+        updatedTx.transactionType === "income";
 
       setLocalTransactions((prev) => {
         // Transfers and income don't need an entity — promote them straight to matched.
@@ -354,7 +415,11 @@ export function ReviewStep() {
           return {
             ...prev,
             matched: prev.matched.some((t) => t === transaction)
-              ? prev.matched.map((t) => (t === transaction ? { ...updatedTx, status: "matched" as const } : t))
+              ? prev.matched.map((t) =>
+                  t === transaction
+                    ? { ...updatedTx, status: "matched" as const }
+                    : t
+                )
               : [...prev.matched, { ...updatedTx, status: "matched" as const }],
             uncertain: prev.uncertain.filter((t) => t !== transaction),
             failed: prev.failed.filter((t) => t !== transaction),
@@ -365,16 +430,24 @@ export function ReviewStep() {
         return {
           ...prev,
           matched: prev.matched.map((t: ProcessedTransaction) =>
-            t === transaction ? { ...t, ...editedFields, manuallyEdited: true } : t
+            t === transaction
+              ? { ...t, ...editedFields, manuallyEdited: true }
+              : t
           ),
           uncertain: prev.uncertain.map((t: ProcessedTransaction) =>
-            t === transaction ? { ...t, ...editedFields, manuallyEdited: true } : t
+            t === transaction
+              ? { ...t, ...editedFields, manuallyEdited: true }
+              : t
           ),
           failed: prev.failed.map((t: ProcessedTransaction) =>
-            t === transaction ? { ...t, ...editedFields, manuallyEdited: true } : t
+            t === transaction
+              ? { ...t, ...editedFields, manuallyEdited: true }
+              : t
           ),
           skipped: prev.skipped.map((t: ProcessedTransaction) =>
-            t === transaction ? { ...t, ...editedFields, manuallyEdited: true } : t
+            t === transaction
+              ? { ...t, ...editedFields, manuallyEdited: true }
+              : t
           ),
         };
       });
@@ -393,8 +466,10 @@ export function ReviewStep() {
         createCorrectionMutation.mutate({
           descriptionPattern: transaction.description,
           matchType: "exact",
-          entityId: editedFields.entity?.entityId ?? transaction.entity?.entityId,
-          entityName: editedFields.entity?.entityName ?? transaction.entity?.entityName,
+          entityId:
+            editedFields.entity?.entityId ?? transaction.entity?.entityId,
+          entityName:
+            editedFields.entity?.entityName ?? transaction.entity?.entityName,
           location: editedFields.location ?? transaction.location,
           online: editedFields.online ?? transaction.online,
         });
@@ -402,15 +477,19 @@ export function ReviewStep() {
       } else if (hasChanges && !shouldLearn) {
         // Show toast asking if they want to learn
         toast.info("Apply this correction to future imports?", {
-          description: "This will help auto-match similar transactions next time.",
+          description:
+            "This will help auto-match similar transactions next time.",
           action: {
             label: "Learn Pattern",
             onClick: () => {
               createCorrectionMutation.mutate({
                 descriptionPattern: transaction.description,
                 matchType: "exact",
-                entityId: editedFields.entity?.entityId ?? transaction.entity?.entityId,
-                entityName: editedFields.entity?.entityName ?? transaction.entity?.entityName,
+                entityId:
+                  editedFields.entity?.entityId ?? transaction.entity?.entityId,
+                entityName:
+                  editedFields.entity?.entityName ??
+                  transaction.entity?.entityName,
                 location: editedFields.location ?? transaction.location,
                 online: editedFields.online ?? transaction.online,
               });
@@ -433,7 +512,8 @@ export function ReviewStep() {
   const handleImport = useCallback(() => {
     const confirmed: ConfirmedTransaction[] = localTransactions.matched
       .filter((t: ProcessedTransaction) => {
-        const isNoEntityType = t.transactionType === "transfer" || t.transactionType === "income";
+        const isNoEntityType =
+          t.transactionType === "transfer" || t.transactionType === "income";
         return isNoEntityType || (t.entity?.entityId && t.entity?.entityName);
       })
       .map((t: ProcessedTransaction) => ({
@@ -481,58 +561,66 @@ export function ReviewStep() {
       </div>
 
       {/* Show warnings if present */}
-      {processedTransactions.warnings && processedTransactions.warnings.length > 0 && (
-        <div className="space-y-2">
-          {processedTransactions.warnings.map((warning, idx: number) => {
-            const isNotionError =
-              warning.type === "NOTION_DATABASE_NOT_FOUND" || warning.type === "NOTION_API_ERROR";
-            const isAiError =
-              warning.type === "AI_CATEGORIZATION_UNAVAILABLE" || warning.type === "AI_API_ERROR";
+      {processedTransactions.warnings &&
+        processedTransactions.warnings.length > 0 && (
+          <div className="space-y-2">
+            {processedTransactions.warnings.map((warning, idx: number) => {
+              const isNotionError =
+                warning.type === "NOTION_DATABASE_NOT_FOUND" ||
+                warning.type === "NOTION_API_ERROR";
+              const isAiError =
+                warning.type === "AI_CATEGORIZATION_UNAVAILABLE" ||
+                warning.type === "AI_API_ERROR";
 
-            return (
-              <div
-                key={idx}
-                className={`p-4 text-sm rounded-lg border ${
-                  isNotionError
-                    ? "text-red-800 bg-red-50 dark:bg-red-900/20 dark:text-red-200 border-red-200 dark:border-red-800"
-                    : "text-amber-800 bg-amber-50 dark:bg-amber-900/20 dark:text-amber-200 border-amber-200 dark:border-amber-800"
-                }`}
-              >
-                <div className="flex items-start gap-3">
-                  <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                  <div className="flex-1 space-y-1">
-                    <p className="font-medium">
-                      {warning.type === "NOTION_DATABASE_NOT_FOUND"
-                        ? "Notion Database Not Found"
-                        : warning.type === "NOTION_API_ERROR"
-                          ? "Notion API Error"
-                          : warning.type === "AI_CATEGORIZATION_UNAVAILABLE"
-                            ? "AI Categorization Unavailable"
-                            : "AI API Error"}
-                    </p>
-                    <p className="text-xs">{warning.message}</p>
-                    {warning.details && (
-                      <p className="text-xs opacity-70 font-mono">{warning.details}</p>
-                    )}
-                    {isAiError && warning.affectedCount && (
-                      <p className="text-xs opacity-80">
-                        {warning.affectedCount} transaction{warning.affectedCount !== 1 ? "s" : ""} could not be
-                        automatically categorized and may appear in the Uncertain or Failed tabs.
+              return (
+                <div
+                  key={idx}
+                  className={`p-4 text-sm rounded-lg border ${
+                    isNotionError
+                      ? "text-red-800 bg-red-50 dark:bg-red-900/20 dark:text-red-200 border-red-200 dark:border-red-800"
+                      : "text-amber-800 bg-amber-50 dark:bg-amber-900/20 dark:text-amber-200 border-amber-200 dark:border-amber-800"
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1 space-y-1">
+                      <p className="font-medium">
+                        {warning.type === "NOTION_DATABASE_NOT_FOUND"
+                          ? "Notion Database Not Found"
+                          : warning.type === "NOTION_API_ERROR"
+                            ? "Notion API Error"
+                            : warning.type === "AI_CATEGORIZATION_UNAVAILABLE"
+                              ? "AI Categorization Unavailable"
+                              : "AI API Error"}
                       </p>
-                    )}
-                    {isNotionError && (
-                      <p className="text-xs opacity-80 mt-2">
-                        Check your .env file and ensure NOTION_BALANCE_SHEET_ID is correct and the database is
-                        shared with your Notion integration.
-                      </p>
-                    )}
+                      <p className="text-xs">{warning.message}</p>
+                      {warning.details && (
+                        <p className="text-xs opacity-70 font-mono">
+                          {warning.details}
+                        </p>
+                      )}
+                      {isAiError && warning.affectedCount && (
+                        <p className="text-xs opacity-80">
+                          {warning.affectedCount} transaction
+                          {warning.affectedCount !== 1 ? "s" : ""} could not be
+                          automatically categorized and may appear in the
+                          Uncertain or Failed tabs.
+                        </p>
+                      )}
+                      {isNotionError && (
+                        <p className="text-xs opacity-80 mt-2">
+                          Check your .env file and ensure
+                          NOTION_BALANCE_SHEET_ID is correct and the database is
+                          shared with your Notion integration.
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        )}
 
       <Tabs defaultValue="matched" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
@@ -612,7 +700,10 @@ export function ReviewStep() {
 
       {/* Write progress overlay */}
       {isWriting && progress && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" data-testid="import-progress-overlay">
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          data-testid="import-progress-overlay"
+        >
           <div className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md w-full mx-4 space-y-4">
             <div className="flex items-center gap-3">
               <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
@@ -620,14 +711,20 @@ export function ReviewStep() {
             </div>
 
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Writing {progress.processedCount}/{progress.totalTransactions} transactions...
+              Writing {progress.processedCount}/{progress.totalTransactions}{" "}
+              transactions...
             </p>
 
             {/* Progress bar */}
             <div className="w-full">
               <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
                 <span>Progress</span>
-                <span>{Math.round((progress.processedCount / progress.totalTransactions) * 100)}%</span>
+                <span>
+                  {Math.round(
+                    (progress.processedCount / progress.totalTransactions) * 100
+                  )}
+                  %
+                </span>
               </div>
               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div
@@ -642,13 +739,24 @@ export function ReviewStep() {
             {/* Current batch */}
             {progress.currentBatch.length > 0 && (
               <div>
-                <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Currently writing:</p>
+                <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Currently writing:
+                </p>
                 <div className="space-y-1 max-h-32 overflow-y-auto">
                   {progress.currentBatch.map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
-                      {item.status === "processing" && <Loader2 className="w-3 h-3 animate-spin" />}
-                      {item.status === "success" && <CheckCircle className="w-3 h-3 text-green-500" />}
-                      {item.status === "failed" && <XCircle className="w-3 h-3 text-red-500" />}
+                    <div
+                      key={idx}
+                      className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400"
+                    >
+                      {item.status === "processing" && (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      )}
+                      {item.status === "success" && (
+                        <CheckCircle className="w-3 h-3 text-green-500" />
+                      )}
+                      {item.status === "failed" && (
+                        <XCircle className="w-3 h-3 text-red-500" />
+                      )}
                       <span className="truncate">{item.description}</span>
                     </div>
                   ))}
@@ -659,14 +767,18 @@ export function ReviewStep() {
             {/* Errors */}
             {progress.errors && progress.errors.length > 0 && (
               <div className="p-3 text-sm text-amber-800 bg-amber-50 dark:bg-amber-900/20 dark:text-amber-200 rounded-lg border border-amber-200 dark:border-amber-800">
-                <p className="font-medium text-xs mb-1">{progress.errors.length} errors occurred</p>
+                <p className="font-medium text-xs mb-1">
+                  {progress.errors.length} errors occurred
+                </p>
                 <div className="space-y-0.5 max-h-20 overflow-y-auto text-xs">
                   {progress.errors.slice(0, 3).map((error, idx) => (
                     <p key={idx}>
                       • {error.description}: {error.error}
                     </p>
                   ))}
-                  {progress.errors.length > 3 && <p>...and {progress.errors.length - 3} more</p>}
+                  {progress.errors.length > 3 && (
+                    <p>...and {progress.errors.length - 3} more</p>
+                  )}
                 </div>
               </div>
             )}
@@ -675,7 +787,11 @@ export function ReviewStep() {
       )}
 
       <div className="flex justify-between gap-3 items-center">
-        <Button variant="outline" onClick={prevStep} disabled={executeImportMutation.isPending || isWriting}>
+        <Button
+          variant="outline"
+          onClick={prevStep}
+          disabled={executeImportMutation.isPending || isWriting}
+        >
           Back
         </Button>
         <div className="flex flex-col items-end gap-1">
@@ -684,7 +800,14 @@ export function ReviewStep() {
               Resolve all uncertain/failed transactions to import
             </p>
           )}
-          <Button onClick={handleImport} disabled={unresolvedCount > 0 || executeImportMutation.isPending || isWriting}>
+          <Button
+            onClick={handleImport}
+            disabled={
+              unresolvedCount > 0 ||
+              executeImportMutation.isPending ||
+              isWriting
+            }
+          >
             {isWriting
               ? `Writing ${progress?.processedCount}/${progress?.totalTransactions}...`
               : executeImportMutation.isPending
@@ -742,15 +865,26 @@ function MatchedTab({
 }: {
   transactions: ProcessedTransaction[];
   onEdit: (t: ProcessedTransaction) => void;
-  onEntitySelect: (t: ProcessedTransaction, entityId: string, entityName: string) => void;
+  onEntitySelect: (
+    t: ProcessedTransaction,
+    entityId: string,
+    entityName: string
+  ) => void;
   onCreateEntity: (t: ProcessedTransaction) => void;
   editingTransaction: ProcessedTransaction | null;
-  onSaveEdit: (t: ProcessedTransaction, edited: Partial<ProcessedTransaction>) => void;
+  onSaveEdit: (
+    t: ProcessedTransaction,
+    edited: Partial<ProcessedTransaction>
+  ) => void;
   onCancelEdit: () => void;
   entities?: Array<{ notionId: string; name: string }>;
 }) {
   if (transactions.length === 0) {
-    return <div className="text-center py-12 text-gray-500">No matched transactions</div>;
+    return (
+      <div className="text-center py-12 text-gray-500">
+        No matched transactions
+      </div>
+    );
   }
 
   return (
@@ -805,19 +939,33 @@ function UncertainTab({
   groups: ReturnType<typeof groupTransactionsByEntity>;
   viewMode: ViewMode;
   onViewModeChange: (mode: ViewMode) => void;
-  onEntitySelect: (t: ProcessedTransaction, entityId: string, entityName: string) => void;
+  onEntitySelect: (
+    t: ProcessedTransaction,
+    entityId: string,
+    entityName: string
+  ) => void;
   onCreateEntity: (t: ProcessedTransaction) => void;
   onAcceptAiSuggestion: (t: ProcessedTransaction) => void;
   onAcceptAll: (transactions: ProcessedTransaction[]) => void;
-  onCreateAndAssignAll: (transactions: ProcessedTransaction[], entityName: string) => void;
+  onCreateAndAssignAll: (
+    transactions: ProcessedTransaction[],
+    entityName: string
+  ) => void;
   onEdit: (t: ProcessedTransaction) => void;
   editingTransaction: ProcessedTransaction | null;
-  onSaveEdit: (t: ProcessedTransaction, edited: Partial<ProcessedTransaction>) => void;
+  onSaveEdit: (
+    t: ProcessedTransaction,
+    edited: Partial<ProcessedTransaction>
+  ) => void;
   onCancelEdit: () => void;
   entities?: Array<{ notionId: string; name: string }>;
 }) {
   if (transactions.length === 0) {
-    return <div className="text-center py-12 text-gray-500">No uncertain transactions</div>;
+    return (
+      <div className="text-center py-12 text-gray-500">
+        No uncertain transactions
+      </div>
+    );
   }
 
   return (
@@ -919,19 +1067,33 @@ function FailedTab({
   groups: ReturnType<typeof groupTransactionsByEntity>;
   viewMode: ViewMode;
   onViewModeChange: (mode: ViewMode) => void;
-  onEntitySelect: (t: ProcessedTransaction, entityId: string, entityName: string) => void;
+  onEntitySelect: (
+    t: ProcessedTransaction,
+    entityId: string,
+    entityName: string
+  ) => void;
   onCreateEntity: (t: ProcessedTransaction) => void;
   onAcceptAiSuggestion: (t: ProcessedTransaction) => void;
   onAcceptAll: (transactions: ProcessedTransaction[]) => void;
-  onCreateAndAssignAll: (transactions: ProcessedTransaction[], entityName: string) => void;
+  onCreateAndAssignAll: (
+    transactions: ProcessedTransaction[],
+    entityName: string
+  ) => void;
   onEdit: (t: ProcessedTransaction) => void;
   editingTransaction: ProcessedTransaction | null;
-  onSaveEdit: (t: ProcessedTransaction, edited: Partial<ProcessedTransaction>) => void;
+  onSaveEdit: (
+    t: ProcessedTransaction,
+    edited: Partial<ProcessedTransaction>
+  ) => void;
   onCancelEdit: () => void;
   entities?: Array<{ notionId: string; name: string }>;
 }) {
   if (transactions.length === 0) {
-    return <div className="text-center py-12 text-gray-500">No failed transactions</div>;
+    return (
+      <div className="text-center py-12 text-gray-500">
+        No failed transactions
+      </div>
+    );
   }
 
   return (
@@ -1013,9 +1175,17 @@ function FailedTab({
 /**
  * Skipped tab - read-only list
  */
-function SkippedTab({ transactions }: { transactions: ProcessedTransaction[] }) {
+function SkippedTab({
+  transactions,
+}: {
+  transactions: ProcessedTransaction[];
+}) {
   if (transactions.length === 0) {
-    return <div className="text-center py-12 text-gray-500">No skipped transactions</div>;
+    return (
+      <div className="text-center py-12 text-gray-500">
+        No skipped transactions
+      </div>
+    );
   }
 
   return (
@@ -1036,7 +1206,9 @@ function SkippedTab({ transactions }: { transactions: ProcessedTransaction[] }) 
                 <td className="px-4 py-2">{t.date}</td>
                 <td className="px-4 py-2">{t.description}</td>
                 <td className="px-4 py-2">${Math.abs(t.amount).toFixed(2)}</td>
-                <td className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400">{t.skipReason}</td>
+                <td className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400">
+                  {t.skipReason}
+                </td>
               </tr>
             ))}
           </tbody>

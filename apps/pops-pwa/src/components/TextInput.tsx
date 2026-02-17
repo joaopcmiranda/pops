@@ -16,12 +16,9 @@ const containerVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "border border-border",
-        ghost:
-          "border-0 hover:bg-accent",
-        underline:
-          "border-0 border-b border-border",
+        default: "border border-border",
+        ghost: "border-0 hover:bg-accent",
+        underline: "border-0 border-b border-border",
       },
       size: {
         sm: "h-9 px-3 py-1 text-xs",
@@ -70,7 +67,8 @@ const inputVariants = cva(
 );
 
 export interface TextInputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "prefix">,
+  extends
+    Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "prefix">,
     VariantProps<typeof containerVariants> {
   /**
    * Icon or content to display before the input
@@ -184,14 +182,12 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
         style={isFocused ? { borderColor: "rgb(55, 65, 81)" } : undefined}
       >
         {prefix && (
-          <span className="flex-shrink-0 text-muted-foreground">
-            {prefix}
-          </span>
+          <span className="flex-shrink-0 text-muted-foreground">{prefix}</span>
         )}
         <input
           ref={ref}
           className={cn(inputVariants({ size, centered, className }))}
-          style={{ outline: 'none', boxShadow: 'none' }}
+          style={{ outline: "none", boxShadow: "none" }}
           value={value}
           onChange={handleChange}
           onFocus={handleFocus}
@@ -211,9 +207,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
           </button>
         )}
         {suffix && !showClearButton && (
-          <span className="flex-shrink-0 text-muted-foreground">
-            {suffix}
-          </span>
+          <span className="flex-shrink-0 text-muted-foreground">{suffix}</span>
         )}
       </div>
     );

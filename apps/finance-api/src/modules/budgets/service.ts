@@ -108,15 +108,14 @@ export async function createBudget(input: CreateBudgetInput): Promise<BudgetRow>
       Period: input.period
         ? { rich_text: [{ text: { content: input.period } }] }
         : { rich_text: [] },
-      Amount: input.amount !== undefined && input.amount !== null
-        ? { number: input.amount }
-        : { number: null },
+      Amount:
+        input.amount !== undefined && input.amount !== null
+          ? { number: input.amount }
+          : { number: null },
       Active: {
         checkbox: input.active ?? false,
       },
-      Notes: input.notes
-        ? { rich_text: [{ text: { content: input.notes } }] }
-        : { rich_text: [] },
+      Notes: input.notes ? { rich_text: [{ text: { content: input.notes } }] } : { rich_text: [] },
     },
   });
 
@@ -170,9 +169,7 @@ export async function updateBudget(id: string, input: UpdateBudgetInput): Promis
       : { rich_text: [] };
   }
   if (input.amount !== undefined) {
-    properties.Amount = input.amount !== null
-      ? { number: input.amount }
-      : { number: null };
+    properties.Amount = input.amount !== null ? { number: input.amount } : { number: null };
   }
   if (input.active !== undefined) {
     properties.Active = {

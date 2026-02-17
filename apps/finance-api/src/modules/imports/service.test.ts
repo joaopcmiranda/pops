@@ -11,6 +11,9 @@ import { clearCache } from "./lib/ai-categorizer.js";
  * ALL tests are 100% offline - zero actual API calls.
  */
 
+/** Shape of a row returned from the entities SQLite table. */
+type EntityRow = { name: string; notion_id: string; last_edited_time: string };
+
 // Mock Notion client
 const mockNotionQuery = vi.fn();
 const mockNotionCreate = vi.fn();
@@ -84,7 +87,7 @@ describe("processImport", () => {
   const baseParsedTransaction: ParsedTransaction = {
     date: "2026-02-13",
     description: "WOOLWORTHS 1234",
-    amount: -125.50,
+    amount: -125.5,
     account: "Amex",
     location: "North Sydney",
     online: false,
@@ -421,7 +424,7 @@ describe("executeImport", () => {
   const baseConfirmedTransaction: ConfirmedTransaction = {
     date: "2026-02-13",
     description: "WOOLWORTHS 1234",
-    amount: -125.50,
+    amount: -125.5,
     account: "Amex",
     location: "North Sydney",
     online: false,
@@ -524,7 +527,7 @@ describe("executeImport", () => {
         properties: expect.objectContaining({
           Description: { title: [{ text: { content: "WOOLWORTHS 1234" } }] },
           Account: { select: { name: "Amex" } },
-          Amount: { number: -125.50 },
+          Amount: { number: -125.5 },
           Date: { date: { start: "2026-02-13" } },
           Online: { checkbox: false },
           Checksum: { rich_text: [{ text: { content: "abc123" } }] },
@@ -605,7 +608,9 @@ describe("createEntity", () => {
     });
 
     // Verify SQLite insert
-    const row = db.prepare("SELECT * FROM entities WHERE notion_id = ?").get("new-entity-id-1234") as any;
+    const row = db
+      .prepare("SELECT * FROM entities WHERE notion_id = ?")
+      .get("new-entity-id-1234") as EntityRow;
     expect(row.name).toBe("New Entity");
   });
 
@@ -644,7 +649,7 @@ describe("createEntity", () => {
 
     const rows = db.prepare("SELECT * FROM entities WHERE notion_id = ?").all("entity-id-123");
     expect(rows).toHaveLength(1);
-    expect((rows[0] as any).name).toBe("Test Entity Updated");
+    expect((rows[0] as EntityRow).name).toBe("Test Entity Updated");
   });
 
   it("sets current timestamp for last_edited_time", async () => {
@@ -654,7 +659,9 @@ describe("createEntity", () => {
     await createEntity("Test Entity");
     const after = new Date().toISOString();
 
-    const row = db.prepare("SELECT last_edited_time FROM entities WHERE notion_id = ?").get("entity-id") as any;
+    const row = db
+      .prepare("SELECT last_edited_time FROM entities WHERE notion_id = ?")
+      .get("entity-id") as EntityRow;
     expect(row.last_edited_time >= before).toBe(true);
     expect(row.last_edited_time <= after).toBe(true);
   });

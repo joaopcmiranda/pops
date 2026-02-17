@@ -28,31 +28,29 @@ export const importsRouter = router({
    * Returns session ID immediately, processing happens in background.
    * Use getImportProgress to poll for results.
    */
-  processImport: protectedProcedure
-    .input(processImportInputSchema)
-    .mutation(async ({ input }) => {
-      const sessionId = crypto.randomUUID();
+  processImport: protectedProcedure.input(processImportInputSchema).mutation(({ input }) => {
+    const sessionId = crypto.randomUUID();
 
-      // Initialize progress
-      setProgress(sessionId, {
-        sessionId,
-        status: "processing",
-        currentStep: "deduplicating",
-        totalTransactions: input.transactions.length,
-        processedCount: 0,
-        currentBatch: [],
-        errors: [],
-        startedAt: new Date().toISOString(),
-      });
+    // Initialize progress
+    setProgress(sessionId, {
+      sessionId,
+      status: "processing",
+      currentStep: "deduplicating",
+      totalTransactions: input.transactions.length,
+      processedCount: 0,
+      currentBatch: [],
+      errors: [],
+      startedAt: new Date().toISOString(),
+    });
 
-      // Process in background (don't await)
-      processImportWithProgress(sessionId, input.transactions, input.account).catch((error) => {
-        console.error("[Import] Background processing failed:", error);
-      });
+    // Process in background (don't await)
+    processImportWithProgress(sessionId, input.transactions, input.account).catch((error) => {
+      console.error("[Import] Background processing failed:", error);
+    });
 
-      // Return session ID immediately
-      return { sessionId };
-    }),
+    // Return session ID immediately
+    return { sessionId };
+  }),
 
   /**
    * Execute import: write confirmed transactions to Notion
@@ -60,31 +58,29 @@ export const importsRouter = router({
    * Returns session ID immediately, writing happens in background.
    * Use getImportProgress to poll for results.
    */
-  executeImport: protectedProcedure
-    .input(executeImportInputSchema)
-    .mutation(async ({ input }) => {
-      const sessionId = crypto.randomUUID();
+  executeImport: protectedProcedure.input(executeImportInputSchema).mutation(({ input }) => {
+    const sessionId = crypto.randomUUID();
 
-      // Initialize progress
-      setProgress(sessionId, {
-        sessionId,
-        status: "processing",
-        currentStep: "writing",
-        totalTransactions: input.transactions.length,
-        processedCount: 0,
-        currentBatch: [],
-        errors: [],
-        startedAt: new Date().toISOString(),
-      });
+    // Initialize progress
+    setProgress(sessionId, {
+      sessionId,
+      status: "processing",
+      currentStep: "writing",
+      totalTransactions: input.transactions.length,
+      processedCount: 0,
+      currentBatch: [],
+      errors: [],
+      startedAt: new Date().toISOString(),
+    });
 
-      // Execute in background (don't await)
-      executeImportWithProgress(sessionId, input.transactions).catch((error) => {
-        console.error("[Import] Background execution failed:", error);
-      });
+    // Execute in background (don't await)
+    executeImportWithProgress(sessionId, input.transactions).catch((error) => {
+      console.error("[Import] Background execution failed:", error);
+    });
 
-      // Return session ID immediately
-      return { sessionId };
-    }),
+    // Return session ID immediately
+    return { sessionId };
+  }),
 
   /**
    * Get import progress by session ID.

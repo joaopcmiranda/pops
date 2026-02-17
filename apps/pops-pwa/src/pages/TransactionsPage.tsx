@@ -34,7 +34,9 @@ export function TransactionsPage() {
   const columns: ColumnDef<Transaction>[] = [
     {
       accessorKey: "date",
-      header: ({ column }) => <SortableHeader column={column}>Date</SortableHeader>,
+      header: ({ column }) => (
+        <SortableHeader column={column}>Date</SortableHeader>
+      ),
       cell: ({ row }) => {
         const date = new Date(row.original.date);
         return date.toLocaleDateString("en-AU", {
@@ -77,9 +79,14 @@ export function TransactionsPage() {
         const isNegative = amount < 0;
         return (
           <div className="text-right font-mono font-medium tabular-nums">
-            <span className={isNegative ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"}>
-              {isNegative ? "-" : "+"}$
-              {Math.abs(amount).toFixed(2)}
+            <span
+              className={
+                isNegative
+                  ? "text-red-600 dark:text-red-400"
+                  : "text-green-600 dark:text-green-400"
+              }
+            >
+              {isNegative ? "-" : "+"}${Math.abs(amount).toFixed(2)}
             </span>
           </div>
         );
@@ -118,7 +125,9 @@ export function TransactionsPage() {
         );
       },
       filterFn: (row, columnId, filterValue) => {
-        const searchTerm = String(filterValue ?? "").toLowerCase().trim();
+        const searchTerm = String(filterValue ?? "")
+          .toLowerCase()
+          .trim();
         if (!searchTerm) {
           return true;
         }
@@ -174,10 +183,7 @@ export function TransactionsPage() {
         <Alert variant="destructive">
           <p className="font-semibold">Failed to load transactions</p>
           <p className="text-sm">{error.message}</p>
-          <button
-            onClick={() => refetch()}
-            className="mt-2 text-sm underline"
-          >
+          <button onClick={() => refetch()} className="mt-2 text-sm underline">
             Try again
           </button>
         </Alert>

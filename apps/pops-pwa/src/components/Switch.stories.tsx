@@ -309,7 +309,9 @@ export const InForm: Story = {
           </div>
 
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Subscribe to newsletter</label>
+            <label className="text-sm font-medium">
+              Subscribe to newsletter
+            </label>
             <Switch
               checked={formData.subscribe}
               onCheckedChange={(checked) =>
@@ -319,7 +321,9 @@ export const InForm: Story = {
           </div>
 
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Accept terms & conditions</label>
+            <label className="text-sm font-medium">
+              Accept terms & conditions
+            </label>
             <Switch
               checked={formData.terms}
               onCheckedChange={(checked) =>

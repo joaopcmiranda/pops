@@ -61,7 +61,8 @@ export function getStats(): AiUsageStatsOutput {
     totalCost,
     totalApiCalls,
     totalCacheHits,
-    cacheHitRate: totalApiCalls + totalCacheHits > 0 ? totalCacheHits / (totalApiCalls + totalCacheHits) : 0,
+    cacheHitRate:
+      totalApiCalls + totalCacheHits > 0 ? totalCacheHits / (totalApiCalls + totalCacheHits) : 0,
     avgCostPerCall: totalApiCalls > 0 ? totalCost / totalApiCalls : 0,
     totalInputTokens: overall.total_input_tokens ?? 0,
     totalOutputTokens: overall.total_output_tokens ?? 0,

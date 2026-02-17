@@ -101,7 +101,13 @@ export function extractLocationDetails(
     const rawRow = JSON.parse(transaction.rawRow) as Record<string, string>;
 
     // Check common CSV location field names
-    const locationFields = ["Town/City", "location", "Location", "City", "city"];
+    const locationFields = [
+      "Town/City",
+      "location",
+      "Location",
+      "City",
+      "city",
+    ];
     for (const field of locationFields) {
       if (rawRow[field] && rawRow[field].trim().length > 0) {
         return {

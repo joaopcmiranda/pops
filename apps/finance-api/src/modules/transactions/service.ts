@@ -217,7 +217,10 @@ export async function createTransaction(input: CreateTransactionInput): Promise<
  * 3. Update SQLite with same data
  * 4. Return updated row
  */
-export async function updateTransaction(id: string, input: UpdateTransactionInput): Promise<TransactionRow> {
+export async function updateTransaction(
+  id: string,
+  input: UpdateTransactionInput
+): Promise<TransactionRow> {
   const db = getDb();
 
   // Verify it exists first

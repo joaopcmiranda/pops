@@ -39,7 +39,9 @@ export function AiUsagePage() {
       <div className="p-6 space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">AI Usage</h1>
-          <p className="text-muted-foreground">Track AI categorization costs and usage</p>
+          <p className="text-muted-foreground">
+            Track AI categorization costs and usage
+          </p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -72,7 +74,9 @@ export function AiUsagePage() {
   const columns: ColumnDef<AiUsageRecord>[] = [
     {
       accessorKey: "date",
-      header: ({ column }) => <SortableHeader column={column}>Date</SortableHeader>,
+      header: ({ column }) => (
+        <SortableHeader column={column}>Date</SortableHeader>
+      ),
       cell: ({ row }) => {
         const date = new Date(row.original.date);
         return date.toLocaleDateString("en-AU", {
@@ -116,7 +120,11 @@ export function AiUsagePage() {
         const rate = total > 0 ? (row.original.cacheHits / total) * 100 : 0;
         return (
           <div className="text-right">
-            <Badge variant={rate > 80 ? "default" : rate > 50 ? "secondary" : "outline"}>
+            <Badge
+              variant={
+                rate > 80 ? "default" : rate > 50 ? "secondary" : "outline"
+              }
+            >
               {rate.toFixed(1)}%
             </Badge>
           </div>
@@ -165,7 +173,8 @@ export function AiUsagePage() {
   ];
 
   // Calculate cache hit rate
-  const totalRequests = (stats?.totalApiCalls ?? 0) + (stats?.totalCacheHits ?? 0);
+  const totalRequests =
+    (stats?.totalApiCalls ?? 0) + (stats?.totalCacheHits ?? 0);
   const cacheHitRate = totalRequests > 0 ? (stats?.cacheHitRate ?? 0) * 100 : 0;
 
   return (
@@ -183,7 +192,9 @@ export function AiUsagePage() {
         {/* Total Cost */}
         <Card className="p-6">
           <div className="flex flex-col space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">Total Cost</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              Total Cost
+            </p>
             <p className="text-3xl font-bold tabular-nums">
               ${(stats?.totalCost ?? 0).toFixed(4)}
             </p>
@@ -198,7 +209,9 @@ export function AiUsagePage() {
         {/* API Calls */}
         <Card className="p-6">
           <div className="flex flex-col space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">API Calls</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              API Calls
+            </p>
             <p className="text-3xl font-bold tabular-nums">
               {(stats?.totalApiCalls ?? 0).toLocaleString()}
             </p>
@@ -213,8 +226,12 @@ export function AiUsagePage() {
         {/* Cache Hit Rate */}
         <Card className="p-6">
           <div className="flex flex-col space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">Cache Hit Rate</p>
-            <p className="text-3xl font-bold tabular-nums">{cacheHitRate.toFixed(1)}%</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              Cache Hit Rate
+            </p>
+            <p className="text-3xl font-bold tabular-nums">
+              {cacheHitRate.toFixed(1)}%
+            </p>
             <p className="text-xs text-muted-foreground">
               {(stats?.totalCacheHits ?? 0).toLocaleString()} cached results
             </p>
@@ -224,12 +241,16 @@ export function AiUsagePage() {
         {/* Avg Cost Per Call */}
         <Card className="p-6">
           <div className="flex flex-col space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">Avg Cost/Call</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              Avg Cost/Call
+            </p>
             <p className="text-3xl font-bold tabular-nums">
               ${(stats?.avgCostPerCall ?? 0).toFixed(5)}
             </p>
             <p className="text-xs text-muted-foreground">
-              {((stats?.totalInputTokens ?? 0) + (stats?.totalOutputTokens ?? 0)).toLocaleString()}{" "}
+              {(
+                (stats?.totalInputTokens ?? 0) + (stats?.totalOutputTokens ?? 0)
+              ).toLocaleString()}{" "}
               total tokens
             </p>
           </div>
@@ -242,7 +263,8 @@ export function AiUsagePage() {
           <div>
             <h2 className="text-xl font-semibold">Daily Usage History</h2>
             <p className="text-sm text-muted-foreground">
-              Showing {history.records.length} days • Total: ${history.summary.totalCost.toFixed(4)}
+              Showing {history.records.length} days • Total: $
+              {history.summary.totalCost.toFixed(4)}
             </p>
           </div>
           <DataTable columns={columns} data={history.records} />

@@ -11,22 +11,16 @@ const chipVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        primary:
-          "bg-primary text-primary-foreground hover:bg-primary/90",
+        default: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        primary: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        success:
-          "bg-[hsl(142_76%_36%)] text-white hover:bg-[hsl(142_76%_30%)]",
-        warning:
-          "bg-[hsl(38_92%_50%)] text-white hover:bg-[hsl(38_92%_45%)]",
-        info:
-          "bg-[hsl(199_89%_48%)] text-white hover:bg-[hsl(199_89%_43%)]",
+        success: "bg-[hsl(142_76%_36%)] text-white hover:bg-[hsl(142_76%_30%)]",
+        warning: "bg-[hsl(38_92%_50%)] text-white hover:bg-[hsl(38_92%_45%)]",
+        info: "bg-[hsl(199_89%_48%)] text-white hover:bg-[hsl(199_89%_43%)]",
         outline:
           "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        ghost:
-          "hover:bg-accent hover:text-accent-foreground",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
       },
       size: {
         sm: "gap-2 px-3 py-1.5 text-sm",
@@ -42,7 +36,8 @@ const chipVariants = cva(
 );
 
 export interface ChipProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "prefix">,
+  extends
+    Omit<HTMLAttributes<HTMLDivElement>, "prefix">,
     VariantProps<typeof chipVariants> {
   /**
    * Content to display inside the chip

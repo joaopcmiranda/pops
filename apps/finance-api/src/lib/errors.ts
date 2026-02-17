@@ -25,7 +25,8 @@ export function formatImportError(error: unknown, context: ErrorContext = {}): F
       return {
         message: "AI categorization unavailable",
         suggestion: "Add CLAUDE_API_KEY to .env file",
-        details: "AI categorization requires an Anthropic API key. See docs/SETUP.md for instructions.",
+        details:
+          "AI categorization requires an Anthropic API key. See docs/SETUP.md for instructions.",
       };
     }
     if (error.code === "INSUFFICIENT_CREDITS") {
@@ -38,7 +39,8 @@ export function formatImportError(error: unknown, context: ErrorContext = {}): F
     if (error.code === "API_ERROR") {
       return {
         message: "AI categorization failed",
-        suggestion: "This may be a temporary API issue. Try again or manually categorize the transaction.",
+        suggestion:
+          "This may be a temporary API issue. Try again or manually categorize the transaction.",
         details: error.message,
       };
     }
@@ -60,7 +62,8 @@ export function formatImportError(error: unknown, context: ErrorContext = {}): F
     if (notionError.code === "object_not_found") {
       return {
         message: "Notion database not found",
-        suggestion: "Check NOTION_BALANCE_SHEET_ID in .env and verify database is shared with your integration",
+        suggestion:
+          "Check NOTION_BALANCE_SHEET_ID in .env and verify database is shared with your integration",
         details: "See docs/NOTION_SETUP.md for setup instructions",
       };
     }
@@ -84,7 +87,8 @@ export function formatImportError(error: unknown, context: ErrorContext = {}): F
     if (notionError.code === "rate_limited") {
       return {
         message: "Notion API rate limit exceeded",
-        suggestion: "Wait a moment and try again. Large imports may need to be split into smaller batches.",
+        suggestion:
+          "Wait a moment and try again. Large imports may need to be split into smaller batches.",
         details: notionError.message,
       };
     }

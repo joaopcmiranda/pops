@@ -64,15 +64,13 @@ export const correctionsRouter = router({
   }),
 
   /** Create or update a correction */
-  createOrUpdate: protectedProcedure
-    .input(CreateCorrectionSchema)
-    .mutation(({ input }) => {
-      const row = service.createOrUpdateCorrection(input);
-      return {
-        data: toCorrection(row),
-        message: "Correction saved",
-      };
-    }),
+  createOrUpdate: protectedProcedure.input(CreateCorrectionSchema).mutation(({ input }) => {
+    const row = service.createOrUpdateCorrection(input);
+    return {
+      data: toCorrection(row),
+      message: "Correction saved",
+    };
+  }),
 
   /** Update an existing correction */
   update: protectedProcedure

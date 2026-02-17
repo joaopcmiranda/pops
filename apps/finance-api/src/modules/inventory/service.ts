@@ -201,7 +201,10 @@ export async function createInventoryItem(input: CreateInventoryItemInput): Prom
  * 3. Update SQLite with same data
  * 4. Return updated row
  */
-export async function updateInventoryItem(id: string, input: UpdateInventoryItemInput): Promise<InventoryRow> {
+export async function updateInventoryItem(
+  id: string,
+  input: UpdateInventoryItemInput
+): Promise<InventoryRow> {
   const db = getDb();
 
   // Verify it exists first

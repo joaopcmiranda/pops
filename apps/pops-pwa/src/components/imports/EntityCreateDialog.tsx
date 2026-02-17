@@ -15,7 +15,11 @@ import { Button } from "../ui/button";
 interface EntityCreateDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onEntityCreated: (entity: { entityId: string; entityName: string; entityUrl: string }) => void;
+  onEntityCreated: (entity: {
+    entityId: string;
+    entityName: string;
+    entityUrl: string;
+  }) => void;
   suggestedName?: string;
 }
 
@@ -99,14 +103,19 @@ export function EntityCreateDialog({
               <Input
                 id="entity-name"
                 value={name}
-                onChange={(e) => { setName(e.target.value); setTouched(true); }}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setTouched(true);
+                }}
                 onBlur={() => setTouched(true)}
                 placeholder="e.g., Woolworths"
                 disabled={createEntityMutation.isPending}
                 autoFocus
               />
               {touched && !name.trim() && (
-                <p className="text-xs text-red-600 dark:text-red-400 mt-1">Name is required</p>
+                <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                  Name is required
+                </p>
               )}
             </div>
 
@@ -135,7 +144,10 @@ export function EntityCreateDialog({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={!name.trim() || createEntityMutation.isPending}>
+            <Button
+              type="submit"
+              disabled={!name.trim() || createEntityMutation.isPending}
+            >
               {createEntityMutation.isPending ? "Creating..." : "Create Entity"}
             </Button>
           </DialogFooter>

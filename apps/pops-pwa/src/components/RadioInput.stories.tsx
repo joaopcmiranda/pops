@@ -22,9 +22,21 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const planOptions = [
-  { label: "Free", value: "free", description: "Basic features for personal use" },
-  { label: "Pro", value: "pro", description: "Advanced features for professionals" },
-  { label: "Enterprise", value: "enterprise", description: "Custom solutions for teams" },
+  {
+    label: "Free",
+    value: "free",
+    description: "Basic features for personal use",
+  },
+  {
+    label: "Pro",
+    value: "pro",
+    description: "Advanced features for professionals",
+  },
+  {
+    label: "Enterprise",
+    value: "enterprise",
+    description: "Custom solutions for teams",
+  },
 ];
 
 const paymentOptions = [

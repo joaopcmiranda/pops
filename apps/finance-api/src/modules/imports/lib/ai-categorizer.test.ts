@@ -142,8 +142,10 @@ describe("categorizeWithAi", () => {
       const after = new Date().toISOString();
 
       expect(result?.cachedAt).toBeDefined();
-      expect(result!.cachedAt >= before).toBe(true);
-      expect(result!.cachedAt <= after).toBe(true);
+      const cachedAt = result?.cachedAt;
+      if (!cachedAt) throw new Error("Expected cachedAt to be defined");
+      expect(cachedAt >= before).toBe(true);
+      expect(cachedAt <= after).toBe(true);
     });
   });
 
@@ -152,7 +154,9 @@ describe("categorizeWithAi", () => {
       delete process.env["CLAUDE_API_KEY"];
 
       await expect(categorizeWithAi("WOOLWORTHS 1234")).rejects.toThrow(AiCategorizationError);
-      await expect(categorizeWithAi("WOOLWORTHS 1234")).rejects.toThrow("CLAUDE_API_KEY not configured");
+      await expect(categorizeWithAi("WOOLWORTHS 1234")).rejects.toThrow(
+        "CLAUDE_API_KEY not configured"
+      );
       expect(mockCreate).not.toHaveBeenCalled();
     });
 
@@ -160,7 +164,9 @@ describe("categorizeWithAi", () => {
       process.env["CLAUDE_API_KEY"] = "";
 
       await expect(categorizeWithAi("WOOLWORTHS 1234")).rejects.toThrow(AiCategorizationError);
-      await expect(categorizeWithAi("WOOLWORTHS 1234")).rejects.toThrow("CLAUDE_API_KEY not configured");
+      await expect(categorizeWithAi("WOOLWORTHS 1234")).rejects.toThrow(
+        "CLAUDE_API_KEY not configured"
+      );
       expect(mockCreate).not.toHaveBeenCalled();
     });
 
@@ -253,9 +259,7 @@ describe("categorizeWithAi", () => {
 
     it("handles special characters in response", async () => {
       mockCreate.mockResolvedValue({
-        content: [
-          { type: "text", text: '{"entityName": "McDonald\'s", "category": "Dining"}' },
-        ],
+        content: [{ type: "text", text: '{"entityName": "McDonald\'s", "category": "Dining"}' }],
         usage: { input_tokens: 50, output_tokens: 20 },
       });
 

@@ -1,12 +1,5 @@
 import { useState } from "react";
-import {
-  ChevronRight,
-  Globe,
-  Store,
-  Sparkles,
-  Zap,
-  Edit2,
-} from "lucide-react";
+import { ChevronRight, Globe, Store, Sparkles, Zap, Edit2 } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import {
@@ -14,12 +7,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../ui/collapsible";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
 import { LocationField } from "./LocationField";
 import type { ProcessedTransaction } from "@pops/finance-api/modules/imports";
 
@@ -59,12 +46,18 @@ export function TransactionCard({
     transaction.entity?.matchType === "ai" && transaction.entity?.entityName;
 
   // Check if AI-suggested entity actually exists in the entities list
-  const aiSuggestedEntityExists = hasAiSuggestion && entities?.some(
-    (e) => e.name.toLowerCase() === transaction.entity?.entityName?.toLowerCase()
-  );
+  const aiSuggestedEntityExists =
+    hasAiSuggestion &&
+    entities?.some(
+      (e) =>
+        e.name.toLowerCase() === transaction.entity?.entityName?.toLowerCase()
+    );
 
-  const isAutoMatched = transaction.entity?.matchType === ("auto-matched" as never);
-  const isEdited = (transaction as ProcessedTransaction & { manuallyEdited?: boolean }).manuallyEdited;
+  const isAutoMatched =
+    transaction.entity?.matchType === ("auto-matched" as never);
+  const isEdited = (
+    transaction as ProcessedTransaction & { manuallyEdited?: boolean }
+  ).manuallyEdited;
 
   // Parse raw row for display
   let rawData: Record<string, string> = {};
@@ -106,7 +99,10 @@ export function TransactionCard({
               </Badge>
             )}
             {isAutoMatched && (
-              <Badge variant="secondary" className="text-xs flex items-center gap-1">
+              <Badge
+                variant="secondary"
+                className="text-xs flex items-center gap-1"
+              >
                 <Zap className="w-3 h-3" />
                 Auto-matched
               </Badge>
@@ -178,7 +174,8 @@ export function TransactionCard({
                     onClick={() => onAcceptAiSuggestion(transaction)}
                     className="bg-purple-600 hover:bg-purple-700 flex-1"
                   >
-                    {aiSuggestedEntityExists ? "✓" : "+"} Accept "{transaction.entity.entityName}"
+                    {aiSuggestedEntityExists ? "✓" : "+"} Accept "
+                    {transaction.entity.entityName}"
                   </Button>
                 )}
                 {onCreateEntity && (

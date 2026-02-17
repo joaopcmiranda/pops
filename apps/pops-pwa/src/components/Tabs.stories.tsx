@@ -1,6 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 
 const meta: Meta = {
   title: "Navigation/Tabs",
@@ -146,7 +152,9 @@ export const AccountsTabs: Story = {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm">Balance</span>
-                <span className="text-lg font-bold text-red-600">-$1,234.56</span>
+                <span className="text-lg font-bold text-red-600">
+                  -$1,234.56
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Available Credit</span>
@@ -205,13 +213,19 @@ export const ReportsTabs: Story = {
         </div>
       </TabsContent>
       <TabsContent value="spending" className="pt-4">
-        <p className="text-sm text-muted-foreground">Spending breakdown by category</p>
+        <p className="text-sm text-muted-foreground">
+          Spending breakdown by category
+        </p>
       </TabsContent>
       <TabsContent value="income" className="pt-4">
-        <p className="text-sm text-muted-foreground">Income sources and history</p>
+        <p className="text-sm text-muted-foreground">
+          Income sources and history
+        </p>
       </TabsContent>
       <TabsContent value="trends" className="pt-4">
-        <p className="text-sm text-muted-foreground">Spending trends over time</p>
+        <p className="text-sm text-muted-foreground">
+          Spending trends over time
+        </p>
       </TabsContent>
     </Tabs>
   ),
@@ -256,10 +270,14 @@ export const SettingsTabs: Story = {
         <Card>
           <CardHeader>
             <CardTitle>Notification Preferences</CardTitle>
-            <CardDescription>Configure how you receive notifications</CardDescription>
+            <CardDescription>
+              Configure how you receive notifications
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">Notification settings would go here</p>
+            <p className="text-sm text-muted-foreground">
+              Notification settings would go here
+            </p>
           </CardContent>
         </Card>
       </TabsContent>
@@ -270,7 +288,9 @@ export const SettingsTabs: Story = {
             <CardDescription>Manage your account security</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">Security settings would go here</p>
+            <p className="text-sm text-muted-foreground">
+              Security settings would go here
+            </p>
           </CardContent>
         </Card>
       </TabsContent>
@@ -278,10 +298,14 @@ export const SettingsTabs: Story = {
         <Card>
           <CardHeader>
             <CardTitle>Connected Integrations</CardTitle>
-            <CardDescription>Manage your connected accounts and services</CardDescription>
+            <CardDescription>
+              Manage your connected accounts and services
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">Integration settings would go here</p>
+            <p className="text-sm text-muted-foreground">
+              Integration settings would go here
+            </p>
           </CardContent>
         </Card>
       </TabsContent>
@@ -338,7 +362,9 @@ export const VerticalTabs: Story = {
               <CardTitle>Account Overview</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">Dashboard overview</p>
+              <p className="text-sm text-muted-foreground">
+                Dashboard overview
+              </p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -348,7 +374,9 @@ export const VerticalTabs: Story = {
               <CardTitle>Recent Transactions</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">Transaction history</p>
+              <p className="text-sm text-muted-foreground">
+                Transaction history
+              </p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -368,7 +396,9 @@ export const VerticalTabs: Story = {
               <CardTitle>Financial Reports</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">Reports and analytics</p>
+              <p className="text-sm text-muted-foreground">
+                Reports and analytics
+              </p>
             </CardContent>
           </Card>
         </TabsContent>

@@ -139,18 +139,14 @@ export function NumberRangeFilter({
     <div className="flex items-center gap-2">
       <NumberInput
         value={filterValue[0]}
-        onChange={(value) =>
-          column.setFilterValue([value, filterValue[1]])
-        }
+        onChange={(value) => column.setFilterValue([value, filterValue[1]])}
         placeholder={minPlaceholder}
         className="w-[100px]"
       />
       <span className="text-muted-foreground">to</span>
       <NumberInput
         value={filterValue[1]}
-        onChange={(value) =>
-          column.setFilterValue([filterValue[0], value])
-        }
+        onChange={(value) => column.setFilterValue([filterValue[0], value])}
         placeholder={maxPlaceholder}
         className="w-[100px]"
       />
@@ -165,15 +161,13 @@ interface FilterBarProps {
 }
 
 export function FilterBar({ filters, table, onClearAll }: FilterBarProps) {
-  const activeFiltersCount = table
-    .getState()
-    .columnFilters.filter((f) => {
-      const value = f.value;
-      if (Array.isArray(value)) {
-        return value.length > 0 && value.some((v) => v !== "" && v !== undefined);
-      }
-      return value !== "" && value !== undefined;
-    }).length;
+  const activeFiltersCount = table.getState().columnFilters.filter((f) => {
+    const value = f.value;
+    if (Array.isArray(value)) {
+      return value.length > 0 && value.some((v) => v !== "" && v !== undefined);
+    }
+    return value !== "" && value !== undefined;
+  }).length;
 
   const handleClearAll = () => {
     table.resetColumnFilters();
@@ -207,10 +201,7 @@ export function FilterBar({ filters, table, onClearAll }: FilterBarProps) {
                 {filter.label}
               </label>
               {filter.type === "text" && (
-                <TextFilter
-                  column={column}
-                  placeholder={filter.placeholder}
-                />
+                <TextFilter column={column} placeholder={filter.placeholder} />
               )}
               {filter.type === "select" && filter.options && (
                 <SelectFilter
@@ -226,7 +217,9 @@ export function FilterBar({ filters, table, onClearAll }: FilterBarProps) {
                   placeholder={filter.placeholder}
                 />
               )}
-              {filter.type === "daterange" && <DateRangeFilter column={column} />}
+              {filter.type === "daterange" && (
+                <DateRangeFilter column={column} />
+              )}
               {filter.type === "numberrange" && (
                 <NumberRangeFilter column={column} />
               )}
@@ -236,7 +229,8 @@ export function FilterBar({ filters, table, onClearAll }: FilterBarProps) {
       </div>
       {activeFiltersCount > 0 && (
         <div className="text-sm text-muted-foreground">
-          {activeFiltersCount} filter{activeFiltersCount !== 1 ? "s" : ""} active
+          {activeFiltersCount} filter{activeFiltersCount !== 1 ? "s" : ""}{" "}
+          active
         </div>
       )}
     </div>

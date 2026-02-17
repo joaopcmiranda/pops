@@ -21,12 +21,14 @@ describe("transformAmex", () => {
 
     expect(result.date).toBe("2026-02-13");
     expect(result.description).toBe("WOOLWORTHS 1234"); // Double space removed
-    expect(result.amount).toBe(-125.50); // Inverted
+    expect(result.amount).toBe(-125.5); // Inverted
     expect(result.account).toBe("Amex");
     expect(result.location).toBe("North Sydney"); // Title-cased first line
     expect(result.online).toBe(false);
     expect(result.rawRow).toBe(JSON.stringify(row));
-    expect(result.checksum).toBe(crypto.createHash("sha256").update(JSON.stringify(row)).digest("hex"));
+    expect(result.checksum).toBe(
+      crypto.createHash("sha256").update(JSON.stringify(row)).digest("hex")
+    );
   });
 
   it("generates consistent checksum for same CSV row", () => {
@@ -110,13 +112,13 @@ describe("transformAmex", () => {
   });
 
   it("throws error for missing required Amount field", () => {
-    const row = {
+    const row: Record<string, unknown> = {
       Date: "13/02/2026",
       Description: "MERCHANT",
-      Amount: undefined as any,
+      Amount: undefined,
     };
 
-    expect(() => transformAmex(row)).toThrow("Invalid amount");
+    expect(() => transformAmex(row as Record<string, string>)).toThrow("Invalid amount");
   });
 
   it("throws error for invalid date format", () => {
@@ -207,7 +209,7 @@ describe("normaliseDate", () => {
 describe("normaliseAmount", () => {
   it("inverts positive amount to negative", () => {
     const row = { Date: "13/02/2026", Description: "TEST", Amount: "100.50" };
-    expect(transformAmex(row).amount).toBe(-100.50);
+    expect(transformAmex(row).amount).toBe(-100.5);
   });
 
   it("inverts negative amount to positive (refunds)", () => {
@@ -237,12 +239,12 @@ describe("normaliseAmount", () => {
 
   it("handles amount with leading whitespace", () => {
     const row = { Date: "13/02/2026", Description: "TEST", Amount: "  100.00" };
-    expect(transformAmex(row).amount).toBe(-100.00);
+    expect(transformAmex(row).amount).toBe(-100.0);
   });
 
   it("handles amount with trailing whitespace", () => {
     const row = { Date: "13/02/2026", Description: "TEST", Amount: "100.00  " };
-    expect(transformAmex(row).amount).toBe(-100.00);
+    expect(transformAmex(row).amount).toBe(-100.0);
   });
 
   it("throws error for non-numeric string", () => {
@@ -256,13 +258,17 @@ describe("normaliseAmount", () => {
   });
 
   it("throws error for null", () => {
-    const row = { Date: "13/02/2026", Description: "TEST", Amount: null as any };
-    expect(() => transformAmex(row)).toThrow("Invalid amount");
+    const row: Record<string, unknown> = { Date: "13/02/2026", Description: "TEST", Amount: null };
+    expect(() => transformAmex(row as Record<string, string>)).toThrow("Invalid amount");
   });
 
   it("throws error for undefined", () => {
-    const row = { Date: "13/02/2026", Description: "TEST", Amount: undefined as any };
-    expect(() => transformAmex(row)).toThrow("Invalid amount");
+    const row: Record<string, unknown> = {
+      Date: "13/02/2026",
+      Description: "TEST",
+      Amount: undefined,
+    };
+    expect(() => transformAmex(row as Record<string, string>)).toThrow("Invalid amount");
   });
 });
 

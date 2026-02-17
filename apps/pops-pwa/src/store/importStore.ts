@@ -82,9 +82,7 @@ interface ImportStore {
     transaction: ProcessedTransaction,
     updates: Partial<ProcessedTransaction>
   ) => void;
-  findSimilar: (
-    transaction: ProcessedTransaction
-  ) => ProcessedTransaction[];
+  findSimilar: (transaction: ProcessedTransaction) => ProcessedTransaction[];
 }
 
 const initialState = {
@@ -129,8 +127,10 @@ export const useImportStore = create<ImportStore>((set) => ({
   setExecuteSessionId: (executeSessionId) => set({ executeSessionId }),
   setImportResult: (importResult) => set({ importResult }),
 
-  nextStep: () => set((state) => ({ currentStep: Math.min(state.currentStep + 1, 5) })),
-  prevStep: () => set((state) => ({ currentStep: Math.max(state.currentStep - 1, 1) })),
+  nextStep: () =>
+    set((state) => ({ currentStep: Math.min(state.currentStep + 1, 5) })),
+  prevStep: () =>
+    set((state) => ({ currentStep: Math.max(state.currentStep - 1, 1) })),
   goToStep: (step) => set({ currentStep: step }),
   reset: () => set(initialState),
 

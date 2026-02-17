@@ -31,7 +31,9 @@ function StatsCard({
     <Card className="p-6">
       <div className="space-y-2">
         <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
-        <p className={`text-3xl font-bold ${variantClasses[variant]}`}>{value}</p>
+        <p className={`text-3xl font-bold ${variantClasses[variant]}`}>
+          {value}
+        </p>
         {description && (
           <p className="text-sm text-muted-foreground">{description}</p>
         )}
@@ -42,15 +44,19 @@ function StatsCard({
 
 export function DashboardPage() {
   // Fetch recent transactions
-  const { data: transactions, isLoading: transactionsLoading, error: transactionsError } =
-    trpc.transactions.list.useQuery({
-      limit: 10,
-    });
+  const {
+    data: transactions,
+    isLoading: transactionsLoading,
+    error: transactionsError,
+  } = trpc.transactions.list.useQuery({
+    limit: 10,
+  });
 
   // Fetch budgets
-  const { data: budgets, isLoading: budgetsLoading } = trpc.budgets.list.useQuery({
-    limit: 5,
-  });
+  const { data: budgets, isLoading: budgetsLoading } =
+    trpc.budgets.list.useQuery({
+      limit: 5,
+    });
 
   // Calculate stats from transactions
   const stats = transactions?.data
@@ -74,7 +80,8 @@ export function DashboardPage() {
           <AlertTitle>Unable to load dashboard</AlertTitle>
           <AlertDescription>
             <p className="mb-2">
-              The backend API is not responding. Make sure the finance-api server is running.
+              The backend API is not responding. Make sure the finance-api
+              server is running.
             </p>
             <details className="mt-3">
               <summary className="cursor-pointer hover:underline font-medium text-sm">
@@ -94,7 +101,9 @@ export function DashboardPage() {
     <div className="p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back! Here's your financial overview.</p>
+        <p className="text-muted-foreground">
+          Welcome back! Here's your financial overview.
+        </p>
       </div>
 
       {/* Stats Grid */}
@@ -129,7 +138,11 @@ export function DashboardPage() {
               title="Net Balance"
               value={`$${(stats.totalIncome - stats.totalExpenses).toFixed(2)}`}
               description="Last 10 transactions"
-              variant={stats.totalIncome > stats.totalExpenses ? "positive" : "negative"}
+              variant={
+                stats.totalIncome > stats.totalExpenses
+                  ? "positive"
+                  : "negative"
+              }
             />
           </>
         ) : null}
@@ -154,7 +167,9 @@ export function DashboardPage() {
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="font-medium truncate">{transaction.description}</p>
+                      <p className="font-medium truncate">
+                        {transaction.description}
+                      </p>
                       {transaction.online && (
                         <Badge variant="secondary" className="text-xs">
                           Online
@@ -220,7 +235,9 @@ export function DashboardPage() {
                   <p className="text-2xl font-bold">
                     ${budget.amount ? budget.amount.toFixed(2) : "0.00"}
                   </p>
-                  <p className="text-sm text-muted-foreground">{budget.period}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {budget.period}
+                  </p>
                 </div>
               </Card>
             ))}

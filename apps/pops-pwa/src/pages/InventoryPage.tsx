@@ -39,7 +39,9 @@ export function InventoryPage() {
   const columns: ColumnDef<InventoryItem>[] = [
     {
       accessorKey: "itemName",
-      header: ({ column }) => <SortableHeader column={column}>Item</SortableHeader>,
+      header: ({ column }) => (
+        <SortableHeader column={column}>Item</SortableHeader>
+      ),
       cell: ({ row }) => (
         <div>
           <div className="font-medium">{row.original.itemName}</div>
@@ -57,7 +59,9 @@ export function InventoryPage() {
       header: "Room",
       cell: ({ row }) => (
         <span className="text-sm">
-          {row.original.room || <span className="text-muted-foreground">—</span>}
+          {row.original.room || (
+            <span className="text-muted-foreground">—</span>
+          )}
         </span>
       ),
     },
@@ -66,7 +70,9 @@ export function InventoryPage() {
       header: "Location",
       cell: ({ row }) => (
         <span className="text-sm">
-          {row.original.location || <span className="text-muted-foreground">—</span>}
+          {row.original.location || (
+            <span className="text-muted-foreground">—</span>
+          )}
         </span>
       ),
     },
@@ -96,9 +102,11 @@ export function InventoryPage() {
         return (
           <Badge
             variant={
-              condition === "Excellent" ? "default" :
-              condition === "Good" ? "secondary" :
-              "outline"
+              condition === "Excellent"
+                ? "default"
+                : condition === "Good"
+                  ? "secondary"
+                  : "outline"
             }
             className="text-xs"
           >
@@ -117,9 +125,7 @@ export function InventoryPage() {
       cell: ({ row }) => {
         const value = row.original.replacementValue;
         if (value === null) {
-          return (
-            <div className="text-right text-muted-foreground">—</div>
-          );
+          return <div className="text-right text-muted-foreground">—</div>;
         }
         return (
           <div className="text-right font-mono font-medium tabular-nums">
@@ -131,15 +137,18 @@ export function InventoryPage() {
     {
       accessorKey: "inUse",
       header: "In Use",
-      cell: ({ row }) => (
+      cell: ({ row }) =>
         row.original.inUse ? (
           <Badge variant="default" className="text-xs">
             Yes
           </Badge>
-        ) : null
-      ),
+        ) : null,
       filterFn: (row, columnId, filterValue) => {
-        if (filterValue === undefined || filterValue === null || filterValue === "") {
+        if (
+          filterValue === undefined ||
+          filterValue === null ||
+          filterValue === ""
+        ) {
           return true;
         }
         const value = row.getValue<boolean>(columnId);
@@ -150,15 +159,18 @@ export function InventoryPage() {
     {
       accessorKey: "deductible",
       header: "Deductible",
-      cell: ({ row }) => (
+      cell: ({ row }) =>
         row.original.deductible ? (
           <Badge variant="secondary" className="text-xs">
             Yes
           </Badge>
-        ) : null
-      ),
+        ) : null,
       filterFn: (row, columnId, filterValue) => {
-        if (filterValue === undefined || filterValue === null || filterValue === "") {
+        if (
+          filterValue === undefined ||
+          filterValue === null ||
+          filterValue === ""
+        ) {
           return true;
         }
         const value = row.getValue<boolean>(columnId);
@@ -235,10 +247,7 @@ export function InventoryPage() {
         <Alert variant="destructive">
           <p className="font-semibold">Failed to load inventory</p>
           <p className="text-sm">{error.message}</p>
-          <button
-            onClick={() => refetch()}
-            className="mt-2 text-sm underline"
-          >
+          <button onClick={() => refetch()} className="mt-2 text-sm underline">
             Try again
           </button>
         </Alert>

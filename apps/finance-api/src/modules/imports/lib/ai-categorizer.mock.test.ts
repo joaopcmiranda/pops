@@ -57,9 +57,7 @@ describe("AI Categorizer Mock Examples", () => {
     it("throws bad JSON error", async () => {
       mockConfig.returnBadJson = true;
 
-      await expect(mockCategorizeWithAi("WOOLWORTHS 1234")).rejects.toThrow(
-        "is not valid JSON"
-      );
+      await expect(mockCategorizeWithAi("WOOLWORTHS 1234")).rejects.toThrow("is not valid JSON");
     });
   });
 

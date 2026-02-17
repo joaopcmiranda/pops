@@ -29,10 +29,10 @@ export function EntitiesPage() {
   const columns: ColumnDef<Entity>[] = [
     {
       accessorKey: "name",
-      header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
-      cell: ({ row }) => (
-        <div className="font-medium">{row.original.name}</div>
+      header: ({ column }) => (
+        <SortableHeader column={column}>Name</SortableHeader>
       ),
+      cell: ({ row }) => <div className="font-medium">{row.original.name}</div>,
     },
     {
       accessorKey: "type",
@@ -82,13 +82,17 @@ export function EntitiesPage() {
         );
       },
       filterFn: (row, columnId, filterValue) => {
-        const searchTerm = String(filterValue ?? "").toLowerCase().trim();
+        const searchTerm = String(filterValue ?? "")
+          .toLowerCase()
+          .trim();
         if (!searchTerm) {
           return true;
         }
         const aliases = row.getValue<string[]>(columnId);
         if (!aliases || aliases.length === 0) return false;
-        return aliases.some((alias) => alias.toLowerCase().includes(searchTerm));
+        return aliases.some((alias) =>
+          alias.toLowerCase().includes(searchTerm)
+        );
       },
     },
     {
@@ -148,10 +152,7 @@ export function EntitiesPage() {
         <Alert variant="destructive">
           <p className="font-semibold">Failed to load entities</p>
           <p className="text-sm">{error.message}</p>
-          <button
-            onClick={() => refetch()}
-            className="mt-2 text-sm underline"
-          >
+          <button onClick={() => refetch()} className="mt-2 text-sm underline">
             Try again
           </button>
         </Alert>

@@ -69,7 +69,8 @@ const inputVariants = cva(
 );
 
 export interface NumberInputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "prefix" | "type">,
+  extends
+    Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "prefix" | "type">,
     VariantProps<typeof containerVariants> {
   /**
    * Icon or content to display before the input

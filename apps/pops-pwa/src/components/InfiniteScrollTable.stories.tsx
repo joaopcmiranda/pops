@@ -49,7 +49,9 @@ const generateTransactions = (count: number, offset: number): Transaction[] => {
 const transactionColumns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "date",
-    header: ({ column }) => <SortableHeader column={column}>Date</SortableHeader>,
+    header: ({ column }) => (
+      <SortableHeader column={column}>Date</SortableHeader>
+    ),
   },
   {
     accessorKey: "description",

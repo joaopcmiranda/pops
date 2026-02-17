@@ -26,8 +26,8 @@ export function getNotionClient(): Client {
  * Get Notion database IDs from environment.
  * These are workspace-specific and loaded from .env (local) or Ansible Vault (production).
  */
-export const getBalanceSheetId = () => requireEnv("NOTION_BALANCE_SHEET_ID");
-export const getEntitiesDbId = () => requireEnv("NOTION_ENTITIES_DB_ID");
-export const getHomeInventoryId = () => requireEnv("NOTION_HOME_INVENTORY_ID");
-export const getBudgetId = () => requireEnv("NOTION_BUDGET_ID");
-export const getWishListId = () => requireEnv("NOTION_WISH_LIST_ID");
+export const getBalanceSheetId = (): string => requireEnv("NOTION_BALANCE_SHEET_ID");
+export const getEntitiesDbId = (): string => requireEnv("NOTION_ENTITIES_DB_ID");
+export const getHomeInventoryId = (): string => requireEnv("NOTION_HOME_INVENTORY_ID");
+export const getBudgetId = (): string => requireEnv("NOTION_BUDGET_ID");
+export const getWishListId = (): string => requireEnv("NOTION_WISH_LIST_ID");

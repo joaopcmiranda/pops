@@ -28,7 +28,10 @@ interface TransactionGroupProps {
   onAcceptAiSuggestion: (transaction: ProcessedTransaction) => void;
   onEdit: (transaction: ProcessedTransaction) => void;
   editingTransaction?: ProcessedTransaction | null;
-  onSaveEdit?: (transaction: ProcessedTransaction, editedFields: Partial<ProcessedTransaction>) => void;
+  onSaveEdit?: (
+    transaction: ProcessedTransaction,
+    editedFields: Partial<ProcessedTransaction>
+  ) => void;
   onCancelEdit?: () => void;
   entities?: Array<{ notionId: string; name: string }>;
   variant?: "uncertain" | "failed";
@@ -60,9 +63,11 @@ export function TransactionGroup({
   );
 
   // Check if AI-suggested entity exists
-  const entityExists = group.aiSuggestion && entities?.some(
-    (e) => e.name.toLowerCase() === group.entityName.toLowerCase()
-  );
+  const entityExists =
+    group.aiSuggestion &&
+    entities?.some(
+      (e) => e.name.toLowerCase() === group.entityName.toLowerCase()
+    );
 
   return (
     <div
@@ -125,7 +130,8 @@ export function TransactionGroup({
                     onClick={() => onAcceptAll(group.transactions)}
                     className="bg-purple-600 hover:bg-purple-700"
                   >
-                    {entityExists ? "✓" : "+"} Accept All as "{group.entityName}"
+                    {entityExists ? "✓" : "+"} Accept All as "{group.entityName}
+                    "
                   </Button>
                   <Button
                     variant="outline"
@@ -164,7 +170,8 @@ export function TransactionGroup({
         {showEntitySelector && entities && entities.length > 0 && (
           <div className="mt-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600">
             <label className="block text-sm font-medium mb-2">
-              Select entity to assign to all {group.transactions.length} transactions:
+              Select entity to assign to all {group.transactions.length}{" "}
+              transactions:
             </label>
             <select
               className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800"
@@ -175,7 +182,11 @@ export function TransactionGroup({
                 if (selectedEntity) {
                   // Apply selected entity to all transactions in group
                   group.transactions.forEach((t) => {
-                    onEntitySelect(t, selectedEntity.notionId, selectedEntity.name);
+                    onEntitySelect(
+                      t,
+                      selectedEntity.notionId,
+                      selectedEntity.name
+                    );
                   });
                   setShowEntitySelector(false);
                 }
@@ -195,7 +206,9 @@ export function TransactionGroup({
         <CollapsibleContent>
           <div className="p-4 space-y-3 border-t dark:border-gray-700">
             {group.transactions.map((transaction, idx) =>
-              editingTransaction === transaction && onSaveEdit && onCancelEdit ? (
+              editingTransaction === transaction &&
+              onSaveEdit &&
+              onCancelEdit ? (
                 <EditableTransactionCard
                   key={idx}
                   transaction={transaction}

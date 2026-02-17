@@ -34,7 +34,9 @@ export function UploadStep() {
       skipEmptyLines: true,
       complete: (results) => {
         if (results.errors.length > 0) {
-          setError(`CSV parsing error: ${results.errors[0]?.message ?? "Unknown error"}`);
+          setError(
+            `CSV parsing error: ${results.errors[0]?.message ?? "Unknown error"}`
+          );
           setIsProcessing(false);
           return;
         }
@@ -73,14 +75,20 @@ export function UploadStep() {
         </p>
       </div>
 
-      <FileUpload onFileSelect={handleFileSelect} acceptedTypes=".csv" maxSizeMB={25} initialFile={file} />
+      <FileUpload
+        onFileSelect={handleFileSelect}
+        acceptedTypes=".csv"
+        maxSizeMB={25}
+        initialFile={file}
+      />
 
       <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
         <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
           Bank: American Express (Amex)
         </h3>
         <p className="text-xs text-blue-700 dark:text-blue-300">
-          Download your Amex transactions as CSV from your online banking portal.
+          Download your Amex transactions as CSV from your online banking
+          portal.
         </p>
       </div>
 

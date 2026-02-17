@@ -3,14 +3,23 @@ import { Loader2, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import { useImportStore } from "../../store/importStore";
 import { trpc } from "../../lib/trpc";
 import { Button } from "../ui/button";
+import type {
+  ProcessImportOutput,
+  ImportWarning,
+} from "@pops/finance-api/modules/imports";
 
 /**
  * Step 3: Process transactions (deduplicate and match entities)
  * Now with real-time progress updates via polling
  */
 export function ProcessingStep() {
-  const { parsedTransactions, setProcessSessionId, processSessionId, setProcessedTransactions, nextStep } =
-    useImportStore();
+  const {
+    parsedTransactions,
+    setProcessSessionId,
+    processSessionId,
+    setProcessedTransactions,
+    nextStep,
+  } = useImportStore();
   const [pollingEnabled, setPollingEnabled] = useState(false);
 
   const processImportMutation = trpc.imports.processImport.useMutation({
@@ -35,21 +44,28 @@ export function ProcessingStep() {
 
   // Handle completion
   useEffect(() => {
-    if (progressQuery.data?.status === "completed" && progressQuery.data.result) {
+    if (
+      progressQuery.data?.status === "completed" &&
+      progressQuery.data.result
+    ) {
       setPollingEnabled(false);
 
       // Type-cast to ProcessImportOutput since this is the processImport step
-      const result = progressQuery.data.result as any;
+      const result = progressQuery.data.result as ProcessImportOutput;
       setProcessedTransactions(result);
 
       // Check if there are CRITICAL Notion errors (not deduplication warnings)
       const hasCriticalNotionError = result.warnings?.some(
-        (w: any) => w.type === "NOTION_DATABASE_NOT_FOUND" || w.type === "NOTION_API_ERROR"
+        (w: ImportWarning) =>
+          w.type === "NOTION_DATABASE_NOT_FOUND" ||
+          w.type === "NOTION_API_ERROR"
       );
 
       if (hasCriticalNotionError) {
         // Don't auto-advance - let user see the error
-        console.error("[Import] Processing completed with critical Notion errors - review warnings");
+        console.error(
+          "[Import] Processing completed with critical Notion errors - review warnings"
+        );
       } else {
         // No critical errors - proceed to review (deduplication warnings are non-critical)
         nextStep();
@@ -63,13 +79,16 @@ export function ProcessingStep() {
 
   useEffect(() => {
     // Start processing automatically when step loads
-    if (parsedTransactions.length > 0 && !processImportMutation.isPending && !processImportMutation.isSuccess) {
+    if (
+      parsedTransactions.length > 0 &&
+      !processImportMutation.isPending &&
+      !processImportMutation.isSuccess
+    ) {
       processImportMutation.mutate({
         transactions: parsedTransactions,
         account: "Amex",
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parsedTransactions.length]);
 
   const progress = progressQuery.data;
@@ -94,7 +113,10 @@ export function ProcessingStep() {
           <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
             <span>Progress</span>
             <span>
-              {Math.round((progress.processedCount / progress.totalTransactions) * 100)}%
+              {Math.round(
+                (progress.processedCount / progress.totalTransactions) * 100
+              )}
+              %
             </span>
           </div>
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
@@ -146,9 +168,15 @@ export function ProcessingStep() {
                 key={idx}
                 className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400"
               >
-                {item.status === "processing" && <Loader2 className="w-3 h-3 animate-spin" />}
-                {item.status === "success" && <CheckCircle className="w-3 h-3 text-green-500" />}
-                {item.status === "failed" && <XCircle className="w-3 h-3 text-red-500" />}
+                {item.status === "processing" && (
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                )}
+                {item.status === "success" && (
+                  <CheckCircle className="w-3 h-3 text-green-500" />
+                )}
+                {item.status === "failed" && (
+                  <XCircle className="w-3 h-3 text-red-500" />
+                )}
                 <span className="truncate">{item.description}</span>
               </div>
             ))}
@@ -182,90 +210,115 @@ export function ProcessingStep() {
       )}
 
       {/* Warnings (from completed result) */}
-      {progressQuery.data?.result && (progressQuery.data.result as any).warnings && (progressQuery.data.result as any).warnings.length > 0 && (
-        <div className="w-full max-w-md space-y-2">
-          {(progressQuery.data.result as any).warnings.map((warning: any, idx: number) => {
-            const isCriticalNotionError =
-              warning.type === "NOTION_DATABASE_NOT_FOUND" || warning.type === "NOTION_API_ERROR";
-            const isDeduplicationDisabled = warning.type === "DEDUPLICATION_DISABLED";
-            const isAiError =
-              warning.type === "AI_CATEGORIZATION_UNAVAILABLE" || warning.type === "AI_API_ERROR";
+      {progressQuery.data?.result &&
+        (progressQuery.data.result as ProcessImportOutput).warnings &&
+        (progressQuery.data.result as ProcessImportOutput).warnings!.length >
+          0 && (
+          <div className="w-full max-w-md space-y-2">
+            {(progressQuery.data.result as ProcessImportOutput).warnings!.map(
+              (warning: ImportWarning, idx: number) => {
+                const isCriticalNotionError =
+                  warning.type === "NOTION_DATABASE_NOT_FOUND" ||
+                  warning.type === "NOTION_API_ERROR";
+                const isDeduplicationDisabled =
+                  warning.type === "DEDUPLICATION_DISABLED";
+                const isAiError =
+                  warning.type === "AI_CATEGORIZATION_UNAVAILABLE" ||
+                  warning.type === "AI_API_ERROR";
 
-            return (
-              <div
-                key={idx}
-                className={`p-4 text-sm rounded-lg border ${
-                  isCriticalNotionError
-                    ? "text-red-800 bg-red-50 dark:bg-red-900/20 dark:text-red-200 border-red-200 dark:border-red-800"
-                    : "text-amber-800 bg-amber-50 dark:bg-amber-900/20 dark:text-amber-200 border-amber-200 dark:border-amber-800"
-                }`}
-              >
-                <div className="flex items-start gap-3">
-                  <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                  <div className="flex-1 space-y-1">
-                    <p className="font-medium">
-                      {warning.type === "NOTION_DATABASE_NOT_FOUND"
-                        ? "Notion Database Not Found"
-                        : warning.type === "NOTION_API_ERROR"
-                          ? "Notion API Error"
-                          : warning.type === "DEDUPLICATION_DISABLED"
-                            ? "Deduplication Disabled"
-                            : warning.type === "AI_CATEGORIZATION_UNAVAILABLE"
-                              ? "AI Categorization Unavailable"
-                              : "AI API Error"}
-                    </p>
-                    <p className="text-xs">{warning.message}</p>
-                    {warning.details && <p className="text-xs opacity-70 font-mono">{warning.details}</p>}
-                    {isAiError && warning.affectedCount && (
-                      <p className="text-xs opacity-80">
-                        {warning.affectedCount} transaction{warning.affectedCount !== 1 ? "s" : ""} could not be
-                        automatically categorized. You can manually categorize them in the review step.
-                      </p>
-                    )}
-                    {(isCriticalNotionError || isDeduplicationDisabled) && (
-                      <p className="text-xs opacity-80 mt-2">
-                        {warning.type === "DEDUPLICATION_DISABLED" ? (
-                          <>
-                            This is expected for new databases. See <code>docs/NOTION_SETUP.md</code> for setup
-                            instructions. Imports will work but duplicates may occur.
-                          </>
-                        ) : (
-                          <>
-                            Check your .env file and ensure NOTION_BALANCE_SHEET_ID is correct and the database is
-                            shared with your Notion integration.
-                          </>
+                return (
+                  <div
+                    key={idx}
+                    className={`p-4 text-sm rounded-lg border ${
+                      isCriticalNotionError
+                        ? "text-red-800 bg-red-50 dark:bg-red-900/20 dark:text-red-200 border-red-200 dark:border-red-800"
+                        : "text-amber-800 bg-amber-50 dark:bg-amber-900/20 dark:text-amber-200 border-amber-200 dark:border-amber-800"
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                      <div className="flex-1 space-y-1">
+                        <p className="font-medium">
+                          {warning.type === "NOTION_DATABASE_NOT_FOUND"
+                            ? "Notion Database Not Found"
+                            : warning.type === "NOTION_API_ERROR"
+                              ? "Notion API Error"
+                              : warning.type === "DEDUPLICATION_DISABLED"
+                                ? "Deduplication Disabled"
+                                : warning.type ===
+                                    "AI_CATEGORIZATION_UNAVAILABLE"
+                                  ? "AI Categorization Unavailable"
+                                  : "AI API Error"}
+                        </p>
+                        <p className="text-xs">{warning.message}</p>
+                        {warning.details && (
+                          <p className="text-xs opacity-70 font-mono">
+                            {warning.details}
+                          </p>
                         )}
-                      </p>
-                    )}
+                        {isAiError && warning.affectedCount && (
+                          <p className="text-xs opacity-80">
+                            {warning.affectedCount} transaction
+                            {warning.affectedCount !== 1 ? "s" : ""} could not
+                            be automatically categorized. You can manually
+                            categorize them in the review step.
+                          </p>
+                        )}
+                        {(isCriticalNotionError || isDeduplicationDisabled) && (
+                          <p className="text-xs opacity-80 mt-2">
+                            {warning.type === "DEDUPLICATION_DISABLED" ? (
+                              <>
+                                This is expected for new databases. See{" "}
+                                <code>docs/NOTION_SETUP.md</code> for setup
+                                instructions. Imports will work but duplicates
+                                may occur.
+                              </>
+                            ) : (
+                              <>
+                                Check your .env file and ensure
+                                NOTION_BALANCE_SHEET_ID is correct and the
+                                database is shared with your Notion integration.
+                              </>
+                            )}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+                );
+              }
+            )}
+          </div>
+        )}
 
       {/* Fatal errors */}
-      {(processImportMutation.isError || progressQuery.data?.status === "failed") && (
+      {(processImportMutation.isError ||
+        progressQuery.data?.status === "failed") && (
         <div className="p-4 max-w-md text-sm text-red-700 bg-red-100 dark:bg-red-900 dark:text-red-200 rounded-lg">
           <p className="font-medium mb-1">Processing Failed</p>
-          <p>{processImportMutation.error?.message || "An unexpected error occurred"}</p>
-          {progressQuery.data?.errors && progressQuery.data.errors.length > 0 && (
-            <div className="mt-2 space-y-1">
-              {progressQuery.data.errors.map((error, idx) => (
-                <p key={idx} className="text-xs">
-                  • {error.error}
-                </p>
-              ))}
-            </div>
-          )}
+          <p>
+            {processImportMutation.error?.message ||
+              "An unexpected error occurred"}
+          </p>
+          {progressQuery.data?.errors &&
+            progressQuery.data.errors.length > 0 && (
+              <div className="mt-2 space-y-1">
+                {progressQuery.data.errors.map((error, idx) => (
+                  <p key={idx} className="text-xs">
+                    • {error.error}
+                  </p>
+                ))}
+              </div>
+            )}
         </div>
       )}
 
       {/* Continue button when processing complete with warnings */}
       {progressQuery.data?.status === "completed" &&
-        (progressQuery.data.result as any)?.warnings?.some(
-          (w: any) => w.type === "NOTION_DATABASE_NOT_FOUND" || w.type === "NOTION_API_ERROR"
+        (progressQuery.data.result as ProcessImportOutput)?.warnings?.some(
+          (w: ImportWarning) =>
+            w.type === "NOTION_DATABASE_NOT_FOUND" ||
+            w.type === "NOTION_API_ERROR"
         ) && (
           <Button onClick={nextStep} className="mt-4">
             Continue to Review

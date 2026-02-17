@@ -4,11 +4,7 @@
  */
 import { getDb } from "../../db.js";
 import { NotFoundError } from "../../shared/errors.js";
-import type {
-  CorrectionRow,
-  CreateCorrectionInput,
-  UpdateCorrectionInput,
-} from "./types.js";
+import type { CorrectionRow, CreateCorrectionInput, UpdateCorrectionInput } from "./types.js";
 import { normalizeDescription } from "./types.js";
 
 /**
@@ -94,9 +90,9 @@ export function listCorrections(
  */
 export function getCorrection(id: string): CorrectionRow {
   const db = getDb();
-  const row = db
-    .prepare("SELECT * FROM transaction_corrections WHERE id = ?")
-    .get(id) as CorrectionRow | undefined;
+  const row = db.prepare("SELECT * FROM transaction_corrections WHERE id = ?").get(id) as
+    | CorrectionRow
+    | undefined;
 
   if (!row) {
     throw new NotFoundError("Correction", id);
@@ -241,9 +237,7 @@ export function updateCorrection(id: string, input: UpdateCorrectionInput): Corr
  */
 export function deleteCorrection(id: string): void {
   const db = getDb();
-  const result = db
-    .prepare("DELETE FROM transaction_corrections WHERE id = ?")
-    .run(id);
+  const result = db.prepare("DELETE FROM transaction_corrections WHERE id = ?").run(id);
 
   if (result.changes === 0) {
     throw new NotFoundError("Correction", id);
@@ -273,9 +267,10 @@ export function adjustConfidence(id: string, delta: number): void {
   const existing = getCorrection(id);
   const newConfidence = Math.max(0, Math.min(1, existing.confidence + delta));
 
-  db.prepare(
-    `UPDATE transaction_corrections SET confidence = ? WHERE id = ?`
-  ).run(newConfidence, id);
+  db.prepare(`UPDATE transaction_corrections SET confidence = ? WHERE id = ?`).run(
+    newConfidence,
+    id
+  );
 
   // Auto-delete if confidence too low
   if (newConfidence < 0.3) {

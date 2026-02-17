@@ -8,7 +8,7 @@ import type { Database } from "better-sqlite3";
 import { seedEntity, createCaller, createTestDb } from "../../shared/test-utils.js";
 import { transformAmex } from "./transformers/amex.js";
 import { clearCache } from "./lib/ai-categorizer.js";
-import type { ConfirmedTransaction } from "./types.js";
+import type { ConfirmedTransaction, ProcessImportOutput, ExecuteImportOutput } from "./types.js";
 
 /**
  * E2E Integration Test for Complete Import Flow
@@ -65,13 +65,17 @@ const originalNotionToken = process.env["NOTION_API_TOKEN"];
 /**
  * Helper to poll for import progress until completion
  */
-async function waitForCompletion<T = any>(sessionId: string, maxAttempts = 100): Promise<T> {
+async function waitForCompletion<T extends ProcessImportOutput | ExecuteImportOutput>(
+  sessionId: string,
+  maxAttempts = 100
+): Promise<T> {
   for (let i = 0; i < maxAttempts; i++) {
     const progress = await caller.imports.getImportProgress({ sessionId });
     if (!progress) {
       throw new Error("Progress not found");
     }
     if (progress.status === "completed") {
+      if (!progress.result) throw new Error("Import completed but result is missing");
       return progress.result as T;
     }
     if (progress.status === "failed") {
@@ -162,7 +166,7 @@ describe("E2E: Complete Import Flow", () => {
 
     expect(parsed.length).toBe(10); // 10 transactions in CSV
     expect(parsed[0].date).toBe("2026-02-13");
-    expect(parsed[0].amount).toBe(-125.50); // Inverted
+    expect(parsed[0].amount).toBe(-125.5); // Inverted
 
     // Step 3: Mock Notion to simulate 1 existing checksum (row 7 is duplicate of row 1)
     const existingChecksum = parsed[6].checksum; // 7th row (duplicate)
@@ -188,30 +192,32 @@ describe("E2E: Complete Import Flow", () => {
       account: "Amex",
     });
 
-    const processed = await waitForCompletion(processSessionId);
+    const processed = await waitForCompletion<ProcessImportOutput>(processSessionId);
     expect(processed).toBeDefined();
 
     // Verify categorization results
-    expect(processed!.matched.length).toBeGreaterThan(0);
-    expect(processed!.skipped.length).toBe(1); // 1 duplicate
-    expect(processed!.uncertain.length).toBeGreaterThanOrEqual(1); // AI suggested new entity
+    expect(processed.matched.length).toBeGreaterThan(0);
+    expect(processed.skipped.length).toBe(1); // 1 duplicate
+    expect(processed.uncertain.length).toBeGreaterThanOrEqual(1); // AI suggested new entity
 
     // Verify specific matches
-    const woolworthsMatch = processed!.matched.find((t: any) => t.description.includes("WOOLWORTHS"));
+    const woolworthsMatch = processed.matched.find((t) => t.description.includes("WOOLWORTHS"));
     expect(woolworthsMatch?.entity.entityName).toBe("Woolworths");
     expect(woolworthsMatch?.entity.matchType).toBe("prefix");
 
-    const transportMatch = processed!.matched.find((t: any) => t.description.includes("TRANSPORTFORNSWTRAVEL"));
+    const transportMatch = processed.matched.find((t) =>
+      t.description.includes("TRANSPORTFORNSWTRAVEL")
+    );
     expect(transportMatch?.entity.entityName).toBe("Transport for NSW");
     expect(transportMatch?.entity.matchType).toBe("alias");
 
-    const netflixMatch = processed!.matched.find((t: any) => t.description.includes("NETFLIX"));
+    const netflixMatch = processed.matched.find((t) => t.description.includes("NETFLIX"));
     expect(netflixMatch?.entity.entityName).toBe("Netflix");
     expect(netflixMatch?.entity.matchType).toBe("contains");
 
     // Step 6: Manually resolve uncertain transactions
     const confirmed: ConfirmedTransaction[] = [
-      ...processed!.matched.map((t: any) => ({
+      ...processed.matched.map((t) => ({
         date: t.date,
         description: t.description,
         amount: t.amount,
@@ -241,12 +247,12 @@ describe("E2E: Complete Import Flow", () => {
     });
 
     // executeImport has 400ms rate limit per transaction, so increase timeout
-    const result = await waitForCompletion(executeSessionId, 500); // 5 second timeout
+    const result = await waitForCompletion<ExecuteImportOutput>(executeSessionId, 500); // 5 second timeout
     expect(result).toBeDefined();
 
     // Step 9: Verify results
-    expect(result!.imported).toBe(confirmed.length);
-    expect(result!.failed.length).toBe(0);
+    expect(result.imported).toBe(confirmed.length);
+    expect(result.failed.length).toBe(0);
 
     // Verify Notion API calls
     expect(mockNotionCreate).toHaveBeenCalledTimes(confirmed.length);
@@ -284,12 +290,12 @@ describe("E2E: Complete Import Flow", () => {
       transactions: [mockTransaction],
     });
 
-    const result = await waitForCompletion(sessionId);
+    const result = await waitForCompletion<ExecuteImportOutput>(sessionId);
     expect(result).toBeDefined();
 
-    expect(result!.imported).toBe(0);
-    expect(result!.failed.length).toBe(1);
-    expect(result!.failed[0].error).toContain("Notion API Error");
+    expect(result.imported).toBe(0);
+    expect(result.failed.length).toBe(1);
+    expect(result.failed[0].error).toContain("Notion API Error");
   }, 10000);
 
   it("deduplicates correctly across multiple imports", async () => {
@@ -298,7 +304,7 @@ describe("E2E: Complete Import Flow", () => {
     const transaction = {
       date: "2026-02-13",
       description: "WOOLWORTHS 1234",
-      amount: -125.50,
+      amount: -125.5,
       account: "Amex",
       location: "Sydney",
       online: false,
@@ -314,11 +320,11 @@ describe("E2E: Complete Import Flow", () => {
       account: "Amex",
     });
 
-    const result1 = await waitForCompletion(sid1);
+    const result1 = await waitForCompletion<ProcessImportOutput>(sid1);
     expect(result1).toBeDefined();
 
-    expect(result1!.matched.length).toBe(1);
-    expect(result1!.skipped.length).toBe(0);
+    expect(result1.matched.length).toBe(1);
+    expect(result1.skipped.length).toBe(0);
 
     // Second import - mock that checksum now exists
     mockNotionQuery.mockResolvedValue({
@@ -339,12 +345,12 @@ describe("E2E: Complete Import Flow", () => {
       account: "Amex",
     });
 
-    const result2 = await waitForCompletion(sid2);
+    const result2 = await waitForCompletion<ProcessImportOutput>(sid2);
     expect(result2).toBeDefined();
 
-    expect(result2!.matched.length).toBe(0);
-    expect(result2!.skipped.length).toBe(1);
-    expect(result2!.skipped[0].skipReason).toContain("Duplicate");
+    expect(result2.matched.length).toBe(0);
+    expect(result2.skipped.length).toBe(1);
+    expect(result2.skipped[0].skipReason).toContain("Duplicate");
   });
 
   it("handles mixed transaction types in single batch", async () => {
@@ -380,11 +386,11 @@ describe("E2E: Complete Import Flow", () => {
       account: "Amex",
     });
 
-    const result = await waitForCompletion(sessionId);
+    const result = await waitForCompletion<ProcessImportOutput>(sessionId);
     expect(result).toBeDefined();
 
-    expect(result!.matched.length).toBe(1);
-    expect(result!.failed.length).toBe(1);
+    expect(result.matched.length).toBe(1);
+    expect(result.failed.length).toBe(1);
   });
 
   it("preserves transaction data through complete pipeline", async () => {
@@ -395,7 +401,7 @@ describe("E2E: Complete Import Flow", () => {
     const originalTransaction = {
       date: "2026-02-13",
       description: "WOOLWORTHS 1234",
-      amount: -125.50,
+      amount: -125.5,
       account: "Amex",
       location: "North Sydney",
       online: false,
@@ -409,15 +415,15 @@ describe("E2E: Complete Import Flow", () => {
       account: "Amex",
     });
 
-    const processed = await waitForCompletion(processSessionId);
+    const processed = await waitForCompletion<ProcessImportOutput>(processSessionId);
     expect(processed).toBeDefined();
 
     // Convert to confirmed
     const confirmed: ConfirmedTransaction = {
-      ...processed!.matched[0],
-      entityId: processed!.matched[0].entity.entityId ?? "",
-      entityName: processed!.matched[0].entity.entityName ?? "",
-      entityUrl: processed!.matched[0].entity.entityUrl ?? "",
+      ...processed.matched[0],
+      entityId: processed.matched[0].entity.entityId ?? "",
+      entityName: processed.matched[0].entity.entityName ?? "",
+      entityUrl: processed.matched[0].entity.entityUrl ?? "",
     };
 
     // Execute
@@ -425,12 +431,12 @@ describe("E2E: Complete Import Flow", () => {
       transactions: [confirmed],
     });
 
-    await waitForCompletion(executeSessionId, 500); // 5 second timeout for rate limiting
+    await waitForCompletion<ExecuteImportOutput>(executeSessionId, 500); // 5 second timeout for rate limiting
 
     // Verify data preservation in Notion call
     const notionCall = mockNotionCreate.mock.calls[0][0];
     expect(notionCall.properties.Description.title[0].text.content).toBe("WOOLWORTHS 1234");
-    expect(notionCall.properties.Amount.number).toBe(-125.50);
+    expect(notionCall.properties.Amount.number).toBe(-125.5);
     expect(notionCall.properties.Date.date.start).toBe("2026-02-13");
     expect(notionCall.properties.Location.select.name).toBe("North Sydney");
     expect(notionCall.properties.Online.checkbox).toBe(false);
@@ -452,7 +458,7 @@ describe("E2E: CSV Transformer Accuracy", () => {
 
     expect(result.date).toBe("2026-02-13");
     expect(result.description).toBe("WOOLWORTHS 1234"); // Double space removed
-    expect(result.amount).toBe(-125.50); // Inverted
+    expect(result.amount).toBe(-125.5); // Inverted
     expect(result.account).toBe("Amex");
     expect(result.location).toBe("North Sydney"); // Title-cased, first line only
     expect(result.online).toBe(false);
@@ -481,6 +487,6 @@ describe("E2E: CSV Transformer Accuracy", () => {
 
     const result = transformAmex(row);
 
-    expect(result.amount).toBe(50.00); // Inverted (negative becomes positive)
+    expect(result.amount).toBe(50.0); // Inverted (negative becomes positive)
   });
 });

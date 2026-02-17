@@ -116,12 +116,17 @@ export const BetweenSections: Story = {
             { desc: "Netflix Subscription", date: "Feb 09", amount: "-$22.99" },
             { desc: "Salary Deposit", date: "Feb 05", amount: "+$3,500.00" },
           ].map((txn, i) => (
-            <div key={i} className="flex items-center justify-between rounded-lg border p-3">
+            <div
+              key={i}
+              className="flex items-center justify-between rounded-lg border p-3"
+            >
               <div>
                 <p className="text-sm font-medium">{txn.desc}</p>
                 <p className="text-xs text-muted-foreground">{txn.date}</p>
               </div>
-              <p className={`font-medium ${txn.amount.startsWith("+") ? "text-green-600" : "text-red-600"}`}>
+              <p
+                className={`font-medium ${txn.amount.startsWith("+") ? "text-green-600" : "text-red-600"}`}
+              >
                 {txn.amount}
               </p>
             </div>

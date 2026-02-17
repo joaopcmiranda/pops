@@ -56,7 +56,7 @@ export function createMockNotionClient(): Client {
        * Mock pages.create()
        * Returns a mock page with generated ID and copies properties from input.
        */
-      create: async (args: {
+      create: (args: {
         parent: { database_id: string };
         properties: Record<string, unknown>;
       }): Promise<MockPage> => {
@@ -71,14 +71,14 @@ export function createMockNotionClient(): Client {
         };
 
         mockPages.set(pageId, page);
-        return page;
+        return Promise.resolve(page);
       },
 
       /**
        * Mock pages.update()
        * Updates properties of existing mock page.
        */
-      update: async (args: {
+      update: (args: {
         page_id: string;
         properties?: Record<string, unknown>;
         archived?: boolean;
@@ -92,25 +92,27 @@ export function createMockNotionClient(): Client {
 
         const updated: MockPage = {
           id: args.page_id,
-          properties: args.properties ? { ...existing.properties, ...args.properties } : existing.properties,
+          properties: args.properties
+            ? { ...existing.properties, ...args.properties }
+            : existing.properties,
           archived: args.archived ?? existing.archived,
           last_edited_time: now,
         };
 
         mockPages.set(args.page_id, updated);
-        return updated;
+        return Promise.resolve(updated);
       },
 
       /**
        * Mock pages.retrieve()
        * Returns existing mock page by ID.
        */
-      retrieve: async (args: { page_id: string }): Promise<MockPage> => {
+      retrieve: (args: { page_id: string }): Promise<MockPage> => {
         const page = mockPages.get(args.page_id);
         if (!page) {
           throw new Error(`Mock Notion page not found: ${args.page_id}`);
         }
-        return page;
+        return Promise.resolve(page);
       },
     },
 
@@ -119,14 +121,13 @@ export function createMockNotionClient(): Client {
        * Mock databases.query()
        * Returns all pages in the mock store (simplified - no filtering).
        */
-      query: async (args: {
+      query: (_args: {
         database_id: string;
         filter?: unknown;
       }): Promise<{ results: MockPage[] }> => {
-        // Simplified: return all pages
-        // Real implementation would apply filters
+        // Simplified: return all pages (no filtering applied)
         const results = Array.from(mockPages.values()).filter((p) => !p.archived);
-        return { results };
+        return Promise.resolve({ results });
       },
     },
   };
@@ -138,5 +139,9 @@ export function createMockNotionClient(): Client {
  * Type guard to check if a Notion client is a mock.
  */
 export function isMockNotionClient(client: Client): boolean {
-  return typeof client === "object" && "pages" in client && typeof (client as unknown as { pages: { create: unknown } }).pages.create === "function";
+  return (
+    typeof client === "object" &&
+    "pages" in client &&
+    typeof (client as unknown as { pages: { create: unknown } }).pages.create === "function"
+  );
 }

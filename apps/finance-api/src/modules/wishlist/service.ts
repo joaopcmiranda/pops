@@ -131,7 +131,10 @@ export async function createWishListItem(input: CreateWishListItemInput): Promis
  * 3. Update SQLite with same data
  * 4. Return updated row
  */
-export async function updateWishListItem(id: string, input: UpdateWishListItemInput): Promise<WishListRow> {
+export async function updateWishListItem(
+  id: string,
+  input: UpdateWishListItemInput
+): Promise<WishListRow> {
   const db = getDb();
 
   // Verify it exists first
@@ -146,24 +149,17 @@ export async function updateWishListItem(id: string, input: UpdateWishListItemIn
     };
   }
   if (input.targetAmount !== undefined) {
-    properties["Target Amount"] = input.targetAmount !== null
-      ? { number: input.targetAmount }
-      : { number: null };
+    properties["Target Amount"] =
+      input.targetAmount !== null ? { number: input.targetAmount } : { number: null };
   }
   if (input.saved !== undefined) {
-    properties.Saved = input.saved !== null
-      ? { number: input.saved }
-      : { number: null };
+    properties.Saved = input.saved !== null ? { number: input.saved } : { number: null };
   }
   if (input.priority !== undefined) {
-    properties.Priority = input.priority
-      ? { select: { name: input.priority } }
-      : { select: null };
+    properties.Priority = input.priority ? { select: { name: input.priority } } : { select: null };
   }
   if (input.url !== undefined) {
-    properties.URL = input.url
-      ? { url: input.url }
-      : { url: null };
+    properties.URL = input.url ? { url: input.url } : { url: null };
   }
   if (input.notes !== undefined) {
     properties.Notes = input.notes

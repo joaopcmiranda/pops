@@ -8,13 +8,24 @@ import type { Client } from "@notionhq/client";
 import { setDb, closeDb } from "../db.js";
 import { appRouter } from "../router.js";
 import type { Context } from "../trpc.js";
-import { createMockNotionClient, resetNotionMock, getMockPages, seedMockPage } from "./notion-mock.js";
+import {
+  createMockNotionClient,
+  resetNotionMock,
+  getMockPages,
+  seedMockPage,
+} from "./notion-mock.js";
 import { setMockNotionClient, clearMockNotionClient, getMockNotionClient } from "./test-globals.js";
 
 /**
  * Re-export Notion mock utilities for use in tests.
  */
-export { resetNotionMock, getMockPages, setMockNotionClient, clearMockNotionClient, getMockNotionClient };
+export {
+  resetNotionMock,
+  getMockPages,
+  setMockNotionClient,
+  clearMockNotionClient,
+  getMockNotionClient,
+};
 
 /**
  * Create a tRPC caller with authentication.

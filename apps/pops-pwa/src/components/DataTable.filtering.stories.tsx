@@ -31,33 +31,38 @@ interface Transaction {
 }
 
 // Generate sample transactions
-const sampleTransactions: Transaction[] = Array.from({ length: 100 }, (_, i) => ({
-  id: `txn-${i + 1}`,
-  date: new Date(2024, Math.floor(i / 10), (i % 10) + 1)
-    .toISOString()
-    .split("T")[0],
-  description: [
-    "Woolworths",
-    "Coles",
-    "Amazon",
-    "Netflix",
-    "Uber",
-    "Spotify",
-    "Apple",
-    "Google",
-  ][i % 8],
-  amount: Math.random() * 400 - 200,
-  category: ["Food", "Shopping", "Entertainment", "Transport", "Bills"][
-    i % 5
-  ],
-  account: ["Checking", "Savings", "Credit Card"][i % 3],
-  status: (["pending", "completed", "failed"] as const)[i % 3],
-}));
+const sampleTransactions: Transaction[] = Array.from(
+  { length: 100 },
+  (_, i) => ({
+    id: `txn-${i + 1}`,
+    date: new Date(2024, Math.floor(i / 10), (i % 10) + 1)
+      .toISOString()
+      .split("T")[0],
+    description: [
+      "Woolworths",
+      "Coles",
+      "Amazon",
+      "Netflix",
+      "Uber",
+      "Spotify",
+      "Apple",
+      "Google",
+    ][i % 8],
+    amount: Math.random() * 400 - 200,
+    category: ["Food", "Shopping", "Entertainment", "Transport", "Bills"][
+      i % 5
+    ],
+    account: ["Checking", "Savings", "Credit Card"][i % 3],
+    status: (["pending", "completed", "failed"] as const)[i % 3],
+  })
+);
 
 const transactionColumns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "date",
-    header: ({ column }) => <SortableHeader column={column}>Date</SortableHeader>,
+    header: ({ column }) => (
+      <SortableHeader column={column}>Date</SortableHeader>
+    ),
     filterFn: dateRangeFilter,
   },
   {
@@ -103,7 +108,9 @@ const transactionColumns: ColumnDef<Transaction>[] = [
         completed: "text-green-600",
         failed: "text-red-600",
       };
-      return <span className={colors[status as keyof typeof colors]}>{status}</span>;
+      return (
+        <span className={colors[status as keyof typeof colors]}>{status}</span>
+      );
     },
     filterFn: multiSelectFilter,
   },

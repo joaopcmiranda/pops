@@ -58,10 +58,8 @@ const inputVariants = cva(
 );
 
 export interface ChipInputProps
-  extends Omit<
-    InputHTMLAttributes<HTMLInputElement>,
-    "size" | "value" | "onChange"
-  >,
+  extends
+    Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "value" | "onChange">,
     VariantProps<typeof containerVariants> {
   /**
    * Array of chip values
@@ -126,7 +124,8 @@ export const ChipInput = forwardRef<HTMLInputElement, ChipInputProps>(
     },
     ref
   ) => {
-    const [internalValues, setInternalValues] = useState<string[]>(defaultValue);
+    const [internalValues, setInternalValues] =
+      useState<string[]>(defaultValue);
     const [inputValue, setInputValue] = useState("");
     const [isFocused, setIsFocused] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);

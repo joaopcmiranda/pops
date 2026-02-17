@@ -8,9 +8,9 @@ import type { UpdateInventoryItemInput } from "./types.js";
  * Build Notion properties for inventory update.
  * Only includes fields that are being updated.
  */
-export function buildInventoryUpdateProperties(
-  input: UpdateInventoryItemInput
-){
+export function buildInventoryUpdateProperties(input: UpdateInventoryItemInput): {
+  [key: string]: unknown;
+} {
   const properties: { [key: string]: unknown } = {};
 
   if (input.itemName !== undefined) {
@@ -43,7 +43,9 @@ export function buildInventoryUpdateProperties(
     properties.Type = input.type ? { select: { name: input.type } } : { select: null };
   }
   if (input.condition !== undefined) {
-    properties.Condition = input.condition ? { select: { name: input.condition } } : { select: null };
+    properties.Condition = input.condition
+      ? { select: { name: input.condition } }
+      : { select: null };
   }
   if (input.inUse !== undefined) {
     properties["In-use"] = { checkbox: input.inUse };
@@ -62,14 +64,12 @@ export function buildInventoryUpdateProperties(
       : { date: null };
   }
   if (input.replacementValue !== undefined) {
-    properties["Est. Replacement Value"] = input.replacementValue !== null
-      ? { number: input.replacementValue }
-      : { number: null };
+    properties["Est. Replacement Value"] =
+      input.replacementValue !== null ? { number: input.replacementValue } : { number: null };
   }
   if (input.resaleValue !== undefined) {
-    properties["Est. Resale Value"] = input.resaleValue !== null
-      ? { number: input.resaleValue }
-      : { number: null };
+    properties["Est. Resale Value"] =
+      input.resaleValue !== null ? { number: input.resaleValue } : { number: null };
   }
   if (input.purchaseTransactionId !== undefined) {
     properties["Purchase Transaction"] = input.purchaseTransactionId

@@ -62,7 +62,11 @@ export function ImportWizard() {
 
       {/* Current step content */}
       <div className="bg-white dark:bg-gray-900 rounded-lg border shadow-sm p-6">
-        {CurrentStepComponent ? <CurrentStepComponent /> : <div>Unknown step</div>}
+        {CurrentStepComponent ? (
+          <CurrentStepComponent />
+        ) : (
+          <div>Unknown step</div>
+        )}
       </div>
     </div>
   );

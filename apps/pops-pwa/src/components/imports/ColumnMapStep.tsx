@@ -9,7 +9,15 @@ import type { ParsedTransaction } from "@pops/finance-api/modules/imports";
  * Step 2: Map CSV columns to schema fields and validate parsing
  */
 export function ColumnMapStep() {
-  const { headers, rows, columnMap, setColumnMap, setParsedTransactions, nextStep, prevStep } = useImportStore();
+  const {
+    headers,
+    rows,
+    columnMap,
+    setColumnMap,
+    setParsedTransactions,
+    nextStep,
+    prevStep,
+  } = useImportStore();
 
   const [localColumnMap, setLocalColumnMap] = useState(columnMap);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
@@ -41,7 +49,11 @@ export function ColumnMapStep() {
     const errors: string[] = [];
     const parsedTransactions: ParsedTransaction[] = [];
 
-    if (!localColumnMap.date || !localColumnMap.description || !localColumnMap.amount) {
+    if (
+      !localColumnMap.date ||
+      !localColumnMap.description ||
+      !localColumnMap.amount
+    ) {
       errors.push("Please map all required fields: Date, Description, Amount");
       return { valid: false, errors, parsedTransactions };
     }
@@ -70,7 +82,9 @@ export function ColumnMapStep() {
 
       // Valid row - create ParsedTransaction
       const description = row[localColumnMap.description] ?? "";
-      const location = localColumnMap.location ? row[localColumnMap.location] : undefined;
+      const location = localColumnMap.location
+        ? row[localColumnMap.location]
+        : undefined;
       const rawRow = JSON.stringify(row);
       const checksum = crypto.SHA256(rawRow).toString();
 
@@ -118,7 +132,11 @@ export function ColumnMapStep() {
     { key: "date" as const, label: "Date", required: true },
     { key: "description" as const, label: "Description", required: true },
     { key: "amount" as const, label: "Amount", required: true },
-    { key: "location" as const, label: "Location (Town/City)", required: false },
+    {
+      key: "location" as const,
+      label: "Location (Town/City)",
+      required: false,
+    },
   ];
 
   return (
@@ -181,7 +199,10 @@ export function ColumnMapStep() {
                 const parsedAmount = parseAmount(amountStr);
 
                 return (
-                  <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <tr
+                    key={idx}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-800"
+                  >
                     <td className="px-4 py-2 text-gray-500">{idx + 1}</td>
                     <td className="px-4 py-2">
                       <div className="flex items-center gap-2">
@@ -190,13 +211,19 @@ export function ColumnMapStep() {
                         ) : (
                           <AlertCircle className="w-4 h-4 text-red-500" />
                         )}
-                        <span className={parsedDate ? "" : "text-red-600"}>{dateStr}</span>
+                        <span className={parsedDate ? "" : "text-red-600"}>
+                          {dateStr}
+                        </span>
                         {parsedDate && (
-                          <span className="text-xs text-gray-500">→ {parsedDate}</span>
+                          <span className="text-xs text-gray-500">
+                            → {parsedDate}
+                          </span>
                         )}
                       </div>
                     </td>
-                    <td className="px-4 py-2">{row[localColumnMap.description ?? ""]}</td>
+                    <td className="px-4 py-2">
+                      {row[localColumnMap.description ?? ""]}
+                    </td>
                     <td className="px-4 py-2">
                       <div className="flex items-center gap-2">
                         {parsedAmount !== null ? (
@@ -204,16 +231,24 @@ export function ColumnMapStep() {
                         ) : (
                           <AlertCircle className="w-4 h-4 text-red-500" />
                         )}
-                        <span className={parsedAmount !== null ? "" : "text-red-600"}>
+                        <span
+                          className={
+                            parsedAmount !== null ? "" : "text-red-600"
+                          }
+                        >
                           {amountStr}
                         </span>
                         {parsedAmount !== null && (
-                          <span className="text-xs text-gray-500">→ {parsedAmount}</span>
+                          <span className="text-xs text-gray-500">
+                            → {parsedAmount}
+                          </span>
                         )}
                       </div>
                     </td>
                     {localColumnMap.location && (
-                      <td className="px-4 py-2">{row[localColumnMap.location]}</td>
+                      <td className="px-4 py-2">
+                        {row[localColumnMap.location]}
+                      </td>
                     )}
                   </tr>
                 );
@@ -240,7 +275,15 @@ export function ColumnMapStep() {
         <Button variant="outline" onClick={prevStep}>
           Back
         </Button>
-        <Button onClick={handleNext} disabled={isValidating || !localColumnMap.date || !localColumnMap.description || !localColumnMap.amount}>
+        <Button
+          onClick={handleNext}
+          disabled={
+            isValidating ||
+            !localColumnMap.date ||
+            !localColumnMap.description ||
+            !localColumnMap.amount
+          }
+        >
           {isValidating ? "Processing..." : "Next"}
         </Button>
       </div>

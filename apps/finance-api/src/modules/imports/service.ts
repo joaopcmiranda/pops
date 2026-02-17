@@ -12,20 +12,15 @@ import { logger } from "../../lib/logger.js";
 import { formatImportError } from "../../lib/errors.js";
 import { matchEntity } from "./lib/entity-matcher.js";
 import { categorizeWithAi, AiCategorizationError } from "./lib/ai-categorizer.js";
-import { setProgress, updateProgress } from "./progress-store.js";
+import { updateProgress } from "./progress-store.js";
 import { findMatchingCorrection } from "../corrections/service.js";
-import {
-  getNotionClient,
-  getBalanceSheetId,
-  getEntitiesDbId,
-} from "../../shared/notion-client.js";
+import { getNotionClient, getBalanceSheetId, getEntitiesDbId } from "../../shared/notion-client.js";
 import { createTransaction } from "../transactions/service.js";
 import type { Client } from "@notionhq/client";
 import type {
   ParsedTransaction,
   ProcessedTransaction,
   ConfirmedTransaction,
-  EntityMatch,
   ProcessImportOutput,
   ExecuteImportOutput,
   CreateEntityOutput,
@@ -60,7 +55,9 @@ function loadEntityLookup(): Record<string, string> {
  */
 function loadAliases(): Record<string, string> {
   const db = getDb();
-  const rows = db.prepare("SELECT name, aliases FROM entities WHERE aliases IS NOT NULL").all() as Array<{
+  const rows = db
+    .prepare("SELECT name, aliases FROM entities WHERE aliases IS NOT NULL")
+    .all() as Array<{
     name: string;
     aliases: string;
   }>;
@@ -85,7 +82,10 @@ function loadAliases(): Record<string, string> {
 async function findExistingChecksums(
   client: Client,
   checksums: string[]
-): Promise<{ checksums: Set<string>; error?: { type: string; message: string; details?: string } }> {
+): Promise<{
+  checksums: Set<string>;
+  error?: { type: string; message: string; details?: string };
+}> {
   try {
     // Query in batches of 100 (Notion filter limit)
     const existingChecksums = new Set<string>();
@@ -133,7 +133,10 @@ async function findExistingChecksums(
         errorType = "NOTION_DATABASE_NOT_FOUND";
         errorMessage = `Database not found. Check that NOTION_BALANCE_SHEET_ID is correct and the database is shared with your integration.`;
         errorDetails = notionError.message;
-      } else if (notionError.code === "validation_error" && notionError.message?.includes("Checksum")) {
+      } else if (
+        notionError.code === "validation_error" &&
+        notionError.message?.includes("Checksum")
+      ) {
         errorType = "DEDUPLICATION_DISABLED";
         errorMessage = `Deduplication disabled: Notion database is missing the "Checksum" property. All transactions will be processed (duplicates may occur).`;
         errorDetails = `To enable deduplication, add a "Rich text" property named "Checksum" to your Balance Sheet database.`;
@@ -164,16 +167,25 @@ export async function processImport(
   // Generate unique batch ID for tracking AI usage
   const importBatchId = `import-${Date.now()}-${Math.random().toString(36).substring(7)}`;
 
-  logger.info({ importBatchId, account, totalCount: transactions.length }, "[Import] Starting processImport");
+  logger.info(
+    { importBatchId, account, totalCount: transactions.length },
+    "[Import] Starting processImport"
+  );
 
   // Step 1: Checksum-based deduplication
-  logger.info({ checksumCount: transactions.length }, "[Import] Querying Notion for existing checksums");
+  logger.info(
+    { checksumCount: transactions.length },
+    "[Import] Querying Notion for existing checksums"
+  );
   const checksums = transactions.map((t) => t.checksum);
   const deduplicationResult = await findExistingChecksums(client, checksums);
   const existingChecksums = deduplicationResult.checksums;
 
   logger.info(
-    { duplicateCount: existingChecksums.size, newCount: transactions.length - existingChecksums.size },
+    {
+      duplicateCount: existingChecksums.size,
+      newCount: transactions.length - existingChecksums.size,
+    },
     "[Import] Deduplication complete"
   );
 
@@ -369,7 +381,8 @@ export async function processImport(
   // Add AI categorization errors
   if (aiError && aiFailureCount > 0) {
     warnings.push({
-      type: aiError.code === "INSUFFICIENT_CREDITS" ? "AI_CATEGORIZATION_UNAVAILABLE" : "AI_API_ERROR",
+      type:
+        aiError.code === "INSUFFICIENT_CREDITS" ? "AI_CATEGORIZATION_UNAVAILABLE" : "AI_API_ERROR",
       message: aiError.message,
       affectedCount: aiFailureCount,
     });
@@ -422,7 +435,7 @@ export async function executeImport(
 
   const results: ImportResult[] = [];
   let imported = 0;
-  let skipped = 0;
+  const skipped = 0;
 
   // Batch writes with concurrency control
   let idx = 0;
@@ -458,7 +471,12 @@ export async function executeImport(
         });
         const pageId = row.notion_id;
         logger.debug(
-          { index: i + 1, total: transactions.length, description: transaction.description.substring(0, 50), pageId },
+          {
+            index: i + 1,
+            total: transactions.length,
+            description: transaction.description.substring(0, 50),
+            pageId,
+          },
           "[Import] Transaction written"
         );
         results.push({
@@ -544,18 +562,27 @@ export async function processImportWithProgress(
     const client = getNotionClient();
     const importBatchId = `import-${Date.now()}-${Math.random().toString(36).substring(7)}`;
 
-    logger.info({ importBatchId, sessionId, account, totalCount: transactions.length }, "[Import] Starting background processImport");
+    logger.info(
+      { importBatchId, sessionId, account, totalCount: transactions.length },
+      "[Import] Starting background processImport"
+    );
 
     // Step 1: Deduplication
     updateProgress(sessionId, { currentStep: "deduplicating", processedCount: 0 });
 
-    logger.info({ checksumCount: transactions.length }, "[Import] Querying Notion for existing checksums");
+    logger.info(
+      { checksumCount: transactions.length },
+      "[Import] Querying Notion for existing checksums"
+    );
     const checksums = transactions.map((t) => t.checksum);
     const deduplicationResult = await findExistingChecksums(client, checksums);
     const existingChecksums = deduplicationResult.checksums;
 
     logger.info(
-      { duplicateCount: existingChecksums.size, newCount: transactions.length - existingChecksums.size },
+      {
+        duplicateCount: existingChecksums.size,
+        newCount: transactions.length - existingChecksums.size,
+      },
       "[Import] Deduplication complete"
     );
 
@@ -586,14 +613,22 @@ export async function processImportWithProgress(
     let totalOutputTokens = 0;
     let totalCostUsd = 0;
 
-    const currentBatch: Array<{ description: string; status: "processing" | "success" | "failed"; error?: string }> = [];
+    const currentBatch: Array<{
+      description: string;
+      status: "processing" | "success" | "failed";
+      error?: string;
+    }> = [];
     const errors: Array<{ description: string; error: string }> = [];
 
     for (let i = 0; i < newTransactions.length; i++) {
       const transaction = newTransactions[i];
       if (!transaction) continue;
 
-      const batchItem: { description: string; status: "processing" | "success" | "failed"; error?: string } = {
+      const batchItem: {
+        description: string;
+        status: "processing" | "success" | "failed";
+        error?: string;
+      } = {
         description: transaction.description.substring(0, 50),
         status: "processing",
       };
@@ -711,10 +746,14 @@ export async function processImportWithProgress(
             batchItem.status = "failed";
             batchItem.error = aiError ? "AI categorization unavailable" : "No entity match found";
 
-            const formattedError = aiError ? formatImportError(aiError) : { message: "No entity match found" };
+            const formattedError = aiError
+              ? formatImportError(aiError)
+              : { message: "No entity match found" };
             errors.push({
               description: transaction.description.substring(0, 50),
-              error: formattedError.message + (formattedError.suggestion ? ` - ${formattedError.suggestion}` : ""),
+              error:
+                formattedError.message +
+                (formattedError.suggestion ? ` - ${formattedError.suggestion}` : ""),
             });
           }
         }
@@ -732,7 +771,9 @@ export async function processImportWithProgress(
         const formattedError = formatImportError(error, { transaction: transaction.description });
         errors.push({
           description: transaction.description.substring(0, 50),
-          error: formattedError.message + (formattedError.suggestion ? ` - ${formattedError.suggestion}` : ""),
+          error:
+            formattedError.message +
+            (formattedError.suggestion ? ` - ${formattedError.suggestion}` : ""),
         });
       }
 
@@ -751,7 +792,10 @@ export async function processImportWithProgress(
     }
     if (aiError && aiFailureCount > 0) {
       warnings.push({
-        type: aiError.code === "INSUFFICIENT_CREDITS" ? "AI_CATEGORIZATION_UNAVAILABLE" : "AI_API_ERROR",
+        type:
+          aiError.code === "INSUFFICIENT_CREDITS"
+            ? "AI_CATEGORIZATION_UNAVAILABLE"
+            : "AI_API_ERROR",
         message: aiError.message,
         affectedCount: aiFailureCount,
       });
@@ -800,12 +844,22 @@ export async function processImportWithProgress(
       errors,
     });
   } catch (error) {
-    logger.error({ sessionId, error: error instanceof Error ? error.message : String(error) }, "[Import] Background processing failed");
+    logger.error(
+      { sessionId, error: error instanceof Error ? error.message : String(error) },
+      "[Import] Background processing failed"
+    );
 
     const formattedError = formatImportError(error);
     updateProgress(sessionId, {
       status: "failed",
-      errors: [{ description: "System", error: formattedError.message + (formattedError.suggestion ? ` - ${formattedError.suggestion}` : "") }],
+      errors: [
+        {
+          description: "System",
+          error:
+            formattedError.message +
+            (formattedError.suggestion ? ` - ${formattedError.suggestion}` : ""),
+        },
+      ],
     });
   }
 }
@@ -814,9 +868,15 @@ export async function processImportWithProgress(
  * Execute import with real-time progress updates.
  * This is an async wrapper that updates progress store as transactions are written.
  */
-export async function executeImportWithProgress(sessionId: string, transactions: ConfirmedTransaction[]): Promise<void> {
+export async function executeImportWithProgress(
+  sessionId: string,
+  transactions: ConfirmedTransaction[]
+): Promise<void> {
   try {
-    logger.info({ sessionId, totalCount: transactions.length }, "[Import] Starting background executeImport");
+    logger.info(
+      { sessionId, totalCount: transactions.length },
+      "[Import] Starting background executeImport"
+    );
 
     updateProgress(sessionId, {
       currentStep: "writing",
@@ -828,9 +888,13 @@ export async function executeImportWithProgress(sessionId: string, transactions:
 
     const results: ImportResult[] = [];
     let imported = 0;
-    let skipped = 0;
+    const skipped = 0;
 
-    const currentBatch: Array<{ description: string; status: "processing" | "success" | "failed"; error?: string }> = [];
+    const currentBatch: Array<{
+      description: string;
+      status: "processing" | "success" | "failed";
+      error?: string;
+    }> = [];
     const errors: Array<{ description: string; error: string }> = [];
 
     let idx = 0;
@@ -841,7 +905,11 @@ export async function executeImportWithProgress(sessionId: string, transactions:
         const transaction = transactions[i];
         if (!transaction) continue;
 
-        const batchItem: { description: string; status: "processing" | "success" | "failed"; error?: string } = {
+        const batchItem: {
+          description: string;
+          status: "processing" | "success" | "failed";
+          error?: string;
+        } = {
           description: transaction.description.substring(0, 50),
           status: "processing",
         };
@@ -857,30 +925,35 @@ export async function executeImportWithProgress(sessionId: string, transactions:
 
         try {
           const notionType =
-          transaction.transactionType === "transfer"
-            ? "Transfer"
-            : transaction.transactionType === "income"
-              ? "Income"
-              : "Expense";
-        const row = await createTransaction({
-          description: transaction.description,
-          account: transaction.account,
-          amount: transaction.amount,
-          date: transaction.date,
-          type: notionType,
-          categories: ["Other"],
-          entityId: transaction.entityId ?? null,
-          entityName: transaction.entityName ?? null,
-          location: transaction.location ?? null,
-          online: transaction.online ?? false,
-          novatedLease: false,
-          taxReturn: false,
-          rawRow: transaction.rawRow,
-          checksum: transaction.checksum,
-        });
-        const pageId = row.notion_id;
+            transaction.transactionType === "transfer"
+              ? "Transfer"
+              : transaction.transactionType === "income"
+                ? "Income"
+                : "Expense";
+          const row = await createTransaction({
+            description: transaction.description,
+            account: transaction.account,
+            amount: transaction.amount,
+            date: transaction.date,
+            type: notionType,
+            categories: ["Other"],
+            entityId: transaction.entityId ?? null,
+            entityName: transaction.entityName ?? null,
+            location: transaction.location ?? null,
+            online: transaction.online ?? false,
+            novatedLease: false,
+            taxReturn: false,
+            rawRow: transaction.rawRow,
+            checksum: transaction.checksum,
+          });
+          const pageId = row.notion_id;
           logger.debug(
-            { index: i + 1, total: transactions.length, description: transaction.description.substring(0, 50), pageId },
+            {
+              index: i + 1,
+              total: transactions.length,
+              description: transaction.description.substring(0, 50),
+              pageId,
+            },
             "[Import] Transaction written"
           );
 
@@ -915,7 +988,9 @@ export async function executeImportWithProgress(sessionId: string, transactions:
           const formattedError = formatImportError(error, { transaction: transaction.description });
           errors.push({
             description: transaction.description.substring(0, 50),
-            error: formattedError.message + (formattedError.suggestion ? ` - ${formattedError.suggestion}` : ""),
+            error:
+              formattedError.message +
+              (formattedError.suggestion ? ` - ${formattedError.suggestion}` : ""),
           });
         }
 
@@ -935,7 +1010,10 @@ export async function executeImportWithProgress(sessionId: string, transactions:
 
     const result: ExecuteImportOutput = { imported, failed, skipped };
 
-    logger.info({ sessionId, imported, failedCount: failed.length, skipped }, "[Import] Background executeImport complete");
+    logger.info(
+      { sessionId, imported, failedCount: failed.length, skipped },
+      "[Import] Background executeImport complete"
+    );
 
     updateProgress(sessionId, {
       status: "completed",
@@ -944,12 +1022,22 @@ export async function executeImportWithProgress(sessionId: string, transactions:
       errors,
     });
   } catch (error) {
-    logger.error({ sessionId, error: error instanceof Error ? error.message : String(error) }, "[Import] Background execution failed");
+    logger.error(
+      { sessionId, error: error instanceof Error ? error.message : String(error) },
+      "[Import] Background execution failed"
+    );
 
     const formattedError = formatImportError(error);
     updateProgress(sessionId, {
       status: "failed",
-      errors: [{ description: "System", error: formattedError.message + (formattedError.suggestion ? ` - ${formattedError.suggestion}` : "") }],
+      errors: [
+        {
+          description: "System",
+          error:
+            formattedError.message +
+            (formattedError.suggestion ? ` - ${formattedError.suggestion}` : ""),
+        },
+      ],
     });
   }
 }

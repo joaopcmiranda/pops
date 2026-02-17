@@ -8,9 +8,9 @@ import type { UpdateTransactionInput } from "./types.js";
  * Build Notion properties for transaction update.
  * Only includes fields that are being updated.
  */
-export function buildTransactionUpdateProperties(
-  input: UpdateTransactionInput
-){
+export function buildTransactionUpdateProperties(input: UpdateTransactionInput): {
+  [key: string]: unknown;
+} {
   const properties: { [key: string]: unknown } = {};
 
   if (input.description !== undefined) {
@@ -32,25 +32,17 @@ export function buildTransactionUpdateProperties(
   }
   if (input.categories !== undefined) {
     properties.Category = {
-      multi_select: input.categories.length
-        ? input.categories.map((cat) => ({ name: cat }))
-        : [],
+      multi_select: input.categories.length ? input.categories.map((cat) => ({ name: cat })) : [],
     };
   }
   if (input.entityId !== undefined) {
-    properties.Entity = input.entityId
-      ? { relation: [{ id: input.entityId }] }
-      : { relation: [] };
+    properties.Entity = input.entityId ? { relation: [{ id: input.entityId }] } : { relation: [] };
   }
   if (input.location !== undefined) {
-    properties.Location = input.location
-      ? { select: { name: input.location } }
-      : { select: null };
+    properties.Location = input.location ? { select: { name: input.location } } : { select: null };
   }
   if (input.country !== undefined) {
-    properties.Country = input.country
-      ? { select: { name: input.country } }
-      : { select: null };
+    properties.Country = input.country ? { select: { name: input.country } } : { select: null };
   }
   if (input.online !== undefined) {
     properties.Online = { checkbox: input.online };

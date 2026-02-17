@@ -14,14 +14,14 @@ export const aiUsageRouter = router({
    * Get overall AI usage statistics
    * Returns total costs, API calls, cache hit rate, etc.
    */
-  getStats: protectedProcedure.query(async () => {
+  getStats: protectedProcedure.query(() => {
     return getStats();
   }),
 
   /**
    * Get AI usage history filtered by date range
    */
-  getHistory: protectedProcedure.input(getHistoryInputSchema).query(async ({ input }) => {
+  getHistory: protectedProcedure.input(getHistoryInputSchema).query(({ input }) => {
     return getHistory(input.startDate, input.endDate);
   }),
 });

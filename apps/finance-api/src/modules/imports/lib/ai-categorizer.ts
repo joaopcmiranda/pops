@@ -57,9 +57,7 @@ async function withRateLimitRetry<T>(fn: () => Promise<T>, description: string):
       return await fn();
     } catch (error) {
       const isRateLimit =
-        error instanceof Error &&
-        "status" in error &&
-        (error as { status: number }).status === 429;
+        error instanceof Error && "status" in error && (error as { status: number }).status === 429;
 
       if (!isRateLimit || attempt === MAX_RETRIES) {
         throw error;
@@ -87,7 +85,11 @@ export async function categorizeWithAi(
   const cached = cache.get(key);
   if (cached) {
     logger.debug(
-      { description: sanitizedDescription, entityName: cached.entityName, category: cached.category },
+      {
+        description: sanitizedDescription,
+        entityName: cached.entityName,
+        category: cached.category,
+      },
       "[AI] Cache hit"
     );
 
@@ -96,7 +98,13 @@ export async function categorizeWithAi(
     db.prepare(
       `INSERT INTO ai_usage (description, entity_name, category, input_tokens, output_tokens, cost_usd, cached, import_batch_id, created_at)
        VALUES (?, ?, ?, 0, 0, 0, 1, ?, ?)`
-    ).run(rawRow.trim(), cached.entityName, cached.category, importBatchId ?? null, new Date().toISOString());
+    ).run(
+      rawRow.trim(),
+      cached.entityName,
+      cached.category,
+      importBatchId ?? null,
+      new Date().toISOString()
+    );
 
     return { result: cached };
   }
@@ -138,7 +146,10 @@ Common categories: Groceries, Dining, Transport, Utilities, Entertainment, Shopp
     if (!text) return { result: null };
 
     // Strip markdown code fences if present (Claude sometimes wraps JSON in ```json...```)
-    const cleanedText = text.trim().replace(/^```(?:json)?\s*\n?/gm, "").replace(/\n?```\s*$/gm, "");
+    const cleanedText = text
+      .trim()
+      .replace(/^```(?:json)?\s*\n?/gm, "")
+      .replace(/\n?```\s*$/gm, "");
     const parsed = JSON.parse(cleanedText) as { entityName: string; category: string };
     const entry: AiCacheEntry = {
       description: rawRow.trim(),
@@ -186,18 +197,27 @@ Common categories: Groceries, Dining, Transport, Utilities, Entertainment, Shopp
     };
   } catch (error) {
     logger.error(
-      { description: sanitizedDescription, error: error instanceof Error ? error.message : String(error) },
+      {
+        description: sanitizedDescription,
+        error: error instanceof Error ? error.message : String(error),
+      },
       "[AI] API call failed"
     );
 
     // Check if it's an Anthropic API error
     if (error && typeof error === "object" && "status" in error) {
-      const apiError = error as { status: number; message?: string; error?: { error?: { message?: string } } };
+      const apiError = error as {
+        status: number;
+        message?: string;
+        error?: { error?: { message?: string } };
+      };
 
       // Insufficient credits - special handling
       if (apiError.status === 400) {
         const errorMessage =
-          apiError.error?.error?.message || (apiError as { message?: string }).message || "Unknown API error";
+          apiError.error?.error?.message ||
+          (apiError as { message?: string }).message ||
+          "Unknown API error";
 
         if (errorMessage.toLowerCase().includes("credit balance")) {
           throw new AiCategorizationError(

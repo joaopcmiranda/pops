@@ -396,7 +396,11 @@ export const AllDateVariants: StoryObj = {
   render: () => (
     <div className="space-y-4">
       <DateInput prefix={<CalendarIcon />} placeholder="Default" />
-      <DateInput variant="ghost" prefix={<CalendarIcon />} placeholder="Ghost" />
+      <DateInput
+        variant="ghost"
+        prefix={<CalendarIcon />}
+        placeholder="Ghost"
+      />
       <DateInput variant="underline" placeholder="Underline" />
     </div>
   ),
@@ -416,7 +420,11 @@ export const AllDateTimeVariants: StoryObj = {
   render: () => (
     <div className="space-y-4">
       <DateTimeInput prefix={<CalendarIcon />} placeholder="Default" />
-      <DateTimeInput variant="ghost" prefix={<CalendarIcon />} placeholder="Ghost" />
+      <DateTimeInput
+        variant="ghost"
+        prefix={<CalendarIcon />}
+        placeholder="Ghost"
+      />
       <DateTimeInput variant="underline" placeholder="Underline" />
     </div>
   ),
@@ -431,7 +439,11 @@ export const States: StoryObj = {
         <div className="space-y-2">
           <DateInput prefix={<CalendarIcon />} placeholder="Empty" />
           <DateInput prefix={<CalendarIcon />} defaultValue="2024-06-15" />
-          <DateInput prefix={<CalendarIcon />} disabled defaultValue="2024-06-15" />
+          <DateInput
+            prefix={<CalendarIcon />}
+            disabled
+            defaultValue="2024-06-15"
+          />
         </div>
       </div>
 
@@ -448,8 +460,15 @@ export const States: StoryObj = {
         <p className="text-sm font-medium">DateTime States</p>
         <div className="space-y-2">
           <DateTimeInput prefix={<CalendarIcon />} placeholder="Empty" />
-          <DateTimeInput prefix={<CalendarIcon />} defaultValue="2024-06-15T14:30" />
-          <DateTimeInput prefix={<CalendarIcon />} disabled defaultValue="2024-06-15T14:30" />
+          <DateTimeInput
+            prefix={<CalendarIcon />}
+            defaultValue="2024-06-15T14:30"
+          />
+          <DateTimeInput
+            prefix={<CalendarIcon />}
+            disabled
+            defaultValue="2024-06-15T14:30"
+          />
         </div>
       </div>
     </div>

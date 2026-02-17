@@ -73,7 +73,8 @@ export interface SelectOption {
 }
 
 export interface SelectProps
-  extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "size" | "prefix">,
+  extends
+    Omit<SelectHTMLAttributes<HTMLSelectElement>, "size" | "prefix">,
     VariantProps<typeof containerVariants> {
   /**
    * Select options

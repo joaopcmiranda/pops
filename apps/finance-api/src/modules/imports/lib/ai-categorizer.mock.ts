@@ -17,7 +17,7 @@ const CATEGORIZATION_LOOKUP: Record<string, AiCacheEntry> = {
     category: "Groceries",
     cachedAt: new Date().toISOString(),
   },
-  "WOOLWORTHS": {
+  WOOLWORTHS: {
     description: "WOOLWORTHS",
     entityName: "Woolworths",
     category: "Groceries",
@@ -37,7 +37,7 @@ const CATEGORIZATION_LOOKUP: Record<string, AiCacheEntry> = {
   },
 
   // Dining
-  "MCDONALDS": {
+  MCDONALDS: {
     description: "MCDONALDS",
     entityName: "McDonald's",
     category: "Dining",
@@ -57,7 +57,7 @@ const CATEGORIZATION_LOOKUP: Record<string, AiCacheEntry> = {
     category: "Subscriptions",
     cachedAt: new Date().toISOString(),
   },
-  "SPOTIFY": {
+  SPOTIFY: {
     description: "SPOTIFY",
     entityName: "Spotify",
     category: "Subscriptions",
@@ -161,7 +161,12 @@ function categorizeByPattern(description: string): AiCacheEntry {
   }
 
   // Transport
-  if (upper.includes("SHELL") || upper.includes("BP") || upper.includes("FUEL") || upper.includes("PETROL")) {
+  if (
+    upper.includes("SHELL") ||
+    upper.includes("BP") ||
+    upper.includes("FUEL") ||
+    upper.includes("PETROL")
+  ) {
     return {
       description,
       entityName: "Fuel Station",

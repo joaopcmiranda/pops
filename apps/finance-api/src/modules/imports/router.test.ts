@@ -3,7 +3,12 @@ import { TRPCError } from "@trpc/server";
 import type { Database } from "better-sqlite3";
 import { setupTestContext, seedEntity, createCaller } from "../../shared/test-utils.js";
 import { clearCache } from "./lib/ai-categorizer.js";
-import type { ProcessImportOutput, ExecuteImportOutput } from "./types.js";
+import type {
+  ProcessImportOutput,
+  ExecuteImportOutput,
+  ParsedTransaction,
+  ConfirmedTransaction,
+} from "./types.js";
 
 /**
  * Unit tests for imports tRPC router.
@@ -26,18 +31,25 @@ import { resetMockAi } from "./lib/ai-categorizer.mock.js";
 const ctx = setupTestContext();
 let caller: ReturnType<typeof createCaller>;
 let db: Database;
-let notionMock: Client;
+let _notionMock: Client;
+
+/** Shape of a row returned from the entities SQLite table. */
+type EntityRow = { name: string; notion_id: string; last_edited_time: string };
 
 /**
  * Helper to poll for import progress until completion
  */
-async function waitForCompletion<T = any>(sessionId: string, maxAttempts = 50): Promise<T> {
+async function waitForCompletion<T extends ProcessImportOutput | ExecuteImportOutput>(
+  sessionId: string,
+  maxAttempts = 50
+): Promise<T> {
   for (let i = 0; i < maxAttempts; i++) {
     const progress = await caller.imports.getImportProgress({ sessionId });
     if (!progress) {
       throw new Error("Progress not found");
     }
     if (progress.status === "completed") {
+      if (!progress.result) throw new Error("Import completed but result is missing");
       return progress.result as T;
     }
     if (progress.status === "failed") {
@@ -50,7 +62,7 @@ async function waitForCompletion<T = any>(sessionId: string, maxAttempts = 50): 
 }
 
 beforeEach(() => {
-  ({ caller, db, notionMock } = ctx.setup());
+  ({ caller, db, notionMock: _notionMock } = ctx.setup());
   resetMockAi();
   clearCache();
 });
@@ -60,24 +72,21 @@ afterEach(() => {
 });
 
 describe("imports.processImport", () => {
-  beforeEach(() => {
-  });
+  beforeEach(() => {});
 
   it("validates input schema (requires transactions array)", async () => {
     await expect(
-      caller.imports.processImport({
-        transactions: undefined as any,
-        account: "Amex",
+      caller.imports.processImport({ account: "Amex" } as {
+        transactions: ParsedTransaction[];
+        account: string;
       })
     ).rejects.toThrow();
   });
 
   it("validates input schema (requires account)", async () => {
     await expect(
-      caller.imports.processImport({
-        transactions: [],
-        account: undefined as any,
-      })
+      // account: "" fails z.string().min(1) at runtime
+      caller.imports.processImport({ transactions: [], account: "" })
     ).rejects.toThrow();
   });
 
@@ -91,8 +100,8 @@ describe("imports.processImport", () => {
             account: "Amex",
             rawRow: "{}",
             checksum: "abc123",
-            // Missing date
-          } as any,
+            // Missing date intentionally — tests runtime Zod validation
+          } as ParsedTransaction,
         ],
         account: "Amex",
       })
@@ -125,11 +134,11 @@ describe("imports.processImport", () => {
         {
           date: "2026-02-13",
           description: "WOOLWORTHS 1234",
-          amount: -125.50,
+          amount: -125.5,
           account: "Amex",
           location: "Sydney",
           online: false,
-          rawRow: '{}',
+          rawRow: "{}",
           checksum: "abc123",
         },
       ],
@@ -176,7 +185,11 @@ describe("imports.processImport", () => {
     const result = await waitForCompletion<ProcessImportOutput>(sessionId);
     expect(result).toBeDefined();
     // All categories combined should equal total transactions
-    const total = result.matched.length + result.uncertain.length + result.failed.length + result.skipped.length;
+    const total =
+      result.matched.length +
+      result.uncertain.length +
+      result.failed.length +
+      result.skipped.length;
     expect(total).toBe(100);
   });
 
@@ -205,9 +218,7 @@ describe("imports.processImport", () => {
 describe("imports.executeImport", () => {
   it("validates input schema (requires transactions array)", async () => {
     await expect(
-      caller.imports.executeImport({
-        transactions: undefined as any,
-      })
+      caller.imports.executeImport({} as { transactions: ConfirmedTransaction[] })
     ).rejects.toThrow();
   });
 
@@ -224,25 +235,24 @@ describe("imports.executeImport", () => {
             checksum: "abc123",
             entityName: "Test",
             entityUrl: "https://notion.so/test",
-            // Missing entityId
-          } as any,
+            // Missing entityId intentionally — tests runtime Zod validation
+          } as ConfirmedTransaction,
         ],
       })
     ).rejects.toThrow();
   });
 
   it("executes valid input successfully", async () => {
-
     const { sessionId } = await caller.imports.executeImport({
       transactions: [
         {
           date: "2026-02-13",
           description: "WOOLWORTHS",
-          amount: -125.50,
+          amount: -125.5,
           account: "Amex",
           location: "Sydney",
           online: false,
-          rawRow: '{}',
+          rawRow: "{}",
           checksum: "abc123",
           entityId: "woolworths-id",
           entityName: "Woolworths",
@@ -254,24 +264,23 @@ describe("imports.executeImport", () => {
     const result = await waitForCompletion<ExecuteImportOutput>(sessionId);
     expect(result).toBeDefined();
 
-    expect(result!.imported).toBe(1);
-    expect(result!.failed).toEqual([]);
+    expect(result.imported).toBe(1);
+    expect(result.failed).toEqual([]);
   }, 10000);
 
   it("returns correct output structure", async () => {
-
     const { sessionId } = await caller.imports.executeImport({
       transactions: [],
     });
 
-    const result = await waitForCompletion(sessionId);
+    const result = await waitForCompletion<ExecuteImportOutput>(sessionId);
     expect(result).toBeDefined();
 
     expect(result).toHaveProperty("imported");
     expect(result).toHaveProperty("failed");
     expect(result).toHaveProperty("skipped");
-    expect(typeof result!.imported).toBe("number");
-    expect(Array.isArray(result!.failed)).toBe(true);
+    expect(typeof result.imported).toBe("number");
+    expect(Array.isArray(result.failed)).toBe(true);
   });
 
   it.skip("handles Notion API errors gracefully", async () => {
@@ -295,19 +304,15 @@ describe("imports.executeImport", () => {
     const result = await waitForCompletion<ExecuteImportOutput>(sessionId);
     expect(result).toBeDefined();
 
-    expect(result!.imported).toBe(0);
-    expect(result!.failed.length).toBe(1);
-    expect(result!.failed[0].error).toBe("Notion API error");
+    expect(result.imported).toBe(0);
+    expect(result.failed.length).toBe(1);
+    expect(result.failed[0].error).toBe("Notion API error");
   }, 10000);
 });
 
 describe("imports.createEntity", () => {
   it("validates input schema (requires name)", async () => {
-    await expect(
-      caller.imports.createEntity({
-        name: undefined as any,
-      })
-    ).rejects.toThrow();
+    await expect(caller.imports.createEntity({} as { name: string })).rejects.toThrow();
   });
 
   it("validates name is non-empty string", async () => {
@@ -330,7 +335,6 @@ describe("imports.createEntity", () => {
   });
 
   it("returns correct output structure", async () => {
-
     const result = await caller.imports.createEntity({
       name: "Test Entity",
     });
@@ -341,7 +345,6 @@ describe("imports.createEntity", () => {
   });
 
   it("handles entity names with special characters", async () => {
-
     const result = await caller.imports.createEntity({
       name: "McDonald's Café & Grill",
     });
@@ -350,7 +353,6 @@ describe("imports.createEntity", () => {
   });
 
   it("handles very long entity names", async () => {
-
     const longName = "A".repeat(200);
     const result = await caller.imports.createEntity({
       name: longName,
@@ -375,13 +377,12 @@ describe("imports.createEntity", () => {
 
     const row = db.prepare("SELECT * FROM entities WHERE notion_id = ?").get(result.entityId);
     expect(row).toBeDefined();
-    expect((row as any).name).toBe("SQLite Test Entity");
+    expect((row as EntityRow).name).toBe("SQLite Test Entity");
   });
 });
 
 describe("imports router - Authorization", () => {
   it("allows authenticated requests (processImport)", async () => {
-
     await expect(
       caller.imports.processImport({
         transactions: [],
@@ -399,7 +400,6 @@ describe("imports router - Authorization", () => {
   });
 
   it("allows authenticated requests (createEntity)", async () => {
-
     await expect(
       caller.imports.createEntity({
         name: "Test",

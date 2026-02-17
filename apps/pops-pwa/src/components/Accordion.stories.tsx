@@ -24,8 +24,8 @@ export const Single: Story = {
         <AccordionTrigger>What is POPS?</AccordionTrigger>
         <AccordionContent>
           POPS (Personal Operations System) is a self-hosted financial tracking
-          and automation platform that uses Notion as the source of truth for all
-          data.
+          and automation platform that uses Notion as the source of truth for
+          all data.
         </AccordionContent>
       </AccordionItem>
 
@@ -146,17 +146,20 @@ export const FAQ: Story = {
           <AccordionTrigger>Can I track multiple accounts?</AccordionTrigger>
           <AccordionContent>
             Yes, POPS supports unlimited accounts including checking, savings,
-            credit cards, and investment accounts. Each transaction is tagged with
-            its source account.
+            credit cards, and investment accounts. Each transaction is tagged
+            with its source account.
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="q3">
-          <AccordionTrigger>How accurate is AI categorization?</AccordionTrigger>
+          <AccordionTrigger>
+            How accurate is AI categorization?
+          </AccordionTrigger>
           <AccordionContent>
             The AI categorization achieves 95-100% accuracy with the 5-stage
-            entity matching pipeline: manual aliases → exact match → prefix match
-            → contains match → AI fallback. Results are cached for consistency.
+            entity matching pipeline: manual aliases → exact match → prefix
+            match → contains match → AI fallback. Results are cached for
+            consistency.
           </AccordionContent>
         </AccordionItem>
 
@@ -171,9 +174,9 @@ export const FAQ: Story = {
         <AccordionItem value="q5">
           <AccordionTrigger>Is there a mobile app?</AccordionTrigger>
           <AccordionContent>
-            POPS includes a Progressive Web App (PWA) that works on mobile devices
-            through your browser. You can install it to your home screen for an
-            app-like experience.
+            POPS includes a Progressive Web App (PWA) that works on mobile
+            devices through your browser. You can install it to your home screen
+            for an app-like experience.
           </AccordionContent>
         </AccordionItem>
       </Accordion>

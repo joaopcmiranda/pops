@@ -329,11 +329,11 @@ describe("matchEntity", () => {
     });
 
     it("handles entity lookup with null/undefined values gracefully", () => {
-      const lookup: EntityLookup = {
+      const lookup: Record<string, string | undefined> = {
         Woolworths: "woolworths-id",
-        Broken: undefined as any,
+        Broken: undefined,
       };
-      const result = matchEntity("WOOLWORTHS", lookup, {});
+      const result = matchEntity("WOOLWORTHS", lookup as EntityLookup, {});
 
       expect(result).not.toBeNull();
     });

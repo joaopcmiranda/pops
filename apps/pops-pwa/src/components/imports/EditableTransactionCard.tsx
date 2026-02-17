@@ -104,18 +104,29 @@ export function EditableTransactionCard({
           name="type"
           value={transactionType}
           onChange={(e) =>
-            setEditedFields({ ...editedFields, transactionType: e.target.value as "purchase" | "transfer" | "income" })
+            setEditedFields({
+              ...editedFields,
+              transactionType: e.target.value as
+                | "purchase"
+                | "transfer"
+                | "income",
+            })
           }
           className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800"
         >
           <option value="purchase">Purchase (requires entity)</option>
-          <option value="transfer">Transfer (between accounts, no entity)</option>
+          <option value="transfer">
+            Transfer (between accounts, no entity)
+          </option>
           <option value="income">Income (salary, refund, etc.)</option>
         </select>
         <p className="text-xs mt-1 text-blue-700 dark:text-blue-300">
-          {transactionType === "transfer" && "Transfers don't need an entity - they move money between accounts"}
-          {transactionType === "income" && "Income transactions: salary, interest, refunds, etc."}
-          {transactionType === "purchase" && "Purchases require an entity (merchant/payee)"}
+          {transactionType === "transfer" &&
+            "Transfers don't need an entity - they move money between accounts"}
+          {transactionType === "income" &&
+            "Income transactions: salary, interest, refunds, etc."}
+          {transactionType === "purchase" &&
+            "Purchases require an entity (merchant/payee)"}
         </p>
       </div>
 
@@ -213,7 +224,7 @@ export function EditableTransactionCard({
             id="entity"
             className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800"
             value={transaction.entity?.entityId || ""}
-            onChange={(e) => {
+            onChange={() => {
               // Entity selection handled separately - this is just for display
               // The parent component should handle entity changes
             }}
@@ -231,7 +242,9 @@ export function EditableTransactionCard({
       {transactionType === "transfer" && (
         <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg mb-4 text-sm">
           <p className="text-gray-700 dark:text-gray-300">
-            💡 <strong>Transfer transactions</strong> don't require an entity. They represent money moving between your accounts (e.g., credit card payments, savings transfers).
+            💡 <strong>Transfer transactions</strong> don't require an entity.
+            They represent money moving between your accounts (e.g., credit card
+            payments, savings transfers).
           </p>
         </div>
       )}
