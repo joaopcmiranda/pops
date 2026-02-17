@@ -222,7 +222,7 @@ describe("imports.executeImport", () => {
     ).rejects.toThrow();
   });
 
-  it("validates confirmed transaction schema (requires entityId)", async () => {
+  it("validates confirmed transaction schema (requires checksum)", async () => {
     await expect(
       caller.imports.executeImport({
         transactions: [
@@ -232,10 +232,7 @@ describe("imports.executeImport", () => {
             amount: -100,
             account: "Amex",
             rawRow: "{}",
-            checksum: "abc123",
-            entityName: "Test",
-            entityUrl: "https://notion.so/test",
-            // Missing entityId intentionally — tests runtime Zod validation
+            // Missing checksum intentionally — tests runtime Zod validation
           } as ConfirmedTransaction,
         ],
       })

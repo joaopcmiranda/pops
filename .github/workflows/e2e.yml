@@ -25,6 +25,9 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Build shared packages
+        run: cd packages/db-types && yarn build
+
       - name: Install Playwright browsers
         run: |
           cd apps/pops-pwa

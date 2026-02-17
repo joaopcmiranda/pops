@@ -454,7 +454,10 @@ describe("executeImport", () => {
   });
 
   it("writes multiple transactions with concurrency", async () => {
-    mockNotionCreate.mockResolvedValue({ id: "page-id" });
+    let createCount = 0;
+    mockNotionCreate.mockImplementation(() =>
+      Promise.resolve({ id: `page-id-${++createCount}` })
+    );
 
     const transactions = Array.from({ length: 10 }, (_, i) => ({
       ...baseConfirmedTransaction,
@@ -569,7 +572,10 @@ describe("executeImport", () => {
   });
 
   it("handles large batch (30 transactions)", async () => {
-    mockNotionCreate.mockResolvedValue({ id: "page-id" });
+    let createCount = 0;
+    mockNotionCreate.mockImplementation(() =>
+      Promise.resolve({ id: `page-id-${++createCount}` })
+    );
 
     // 30 transactions × 400ms delay = 12 seconds total
     // With 3 workers = ~4 seconds
