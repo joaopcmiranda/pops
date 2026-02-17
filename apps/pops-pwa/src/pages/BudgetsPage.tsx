@@ -27,7 +27,9 @@ export function BudgetsPage() {
   const columns: ColumnDef<Budget>[] = [
     {
       accessorKey: "category",
-      header: ({ column }) => <SortableHeader column={column}>Category</SortableHeader>,
+      header: ({ column }) => (
+        <SortableHeader column={column}>Category</SortableHeader>
+      ),
       cell: ({ row }) => (
         <div className="font-medium">{row.original.category}</div>
       ),
@@ -37,7 +39,9 @@ export function BudgetsPage() {
       header: "Period",
       cell: ({ row }) => (
         <span className="text-sm">
-          {row.original.period || <span className="text-muted-foreground">—</span>}
+          {row.original.period || (
+            <span className="text-muted-foreground">—</span>
+          )}
         </span>
       ),
     },
@@ -51,9 +55,7 @@ export function BudgetsPage() {
       cell: ({ row }) => {
         const amount = row.original.amount;
         if (amount === null) {
-          return (
-            <div className="text-right text-muted-foreground">—</div>
-          );
+          return <div className="text-right text-muted-foreground">—</div>;
         }
         return (
           <div className="text-right font-mono font-medium tabular-nums">
@@ -66,12 +68,19 @@ export function BudgetsPage() {
       accessorKey: "active",
       header: "Status",
       cell: ({ row }) => (
-        <Badge variant={row.original.active ? "default" : "secondary"} className="text-xs">
+        <Badge
+          variant={row.original.active ? "default" : "secondary"}
+          className="text-xs"
+        >
           {row.original.active ? "Active" : "Inactive"}
         </Badge>
       ),
       filterFn: (row, columnId, filterValue) => {
-        if (filterValue === undefined || filterValue === null || filterValue === "") {
+        if (
+          filterValue === undefined ||
+          filterValue === null ||
+          filterValue === ""
+        ) {
           return true;
         }
         const value = row.getValue<boolean>(columnId);
@@ -126,10 +135,7 @@ export function BudgetsPage() {
         <Alert variant="destructive">
           <p className="font-semibold">Failed to load budgets</p>
           <p className="text-sm">{error.message}</p>
-          <button
-            onClick={() => refetch()}
-            className="mt-2 text-sm underline"
-          >
+          <button onClick={() => refetch()} className="mt-2 text-sm underline">
             Try again
           </button>
         </Alert>

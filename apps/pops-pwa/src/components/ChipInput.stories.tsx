@@ -269,9 +269,7 @@ export const CategorySelector: Story = {
           />
         </div>
         <div>
-          <p className="text-sm text-muted-foreground mb-2">
-            Quick add:
-          </p>
+          <p className="text-sm text-muted-foreground mb-2">Quick add:</p>
           <div className="flex flex-wrap gap-2">
             {suggestions
               .filter((s) => !categories.includes(s))

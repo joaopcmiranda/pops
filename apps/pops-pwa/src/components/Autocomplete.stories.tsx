@@ -27,11 +27,23 @@ const cities = [
   { label: "Brisbane", value: "bne", description: "Queensland, Australia" },
   { label: "Perth", value: "per", description: "Western Australia" },
   { label: "Adelaide", value: "adl", description: "South Australia" },
-  { label: "Canberra", value: "can", description: "Australian Capital Territory" },
+  {
+    label: "Canberra",
+    value: "can",
+    description: "Australian Capital Territory",
+  },
   { label: "Hobart", value: "hba", description: "Tasmania, Australia" },
-  { label: "Darwin", value: "drw", description: "Northern Territory, Australia" },
+  {
+    label: "Darwin",
+    value: "drw",
+    description: "Northern Territory, Australia",
+  },
   { label: "Gold Coast", value: "ool", description: "Queensland, Australia" },
-  { label: "Newcastle", value: "ntl", description: "New South Wales, Australia" },
+  {
+    label: "Newcastle",
+    value: "ntl",
+    description: "New South Wales, Australia",
+  },
 ];
 
 const merchants = [
@@ -143,7 +155,6 @@ export const CustomEmpty: Story = {
     );
   },
 };
-
 
 export const Disabled: Story = {
   args: {},

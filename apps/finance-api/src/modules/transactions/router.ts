@@ -62,8 +62,8 @@ export const transactionsRouter = router({
   }),
 
   /** Create a new transaction. */
-  create: protectedProcedure.input(CreateTransactionSchema).mutation(({ input }) => {
-    const row = service.createTransaction(input);
+  create: protectedProcedure.input(CreateTransactionSchema).mutation(async ({ input }) => {
+    const row = await service.createTransaction(input);
     return {
       data: toTransaction(row),
       message: "Transaction created",
@@ -78,9 +78,9 @@ export const transactionsRouter = router({
         data: UpdateTransactionSchema,
       })
     )
-    .mutation(({ input }) => {
+    .mutation(async ({ input }) => {
       try {
-        const row = service.updateTransaction(input.id, input.data);
+        const row = await service.updateTransaction(input.id, input.data);
         return {
           data: toTransaction(row),
           message: "Transaction updated",
@@ -94,9 +94,9 @@ export const transactionsRouter = router({
     }),
 
   /** Delete a transaction. */
-  delete: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ input }) => {
+  delete: protectedProcedure.input(z.object({ id: z.string() })).mutation(async ({ input }) => {
     try {
-      service.deleteTransaction(input.id);
+      await service.deleteTransaction(input.id);
       return { message: "Transaction deleted" };
     } catch (err) {
       if (err instanceof NotFoundError) {

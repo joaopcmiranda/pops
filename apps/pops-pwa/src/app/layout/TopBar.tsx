@@ -30,9 +30,7 @@ export function TopBar() {
           {theme === "dark" ? "☀️" : "🌙"}
         </button>
 
-        <div className="text-sm text-muted-foreground">
-          user@example.com
-        </div>
+        <div className="text-sm text-muted-foreground">user@example.com</div>
       </div>
     </header>
   );

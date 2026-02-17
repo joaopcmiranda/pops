@@ -45,7 +45,7 @@ export function toTransaction(row: TransactionRow): Transaction {
             // Fallback to comma-separated if not JSON
             return row.categories
               .split(",")
-              .map((s) => s.trim())
+              .map((s: string) => s.trim())
               .filter(Boolean);
           }
         })()
@@ -80,6 +80,10 @@ export const CreateTransactionSchema = z.object({
   taxReturn: z.boolean().optional().default(false),
   relatedTransactionId: z.string().nullable().optional(),
   notes: z.string().nullable().optional(),
+  /** Import-only: raw CSV row, stored in Notion for audit trail. Not persisted in SQLite. */
+  rawRow: z.string().optional(),
+  /** Import-only: checksum for deduplication, stored in Notion. Not persisted in SQLite. */
+  checksum: z.string().optional(),
 });
 export type CreateTransactionInput = z.infer<typeof CreateTransactionSchema>;
 

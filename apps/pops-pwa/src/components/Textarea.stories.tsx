@@ -174,9 +174,7 @@ export const Feedback: Story = {
               Please provide at least {minLength} characters
             </p>
           )}
-          {isValid && (
-            <p className="text-xs text-green-600">Looks good!</p>
-          )}
+          {isValid && <p className="text-xs text-green-600">Looks good!</p>}
         </div>
 
         <button

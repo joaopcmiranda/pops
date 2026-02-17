@@ -58,9 +58,11 @@ mise docker:logs      # Show logs
 
 **Ansible:**
 ```bash
-mise ansible:provision  # Full N95 provision
-mise ansible:deploy     # Deploy services only
-mise ansible:check      # Syntax check
+mise ansible:provision    # Full N95 provision
+mise ansible:deploy       # Deploy services only
+mise ansible:check        # Syntax check
+mise ansible:view         # View vault contents (read-only)
+mise ansible:decrypt-env  # Decrypt vault → .env for local dev
 ```
 
 **Git Worktrees:**
@@ -227,28 +229,30 @@ Bank Feeds:
 
 ## Notion Databases
 
+**NOTE:** Database IDs are workspace-specific and loaded from environment variables (`.env` file locally, Ansible Vault in production). See `.env.example` for required variables.
+
 ### Balance Sheet
-- **ID:** `9ad27001-d723-4a3f-8b3a-cf19cf715eec`
+- **Env Var:** `NOTION_BALANCE_SHEET_ID`
 - **Records:** 15,000+ transactions across 11 accounts
 - **Properties:** Description (title), Account (select), Amount (number), Date (date), Type (select), Category (multi_select), Entity (relation → Entities), Location (select), Country (select), Online (checkbox), Novated Lease (checkbox), Tax Return (checkbox), Related Transaction (relation)
 
 ### Entities
-- **ID:** `3062f475-7765-406e-bde5-117f3e0a473f`
+- **Env Var:** `NOTION_ENTITIES_DB_ID`
 - **Records:** 940+ merchants/payees
 - **Properties:** Name (title)
 
 ### Home Inventory
-- **ID:** `542bb48c-740c-4848-93ad-eb91c86a612e`
+- **Env Var:** `NOTION_HOME_INVENTORY_ID`
 - **Data source:** `collection://7784d712-0114-4371-90c1-cb15ea003fe2`
 - **Properties:** Item Name (title), Brand/Manufacturer, Model, ID, Room, Location, Type, Condition, In-use, Deductible, Purchase Date, Warranty Expires, Est. Replacement Value, Est. Resale Value, Purchase Transaction (relation → Balance Sheet), Purchased From (relation → Entities)
 - **Missing:** Receipt attachment
 
 ### Budget
-- **ID:** `1a640f45-3d91-80e8-9a88-c94dc05fba23`
+- **Env Var:** `NOTION_BUDGET_ID`
 - **Properties:** Category (title), Period (select), Amount (number), Active (checkbox), Notes (rich_text)
 
 ### Wish List
-- **ID:** `1a640f45-3d91-808a-a84b-d79acbe56acb`
+- **Env Var:** `NOTION_WISH_LIST_ID`
 - **Properties:** Item (title), Target Amount (number), Saved (number), Priority (select: Needing/Soon/One Day/Dreaming), URL (url), Notes (rich_text)
 
 ## Import Tools
@@ -269,6 +273,7 @@ Hit rate: ~95-100% with aliases. AI fallback handles the rest and caches results
 
 - **Never read `.env` contents** — reference file paths only, never inline token values
 - **Never commit secrets** — `.env`, `*.csv`, `entity_lookup.json`, `.claude/`, `*.jsonl` must be in `.gitignore`
+- **Never hardcode Notion database IDs** — use environment variables (workspace-specific)
 - **Docker secrets** for all API tokens in production (not env vars in compose files)
 - **Parameterized queries only** — no string interpolation into SQL
 - **Cloudflare Access** in front of all exposed services (except Up webhook endpoint)

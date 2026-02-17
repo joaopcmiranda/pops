@@ -146,7 +146,6 @@ export const WithDisabledOptions: Story = {
   },
 };
 
-
 export const DefaultVariant: Story = {
   args: {},
   render: () => {
@@ -163,7 +162,6 @@ export const DefaultVariant: Story = {
     );
   },
 };
-
 
 export const Disabled: Story = {
   args: {},

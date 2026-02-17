@@ -81,27 +81,32 @@ const sampleUsers: User[] = [
   },
 ];
 
-const sampleTransactions: Transaction[] = Array.from({ length: 50 }, (_, i) => ({
-  id: `txn-${i + 1}`,
-  date: new Date(2024, 0, i + 1).toISOString().split("T")[0],
-  description: [
-    "Woolworths",
-    "Coles",
-    "Amazon",
-    "Netflix",
-    "Uber",
-    "Spotify",
-  ][i % 6],
-  amount: Math.random() * 200 - 100,
-  category: ["Food", "Shopping", "Entertainment", "Transport"][i % 4],
-  account: ["Checking", "Savings", "Credit Card"][i % 3],
-}));
+const sampleTransactions: Transaction[] = Array.from(
+  { length: 50 },
+  (_, i) => ({
+    id: `txn-${i + 1}`,
+    date: new Date(2024, 0, i + 1).toISOString().split("T")[0],
+    description: [
+      "Woolworths",
+      "Coles",
+      "Amazon",
+      "Netflix",
+      "Uber",
+      "Spotify",
+    ][i % 6],
+    amount: Math.random() * 200 - 100,
+    category: ["Food", "Shopping", "Entertainment", "Transport"][i % 4],
+    account: ["Checking", "Savings", "Credit Card"][i % 3],
+  })
+);
 
 // Basic columns
 const userColumns: ColumnDef<User>[] = [
   {
     accessorKey: "name",
-    header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
+    header: ({ column }) => (
+      <SortableHeader column={column}>Name</SortableHeader>
+    ),
   },
   {
     accessorKey: "email",
@@ -270,9 +275,15 @@ export const WithEditableCells: Story = {
   render: () => {
     const [users, setUsers] = useState(sampleUsers);
 
-    const updateUser = (id: number, field: keyof User, value: User[keyof User]) => {
+    const updateUser = (
+      id: number,
+      field: keyof User,
+      value: User[keyof User]
+    ) => {
       setUsers((prev) =>
-        prev.map((user) => (user.id === id ? { ...user, [field]: value } : user))
+        prev.map((user) =>
+          user.id === id ? { ...user, [field]: value } : user
+        )
       );
     };
 
@@ -300,7 +311,9 @@ export const WithEditableCells: Story = {
           <EditableCell
             value={row.original.email}
             type="text"
-            onSave={(newValue) => updateUser(row.original.id, "email", newValue)}
+            onSave={(newValue) =>
+              updateUser(row.original.id, "email", newValue)
+            }
             validate={(val) =>
               /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) || "Invalid email"
             }
@@ -407,9 +420,7 @@ export const WithActions: Story = {
 export const Loading: Story = {
   args: {},
   render: () => {
-    return (
-      <DataTable columns={userColumns} data={[]} loading />
-    );
+    return <DataTable columns={userColumns} data={[]} loading />;
   },
 };
 

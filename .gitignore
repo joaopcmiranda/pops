@@ -16,6 +16,7 @@ dist/
 *.db-wal
 *.db-shm
 *.csv
+!apps/finance-api/src/modules/imports/test-data/amex-sample.csv
 entity_lookup.json
 ai_entity_cache.json
 
@@ -40,3 +41,10 @@ ai_entity_cache.json
 
 *storybook.log
 storybook-static
+
+# Test artifacts
+playwright-report/
+test-results/
+
+# Temporary files
+tmp/

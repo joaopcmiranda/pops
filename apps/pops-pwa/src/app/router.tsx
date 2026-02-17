@@ -9,6 +9,8 @@ import { EntitiesPage } from "@/pages/EntitiesPage";
 import { BudgetsPage } from "@/pages/BudgetsPage";
 import { InventoryPage } from "@/pages/InventoryPage";
 import { WishlistPage } from "@/pages/WishlistPage";
+import { ImportPage } from "@/pages/ImportPage";
+import { AiUsagePage } from "@/pages/AiUsagePage";
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +23,8 @@ export const router = createBrowserRouter([
       { path: "budgets", element: <BudgetsPage /> },
       { path: "inventory", element: <InventoryPage /> },
       { path: "wishlist", element: <WishlistPage /> },
+      { path: "import", element: <ImportPage /> },
+      { path: "ai-usage", element: <AiUsagePage /> },
     ],
   },
 ]);

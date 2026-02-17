@@ -110,7 +110,9 @@ export const FormField: Story = {
           <HelpCircleIcon className="h-4 w-4 text-muted-foreground cursor-help" />
         </TooltipTrigger>
         <TooltipContent>
-          <p>The current balance of your account including pending transactions</p>
+          <p>
+            The current balance of your account including pending transactions
+          </p>
         </TooltipContent>
       </Tooltip>
     </div>
@@ -127,8 +129,8 @@ export const LongText: Story = {
       <TooltipContent className="max-w-xs">
         <p>
           Entity matching uses a 5-stage pipeline: manual aliases, exact match,
-          prefix match, contains match, and punctuation stripping. Achieves 95-100%
-          hit rate with aliases, with AI fallback for remaining cases.
+          prefix match, contains match, and punctuation stripping. Achieves
+          95-100% hit rate with aliases, with AI fallback for remaining cases.
         </p>
       </TooltipContent>
     </Tooltip>

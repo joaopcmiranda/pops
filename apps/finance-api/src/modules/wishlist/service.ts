@@ -1,10 +1,11 @@
 /**
- * Wish list service — CRUD operations against the SQLite wish_list table.
+ * Wish list service — CRUD operations against Notion and SQLite.
+ * Notion is the source of truth. All writes go to Notion first, then sync to SQLite.
  * All SQL uses parameterized queries (no string interpolation).
  */
-import { randomUUID } from "node:crypto";
 import { getDb } from "../../db.js";
 import { NotFoundError } from "../../shared/errors.js";
+import { getNotionClient, getWishListId } from "../../shared/notion-client.js";
 import type { WishListRow, CreateWishListItemInput, UpdateWishListItemInput } from "./types.js";
 
 /** Count + rows for a paginated list. */
@@ -57,19 +58,58 @@ export function getWishListItem(id: string): WishListRow {
   return row;
 }
 
-/** Create a new wish list item. Returns the created row. */
-export function createWishListItem(input: CreateWishListItemInput): WishListRow {
+/**
+ * Create a new wish list item. Returns the created row.
+ *
+ * Flow:
+ * 1. Create page in Notion
+ * 2. Insert into SQLite using Notion's response
+ * 3. Return created row
+ */
+export async function createWishListItem(input: CreateWishListItemInput): Promise<WishListRow> {
   const db = getDb();
-  const id = randomUUID();
+
+  // Build Notion properties
+  const properties: { [key: string]: unknown } = {
+    Item: {
+      title: [{ text: { content: input.item } }],
+    },
+  };
+
+  if (input.targetAmount !== undefined && input.targetAmount !== null) {
+    properties["Target Amount"] = { number: input.targetAmount };
+  }
+  if (input.saved !== undefined && input.saved !== null) {
+    properties.Saved = { number: input.saved };
+  }
+  if (input.priority) {
+    properties.Priority = { select: { name: input.priority } };
+  }
+  if (input.url) {
+    properties.URL = { url: input.url };
+  }
+  if (input.notes) {
+    properties.Notes = { rich_text: [{ text: { content: input.notes } }] };
+  }
+
+  // 1. Create in Notion
+  const notion = getNotionClient();
+  const response = await notion.pages.create({
+    parent: { database_id: getWishListId() },
+    // @ts-expect-error - Dynamic property building conflicts with Notion's strict types, but properties are correct at runtime
+    properties,
+  });
+
   const now = new Date().toISOString();
 
+  // 2. Insert into SQLite using Notion's ID
   db.prepare(
     `
     INSERT INTO wish_list (notion_id, item, target_amount, saved, priority, url, notes, last_edited_time)
     VALUES (@notionId, @item, @targetAmount, @saved, @priority, @url, @notes, @lastEditedTime)
   `
   ).run({
-    notionId: id,
+    notionId: response.id,
     item: input.item,
     targetAmount: input.targetAmount ?? null,
     saved: input.saved ?? null,
@@ -79,16 +119,63 @@ export function createWishListItem(input: CreateWishListItemInput): WishListRow 
     lastEditedTime: now,
   });
 
-  return getWishListItem(id);
+  return getWishListItem(response.id);
 }
 
-/** Update an existing wish list item. Returns the updated row. */
-export function updateWishListItem(id: string, input: UpdateWishListItemInput): WishListRow {
+/**
+ * Update an existing wish list item. Returns the updated row.
+ *
+ * Flow:
+ * 1. Verify item exists in SQLite
+ * 2. Update page in Notion
+ * 3. Update SQLite with same data
+ * 4. Return updated row
+ */
+export async function updateWishListItem(
+  id: string,
+  input: UpdateWishListItemInput
+): Promise<WishListRow> {
   const db = getDb();
 
   // Verify it exists first
   getWishListItem(id);
 
+  // Build Notion properties update
+  const properties: { [key: string]: unknown } = {};
+
+  if (input.item !== undefined) {
+    properties.Item = {
+      title: [{ text: { content: input.item } }],
+    };
+  }
+  if (input.targetAmount !== undefined) {
+    properties["Target Amount"] =
+      input.targetAmount !== null ? { number: input.targetAmount } : { number: null };
+  }
+  if (input.saved !== undefined) {
+    properties.Saved = input.saved !== null ? { number: input.saved } : { number: null };
+  }
+  if (input.priority !== undefined) {
+    properties.Priority = input.priority ? { select: { name: input.priority } } : { select: null };
+  }
+  if (input.url !== undefined) {
+    properties.URL = input.url ? { url: input.url } : { url: null };
+  }
+  if (input.notes !== undefined) {
+    properties.Notes = input.notes
+      ? { rich_text: [{ text: { content: input.notes } }] }
+      : { rich_text: [] };
+  }
+
+  // 1. Update in Notion
+  const notion = getNotionClient();
+  await notion.pages.update({
+    page_id: id,
+    // @ts-expect-error - Dynamic property building conflicts with Notion's strict types, but properties are correct at runtime
+    properties,
+  });
+
+  // 2. Update in SQLite
   const fields: string[] = [];
   const params: Record<string, string | number | null> = { notionId: id };
 
@@ -127,9 +214,27 @@ export function updateWishListItem(id: string, input: UpdateWishListItemInput): 
   return getWishListItem(id);
 }
 
-/** Delete a wish list item by ID. Throws NotFoundError if missing. */
-export function deleteWishListItem(id: string): void {
+/**
+ * Delete a wish list item by ID. Throws NotFoundError if missing.
+ *
+ * Flow:
+ * 1. Archive page in Notion
+ * 2. Delete from SQLite
+ */
+export async function deleteWishListItem(id: string): Promise<void> {
   const db = getDb();
+
+  // Verify it exists first
+  getWishListItem(id);
+
+  // 1. Archive in Notion
+  const notion = getNotionClient();
+  await notion.pages.update({
+    page_id: id,
+    archived: true,
+  });
+
+  // 2. Delete from SQLite
   const result = db.prepare("DELETE FROM wish_list WHERE notion_id = ?").run(id);
   if (result.changes === 0) throw new NotFoundError("Wish list item", id);
 }

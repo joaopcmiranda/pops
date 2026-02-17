@@ -50,3 +50,9 @@ jobs:
 
       - name: Run tests
         run: yarn test
+        env:
+          NOTION_BALANCE_SHEET_ID: test-balance-sheet-id
+          NOTION_ENTITIES_DB_ID: test-entities-db-id
+          NOTION_HOME_INVENTORY_ID: test-home-inventory-id
+          NOTION_BUDGET_ID: test-budget-id
+          NOTION_WISH_LIST_ID: test-wish-list-id

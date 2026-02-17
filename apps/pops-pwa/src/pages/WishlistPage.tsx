@@ -30,7 +30,9 @@ export function WishlistPage() {
   const columns: ColumnDef<WishlistItem>[] = [
     {
       accessorKey: "item",
-      header: ({ column }) => <SortableHeader column={column}>Item</SortableHeader>,
+      header: ({ column }) => (
+        <SortableHeader column={column}>Item</SortableHeader>
+      ),
       cell: ({ row }) => (
         <div>
           <div className="font-medium">{row.original.item}</div>
@@ -58,9 +60,11 @@ export function WishlistPage() {
         return (
           <Badge
             variant={
-              priority === "Needing" ? "default" :
-              priority === "Soon" ? "secondary" :
-              "outline"
+              priority === "Needing"
+                ? "default"
+                : priority === "Soon"
+                  ? "secondary"
+                  : "outline"
             }
             className="text-xs"
           >
@@ -79,9 +83,7 @@ export function WishlistPage() {
       cell: ({ row }) => {
         const amount = row.original.targetAmount;
         if (amount === null) {
-          return (
-            <div className="text-right text-muted-foreground">—</div>
-          );
+          return <div className="text-right text-muted-foreground">—</div>;
         }
         return (
           <div className="text-right font-mono font-medium tabular-nums">
@@ -100,9 +102,7 @@ export function WishlistPage() {
       cell: ({ row }) => {
         const amount = row.original.saved;
         if (amount === null) {
-          return (
-            <div className="text-right text-muted-foreground">—</div>
-          );
+          return <div className="text-right text-muted-foreground">—</div>;
         }
         return (
           <div className="text-right font-mono font-medium tabular-nums text-green-600 dark:text-green-400">
@@ -121,9 +121,7 @@ export function WishlistPage() {
       cell: ({ row }) => {
         const amount = row.original.remainingAmount;
         if (amount === null) {
-          return (
-            <div className="text-right text-muted-foreground">—</div>
-          );
+          return <div className="text-right text-muted-foreground">—</div>;
         }
         return (
           <div className="text-right font-mono font-medium tabular-nums">
@@ -140,7 +138,10 @@ export function WishlistPage() {
         if (targetAmount === null || saved === null || targetAmount === 0) {
           return <span className="text-muted-foreground">—</span>;
         }
-        const percentage = Math.min(100, Math.round((saved / targetAmount) * 100));
+        const percentage = Math.min(
+          100,
+          Math.round((saved / targetAmount) * 100)
+        );
         return (
           <div className="flex items-center gap-2 min-w-[120px]">
             <Progress value={percentage} className="h-2 flex-1" />
@@ -175,10 +176,7 @@ export function WishlistPage() {
         <Alert variant="destructive">
           <p className="font-semibold">Failed to load wish list</p>
           <p className="text-sm">{error.message}</p>
-          <button
-            onClick={() => refetch()}
-            className="mt-2 text-sm underline"
-          >
+          <button onClick={() => refetch()} className="mt-2 text-sm underline">
             Try again
           </button>
         </Alert>

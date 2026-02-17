@@ -52,10 +52,7 @@ export const BudgetTracking: Story = {
     return (
       <div className="space-y-6">
         {budgets.map((budget) => {
-          const percentage = Math.min(
-            (budget.spent / budget.total) * 100,
-            100
-          );
+          const percentage = Math.min((budget.spent / budget.total) * 100, 100);
           const isOverBudget = budget.spent > budget.total;
 
           return (
@@ -145,9 +142,7 @@ export const ControlledProgress: Story = {
             Complete
           </Button>
         </div>
-        <p className="text-center text-sm text-muted-foreground">
-          {progress}%
-        </p>
+        <p className="text-center text-sm text-muted-foreground">{progress}%</p>
       </div>
     );
   },
@@ -241,7 +236,12 @@ export const MultipleGoals: Story = {
       },
       { name: "Vacation", current: 2400, target: 5000, color: "bg-green-600" },
       { name: "New Car", current: 8200, target: 15000, color: "bg-purple-600" },
-      { name: "Home Deposit", current: 45000, target: 80000, color: "bg-orange-600" },
+      {
+        name: "Home Deposit",
+        current: 45000,
+        target: 80000,
+        color: "bg-orange-600",
+      },
     ];
 
     return (
@@ -257,7 +257,10 @@ export const MultipleGoals: Story = {
                   {goal.target.toLocaleString()}
                 </span>
               </div>
-              <Progress value={percentage} className={`[&>div]:${goal.color}`} />
+              <Progress
+                value={percentage}
+                className={`[&>div]:${goal.color}`}
+              />
             </div>
           );
         })}

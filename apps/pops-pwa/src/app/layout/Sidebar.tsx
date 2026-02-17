@@ -14,6 +14,8 @@ const navItems = [
   { path: "/budgets", label: "Budgets", icon: "💰" },
   { path: "/inventory", label: "Inventory", icon: "📦" },
   { path: "/wishlist", label: "Wish List", icon: "⭐" },
+  { path: "/import", label: "Import", icon: "📥" },
+  { path: "/ai-usage", label: "AI Usage", icon: "🤖" },
 ];
 
 export function Sidebar({ open }: SidebarProps) {

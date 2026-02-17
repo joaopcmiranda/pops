@@ -349,14 +349,10 @@ export const ColoredFallbacks: Story = {
         <AvatarFallback className="bg-green-600 text-white">AB</AvatarFallback>
       </Avatar>
       <Avatar>
-        <AvatarFallback className="bg-purple-600 text-white">
-          CD
-        </AvatarFallback>
+        <AvatarFallback className="bg-purple-600 text-white">CD</AvatarFallback>
       </Avatar>
       <Avatar>
-        <AvatarFallback className="bg-orange-600 text-white">
-          EF
-        </AvatarFallback>
+        <AvatarFallback className="bg-orange-600 text-white">EF</AvatarFallback>
       </Avatar>
       <Avatar>
         <AvatarFallback className="bg-pink-600 text-white">GH</AvatarFallback>

@@ -215,7 +215,9 @@ export const DateRange: Story = {
     return (
       <div className="space-y-6 w-96">
         <div className="space-y-2">
-          <label className="text-sm font-medium">Transaction History Range</label>
+          <label className="text-sm font-medium">
+            Transaction History Range
+          </label>
           <Slider
             value={days}
             onValueChange={setDays}
@@ -245,7 +247,9 @@ export const SavingsGoal: Story = {
       <div className="space-y-6 w-96 rounded-lg border p-6">
         <div>
           <h3 className="text-lg font-semibold">Savings Goal Calculator</h3>
-          <p className="text-sm text-muted-foreground">Goal: ${goal.toLocaleString()}</p>
+          <p className="text-sm text-muted-foreground">
+            Goal: ${goal.toLocaleString()}
+          </p>
         </div>
 
         <div className="space-y-2">

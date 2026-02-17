@@ -102,7 +102,11 @@ export const Default: Story = {
 
 export const AlignEnd: Story = {
   args: {
-    trigger: <Button variant="outline" size="lg">Align End (Wide Button)</Button>,
+    trigger: (
+      <Button variant="outline" size="lg">
+        Align End (Wide Button)
+      </Button>
+    ),
     align: "end",
     items: [
       { label: "Profile", value: "profile" },
@@ -114,7 +118,11 @@ export const AlignEnd: Story = {
 
 export const AlignCenter: Story = {
   args: {
-    trigger: <Button variant="outline" size="lg">Align Center (Wide Button)</Button>,
+    trigger: (
+      <Button variant="outline" size="lg">
+        Align Center (Wide Button)
+      </Button>
+    ),
     align: "center",
     items: [
       { label: "Profile", value: "profile" },

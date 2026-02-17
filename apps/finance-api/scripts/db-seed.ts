@@ -34,6 +34,7 @@ const seedDatabase = db.transaction(() => {
   db.exec(`DELETE FROM home_inventory`);
   db.exec(`DELETE FROM wish_list`);
   db.exec(`DELETE FROM sync_cursors`);
+  db.exec(`DELETE FROM ai_usage`);
 
 // =============================================================================
 // Entities (merchants/payees)

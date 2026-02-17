@@ -146,8 +146,8 @@ export const LongContent: Story = {
         Successfully imported 1,247 transactions from ANZ, Amex, and ING. All
         transactions have been matched with existing entities using the 5-stage
         matching pipeline. Entity matching achieved a 98% success rate with
-        manual aliases, exact matches, and prefix matching. The remaining 2% were
-        matched using AI-powered entity recognition with cached results for
+        manual aliases, exact matches, and prefix matching. The remaining 2%
+        were matched using AI-powered entity recognition with cached results for
         future imports.
       </AlertDescription>
     </Alert>

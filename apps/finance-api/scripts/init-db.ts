@@ -96,10 +96,50 @@ db.exec(`
   );
 
   CREATE TABLE IF NOT EXISTS sync_cursors (
-    database_name TEXT PRIMARY KEY,
-    cursor TEXT NOT NULL,
-    last_sync_time TEXT NOT NULL
+    database_id TEXT PRIMARY KEY,
+    last_edited_time TEXT NOT NULL
   );
+
+  CREATE TABLE IF NOT EXISTS ai_usage (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    description TEXT NOT NULL,
+    entity_name TEXT,
+    category TEXT,
+    input_tokens INTEGER NOT NULL,
+    output_tokens INTEGER NOT NULL,
+    cost_usd REAL NOT NULL,
+    cached INTEGER NOT NULL DEFAULT 0,
+    import_batch_id TEXT,
+    created_at TEXT NOT NULL
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_ai_usage_created_at ON ai_usage(created_at);
+  CREATE INDEX IF NOT EXISTS idx_ai_usage_batch ON ai_usage(import_batch_id);
+
+  CREATE TABLE IF NOT EXISTS transaction_corrections (
+    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+    description_pattern TEXT NOT NULL,
+    match_type TEXT CHECK(match_type IN ('exact', 'contains', 'regex')) NOT NULL DEFAULT 'exact',
+    entity_id TEXT,
+    entity_name TEXT,
+    location TEXT,
+    online INTEGER,
+    transaction_type TEXT CHECK(transaction_type IN ('purchase', 'transfer', 'income')),
+    confidence REAL NOT NULL DEFAULT 0.5 CHECK(confidence >= 0.0 AND confidence <= 1.0),
+    times_applied INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    last_used_at TEXT,
+    FOREIGN KEY (entity_id) REFERENCES entities(notion_id) ON DELETE SET NULL
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_corrections_pattern ON transaction_corrections(description_pattern);
+  CREATE INDEX IF NOT EXISTS idx_corrections_confidence ON transaction_corrections(confidence DESC);
+  CREATE INDEX IF NOT EXISTS idx_corrections_times_applied ON transaction_corrections(times_applied DESC);
+
+  CREATE VIEW IF NOT EXISTS v_active_corrections AS
+  SELECT * FROM transaction_corrections
+  WHERE confidence >= 0.7
+  ORDER BY confidence DESC, times_applied DESC;
 `);
 
 console.log(`✅ Database initialized at ${DB_PATH}`);

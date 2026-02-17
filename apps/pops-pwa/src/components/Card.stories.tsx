@@ -11,7 +11,11 @@ import {
 import { Button } from "./Button";
 import { Badge } from "./ui/badge";
 import { Progress } from "./ui/progress";
-import { MoreVerticalIcon, TrendingUpIcon, TrendingDownIcon } from "lucide-react";
+import {
+  MoreVerticalIcon,
+  TrendingUpIcon,
+  TrendingDownIcon,
+} from "lucide-react";
 
 const meta: Meta<typeof Card> = {
   title: "Layout/Card",
@@ -47,7 +51,9 @@ export const WithFooter: Story = {
         <CardDescription>This action cannot be undone</CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-sm">Are you sure you want to delete this transaction?</p>
+        <p className="text-sm">
+          Are you sure you want to delete this transaction?
+        </p>
       </CardContent>
       <CardFooter className="gap-2">
         <Button variant="outline" className="flex-1">
@@ -278,8 +284,8 @@ export const NotificationCard: Story = {
       </CardHeader>
       <CardContent>
         <p className="text-sm">
-          You've reached 85% of your Shopping budget for February. Consider reducing
-          spending in this category.
+          You've reached 85% of your Shopping budget for February. Consider
+          reducing spending in this category.
         </p>
       </CardContent>
       <CardFooter className="gap-2">
@@ -344,7 +350,9 @@ export const DashboardGrid: Story = {
       <Card className="col-span-4">
         <CardHeader>
           <CardTitle>Overview</CardTitle>
-          <CardDescription>Your financial summary for February 2026</CardDescription>
+          <CardDescription>
+            Your financial summary for February 2026
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[200px] flex items-center justify-center text-muted-foreground">

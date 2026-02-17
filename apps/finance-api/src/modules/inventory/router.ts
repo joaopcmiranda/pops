@@ -59,8 +59,8 @@ export const inventoryRouter = router({
   }),
 
   /** Create a new inventory item. */
-  create: protectedProcedure.input(CreateInventoryItemSchema).mutation(({ input }) => {
-    const row = service.createInventoryItem(input);
+  create: protectedProcedure.input(CreateInventoryItemSchema).mutation(async ({ input }) => {
+    const row = await service.createInventoryItem(input);
     return {
       data: toInventoryItem(row),
       message: "Inventory item created",
@@ -75,9 +75,9 @@ export const inventoryRouter = router({
         data: UpdateInventoryItemSchema,
       })
     )
-    .mutation(({ input }) => {
+    .mutation(async ({ input }) => {
       try {
-        const row = service.updateInventoryItem(input.id, input.data);
+        const row = await service.updateInventoryItem(input.id, input.data);
         return {
           data: toInventoryItem(row),
           message: "Inventory item updated",
@@ -91,9 +91,9 @@ export const inventoryRouter = router({
     }),
 
   /** Delete an inventory item. */
-  delete: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ input }) => {
+  delete: protectedProcedure.input(z.object({ id: z.string() })).mutation(async ({ input }) => {
     try {
-      service.deleteInventoryItem(input.id);
+      await service.deleteInventoryItem(input.id);
       return { message: "Inventory item deleted" };
     } catch (err) {
       if (err instanceof NotFoundError) {

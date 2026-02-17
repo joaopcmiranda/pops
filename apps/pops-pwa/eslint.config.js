@@ -16,6 +16,10 @@ export default tseslint.config(js.configs.recommended, ...tseslint.configs.recom
     // No type assertions
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/consistent-type-imports": "warn",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+    ],
   },
   settings: {
     react: {

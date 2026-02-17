@@ -1,12 +1,31 @@
 /**
  * Shared test utilities for finance-api.
- * Provides in-memory SQLite setup, tRPC caller factory, and seed helpers.
+ * Provides in-memory SQLite setup, tRPC caller factory, Notion mocking, and seed helpers.
  */
 import type { Database } from "better-sqlite3";
 import BetterSqlite3 from "better-sqlite3";
+import type { Client } from "@notionhq/client";
 import { setDb, closeDb } from "../db.js";
 import { appRouter } from "../router.js";
 import type { Context } from "../trpc.js";
+import {
+  createMockNotionClient,
+  resetNotionMock,
+  getMockPages,
+  seedMockPage,
+} from "./notion-mock.js";
+import { setMockNotionClient, clearMockNotionClient, getMockNotionClient } from "./test-globals.js";
+
+/**
+ * Re-export Notion mock utilities for use in tests.
+ */
+export {
+  resetNotionMock,
+  getMockPages,
+  setMockNotionClient,
+  clearMockNotionClient,
+  getMockNotionClient,
+};
 
 /**
  * Create a tRPC caller with authentication.
@@ -108,12 +127,35 @@ export function createTestDb(): Database {
       notes            TEXT,
       last_edited_time TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS transaction_corrections (
+      id TEXT PRIMARY KEY,
+      description_pattern TEXT NOT NULL,
+      match_type TEXT CHECK(match_type IN ('exact', 'contains', 'regex')) NOT NULL DEFAULT 'exact',
+      entity_id TEXT,
+      entity_name TEXT,
+      location TEXT,
+      online INTEGER,
+      transaction_type TEXT CHECK(transaction_type IN ('purchase', 'transfer', 'income')),
+      confidence REAL NOT NULL DEFAULT 0.5 CHECK(confidence >= 0.0 AND confidence <= 1.0),
+      times_applied INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL,
+      last_used_at TEXT,
+      FOREIGN KEY (entity_id) REFERENCES entities(notion_id) ON DELETE SET NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_corrections_pattern ON transaction_corrections(description_pattern);
+    CREATE INDEX IF NOT EXISTS idx_corrections_confidence ON transaction_corrections(confidence DESC);
+    CREATE INDEX IF NOT EXISTS idx_corrections_times_applied ON transaction_corrections(times_applied DESC);
   `);
 
   return db;
 }
 
-/** Seed a single entity row into the test DB. Returns the notion_id. */
+/**
+ * Seed a single entity row into the test DB.
+ * Inserts into both SQLite and mock Notion to keep stores in sync.
+ * Returns the notion_id.
+ */
 export function seedEntity(
   db: Database,
   overrides: Partial<{
@@ -129,6 +171,8 @@ export function seedEntity(
   }> = {}
 ): string {
   const id = overrides.notion_id ?? crypto.randomUUID();
+
+  // Insert into SQLite
   db.prepare(
     `
     INSERT INTO entities (notion_id, name, type, abn, aliases, default_transaction_type, default_category, notes, last_edited_time)
@@ -145,10 +189,20 @@ export function seedEntity(
     notes: overrides.notes ?? null,
     last_edited_time: overrides.last_edited_time ?? "2025-01-01T00:00:00.000Z",
   });
+
+  // Also seed into mock Notion
+  seedMockPage(id, {
+    Name: { title: [{ text: { content: overrides.name ?? "Test Entity" } }] },
+  });
+
   return id;
 }
 
-/** Seed a single transaction row into the test DB. Returns the notion_id. */
+/**
+ * Seed a single transaction row into the test DB.
+ * Inserts into both SQLite and mock Notion to keep stores in sync.
+ * Returns the notion_id.
+ */
 export function seedTransaction(
   db: Database,
   overrides: Partial<{
@@ -172,6 +226,8 @@ export function seedTransaction(
   }> = {}
 ): string {
   const id = overrides.notion_id ?? crypto.randomUUID();
+
+  // Insert into SQLite
   db.prepare(
     `
     INSERT INTO transactions (
@@ -204,10 +260,21 @@ export function seedTransaction(
     notes: overrides.notes ?? null,
     last_edited_time: overrides.last_edited_time ?? "2025-01-01T00:00:00.000Z",
   });
+
+  // Also seed into mock Notion
+
+  seedMockPage(id, {
+    Description: { title: [{ text: { content: overrides.description ?? "Test Transaction" } }] },
+  });
+
   return id;
 }
 
-/** Seed a single inventory item row into the test DB. Returns the notion_id. */
+/**
+ * Seed a single inventory item row into the test DB.
+ * Inserts into both SQLite and mock Notion to keep stores in sync.
+ * Returns the notion_id.
+ */
 export function seedInventoryItem(
   db: Database,
   overrides: Partial<{
@@ -233,6 +300,8 @@ export function seedInventoryItem(
   }> = {}
 ): string {
   const id = overrides.notion_id ?? crypto.randomUUID();
+
+  // Insert into SQLite
   db.prepare(
     `
     INSERT INTO home_inventory (
@@ -267,10 +336,21 @@ export function seedInventoryItem(
     purchased_from_name: overrides.purchased_from_name ?? null,
     last_edited_time: overrides.last_edited_time ?? "2025-01-01T00:00:00.000Z",
   });
+
+  // Also seed into mock Notion
+
+  seedMockPage(id, {
+    "Item Name": { title: [{ text: { content: overrides.item_name ?? "Test Item" } }] },
+  });
+
   return id;
 }
 
-/** Seed a single budget row into the test DB. Returns the notion_id. */
+/**
+ * Seed a single budget row into the test DB.
+ * Inserts into both SQLite and mock Notion to keep stores in sync.
+ * Returns the notion_id.
+ */
 export function seedBudget(
   db: Database,
   overrides: Partial<{
@@ -284,6 +364,8 @@ export function seedBudget(
   }> = {}
 ): string {
   const id = overrides.notion_id ?? crypto.randomUUID();
+
+  // Insert into SQLite
   db.prepare(
     `
     INSERT INTO budgets (notion_id, category, period, amount, active, notes, last_edited_time)
@@ -298,10 +380,21 @@ export function seedBudget(
     notes: overrides.notes ?? null,
     last_edited_time: overrides.last_edited_time ?? "2025-01-01T00:00:00.000Z",
   });
+
+  // Also seed into mock Notion
+
+  seedMockPage(id, {
+    Category: { title: [{ text: { content: overrides.category ?? "Test Category" } }] },
+  });
+
   return id;
 }
 
-/** Seed a single wish list item row into the test DB. Returns the notion_id. */
+/**
+ * Seed a single wish list item row into the test DB.
+ * Inserts into both SQLite and mock Notion to keep stores in sync.
+ * Returns the notion_id.
+ */
 export function seedWishListItem(
   db: Database,
   overrides: Partial<{
@@ -316,6 +409,8 @@ export function seedWishListItem(
   }> = {}
 ): string {
   const id = overrides.notion_id ?? crypto.randomUUID();
+
+  // Insert into SQLite
   db.prepare(
     `
     INSERT INTO wish_list (notion_id, item, target_amount, saved, priority, url, notes, last_edited_time)
@@ -331,24 +426,56 @@ export function seedWishListItem(
     notes: overrides.notes ?? null,
     last_edited_time: overrides.last_edited_time ?? "2025-01-01T00:00:00.000Z",
   });
+
+  // Also seed into mock Notion
+
+  seedMockPage(id, {
+    Item: { title: [{ text: { content: overrides.item ?? "Test Wish List Item" } }] },
+  });
+
   return id;
 }
 
 /**
  * Setup helper for test suites. Call in beforeEach/afterEach.
- * Returns the test DB and a tRPC caller.
+ * Returns the test DB, a tRPC caller, and the mock Notion client.
  */
 export function setupTestContext() {
   let db: Database;
+  let notionMock: Client;
 
-  function setup(): { db: Database; caller: ReturnType<typeof createCaller> } {
+  function setup(): { db: Database; caller: ReturnType<typeof createCaller>; notionMock: Client } {
+    // Set required env vars for tests
+    process.env.NOTION_API_TOKEN = "test-token";
+    process.env.NOTION_BALANCE_SHEET_ID = "test-balance-sheet-id";
+    process.env.NOTION_ENTITIES_DB_ID = "test-entities-db-id";
+    process.env.NOTION_HOME_INVENTORY_ID = "test-inventory-id";
+    process.env.NOTION_BUDGET_ID = "test-budget-id";
+    process.env.NOTION_WISH_LIST_ID = "test-wishlist-id";
+
     db = createTestDb();
     setDb(db);
-    return { db, caller: createCaller(true) };
+
+    // Initialize Notion mock
+    notionMock = createMockNotionClient();
+    setMockNotionClient(notionMock);
+    resetNotionMock();
+
+    return { db, caller: createCaller(true), notionMock };
   }
 
   function teardown() {
     closeDb();
+    clearMockNotionClient();
+    resetNotionMock();
+
+    // Clean up env vars
+    delete process.env.NOTION_API_TOKEN;
+    delete process.env.NOTION_BALANCE_SHEET_ID;
+    delete process.env.NOTION_ENTITIES_DB_ID;
+    delete process.env.NOTION_HOME_INVENTORY_ID;
+    delete process.env.NOTION_BUDGET_ID;
+    delete process.env.NOTION_WISH_LIST_ID;
   }
 
   return { setup, teardown };

@@ -20,6 +20,7 @@ export const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
       url: "/trpc", // Proxied by Vite to localhost:3000 in dev
+      maxURLLength: 2083, // Don't batch if URL gets too long
     }),
   ],
 });

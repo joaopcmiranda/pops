@@ -94,13 +94,28 @@ export function DropdownMenu({
       <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
       <DropdownMenuContent align={align} side={side} className={className}>
         {children ||
-          (groups ? (
-            groups.map((group, groupIndex) => (
-              <div key={groupIndex}>
-                {group.label && (
-                  <DropdownMenuLabel>{group.label}</DropdownMenuLabel>
-                )}
-                {group.items.map((item) => (
+          (groups
+            ? groups.map((group, groupIndex) => (
+                <div key={groupIndex}>
+                  {group.label && (
+                    <DropdownMenuLabel>{group.label}</DropdownMenuLabel>
+                  )}
+                  {group.items.map((item) => (
+                    <DropdownMenuItem
+                      key={item.value}
+                      disabled={item.disabled}
+                      variant={item.variant}
+                      onSelect={item.onSelect}
+                    >
+                      {item.icon}
+                      {item.label}
+                    </DropdownMenuItem>
+                  ))}
+                  {groupIndex < groups.length - 1 && <DropdownMenuSeparator />}
+                </div>
+              ))
+            : items
+              ? items.map((item) => (
                   <DropdownMenuItem
                     key={item.value}
                     disabled={item.disabled}
@@ -110,23 +125,8 @@ export function DropdownMenu({
                     {item.icon}
                     {item.label}
                   </DropdownMenuItem>
-                ))}
-                {groupIndex < groups.length - 1 && <DropdownMenuSeparator />}
-              </div>
-            ))
-          ) : items ? (
-            items.map((item) => (
-              <DropdownMenuItem
-                key={item.value}
-                disabled={item.disabled}
-                variant={item.variant}
-                onSelect={item.onSelect}
-              >
-                {item.icon}
-                {item.label}
-              </DropdownMenuItem>
-            ))
-          ) : null)}
+                ))
+              : null)}
       </DropdownMenuContent>
     </DropdownMenuPrimitive>
   );
