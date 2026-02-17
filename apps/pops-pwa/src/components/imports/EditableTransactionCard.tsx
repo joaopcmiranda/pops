@@ -123,6 +123,7 @@ export function EditableTransactionCard({
           <Label htmlFor="description">Description</Label>
           <Input
             id="description"
+            autoFocus
             value={editedFields.description || ""}
             onChange={(e) =>
               setEditedFields({ ...editedFields, description: e.target.value })
