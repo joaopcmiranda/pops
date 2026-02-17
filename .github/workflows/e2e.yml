@@ -38,11 +38,11 @@ jobs:
           cd apps/finance-api
           yarn dev &
           # Wait for API to be ready
-          npx wait-on http://localhost:3000/api/health --timeout 60000
+          npx wait-on http://localhost:3000/health --timeout 60000
         env:
           NOTION_API_TOKEN: ${{ secrets.NOTION_API_TOKEN || 'test-token' }}
           CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY || 'test-key' }}
-          DATABASE_PATH: ':memory:'
+          SQLITE_PATH: ':memory:'
 
       - name: Run Playwright tests
         run: |
