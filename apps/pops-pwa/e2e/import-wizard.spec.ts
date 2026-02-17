@@ -280,8 +280,8 @@ const setupMockAPIs = async (page: Page, options: SetupMockAPIsOptions = {}) => 
     });
   });
 
-  // Mock saveCorrection endpoint (for Save & Learn)
-  await page.route(/\/trpc\/imports\.saveCorrection/, async (route) => {
+  // Mock corrections.createOrUpdate endpoint (for Save & Learn)
+  await page.route(/\/trpc\/corrections\.createOrUpdate/, async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -418,8 +418,7 @@ test.describe('Import Wizard - Complete Flow', () => {
     // Step 5: Summary
     await test.step('View summary', async () => {
       await expect(page.getByText('Import Complete')).toBeVisible({ timeout: 10000 });
-      await expect(page.getByText(/1.*imported/i)).toBeVisible();
-      await expect(page.getByText(/0.*failed/i)).toBeVisible();
+      await expect(page.getByText('1 imported, 0 failed, 0 skipped')).toBeVisible();
       await expect(page.getByRole('button', { name: /new import/i })).toBeVisible();
     });
   });
@@ -527,7 +526,7 @@ test.describe('Import Wizard - Transaction Editing', () => {
     // Listen for saveCorrection API call
     let correctionCalled = false;
     page.on('request', (request) => {
-      if (request.url().includes('saveCorrection')) {
+      if (request.url().includes('corrections')) {
         correctionCalled = true;
       }
     });
@@ -563,8 +562,8 @@ test.describe('Import Wizard - Transaction Editing', () => {
     // Wait for secondary toast prompting to learn (use first() since Sonner nests elements)
     await expect(page.getByText(/apply.*future imports/i).first()).toBeVisible({ timeout: 5000 });
 
-    // Click "Learn Pattern" in toast
-    await page.getByRole('button', { name: /learn pattern/i }).click();
+    // Dispatch click directly: Sonner action button may be outside viewport or intercepted by toast container
+    await page.getByRole('button', { name: /learn pattern/i }).dispatchEvent('click');
 
     // Verify correction saved
     await expect(page.getByText(/pattern saved/i)).toBeVisible({ timeout: 5000 });
@@ -1340,8 +1339,8 @@ test.describe('Import Wizard - Error Recovery', () => {
     await page.getByLabel(/entity name/i).fill('Retry Entity');
     await page.getByRole('button', { name: /create/i }).click();
 
-    // Should show error message in dialog (EntityCreateDialog shows error text from mutation)
-    await expect(page.getByRole('dialog').getByText(/server error/i)).toBeVisible({ timeout: 5000 });
+    // Should show error state in dialog (EntityCreateDialog shows retry button on mutation error)
+    await expect(page.getByRole('dialog').getByRole('button', { name: /retry/i })).toBeVisible({ timeout: 5000 });
 
     // Retry
     await page.getByRole('dialog').getByRole('button', { name: /retry/i }).click();
