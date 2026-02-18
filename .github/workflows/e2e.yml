@@ -54,7 +54,8 @@ jobs:
           NOTION_BUDGET_ID: test-budget-id
           NOTION_WISH_LIST_ID: test-wish-list-id
           CLAUDE_API_KEY: test-dummy-key
-          SQLITE_PATH: ./apps/finance-api/data/pops.db
+          # Path is relative to the API server's working directory (apps/finance-api)
+          SQLITE_PATH: ./data/pops.db
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4

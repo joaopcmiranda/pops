@@ -28,6 +28,16 @@ import {
 
 let tmpDir: string;
 
+/**
+ * Assert that an env record exists and narrow its type.
+ * Throws (fails the test) if the record is null.
+ */
+function assertEnv(name: string): EnvRecord {
+  const record = getEnvRecord(name);
+  if (!record) throw new Error(`Expected env '${name}' to exist in registry`);
+  return record;
+}
+
 function setupProdDb() {
   const db = new BetterSqlite3(join(tmpDir, "pops.db"));
   initializeSchema(db);
@@ -107,32 +117,28 @@ describe("createEnv", () => {
 
   it("inserts a registry row in the prod DB", () => {
     createEnv("create-row", "none", null);
-    const record = getEnvRecord("create-row");
-    expect(record).not.toBeNull();
-    expect(record!.name).toBe("create-row");
-    expect(record!.seed_type).toBe("none");
-    expect(record!.ttl_seconds).toBeNull();
-    expect(record!.expires_at).toBeNull();
+    const record = assertEnv("create-row");
+    expect(record.name).toBe("create-row");
+    expect(record.seed_type).toBe("none");
+    expect(record.ttl_seconds).toBeNull();
+    expect(record.expires_at).toBeNull();
   });
 
   it("stores the db_path that points to the created file", () => {
     createEnv("path-check", "none", null);
-    const record = getEnvRecord("path-check");
-    expect(existsSync(record!.db_path)).toBe(true);
+    expect(existsSync(assertEnv("path-check").db_path)).toBe(true);
   });
 
   it("seeds the DB when seed_type is 'test'", () => {
     createEnv("seeded", "test", null);
-    const record = getEnvRecord("seeded");
-    const envDb = getOrOpenEnvDb(record!);
+    const envDb = getOrOpenEnvDb(assertEnv("seeded"));
     const count = envDb.prepare("SELECT COUNT(*) as n FROM transactions").get() as { n: number };
     expect(count.n).toBeGreaterThan(0);
   });
 
   it("leaves DB empty when seed_type is 'none'", () => {
     createEnv("empty", "none", null);
-    const record = getEnvRecord("empty");
-    const envDb = getOrOpenEnvDb(record!);
+    const envDb = getOrOpenEnvDb(assertEnv("empty"));
     const count = envDb.prepare("SELECT COUNT(*) as n FROM transactions").get() as { n: number };
     expect(count.n).toBe(0);
   });
@@ -142,26 +148,27 @@ describe("createEnv", () => {
     createEnv("ttl-env", "none", 3600);
     const after = Date.now();
 
-    const record = getEnvRecord("ttl-env");
-    expect(record!.ttl_seconds).toBe(3600);
-    expect(record!.expires_at).not.toBeNull();
+    const record = assertEnv("ttl-env");
+    expect(record.ttl_seconds).toBe(3600);
+    expect(record.expires_at).not.toBeNull();
 
-    const expiresMs = new Date(record!.expires_at!).getTime();
+    const expiresAt = record.expires_at;
+    if (!expiresAt) throw new Error("expires_at should not be null");
+    const expiresMs = new Date(expiresAt).getTime();
     expect(expiresMs).toBeGreaterThanOrEqual(before + 3600 * 1000 - 50);
     expect(expiresMs).toBeLessThanOrEqual(after + 3600 * 1000 + 50);
   });
 
   it("sets expires_at to null for null ttl", () => {
     createEnv("infinite", "none", null);
-    const record = getEnvRecord("infinite");
-    expect(record!.expires_at).toBeNull();
-    expect(record!.ttl_seconds).toBeNull();
+    const record = assertEnv("infinite");
+    expect(record.expires_at).toBeNull();
+    expect(record.ttl_seconds).toBeNull();
   });
 
   it("created env DB has proper schema (all core tables exist)", () => {
     createEnv("schema-check", "none", null);
-    const record = getEnvRecord("schema-check");
-    const db = getOrOpenEnvDb(record!);
+    const db = getOrOpenEnvDb(assertEnv("schema-check"));
 
     const tables = db
       .prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
@@ -188,7 +195,7 @@ describe("getEnvRecord", () => {
     createEnv("lookup-test", "none", null);
     const record = getEnvRecord("lookup-test");
     expect(record).not.toBeNull();
-    expect(record!.name).toBe("lookup-test");
+    expect(record?.name).toBe("lookup-test");
   });
 });
 
@@ -217,7 +224,7 @@ describe("listEnvs", () => {
 describe("getOrOpenEnvDb", () => {
   it("returns a usable database", () => {
     createEnv("open-test", "none", null);
-    const record = getEnvRecord("open-test")!;
+    const record = assertEnv("open-test");
     const db = getOrOpenEnvDb(record);
     expect(db.open).toBe(true);
     // Should be able to query it
@@ -227,7 +234,7 @@ describe("getOrOpenEnvDb", () => {
 
   it("returns the same instance on repeated calls (cache hit)", () => {
     createEnv("cache-test", "none", null);
-    const record = getEnvRecord("cache-test")!;
+    const record = assertEnv("cache-test");
     const db1 = getOrOpenEnvDb(record);
     const db2 = getOrOpenEnvDb(record);
     expect(db1).toBe(db2);
@@ -237,7 +244,7 @@ describe("getOrOpenEnvDb", () => {
 describe("closeEnvDb", () => {
   it("closes the connection so subsequent queries would fail", () => {
     createEnv("close-test", "none", null);
-    const record = getEnvRecord("close-test")!;
+    const record = assertEnv("close-test");
     const db = getOrOpenEnvDb(record);
     expect(db.open).toBe(true);
 
@@ -252,7 +259,7 @@ describe("closeEnvDb", () => {
 
   it("evicts the cache so the next getOrOpenEnvDb opens a fresh connection", () => {
     createEnv("reopen-test", "none", null);
-    const record = getEnvRecord("reopen-test")!;
+    const record = assertEnv("reopen-test");
     const db1 = getOrOpenEnvDb(record);
     closeEnvDb("reopen-test");
 
@@ -274,9 +281,11 @@ describe("updateEnvTtl", () => {
     updateEnvTtl("ttl-update", 7200);
     const after = Date.now();
 
-    const record = getEnvRecord("ttl-update")!;
+    const record = assertEnv("ttl-update");
     expect(record.ttl_seconds).toBe(7200);
-    const expiresMs = new Date(record.expires_at!).getTime();
+    const expiresAt = record.expires_at;
+    if (!expiresAt) throw new Error("expires_at should not be null after updateEnvTtl");
+    const expiresMs = new Date(expiresAt).getTime();
     expect(expiresMs).toBeGreaterThanOrEqual(before + 7200 * 1000 - 50);
     expect(expiresMs).toBeLessThanOrEqual(after + 7200 * 1000 + 50);
   });
@@ -285,7 +294,7 @@ describe("updateEnvTtl", () => {
     createEnv("ttl-clear", "none", 3600);
     updateEnvTtl("ttl-clear", null);
 
-    const record = getEnvRecord("ttl-clear")!;
+    const record = assertEnv("ttl-clear");
     expect(record.ttl_seconds).toBeNull();
     expect(record.expires_at).toBeNull();
   });
@@ -299,8 +308,8 @@ describe("updateEnvTtl", () => {
     createEnv("ttl-return", "none", null);
     const updated = updateEnvTtl("ttl-return", 120);
     expect(updated).not.toBeNull();
-    expect(updated!.name).toBe("ttl-return");
-    expect(updated!.ttl_seconds).toBe(120);
+    expect(updated?.name).toBe("ttl-return");
+    expect(updated?.ttl_seconds).toBe(120);
   });
 });
 
@@ -317,7 +326,7 @@ describe("deleteEnv", () => {
 
   it("deletes the DB file from disk", () => {
     createEnv("del-file", "none", null);
-    const record = getEnvRecord("del-file")!;
+    const record = assertEnv("del-file");
     const path = record.db_path;
     expect(existsSync(path)).toBe(true);
 
@@ -327,7 +336,7 @@ describe("deleteEnv", () => {
 
   it("closes the DB connection", () => {
     createEnv("del-conn", "none", null);
-    const record = getEnvRecord("del-conn")!;
+    const record = assertEnv("del-conn");
     const db = getOrOpenEnvDb(record);
     expect(db.open).toBe(true);
 
@@ -376,7 +385,7 @@ describe("deleteExpiredEnvs", () => {
 
   it("deletes envs whose expires_at is in the past", () => {
     createEnv("expired-env", "none", null);
-    const record = getEnvRecord("expired-env")!;
+    const record = assertEnv("expired-env");
 
     // Backdate the expiry directly via the active prod DB
     const pastIso = new Date(Date.now() - 3600 * 1000).toISOString();
@@ -414,17 +423,17 @@ describe("deleteExpiredEnvs", () => {
 describe("ttlRemaining", () => {
   it("returns null for envs with no expiry", () => {
     createEnv("no-ttl", "none", null);
-    const record = getEnvRecord("no-ttl")!;
+    const record = assertEnv("no-ttl");
     expect(ttlRemaining(record)).toBeNull();
   });
 
   it("returns a positive number for envs with future expiry", () => {
     createEnv("future-ttl", "none", 3600);
-    const record = getEnvRecord("future-ttl")!;
+    const record = assertEnv("future-ttl");
     const remaining = ttlRemaining(record);
     expect(remaining).not.toBeNull();
-    expect(remaining!).toBeGreaterThan(3590);
-    expect(remaining!).toBeLessThanOrEqual(3600);
+    expect(remaining).toBeGreaterThan(3590);
+    expect(remaining).toBeLessThanOrEqual(3600);
   });
 
   it("returns 0 for envs whose expiry has passed", () => {

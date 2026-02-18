@@ -19,6 +19,20 @@ import {
 } from "./registry.js";
 import type { EnvRecord } from "./registry.js";
 
+interface EnvRequestBody {
+  seed?: unknown;
+  ttl?: unknown;
+}
+
+interface FormattedEnvRecord {
+  name: string;
+  seedType: string;
+  ttlSeconds: number | null;
+  ttlRemaining: number | null;
+  createdAt: string;
+  expiresAt: string | null;
+}
+
 const envRouter = Router();
 envRouter.use((_req, res, next) => {
   res.setHeader("Content-Type", "application/json");
@@ -40,9 +54,10 @@ envRouter.post("/env/:name", (req, res) => {
     return;
   }
 
-  const seedType = req.body?.seed === "test" ? "test" : "none";
+  const body: EnvRequestBody = typeof req.body === "object" && req.body !== null ? (req.body as EnvRequestBody) : {};
+  const seedType = body.seed === "test" ? "test" : "none";
   const ttlSeconds: number | null =
-    typeof req.body?.ttl === "number" && req.body.ttl > 0 ? req.body.ttl : null;
+    typeof body.ttl === "number" && body.ttl > 0 ? body.ttl : null;
 
   try {
     const record = createEnv(name, seedType, ttlSeconds);
@@ -77,8 +92,9 @@ envRouter.patch("/env/:name", (req, res) => {
     return;
   }
 
+  const patchBody: EnvRequestBody = typeof req.body === "object" && req.body !== null ? (req.body as EnvRequestBody) : {};
   const ttlSeconds: number | null =
-    typeof req.body?.ttl === "number" && req.body.ttl > 0 ? req.body.ttl : null;
+    typeof patchBody.ttl === "number" && patchBody.ttl > 0 ? patchBody.ttl : null;
 
   const updated = updateEnvTtl(req.params.name, ttlSeconds);
   res.status(200).json(updated ? formatRecord(updated) : null);
@@ -94,7 +110,7 @@ envRouter.delete("/env/:name", (req, res) => {
   res.status(204).send();
 });
 
-function formatRecord(record: EnvRecord) {
+function formatRecord(record: EnvRecord): FormattedEnvRecord {
   return {
     name: record.name,
     seedType: record.seed_type,
