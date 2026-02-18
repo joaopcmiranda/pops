@@ -69,7 +69,10 @@ async function main(): Promise<void> {
   console.log(`[migrate-tags] Note: Category → Tags rename already done in Notion directly.`);
 
   let cursor: string | undefined;
-  let processed = 0, skipped = 0, updated = 0, failed = 0;
+  let processed = 0,
+    skipped = 0,
+    updated = 0,
+    failed = 0;
 
   do {
     const response = await notion.databases.query({
@@ -92,13 +95,18 @@ async function main(): Promise<void> {
       if (getCheckbox(props, 'Tax Return')) boolTags.push('Tax Deductible');
 
       // Skip if no boolean flags to add
-      if (boolTags.length === 0) { skipped++; continue; }
+      if (boolTags.length === 0) {
+        skipped++;
+        continue;
+      }
 
       // Merge: union of existing tags + new bool tags
       const merged = [...new Set([...existingTags, ...boolTags])].sort();
 
       if (mode === 'dry-run') {
-        console.log(`  [dry-run] ${page.id}: Tags ${JSON.stringify(existingTags)} → ${JSON.stringify(merged)}`);
+        console.log(
+          `  [dry-run] ${page.id}: Tags ${JSON.stringify(existingTags)} → ${JSON.stringify(merged)}`
+        );
         updated++;
         continue;
       }
@@ -120,7 +128,9 @@ async function main(): Promise<void> {
     cursor = response.has_more ? (response.next_cursor ?? undefined) : undefined;
   } while (cursor);
 
-  console.log(`\n[migrate-tags] Done. processed=${processed} skipped=${skipped} updated=${updated} failed=${failed}`);
+  console.log(
+    `\n[migrate-tags] Done. processed=${processed} skipped=${skipped} updated=${updated} failed=${failed}`
+  );
   if (failed > 0) process.exit(1);
 }
 
