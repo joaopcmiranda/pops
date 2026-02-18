@@ -4,8 +4,12 @@
  * Plain Express routes (not tRPC) so the env context middleware can be mounted
  * AFTER these routes, ensuring env CRUD itself always uses the prod DB.
  *
- * Auth: In production, Cloudflare Access protects the entire service.
- *       In non-production, tRPC context already skips JWT — same principle applies here.
+ * Auth: These routes have no application-level auth guard by design.
+ *       DEPLOYMENT REQUIREMENT: Cloudflare Access MUST front this service in production.
+ *       Without it, these endpoints allow unauthenticated environment creation/deletion.
+ *       Do NOT expose this service directly to the internet without CF Access in place.
+ *       In local/test environments this is intentional — the service is not externally
+ *       reachable.
  */
 import { Router } from "express";
 import {

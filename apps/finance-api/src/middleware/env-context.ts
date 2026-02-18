@@ -30,7 +30,14 @@ export function envContextMiddleware(req: Request, res: Response, next: NextFunc
   const db = getOrOpenEnvDb(record);
 
   // Run the rest of the middleware chain within the env DB context.
-  // AsyncLocalStorage propagates this through all async continuations,
-  // so every getDb() call in services will see the env DB.
+  // AsyncLocalStorage.run() propagates the store through all async continuations
+  // spawned within the callback — including awaited promises and microtasks.
+  //
+  // Limitation: code that escapes the async context (e.g. setTimeout with no
+  // await, or fire-and-forget Promises that outlive the request) will NOT see
+  // the env DB. This is acceptable here because:
+  //  - tRPC handlers use async/await throughout — context propagates correctly.
+  //  - Background jobs (TTL watcher, import processing) always use getDb() via
+  //    the prod DB path, which is the desired behaviour for those operations.
   withEnvDb(db, () => next());
 }

@@ -24,7 +24,15 @@ export interface EnvStatus extends EnvRecord {
   ttl_remaining: number | null;
 }
 
-/** In-memory cache of open env DB connections keyed by env name. */
+/**
+ * In-memory cache of open env DB connections keyed by env name.
+ *
+ * Bounds: envs are scoped to testing workflows and are expected to be short-lived.
+ * The TTL watcher purges expired envs every 30 s; startupCleanup() removes any
+ * stragglers on restart. In normal usage (CI + local dev) the number of live envs
+ * at any point is O(1). If unbounded growth becomes a concern, add TTLs to all
+ * envs or call closeEnvDb() explicitly when done.
+ */
 const connections = new Map<string, BetterSqlite3.Database>();
 
 /** Env DB files live next to the prod DB under ./envs/ subdirectory. */

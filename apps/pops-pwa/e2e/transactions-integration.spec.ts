@@ -49,9 +49,12 @@ test.describe('Transactions — real data loads from seeded DB', () => {
   });
 
   test('renders seeded transactions from the e2e database', async ({ page }) => {
-    // Seeded data has "Salary Payment" and "Woolworths Metro"
-    await expect(page.getByText('Salary Payment')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText('Woolworths Metro')).toBeVisible();
+    // Use row-scoped locators to avoid ambiguity (multiple salary rows are seeded).
+    // We target the first matching row explicitly rather than any text anywhere on the page.
+    await expect(page.getByRole('row').filter({ hasText: 'Salary Payment' }).first())
+      .toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('row').filter({ hasText: 'Woolworths Metro' }).first())
+      .toBeVisible();
   });
 
   test('seeded transactions have tags populated', async ({ page }) => {

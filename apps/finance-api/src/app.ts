@@ -22,16 +22,19 @@ export function createApp(): express.Express {
   // Rate limiting
   app.use(rateLimiter);
 
-  // Webhook route needs raw body for signature verification (must be before express.json())
+  // Webhook route needs raw body for signature verification — MUST come before express.json()
+  // because body parsers consume the stream; once json() runs, raw() sees an empty body.
   app.use("/webhooks/up", express.raw({ type: "application/json" }));
 
-  // Body parsing for JSON routes (env router needs this)
+  // JSON body parsing for all other routes (env CRUD, tRPC).
+  // Intentionally placed AFTER the raw webhook registration above.
   app.use(express.json());
 
-  // Health check (public, no auth)
+  // Health check — no request body needed, placed after security/parsing for consistency
+  // (moving it before express.json() would be safe but creates confusion about ordering).
   app.use(healthRouter);
 
-  // Up Bank webhook (handles its own signature verification)
+  // Up Bank webhook handler (processes its own raw body + signature verification)
   app.use(upBankRouter);
 
   // Env CRUD routes — mounted before env context middleware so these always
