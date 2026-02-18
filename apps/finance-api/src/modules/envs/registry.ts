@@ -5,8 +5,8 @@
  * The registry table lives in the prod DB; env DBs live under ./data/envs/.
  */
 import type BetterSqlite3 from "better-sqlite3";
-import { mkdirSync, unlinkSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { mkdirSync, readdirSync, unlinkSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
 import { getDb, openEnvDatabase } from "../../db.js";
 import { seedDatabase } from "../../db/seeder.js";
 
@@ -189,4 +189,46 @@ export function ttlRemaining(record: EnvRecord): number | null {
   if (!record.expires_at) return null;
   const remaining = Math.max(0, (new Date(record.expires_at).getTime() - Date.now()) / 1000);
   return Math.round(remaining);
+}
+
+/**
+ * Startup cleanup — run once when the server starts.
+ *
+ * Handles two crash-survivor scenarios:
+ *  1. Expired envs whose TTL passed while the server was down (TTL watcher
+ *     couldn't fire because the process wasn't running).
+ *  2. Orphaned DB files in envs/ that have no matching registry row (left
+ *     behind when the server crashed mid-createEnv before the INSERT).
+ *
+ * Returns a summary of what was cleaned up for logging.
+ */
+export function startupCleanup(): { expired: string[]; orphaned: string[] } {
+  const expired = deleteExpiredEnvs();
+
+  // Scan the envs/ directory for .db files with no registry entry
+  const envsDir = join(dirname(process.env["SQLITE_PATH"] ?? "./data/pops.db"), "envs");
+  const orphaned: string[] = [];
+
+  let files: string[];
+  try {
+    files = readdirSync(envsDir).filter((f) => f.endsWith(".db"));
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code === "ENOENT") return { expired, orphaned };
+    throw err;
+  }
+
+  const registeredPaths = new Set(listEnvs().map((e) => e.db_path));
+  for (const file of files) {
+    const filePath = join(envsDir, file);
+    if (!registeredPaths.has(filePath)) {
+      try {
+        unlinkSync(filePath);
+        orphaned.push(basename(file, ".db"));
+      } catch {
+        // Already gone — not an error
+      }
+    }
+  }
+
+  return { expired, orphaned };
 }

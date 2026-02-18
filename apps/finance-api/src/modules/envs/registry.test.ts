@@ -22,6 +22,7 @@ import {
   updateEnvTtl,
   deleteEnv,
   deleteExpiredEnvs,
+  startupCleanup,
   ttlRemaining,
   type EnvRecord,
 } from "./registry.js";
@@ -458,5 +459,57 @@ describe("ttlRemaining", () => {
       expires_at: new Date(Date.now() - 5000).toISOString(),
     };
     expect(ttlRemaining(pastRecord)).toBe(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// startupCleanup
+// ---------------------------------------------------------------------------
+
+describe("startupCleanup", () => {
+  it("returns empty arrays when nothing to clean up", () => {
+    const result = startupCleanup();
+    expect(result.expired).toEqual([]);
+    expect(result.orphaned).toEqual([]);
+  });
+
+  it("removes expired envs", () => {
+    createEnv("startup-expired", "none", null);
+    const record = assertEnv("startup-expired");
+
+    const pastIso = new Date(Date.now() - 3600 * 1000).toISOString();
+    getDb()
+      .prepare(`UPDATE environments SET ttl_seconds=1, expires_at=? WHERE name='startup-expired'`)
+      .run(pastIso);
+
+    const result = startupCleanup();
+    expect(result.expired).toContain("startup-expired");
+    expect(getEnvRecord("startup-expired")).toBeNull();
+    expect(existsSync(record.db_path)).toBe(false);
+  });
+
+  it("removes orphaned DB files that have no registry entry", () => {
+    // Simulate a crash mid-createEnv: file on disk but no registry row
+    const envsDir = join(tmpDir, "envs");
+    mkdirSync(envsDir, { recursive: true });
+    const orphanPath = join(envsDir, "ghost-crash.db");
+    // Create a minimal SQLite file (BetterSqlite3 writes the file on construction)
+    const ghostDb = new BetterSqlite3(orphanPath);
+    ghostDb.close();
+    expect(existsSync(orphanPath)).toBe(true);
+
+    const result = startupCleanup();
+    expect(result.orphaned).toContain("ghost-crash");
+    expect(existsSync(orphanPath)).toBe(false);
+  });
+
+  it("does not touch registered envs with valid files", () => {
+    createEnv("keep-startup", "none", null);
+    const record = assertEnv("keep-startup");
+
+    const result = startupCleanup();
+    expect(result.orphaned).not.toContain("keep-startup");
+    expect(result.expired).not.toContain("keep-startup");
+    expect(existsSync(record.db_path)).toBe(true);
   });
 });
