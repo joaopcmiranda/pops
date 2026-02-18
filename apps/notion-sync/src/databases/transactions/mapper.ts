@@ -7,7 +7,6 @@ import {
   getSelect,
   getMultiSelect,
   getDate,
-  getCheckbox,
   getRelationIds,
 } from '../../property-mapper.js';
 
@@ -31,14 +30,11 @@ export function mapTransaction(
     amount: getNumber(props, 'Amount') ?? 0,
     date: getDate(props, 'Date') ?? '',
     type: getSelect(props, 'Type') ?? '',
-    categories: JSON.stringify(getMultiSelect(props, 'Category')),
+    tags: JSON.stringify(getMultiSelect(props, 'Tags')),
     entityId: firstEntityId,
     entityName: firstEntityId ? (entityLookup.get(firstEntityId) ?? null) : null,
     location: getSelect(props, 'Location'),
     country: getSelect(props, 'Country'),
-    online: getCheckbox(props, 'Online'),
-    novatedLease: getCheckbox(props, 'Novated Lease'),
-    taxReturn: getCheckbox(props, 'Tax Return'),
     relatedTransactionId: firstRelatedId,
     notes: getRichText(props, 'Notes'),
     lastEditedTime: page.last_edited_time,

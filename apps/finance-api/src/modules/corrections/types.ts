@@ -10,7 +10,7 @@ export interface CorrectionRow {
   entity_id: string | null;
   entity_name: string | null;
   location: string | null;
-  online: number | null; // 0/1 in SQLite
+  tags: string; // JSON array string
   transaction_type: "purchase" | "transfer" | "income" | null;
   confidence: number;
   times_applied: number;
@@ -28,7 +28,7 @@ export interface Correction {
   entityId: string | null;
   entityName: string | null;
   location: string | null;
-  online: boolean | null;
+  tags: string[];
   transactionType: "purchase" | "transfer" | "income" | null;
   confidence: number;
   timesApplied: number;
@@ -47,7 +47,17 @@ export function toCorrection(row: CorrectionRow): Correction {
     entityId: row.entity_id,
     entityName: row.entity_name,
     location: row.location,
-    online: row.online !== null ? row.online === 1 : null,
+    tags: (() => {
+      try {
+        const parsed = JSON.parse(row.tags) as unknown;
+        if (Array.isArray(parsed)) {
+          return parsed.filter((item): item is string => typeof item === "string");
+        }
+        return [];
+      } catch {
+        return [];
+      }
+    })(),
     transactionType: row.transaction_type,
     confidence: row.confidence,
     timesApplied: row.times_applied,
@@ -76,7 +86,7 @@ export const CreateCorrectionSchema = z.object({
   entityId: z.string().nullable().optional(),
   entityName: z.string().nullable().optional(),
   location: z.string().nullable().optional(),
-  online: z.boolean().nullable().optional(),
+  tags: z.array(z.string()).optional().default([]),
   transactionType: z.enum(["purchase", "transfer", "income"]).nullable().optional(),
 });
 export type CreateCorrectionInput = z.infer<typeof CreateCorrectionSchema>;
@@ -88,7 +98,7 @@ export const UpdateCorrectionSchema = z.object({
   entityId: z.string().nullable().optional(),
   entityName: z.string().nullable().optional(),
   location: z.string().nullable().optional(),
-  online: z.boolean().nullable().optional(),
+  tags: z.array(z.string()).optional(),
   transactionType: z.enum(["purchase", "transfer", "income"]).nullable().optional(),
   confidence: z.number().min(0).max(1).optional(),
 });

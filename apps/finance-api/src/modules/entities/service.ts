@@ -97,8 +97,10 @@ export async function createEntity(input: CreateEntityInput): Promise<EntityRow>
   if (input.defaultTransactionType) {
     properties["Default Transaction Type"] = { select: { name: input.defaultTransactionType } };
   }
-  if (input.defaultCategory) {
-    properties["Default Category"] = { multi_select: [{ name: input.defaultCategory }] };
+  if (input.defaultTags?.length) {
+    properties["Default Tags"] = {
+      multi_select: input.defaultTags.map((tag) => ({ name: tag })),
+    };
   }
   if (input.notes) {
     properties.Notes = { rich_text: [{ text: { content: input.notes } }] };
@@ -115,8 +117,8 @@ export async function createEntity(input: CreateEntityInput): Promise<EntityRow>
   // 2. Insert into SQLite using Notion's ID
   db.prepare(
     `
-    INSERT INTO entities (notion_id, name, type, abn, aliases, default_transaction_type, default_category, notes, last_edited_time)
-    VALUES (@notionId, @name, @type, @abn, @aliases, @defaultTransactionType, @defaultCategory, @notes, @lastEditedTime)
+    INSERT INTO entities (notion_id, name, type, abn, aliases, default_transaction_type, default_tags, notes, last_edited_time)
+    VALUES (@notionId, @name, @type, @abn, @aliases, @defaultTransactionType, @defaultTags, @notes, @lastEditedTime)
   `
   ).run({
     notionId: response.id,
@@ -125,7 +127,7 @@ export async function createEntity(input: CreateEntityInput): Promise<EntityRow>
     abn: input.abn ?? null,
     aliases: input.aliases?.length ? input.aliases.join(", ") : null,
     defaultTransactionType: input.defaultTransactionType ?? null,
-    defaultCategory: input.defaultCategory ?? null,
+    defaultTags: input.defaultTags?.length ? JSON.stringify(input.defaultTags) : null,
     notes: input.notes ?? null,
     lastEditedTime: now,
   });
@@ -174,10 +176,10 @@ export async function updateEntity(id: string, input: UpdateEntityInput): Promis
       ? { select: { name: input.defaultTransactionType } }
       : { select: null };
   }
-  if (input.defaultCategory !== undefined) {
-    properties["Default Category"] = input.defaultCategory
-      ? { multi_select: [{ name: input.defaultCategory }] }
-      : { multi_select: [] };
+  if (input.defaultTags !== undefined) {
+    properties["Default Tags"] = {
+      multi_select: input.defaultTags.map((tag) => ({ name: tag })),
+    };
   }
   if (input.notes !== undefined) {
     properties.Notes = input.notes
@@ -217,9 +219,9 @@ export async function updateEntity(id: string, input: UpdateEntityInput): Promis
     fields.push("default_transaction_type = @defaultTransactionType");
     params["defaultTransactionType"] = input.defaultTransactionType ?? null;
   }
-  if (input.defaultCategory !== undefined) {
-    fields.push("default_category = @defaultCategory");
-    params["defaultCategory"] = input.defaultCategory ?? null;
+  if (input.defaultTags !== undefined) {
+    fields.push("default_tags = @defaultTags");
+    params["defaultTags"] = input.defaultTags.length ? JSON.stringify(input.defaultTags) : null;
   }
   if (input.notes !== undefined) {
     fields.push("notes = @notes");

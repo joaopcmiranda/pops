@@ -46,9 +46,11 @@ export function listTransactions(
     conditions.push("date <= @endDate");
     params["endDate"] = filters.endDate;
   }
-  if (filters.category) {
-    conditions.push("categories LIKE @category");
-    params["category"] = `%${filters.category}%`;
+  if (filters.tag) {
+    conditions.push(
+      "EXISTS (SELECT 1 FROM json_each(tags) WHERE json_each.value = @tag)"
+    );
+    params["tag"] = filters.tag;
   }
   if (filters.entityId) {
     conditions.push("entity_id = @entityId");
@@ -57,18 +59,6 @@ export function listTransactions(
   if (filters.type) {
     conditions.push("type = @type");
     params["type"] = filters.type;
-  }
-  if (filters.online !== undefined) {
-    conditions.push("online = @online");
-    params["online"] = filters.online ? 1 : 0;
-  }
-  if (filters.novatedLease !== undefined) {
-    conditions.push("novated_lease = @novatedLease");
-    params["novatedLease"] = filters.novatedLease ? 1 : 0;
-  }
-  if (filters.taxReturn !== undefined) {
-    conditions.push("tax_return = @taxReturn");
-    params["taxReturn"] = filters.taxReturn ? 1 : 0;
   }
 
   const where = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
@@ -123,19 +113,8 @@ export async function createTransaction(input: CreateTransactionInput): Promise<
     Type: {
       select: { name: input.type || "Expense" },
     },
-    Category: {
-      multi_select: input.categories?.length
-        ? input.categories.map((cat) => ({ name: cat }))
-        : [{ name: "Other" }],
-    },
-    Online: {
-      checkbox: input.online ?? false,
-    },
-    "Novated Lease": {
-      checkbox: input.novatedLease ?? false,
-    },
-    "Tax Return": {
-      checkbox: input.taxReturn ?? false,
+    Tags: {
+      multi_select: input.tags?.length ? input.tags.map((tag) => ({ name: tag })) : [],
     },
   };
 
@@ -175,14 +154,14 @@ export async function createTransaction(input: CreateTransactionInput): Promise<
   db.prepare(
     `
     INSERT INTO transactions (
-      notion_id, description, account, amount, date, type, categories,
-      entity_id, entity_name, location, country, online, novated_lease,
-      tax_return, related_transaction_id, notes, last_edited_time
+      notion_id, description, account, amount, date, type, tags,
+      entity_id, entity_name, location, country,
+      related_transaction_id, notes, last_edited_time
     )
     VALUES (
-      @notionId, @description, @account, @amount, @date, @type, @categories,
-      @entityId, @entityName, @location, @country, @online, @novatedLease,
-      @taxReturn, @relatedTransactionId, @notes, @lastEditedTime
+      @notionId, @description, @account, @amount, @date, @type, @tags,
+      @entityId, @entityName, @location, @country,
+      @relatedTransactionId, @notes, @lastEditedTime
     )
   `
   ).run({
@@ -192,14 +171,11 @@ export async function createTransaction(input: CreateTransactionInput): Promise<
     amount: input.amount,
     date: input.date,
     type: input.type || "",
-    categories: input.categories?.length ? input.categories.join(", ") : "",
+    tags: JSON.stringify(input.tags ?? []),
     entityId: input.entityId ?? null,
     entityName: input.entityName ?? null,
     location: input.location ?? null,
     country: input.country ?? null,
-    online: input.online ? 1 : 0,
-    novatedLease: input.novatedLease ? 1 : 0,
-    taxReturn: input.taxReturn ? 1 : 0,
     relatedTransactionId: input.relatedTransactionId ?? null,
     notes: input.notes ?? null,
     lastEditedTime: now,
@@ -261,9 +237,9 @@ export async function updateTransaction(
     fields.push("type = @type");
     params["type"] = input.type ?? "";
   }
-  if (input.categories !== undefined) {
-    fields.push("categories = @categories");
-    params["categories"] = input.categories.length ? input.categories.join(", ") : "";
+  if (input.tags !== undefined) {
+    fields.push("tags = @tags");
+    params["tags"] = JSON.stringify(input.tags);
   }
   if (input.entityId !== undefined) {
     fields.push("entity_id = @entityId");
@@ -280,18 +256,6 @@ export async function updateTransaction(
   if (input.country !== undefined) {
     fields.push("country = @country");
     params["country"] = input.country ?? null;
-  }
-  if (input.online !== undefined) {
-    fields.push("online = @online");
-    params["online"] = input.online ? 1 : 0;
-  }
-  if (input.novatedLease !== undefined) {
-    fields.push("novated_lease = @novatedLease");
-    params["novatedLease"] = input.novatedLease ? 1 : 0;
-  }
-  if (input.taxReturn !== undefined) {
-    fields.push("tax_return = @taxReturn");
-    params["taxReturn"] = input.taxReturn ? 1 : 0;
   }
   if (input.relatedTransactionId !== undefined) {
     fields.push("related_transaction_id = @relatedTransactionId");

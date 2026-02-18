@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS transaction_corrections (
   entity_id TEXT,
   entity_name TEXT,
   location TEXT,
-  online INTEGER, -- 0/1 boolean
+  tags TEXT NOT NULL DEFAULT '[]',
   transaction_type TEXT CHECK(transaction_type IN ('purchase', 'transfer', 'income')),
 
   -- Metadata

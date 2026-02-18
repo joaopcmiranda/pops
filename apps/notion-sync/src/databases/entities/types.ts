@@ -6,7 +6,7 @@ export interface EntityRow {
   abn: string | null;
   aliases: string | null;
   defaultTransactionType: string | null;
-  defaultCategory: string | null;
+  defaultTags: string | null;
   notes: string | null;
   lastEditedTime: string;
 }

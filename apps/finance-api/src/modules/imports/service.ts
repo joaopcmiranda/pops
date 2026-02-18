@@ -239,7 +239,6 @@ export async function processImport(
         matched.push({
           ...transaction,
           location: correction.location ?? transaction.location,
-          online: correction.online !== null ? correction.online === 1 : transaction.online,
           entity: {
             entityId: correction.entity_id,
             entityName: correction.entity_name ?? "Unknown",
@@ -459,13 +458,10 @@ export async function executeImport(
           amount: transaction.amount,
           date: transaction.date,
           type: notionType,
-          categories: ["Other"],
+          tags: [],
           entityId: transaction.entityId ?? null,
           entityName: transaction.entityName ?? null,
           location: transaction.location ?? null,
-          online: transaction.online ?? false,
-          novatedLease: false,
-          taxReturn: false,
           rawRow: transaction.rawRow,
           checksum: transaction.checksum,
         });
@@ -541,7 +537,7 @@ export async function createEntity(name: string): Promise<CreateEntityOutput> {
   const db = getDb();
   db.prepare(
     `
-    INSERT OR REPLACE INTO entities (notion_id, name, type, abn, aliases, default_transaction_type, default_category, notes, last_edited_time)
+    INSERT OR REPLACE INTO entities (notion_id, name, type, abn, aliases, default_transaction_type, default_tags, notes, last_edited_time)
     VALUES (?, ?, NULL, NULL, NULL, NULL, NULL, NULL, ?)
   `
   ).run(entityId, name, new Date().toISOString());
@@ -936,13 +932,10 @@ export async function executeImportWithProgress(
             amount: transaction.amount,
             date: transaction.date,
             type: notionType,
-            categories: ["Other"],
+            tags: [],
             entityId: transaction.entityId ?? null,
             entityName: transaction.entityName ?? null,
             location: transaction.location ?? null,
-            online: transaction.online ?? false,
-            novatedLease: false,
-            taxReturn: false,
             rawRow: transaction.rawRow,
             checksum: transaction.checksum,
           });

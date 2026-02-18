@@ -102,6 +102,37 @@ export function getCorrection(id: string): CorrectionRow {
 }
 
 /**
+ * Find all corrections that match a description (for tag union across all rules)
+ */
+export function findAllMatchingCorrections(description: string): CorrectionRow[] {
+  const db = getDb();
+  const normalized = normalizeDescription(description);
+
+  const exactMatches = db
+    .prepare(
+      `
+    SELECT * FROM transaction_corrections
+    WHERE match_type = 'exact' AND description_pattern = ?
+    ORDER BY confidence DESC, times_applied DESC
+  `
+    )
+    .all(normalized) as CorrectionRow[];
+
+  const containsMatches = db
+    .prepare(
+      `
+    SELECT * FROM transaction_corrections
+    WHERE match_type = 'contains'
+      AND ? LIKE '%' || description_pattern || '%'
+    ORDER BY confidence DESC, times_applied DESC
+  `
+    )
+    .all(normalized) as CorrectionRow[];
+
+  return [...exactMatches, ...containsMatches];
+}
+
+/**
  * Create a new correction or update existing one
  */
 export function createOrUpdateCorrection(input: CreateCorrectionInput): CorrectionRow {
@@ -132,7 +163,7 @@ export function createOrUpdateCorrection(input: CreateCorrectionInput): Correcti
           entity_id = COALESCE(?, entity_id),
           entity_name = COALESCE(?, entity_name),
           location = COALESCE(?, location),
-          online = COALESCE(?, online),
+          tags = ?,
           transaction_type = COALESCE(?, transaction_type)
       WHERE id = ?
     `
@@ -142,7 +173,7 @@ export function createOrUpdateCorrection(input: CreateCorrectionInput): Correcti
       input.entityId ?? null,
       input.entityName ?? null,
       input.location ?? null,
-      input.online !== undefined ? (input.online ? 1 : 0) : null,
+      JSON.stringify(input.tags ?? []),
       input.transactionType ?? null,
       existing.id
     );
@@ -156,7 +187,7 @@ export function createOrUpdateCorrection(input: CreateCorrectionInput): Correcti
       `
     INSERT INTO transaction_corrections (
       description_pattern, match_type, entity_id, entity_name,
-      location, online, transaction_type
+      location, tags, transaction_type
     )
     VALUES (?, ?, ?, ?, ?, ?, ?)
   `
@@ -167,7 +198,7 @@ export function createOrUpdateCorrection(input: CreateCorrectionInput): Correcti
       input.entityId ?? null,
       input.entityName ?? null,
       input.location ?? null,
-      input.online !== undefined ? (input.online ? 1 : 0) : null,
+      JSON.stringify(input.tags ?? []),
       input.transactionType ?? null
     );
 
@@ -206,9 +237,9 @@ export function updateCorrection(id: string, input: UpdateCorrectionInput): Corr
     updates.push("location = ?");
     values.push(input.location);
   }
-  if (input.online !== undefined) {
-    updates.push("online = ?");
-    values.push(input.online ? 1 : 0);
+  if (input.tags !== undefined) {
+    updates.push("tags = ?");
+    values.push(JSON.stringify(input.tags));
   }
   if (input.transactionType !== undefined) {
     updates.push("transaction_type = ?");

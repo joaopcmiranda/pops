@@ -13,6 +13,7 @@ import {
 } from "./types.js";
 import * as service from "./service.js";
 import { NotFoundError } from "../../shared/errors.js";
+import { generateRules } from "./lib/rule-generator.js";
 
 const DEFAULT_LIMIT = 50;
 const DEFAULT_OFFSET = 0;
@@ -126,5 +127,31 @@ export const correctionsRouter = router({
         }
         throw err;
       }
+    }),
+
+  /**
+   * Generate proposed correction rules from a batch of transactions using Claude Haiku.
+   * Does NOT save the rules — caller must confirm via createOrUpdate.
+   */
+  generateRules: protectedProcedure
+    .input(
+      z.object({
+        transactions: z
+          .array(
+            z.object({
+              description: z.string(),
+              entityName: z.string().nullable(),
+              amount: z.number(),
+              account: z.string(),
+              currentTags: z.array(z.string()),
+            })
+          )
+          .min(1)
+          .max(50),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const proposals = await generateRules(input.transactions);
+      return { proposals };
     }),
 });

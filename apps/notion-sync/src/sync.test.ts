@@ -28,7 +28,7 @@ describe('mapTransaction', () => {
         Amount: { type: 'number', number: -125.5, id: 'p3' },
         Date: { type: 'date', date: { start: '2024-06-15', end: null, time_zone: null }, id: 'p4' },
         Type: { type: 'select', select: { id: 's2', name: 'Expense', color: 'red' }, id: 'p5' },
-        Category: {
+        Tags: {
           type: 'multi_select',
           multi_select: [
             { id: 'ms1', name: 'Groceries', color: 'green' },
@@ -47,9 +47,6 @@ describe('mapTransaction', () => {
           select: { id: 's3', name: 'Australia', color: 'green' },
           id: 'p9',
         },
-        Online: { type: 'checkbox', checkbox: false, id: 'p10' },
-        'Novated Lease': { type: 'checkbox', checkbox: false, id: 'p11' },
-        'Tax Return': { type: 'checkbox', checkbox: true, id: 'p12' },
         'Related Transaction': { type: 'relation', relation: [{ id: 'tx-related' }], id: 'p13' },
         Notes: { type: 'rich_text', rich_text: richText('For the week'), id: 'p14' },
       },
@@ -65,14 +62,11 @@ describe('mapTransaction', () => {
       amount: -125.5,
       date: '2024-06-15',
       type: 'Expense',
-      categories: JSON.stringify(['Groceries', 'Food']),
+      tags: JSON.stringify(['Groceries', 'Food']),
       entityId: 'entity-abc',
       entityName: 'Woolworths',
       location: 'Woolworths Bondi',
       country: 'Australia',
-      online: false,
-      novatedLease: false,
-      taxReturn: true,
       relatedTransactionId: 'tx-related',
       notes: 'For the week',
       lastEditedTime: '2024-06-15T12:00:00.000Z',
@@ -112,7 +106,7 @@ describe('mapTransaction', () => {
     expect(row.location).toBeNull();
     expect(row.country).toBeNull();
     expect(row.type).toBe('');
-    expect(row.categories).toBe('[]');
+    expect(row.tags).toBe('[]');
     expect(row.relatedTransactionId).toBeNull();
     expect(row.notes).toBeNull();
   });
@@ -153,7 +147,7 @@ describe('mapEntity', () => {
           select: { id: 's2', name: 'Expense', color: 'red' },
           id: 'p5',
         },
-        'Default Category': {
+        'Default Tags': {
           type: 'multi_select',
           multi_select: [{ id: 'ms1', name: 'Groceries', color: 'green' }],
           id: 'p6',
@@ -172,7 +166,7 @@ describe('mapEntity', () => {
       abn: '88 000 014 675',
       aliases: 'Woolies, WOW',
       defaultTransactionType: 'Expense',
-      defaultCategory: JSON.stringify(['Groceries']),
+      defaultTags: JSON.stringify(['Groceries']),
       notes: 'Supermarket chain',
       lastEditedTime: '2024-05-01T00:00:00.000Z',
     });
@@ -187,7 +181,7 @@ describe('mapEntity', () => {
         ABN: { type: 'rich_text', rich_text: [], id: 'p3' },
         Aliases: { type: 'rich_text', rich_text: [], id: 'p4' },
         'Default Transaction Type': { type: 'select', select: null, id: 'p5' },
-        'Default Category': { type: 'multi_select', multi_select: [], id: 'p6' },
+        'Default Tags': { type: 'multi_select', multi_select: [], id: 'p6' },
         Notes: { type: 'rich_text', rich_text: [], id: 'p7' },
       },
       '2024-05-02T00:00:00.000Z'
@@ -200,7 +194,7 @@ describe('mapEntity', () => {
     expect(row.abn).toBeNull();
     expect(row.aliases).toBeNull();
     expect(row.defaultTransactionType).toBeNull();
-    expect(row.defaultCategory).toBeNull();
+    expect(row.defaultTags).toBeNull();
     expect(row.notes).toBeNull();
   });
 });
@@ -460,7 +454,7 @@ describe('SQLite round-trip', () => {
         abn: '88 000 014 675',
         aliases: 'Woolies, WOW',
         defaultTransactionType: 'Expense',
-        defaultCategory: JSON.stringify(['Groceries']),
+        defaultTags: JSON.stringify(['Groceries']),
         notes: 'Supermarket',
         lastEditedTime: '2024-05-01T00:00:00.000Z',
       },
@@ -475,7 +469,7 @@ describe('SQLite round-trip', () => {
     expect(row['abn']).toBe('88 000 014 675');
     expect(row['aliases']).toBe('Woolies, WOW');
     expect(row['default_transaction_type']).toBe('Expense');
-    expect(row['default_category']).toBe(JSON.stringify(['Groceries']));
+    expect(row['default_tags']).toBe(JSON.stringify(['Groceries']));
     expect(row['notes']).toBe('Supermarket');
   });
 
@@ -488,7 +482,7 @@ describe('SQLite round-trip', () => {
         abn: null,
         aliases: null,
         defaultTransactionType: null,
-        defaultCategory: null,
+        defaultTags: null,
         notes: null,
         lastEditedTime: '2024-01-01T00:00:00.000Z',
       },
@@ -502,7 +496,7 @@ describe('SQLite round-trip', () => {
         abn: '12345',
         aliases: null,
         defaultTransactionType: null,
-        defaultCategory: null,
+        defaultTags: null,
         notes: null,
         lastEditedTime: '2024-06-01T00:00:00.000Z',
       },
@@ -527,14 +521,11 @@ describe('SQLite round-trip', () => {
         amount: -50,
         date: '2024-06-15',
         type: 'Expense',
-        categories: JSON.stringify(['Food']),
+        tags: JSON.stringify(['Food']),
         entityId: null,
         entityName: null,
         location: null,
         country: null,
-        online: false,
-        novatedLease: false,
-        taxReturn: false,
         relatedTransactionId: null,
         notes: 'Weekly shop',
         lastEditedTime: '2024-06-15T00:00:00.000Z',
@@ -546,7 +537,7 @@ describe('SQLite round-trip', () => {
       unknown
     >;
     expect(row['notes']).toBe('Weekly shop');
-    expect(row['online']).toBe(0);
+    expect(row['tags']).toBe(JSON.stringify(['Food']));
   });
 
   it('upserts inventory items with boolean conversion and relations', () => {
@@ -688,7 +679,7 @@ describe('SQLite round-trip', () => {
       abn: null,
       aliases: null,
       defaultTransactionType: null,
-      defaultCategory: null,
+      defaultTags: null,
       notes: null,
       lastEditedTime: '2024-01-01T00:00:00.000Z',
     }));

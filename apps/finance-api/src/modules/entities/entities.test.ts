@@ -43,7 +43,7 @@ describe("entities.list", () => {
       name: "Woolworths",
       type: "Retailer",
       default_transaction_type: "Purchase",
-      default_category: "Groceries",
+      default_tags: '["Groceries"]',
       last_edited_time: "2025-06-15T10:00:00.000Z",
     });
 
@@ -51,7 +51,7 @@ describe("entities.list", () => {
     const entity = result.data[0];
     expect(entity).toHaveProperty("notionId");
     expect(entity).toHaveProperty("defaultTransactionType", "Purchase");
-    expect(entity).toHaveProperty("defaultCategory", "Groceries");
+    expect(entity).toHaveProperty("defaultTags", ["Groceries"]);
     expect(entity).toHaveProperty("lastEditedTime", "2025-06-15T10:00:00.000Z");
     // No snake_case leaking
     expect(entity).not.toHaveProperty("notion_id");
@@ -166,7 +166,7 @@ describe("entities.create", () => {
       abn: "88000014675",
       aliases: ["Woolies", "WW"],
       defaultTransactionType: "Purchase",
-      defaultCategory: "Groceries",
+      defaultTags: ["Groceries"],
       notes: "Supermarket chain",
     });
 
@@ -175,7 +175,7 @@ describe("entities.create", () => {
     expect(result.data.abn).toBe("88000014675");
     expect(result.data.aliases).toEqual(["Woolies", "WW"]);
     expect(result.data.defaultTransactionType).toBe("Purchase");
-    expect(result.data.defaultCategory).toBe("Groceries");
+    expect(result.data.defaultTags).toEqual(["Groceries"]);
     expect(result.data.notes).toBe("Supermarket chain");
   });
 

@@ -14,6 +14,7 @@ import {
 } from "./types.js";
 import * as service from "./service.js";
 import { NotFoundError } from "../../shared/errors.js";
+import { suggestTags } from "../../shared/tag-suggester.js";
 
 /** Default pagination values. */
 const DEFAULT_LIMIT = 50;
@@ -30,14 +31,9 @@ export const transactionsRouter = router({
       account: input.account,
       startDate: input.startDate,
       endDate: input.endDate,
-      category: input.category,
+      tag: input.tag,
       entityId: input.entityId,
       type: input.type,
-      online: input.online === "true" ? true : input.online === "false" ? false : undefined,
-      novatedLease:
-        input.novatedLease === "true" ? true : input.novatedLease === "false" ? false : undefined,
-      taxReturn:
-        input.taxReturn === "true" ? true : input.taxReturn === "false" ? false : undefined,
     };
 
     const { rows, total } = service.listTransactions(filters, limit, offset);
@@ -105,4 +101,20 @@ export const transactionsRouter = router({
       throw err;
     }
   }),
+
+  /**
+   * Suggest tags for a transaction using entity defaults + correction rules.
+   * Pure rule-based, no LLM call.
+   */
+  suggestTags: protectedProcedure
+    .input(
+      z.object({
+        description: z.string(),
+        entityId: z.string().nullable().optional(),
+      })
+    )
+    .query(({ input }) => {
+      const tags = suggestTags(input.description, input.entityId ?? null);
+      return { tags };
+    }),
 });

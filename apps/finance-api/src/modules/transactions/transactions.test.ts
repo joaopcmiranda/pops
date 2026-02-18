@@ -59,40 +59,28 @@ describe("transactions.list", () => {
     expect(txn).not.toHaveProperty("notion_id");
     expect(txn).not.toHaveProperty("entity_id");
     expect(txn).not.toHaveProperty("last_edited_time");
+    // Removed boolean fields
+    expect(txn).not.toHaveProperty("online");
+    expect(txn).not.toHaveProperty("novatedLease");
+    expect(txn).not.toHaveProperty("taxReturn");
   });
 
-  it("converts boolean fields from INTEGER", async () => {
+  it("parses JSON tags into array", async () => {
     seedTransaction(db, {
       description: "Test",
       account: "Up",
-      online: 1,
-      novated_lease: 0,
-      tax_return: 1,
+      tags: JSON.stringify(["Groceries", "Online"]),
     });
 
     const result = await caller.transactions.list({});
-    const txn = result.data[0];
-    expect(txn.online).toBe(true);
-    expect(txn.novatedLease).toBe(false);
-    expect(txn.taxReturn).toBe(true);
+    expect(result.data[0].tags).toEqual(["Groceries", "Online"]);
   });
 
-  it("splits comma-separated categories into array", async () => {
-    seedTransaction(db, {
-      description: "Test",
-      account: "Up",
-      categories: "Groceries, Food, Shopping",
-    });
+  it("returns empty tags array when tags is empty JSON array", async () => {
+    seedTransaction(db, { description: "Test", account: "Up", tags: "[]" });
 
     const result = await caller.transactions.list({});
-    expect(result.data[0].categories).toEqual(["Groceries", "Food", "Shopping"]);
-  });
-
-  it("returns empty categories array when empty string", async () => {
-    seedTransaction(db, { description: "Test", account: "Up", categories: "" });
-
-    const result = await caller.transactions.list({});
-    expect(result.data[0].categories).toEqual([]);
+    expect(result.data[0].tags).toEqual([]);
   });
 
   it("filters by search (case-insensitive LIKE)", async () => {
@@ -146,11 +134,19 @@ describe("transactions.list", () => {
     expect(result.data[0].description).toBe("Within");
   });
 
-  it("filters by category (partial LIKE match)", async () => {
-    seedTransaction(db, { description: "Test 1", account: "Up", categories: "Groceries, Food" });
-    seedTransaction(db, { description: "Test 2", account: "Up", categories: "Transport" });
+  it("filters by tag (exact JSON array membership)", async () => {
+    seedTransaction(db, {
+      description: "Test 1",
+      account: "Up",
+      tags: JSON.stringify(["Groceries", "Online"]),
+    });
+    seedTransaction(db, {
+      description: "Test 2",
+      account: "Up",
+      tags: JSON.stringify(["Transport"]),
+    });
 
-    const result = await caller.transactions.list({ category: "Groc" });
+    const result = await caller.transactions.list({ tag: "Groceries" });
     expect(result.data).toHaveLength(1);
     expect(result.data[0].description).toBe("Test 1");
   });
@@ -173,95 +169,34 @@ describe("transactions.list", () => {
     expect(result.data[0].description).toBe("Test 1");
   });
 
-  it("filters by online=true", async () => {
-    seedTransaction(db, { description: "Online", account: "Up", online: 1 });
-    seedTransaction(db, { description: "In-store", account: "Up", online: 0 });
-
-    const result = await caller.transactions.list({ online: "true" });
-    expect(result.data).toHaveLength(1);
-    expect(result.data[0].description).toBe("Online");
-  });
-
-  it("filters by online=false", async () => {
-    seedTransaction(db, { description: "Online", account: "Up", online: 1 });
-    seedTransaction(db, { description: "In-store", account: "Up", online: 0 });
-
-    const result = await caller.transactions.list({ online: "false" });
-    expect(result.data).toHaveLength(1);
-    expect(result.data[0].description).toBe("In-store");
-  });
-
-  it("filters by novatedLease=true", async () => {
-    seedTransaction(db, { description: "Novated", account: "Up", novated_lease: 1 });
-    seedTransaction(db, { description: "Regular", account: "Up", novated_lease: 0 });
-
-    const result = await caller.transactions.list({ novatedLease: "true" });
-    expect(result.data).toHaveLength(1);
-    expect(result.data[0].description).toBe("Novated");
-  });
-
-  it("filters by novatedLease=false", async () => {
-    seedTransaction(db, { description: "Novated", account: "Up", novated_lease: 1 });
-    seedTransaction(db, { description: "Regular", account: "Up", novated_lease: 0 });
-
-    const result = await caller.transactions.list({ novatedLease: "false" });
-    expect(result.data).toHaveLength(1);
-    expect(result.data[0].description).toBe("Regular");
-  });
-
-  it("filters by taxReturn=true", async () => {
-    seedTransaction(db, { description: "Deductible", account: "Up", tax_return: 1 });
-    seedTransaction(db, { description: "Non-deductible", account: "Up", tax_return: 0 });
-
-    const result = await caller.transactions.list({ taxReturn: "true" });
-    expect(result.data).toHaveLength(1);
-    expect(result.data[0].description).toBe("Deductible");
-  });
-
-  it("filters by taxReturn=false", async () => {
-    seedTransaction(db, { description: "Deductible", account: "Up", tax_return: 1 });
-    seedTransaction(db, { description: "Non-deductible", account: "Up", tax_return: 0 });
-
-    const result = await caller.transactions.list({ taxReturn: "false" });
-    expect(result.data).toHaveLength(1);
-    expect(result.data[0].description).toBe("Non-deductible");
-  });
-
   it("combines multiple filters", async () => {
     seedTransaction(db, {
       description: "Match",
       account: "Up",
       date: "2025-06-01",
       type: "Purchase",
-      online: 1,
+      tags: JSON.stringify(["Groceries"]),
     });
     seedTransaction(db, {
       description: "Wrong account",
       account: "ANZ",
       date: "2025-06-01",
       type: "Purchase",
-      online: 1,
+      tags: JSON.stringify(["Groceries"]),
     });
     seedTransaction(db, {
       description: "Wrong date",
       account: "Up",
       date: "2025-01-01",
       type: "Purchase",
-      online: 1,
-    });
-    seedTransaction(db, {
-      description: "Wrong type",
-      account: "Up",
-      date: "2025-06-01",
-      type: "Transfer",
-      online: 1,
+      tags: JSON.stringify(["Groceries"]),
     });
 
     const result = await caller.transactions.list({
       account: "Up",
       startDate: "2025-05-01",
       type: "Purchase",
-      online: "true",
+      tag: "Groceries",
     });
     expect(result.data).toHaveLength(1);
     expect(result.data[0].description).toBe("Match");
@@ -349,10 +284,7 @@ describe("transactions.create", () => {
     expect(result.data.date).toBe("2025-06-15");
     expect(result.data.type).toBe("Purchase");
     expect(result.data.notionId).toBeDefined();
-    expect(result.data.categories).toEqual([]);
-    expect(result.data.online).toBe(false);
-    expect(result.data.novatedLease).toBe(false);
-    expect(result.data.taxReturn).toBe(false);
+    expect(result.data.tags).toEqual([]);
   });
 
   it("creates a transaction with all fields", async () => {
@@ -362,27 +294,21 @@ describe("transactions.create", () => {
       amount: 150.75,
       date: "2025-06-15",
       type: "Purchase",
-      categories: ["Groceries", "Food"],
+      tags: ["Groceries", "Online"],
       entityId: "ent-123",
       entityName: "Woolworths",
       location: "Sydney CBD",
       country: "Australia",
-      online: false,
-      novatedLease: false,
-      taxReturn: false,
       relatedTransactionId: "txn-456",
       notes: "Weekly groceries",
     });
 
     expect(result.data.description).toBe("Woolworths Groceries");
-    expect(result.data.categories).toEqual(["Groceries", "Food"]);
+    expect(result.data.tags).toEqual(["Groceries", "Online"]);
     expect(result.data.entityId).toBe("ent-123");
     expect(result.data.entityName).toBe("Woolworths");
     expect(result.data.location).toBe("Sydney CBD");
     expect(result.data.country).toBe("Australia");
-    expect(result.data.online).toBe(false);
-    expect(result.data.novatedLease).toBe(false);
-    expect(result.data.taxReturn).toBe(false);
     expect(result.data.relatedTransactionId).toBe("txn-456");
     expect(result.data.notes).toBe("Weekly groceries");
   });
@@ -460,7 +386,7 @@ describe("transactions.update", () => {
     expect(result.data.account).toBe("Up");
   });
 
-  it("updates multiple fields at once", async () => {
+  it("updates tags", async () => {
     const id = seedTransaction(db, {
       description: "Test",
       account: "Up",
@@ -470,16 +396,10 @@ describe("transactions.update", () => {
 
     const result = await caller.transactions.update({
       id,
-      data: {
-        description: "New Description",
-        amount: 100.0,
-        categories: ["Shopping", "Retail"],
-      },
+      data: { tags: ["Shopping", "Online"] },
     });
 
-    expect(result.data.description).toBe("New Description");
-    expect(result.data.amount).toBe(100.0);
-    expect(result.data.categories).toEqual(["Shopping", "Retail"]);
+    expect(result.data.tags).toEqual(["Shopping", "Online"]);
   });
 
   it("clears a field by setting to null", async () => {

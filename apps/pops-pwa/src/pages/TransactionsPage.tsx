@@ -2,11 +2,13 @@
  * Transactions page - list and manage transactions
  */
 import type { ColumnDef } from "@tanstack/react-table";
+import { useCallback } from "react";
 import { trpc } from "@/lib/trpc";
 import { DataTable, SortableHeader } from "@/components/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TagEditor } from "@/components/TagEditor";
 import type { ColumnFilter } from "@/components/DataTableFilters";
 
 interface Transaction {
@@ -16,27 +18,50 @@ interface Transaction {
   amount: number;
   date: string;
   type: string;
-  categories: string[];
+  tags: string[];
+  entityId: string | null;
   entityName: string | null;
   location: string | null;
-  online: boolean;
-  novatedLease: boolean;
-  taxReturn: boolean;
 }
 
 export function TransactionsPage() {
+  const utils = trpc.useUtils();
+
   // Fetch transactions using tRPC
   const { data, isLoading, error, refetch } = trpc.transactions.list.useQuery({
-    limit: 100, // Fetch more for client-side pagination
+    limit: 100,
   });
+
+  const updateMutation = trpc.transactions.update.useMutation({
+    onSuccess: () => {
+      void utils.transactions.list.invalidate();
+    },
+  });
+
+  const handleTagSave = useCallback(
+    (transactionId: string, _entityId: string | null, _description: string) =>
+      async (tags: string[]) => {
+        await updateMutation.mutateAsync({ id: transactionId, data: { tags } });
+      },
+    [updateMutation]
+  );
+
+  const handleTagSuggest = useCallback(
+    (description: string, entityId: string | null) => async () => {
+      const result = await utils.transactions.suggestTags.fetch({
+        description,
+        entityId: entityId ?? null,
+      });
+      return result.tags;
+    },
+    [utils]
+  );
 
   // Define table columns
   const columns: ColumnDef<Transaction>[] = [
     {
       accessorKey: "date",
-      header: ({ column }) => (
-        <SortableHeader column={column}>Date</SortableHeader>
-      ),
+      header: ({ column }) => <SortableHeader column={column}>Date</SortableHeader>,
       cell: ({ row }) => {
         const date = new Date(row.original.date);
         return date.toLocaleDateString("en-AU", {
@@ -53,9 +78,7 @@ export function TransactionsPage() {
         <div className="max-w-md">
           <div className="font-medium truncate">{row.original.description}</div>
           {row.original.entityName && (
-            <div className="text-sm text-muted-foreground truncate">
-              {row.original.entityName}
-            </div>
+            <div className="text-sm text-muted-foreground truncate">{row.original.entityName}</div>
           )}
         </div>
       ),
@@ -81,9 +104,7 @@ export function TransactionsPage() {
           <div className="text-right font-mono font-medium tabular-nums">
             <span
               className={
-                isNegative
-                  ? "text-red-600 dark:text-red-400"
-                  : "text-green-600 dark:text-green-400"
+                isNegative ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"
               }
             >
               {isNegative ? "-" : "+"}${Math.abs(amount).toFixed(2)}
@@ -102,49 +123,27 @@ export function TransactionsPage() {
       ),
     },
     {
-      accessorKey: "categories",
-      header: "Categories",
+      accessorKey: "tags",
+      header: "Tags",
       cell: ({ row }) => {
-        const categories = row.original.categories;
-        if (!categories || categories.length === 0) {
-          return <span className="text-muted-foreground">—</span>;
-        }
+        const { notionId, tags, entityId, description } = row.original;
         return (
-          <div className="flex flex-wrap gap-1">
-            {categories.slice(0, 2).map((cat) => (
-              <Badge key={cat} variant="secondary" className="text-xs">
-                {cat}
-              </Badge>
-            ))}
-            {categories.length > 2 && (
-              <Badge variant="secondary" className="text-xs">
-                +{categories.length - 2}
-              </Badge>
-            )}
-          </div>
+          <TagEditor
+            currentTags={tags}
+            onSave={handleTagSave(notionId, entityId, description)}
+            onSuggest={handleTagSuggest(description, entityId)}
+          />
         );
       },
       filterFn: (row, columnId, filterValue) => {
         const searchTerm = String(filterValue ?? "")
           .toLowerCase()
           .trim();
-        if (!searchTerm) {
-          return true;
-        }
-        const categories = row.getValue<string[]>(columnId);
-        if (!categories || categories.length === 0) return false;
-        return categories.some((cat) => cat.toLowerCase().includes(searchTerm));
+        if (!searchTerm) return true;
+        const tags = row.getValue<string[]>(columnId);
+        if (!tags || tags.length === 0) return false;
+        return tags.some((tag) => tag.toLowerCase().includes(searchTerm));
       },
-    },
-    {
-      accessorKey: "online",
-      header: "Online",
-      cell: ({ row }) =>
-        row.original.online ? (
-          <Badge variant="default" className="text-xs">
-            Yes
-          </Badge>
-        ) : null,
     },
   ];
 
@@ -173,6 +172,12 @@ export function TransactionsPage() {
         { label: "Expense", value: "Expense" },
         { label: "Transfer", value: "Transfer" },
       ],
+    },
+    {
+      id: "tags",
+      type: "text",
+      label: "Tag",
+      placeholder: "Filter by tag...",
     },
   ];
 

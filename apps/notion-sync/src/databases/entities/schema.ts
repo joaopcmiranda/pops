@@ -10,7 +10,7 @@ export function createEntitiesTable(db: Database.Database): void {
       abn                      TEXT,
       aliases                  TEXT,
       default_transaction_type TEXT,
-      default_category         TEXT,
+      default_tags             TEXT,
       notes                    TEXT,
       last_edited_time         TEXT NOT NULL
     );

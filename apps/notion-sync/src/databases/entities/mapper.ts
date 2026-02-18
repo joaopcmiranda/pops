@@ -5,7 +5,7 @@ import { getTitle, getRichText, getSelect, getMultiSelect } from '../../property
 /** Map a Notion Entities page to an EntityRow. */
 export function mapEntity(page: NotionPage): EntityRow {
   const props = page.properties;
-  const defaultCategories = getMultiSelect(props, 'Default Category');
+  const defaultTags = getMultiSelect(props, 'Default Tags');
 
   return {
     notionId: page.id,
@@ -14,7 +14,7 @@ export function mapEntity(page: NotionPage): EntityRow {
     abn: getRichText(props, 'ABN'),
     aliases: getRichText(props, 'Aliases'),
     defaultTransactionType: getSelect(props, 'Default Transaction Type'),
-    defaultCategory: defaultCategories.length > 0 ? JSON.stringify(defaultCategories) : null,
+    defaultTags: defaultTags.length > 0 ? JSON.stringify(defaultTags) : null,
     notes: getRichText(props, 'Notes'),
     lastEditedTime: page.last_edited_time,
   };
