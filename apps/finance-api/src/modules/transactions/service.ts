@@ -47,9 +47,7 @@ export function listTransactions(
     params["endDate"] = filters.endDate;
   }
   if (filters.tag) {
-    conditions.push(
-      "EXISTS (SELECT 1 FROM json_each(tags) WHERE json_each.value = @tag)"
-    );
+    conditions.push("EXISTS (SELECT 1 FROM json_each(tags) WHERE json_each.value = @tag)");
     params["tag"] = filters.tag;
   }
   if (filters.entityId) {

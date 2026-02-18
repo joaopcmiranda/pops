@@ -106,7 +106,6 @@ async function main(): Promise<void> {
       try {
         await notion.pages.update({
           page_id: page.id,
-          // @ts-expect-error - Dynamic Notion properties
           properties: { Tags: { multi_select: merged.map((name) => ({ name })) } },
         });
         console.log(`  [updated] ${page.id}: ${JSON.stringify(merged)}`);
