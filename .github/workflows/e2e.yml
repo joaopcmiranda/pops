@@ -33,16 +33,10 @@ jobs:
           cd apps/pops-pwa
           npx playwright install --with-deps
 
-      - name: Start backend API
-        run: |
-          cd apps/finance-api
-          yarn dev &
-          # Wait for API to be ready
-          npx wait-on http://localhost:3000/health --timeout 60000
+      - name: Initialize finance-api database
+        run: cd apps/finance-api && yarn dev:init
         env:
-          NOTION_API_TOKEN: ${{ secrets.NOTION_API_TOKEN || 'test-token' }}
-          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY || 'test-key' }}
-          SQLITE_PATH: ':memory:'
+          SQLITE_PATH: ./data/pops.db
 
       - name: Run Playwright tests
         run: |
@@ -50,6 +44,17 @@ jobs:
           yarn test:e2e
         env:
           CI: true
+          # finance-api is started by Playwright's webServer config.
+          # These dummy values are required by env.ts — Notion/Claude calls fail
+          # gracefully (dedup disabled warning) so entity matching still runs.
+          NOTION_API_TOKEN: test-dummy-token
+          NOTION_BALANCE_SHEET_ID: test-balance-sheet-id
+          NOTION_ENTITIES_DB_ID: test-entities-db-id
+          NOTION_HOME_INVENTORY_ID: test-home-inventory-id
+          NOTION_BUDGET_ID: test-budget-id
+          NOTION_WISH_LIST_ID: test-wish-list-id
+          CLAUDE_API_KEY: test-dummy-key
+          SQLITE_PATH: ./apps/finance-api/data/pops.db
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
