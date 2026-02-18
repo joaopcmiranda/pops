@@ -61,7 +61,9 @@ export function TransactionsPage() {
   const columns: ColumnDef<Transaction>[] = [
     {
       accessorKey: "date",
-      header: ({ column }) => <SortableHeader column={column}>Date</SortableHeader>,
+      header: ({ column }) => (
+        <SortableHeader column={column}>Date</SortableHeader>
+      ),
       cell: ({ row }) => {
         const date = new Date(row.original.date);
         return date.toLocaleDateString("en-AU", {
