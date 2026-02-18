@@ -46,9 +46,7 @@ afterEach(() => {
 
 describe("POST /env/:name", () => {
   it("returns 201 with the created env record", async () => {
-    const res = await request(app)
-      .post("/env/new-env")
-      .send({ seed: "none" });
+    const res = await request(app).post("/env/new-env").send({ seed: "none" });
 
     expect(res.status).toBe(201);
     expect(res.body.name).toBe("new-env");
@@ -60,18 +58,14 @@ describe("POST /env/:name", () => {
   });
 
   it("returns 201 with a seeded env", async () => {
-    const res = await request(app)
-      .post("/env/seeded")
-      .send({ seed: "test" });
+    const res = await request(app).post("/env/seeded").send({ seed: "test" });
 
     expect(res.status).toBe(201);
     expect(res.body.seedType).toBe("test");
   });
 
   it("returns 201 with TTL", async () => {
-    const res = await request(app)
-      .post("/env/ttl-env")
-      .send({ ttl: 3600 });
+    const res = await request(app).post("/env/ttl-env").send({ ttl: 3600 });
 
     expect(res.status).toBe(201);
     expect(res.body.ttlSeconds).toBe(3600);

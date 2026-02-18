@@ -44,22 +44,25 @@ function envDbPath(name: string): string {
 /** Validate env name: alphanumeric + hyphens, 1–64 chars, not "prod". */
 export function validateEnvName(name: string): string | null {
   if (name === "prod") return `"prod" is reserved`;
-  if (!(/^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$|^[a-zA-Z0-9]$/.test(name))) return "Name must start and end with alphanumeric characters, hyphens allowed in between";
+  if (!/^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$|^[a-zA-Z0-9]$/.test(name))
+    return "Name must start and end with alphanumeric characters, hyphens allowed in between";
   if (name.length < 1 || name.length > 64) return "Name must be 1–64 characters";
   return null;
 }
 
 /** Get a single env record from the prod DB. Returns null if not found. */
 export function getEnvRecord(name: string): EnvRecord | null {
-  const row = getDb()
-    .prepare("SELECT * FROM environments WHERE name = ?")
-    .get(name) as EnvRecord | undefined;
+  const row = getDb().prepare("SELECT * FROM environments WHERE name = ?").get(name) as
+    | EnvRecord
+    | undefined;
   return row ?? null;
 }
 
 /** List all env records. */
 export function listEnvs(): EnvRecord[] {
-  return getDb().prepare("SELECT * FROM environments ORDER BY created_at DESC").all() as EnvRecord[];
+  return getDb()
+    .prepare("SELECT * FROM environments ORDER BY created_at DESC")
+    .all() as EnvRecord[];
 }
 
 /**
@@ -88,7 +91,11 @@ export function closeEnvDb(name: string): void {
  * Create a new named environment.
  * Returns the created record, or throws if the name already exists.
  */
-export function createEnv(name: string, seedType: "none" | "test", ttlSeconds: number | null): EnvRecord {
+export function createEnv(
+  name: string,
+  seedType: "none" | "test",
+  ttlSeconds: number | null
+): EnvRecord {
   const dbPath = envDbPath(name);
 
   // Ensure envs directory exists
@@ -105,9 +112,7 @@ export function createEnv(name: string, seedType: "none" | "test", ttlSeconds: n
 
   // Compute expires_at
   const expiresAt =
-    ttlSeconds !== null
-      ? new Date(Date.now() + ttlSeconds * 1000).toISOString()
-      : null;
+    ttlSeconds !== null ? new Date(Date.now() + ttlSeconds * 1000).toISOString() : null;
 
   // Insert into prod DB registry — clean up the file and cached connection on failure
   try {
@@ -120,7 +125,11 @@ export function createEnv(name: string, seedType: "none" | "test", ttlSeconds: n
   } catch (err) {
     db.close();
     connections.delete(name);
-    try { unlinkSync(dbPath); } catch { /* already gone */ }
+    try {
+      unlinkSync(dbPath);
+    } catch {
+      /* already gone */
+    }
     throw err;
   }
 
@@ -136,14 +145,10 @@ export function updateEnvTtl(name: string, ttlSeconds: number | null): EnvRecord
   if (!record) return null;
 
   const expiresAt =
-    ttlSeconds !== null
-      ? new Date(Date.now() + ttlSeconds * 1000).toISOString()
-      : null;
+    ttlSeconds !== null ? new Date(Date.now() + ttlSeconds * 1000).toISOString() : null;
 
   getDb()
-    .prepare(
-      `UPDATE environments SET ttl_seconds = ?, expires_at = ? WHERE name = ?`
-    )
+    .prepare(`UPDATE environments SET ttl_seconds = ?, expires_at = ? WHERE name = ?`)
     .run(ttlSeconds, expiresAt, name);
 
   return getEnvRecord(name);

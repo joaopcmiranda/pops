@@ -58,10 +58,10 @@ envRouter.post("/env/:name", (req, res) => {
     return;
   }
 
-  const body: EnvRequestBody = typeof req.body === "object" && req.body !== null ? (req.body as EnvRequestBody) : {};
+  const body: EnvRequestBody =
+    typeof req.body === "object" && req.body !== null ? (req.body as EnvRequestBody) : {};
   const seedType = body.seed === "test" ? "test" : "none";
-  const ttlSeconds: number | null =
-    typeof body.ttl === "number" && body.ttl > 0 ? body.ttl : null;
+  const ttlSeconds: number | null = typeof body.ttl === "number" && body.ttl > 0 ? body.ttl : null;
 
   try {
     const record = createEnv(name, seedType, ttlSeconds);
@@ -96,7 +96,8 @@ envRouter.patch("/env/:name", (req, res) => {
     return;
   }
 
-  const patchBody: EnvRequestBody = typeof req.body === "object" && req.body !== null ? (req.body as EnvRequestBody) : {};
+  const patchBody: EnvRequestBody =
+    typeof req.body === "object" && req.body !== null ? (req.body as EnvRequestBody) : {};
   const ttlSeconds: number | null =
     typeof patchBody.ttl === "number" && patchBody.ttl > 0 ? patchBody.ttl : null;
 

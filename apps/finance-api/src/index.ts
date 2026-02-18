@@ -16,8 +16,12 @@ const app = createApp();
 
 // Clean up expired and orphaned env DBs left over from any previous crash
 const { expired, orphaned } = startupCleanup();
-if (expired.length > 0) console.log(`[finance-api] Cleaned up ${expired.length} expired env(s): ${expired.join(", ")}`);
-if (orphaned.length > 0) console.log(`[finance-api] Removed ${orphaned.length} orphaned env DB(s): ${orphaned.join(", ")}`);
+if (expired.length > 0)
+  console.log(`[finance-api] Cleaned up ${expired.length} expired env(s): ${expired.join(", ")}`);
+if (orphaned.length > 0)
+  console.log(
+    `[finance-api] Removed ${orphaned.length} orphaned env DB(s): ${orphaned.join(", ")}`
+  );
 
 const server = app.listen(port, () => {
   console.log(`[finance-api] Listening on port ${port}`);

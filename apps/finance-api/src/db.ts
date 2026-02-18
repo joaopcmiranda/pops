@@ -34,9 +34,9 @@ function runMigrations(database: BetterSqlite3.Database): void {
 
   const applied = new Set(
     (
-      database
-        .prepare("SELECT version FROM schema_migrations ORDER BY version")
-        .all() as { version: string }[]
+      database.prepare("SELECT version FROM schema_migrations ORDER BY version").all() as {
+        version: string;
+      }[]
     ).map((r) => r.version)
   );
 

@@ -435,14 +435,70 @@ export function seedDatabase(db: BetterSqlite3.Database): void {
     // Budgets
     // -------------------------------------------------------------------------
     const budgets = [
-      { notion_id: "budget-001", category: "Groceries", period: "Monthly", amount: 800.0, active: 1, notes: "Supermarket shopping and essentials" },
-      { notion_id: "budget-002", category: "Transport", period: "Monthly", amount: 300.0, active: 1, notes: "Fuel, tolls, parking" },
-      { notion_id: "budget-003", category: "Entertainment", period: "Monthly", amount: 150.0, active: 1, notes: "Streaming, dining out, activities" },
-      { notion_id: "budget-004", category: "Shopping", period: "Monthly", amount: 400.0, active: 1, notes: "Clothing, electronics, misc purchases" },
-      { notion_id: "budget-005", category: "Home & Garden", period: "Monthly", amount: 200.0, active: 1, notes: "Maintenance, improvements, supplies" },
-      { notion_id: "budget-006", category: "Utilities", period: "Monthly", amount: 250.0, active: 1, notes: "Electricity, gas, water, internet" },
-      { notion_id: "budget-007", category: "Subscriptions", period: "Monthly", amount: 100.0, active: 1, notes: "Streaming services, software, memberships" },
-      { notion_id: "budget-008", category: "Holiday Fund", period: "Yearly", amount: 5000.0, active: 1, notes: "Annual vacation savings" },
+      {
+        notion_id: "budget-001",
+        category: "Groceries",
+        period: "Monthly",
+        amount: 800.0,
+        active: 1,
+        notes: "Supermarket shopping and essentials",
+      },
+      {
+        notion_id: "budget-002",
+        category: "Transport",
+        period: "Monthly",
+        amount: 300.0,
+        active: 1,
+        notes: "Fuel, tolls, parking",
+      },
+      {
+        notion_id: "budget-003",
+        category: "Entertainment",
+        period: "Monthly",
+        amount: 150.0,
+        active: 1,
+        notes: "Streaming, dining out, activities",
+      },
+      {
+        notion_id: "budget-004",
+        category: "Shopping",
+        period: "Monthly",
+        amount: 400.0,
+        active: 1,
+        notes: "Clothing, electronics, misc purchases",
+      },
+      {
+        notion_id: "budget-005",
+        category: "Home & Garden",
+        period: "Monthly",
+        amount: 200.0,
+        active: 1,
+        notes: "Maintenance, improvements, supplies",
+      },
+      {
+        notion_id: "budget-006",
+        category: "Utilities",
+        period: "Monthly",
+        amount: 250.0,
+        active: 1,
+        notes: "Electricity, gas, water, internet",
+      },
+      {
+        notion_id: "budget-007",
+        category: "Subscriptions",
+        period: "Monthly",
+        amount: 100.0,
+        active: 1,
+        notes: "Streaming services, software, memberships",
+      },
+      {
+        notion_id: "budget-008",
+        category: "Holiday Fund",
+        period: "Yearly",
+        amount: 5000.0,
+        active: 1,
+        notes: "Annual vacation savings",
+      },
     ];
 
     const insertBudget = db.prepare(`
@@ -451,7 +507,15 @@ export function seedDatabase(db: BetterSqlite3.Database): void {
     `);
 
     for (const budget of budgets) {
-      insertBudget.run(budget.notion_id, budget.category, budget.period, budget.amount, budget.active, budget.notes, now);
+      insertBudget.run(
+        budget.notion_id,
+        budget.category,
+        budget.period,
+        budget.amount,
+        budget.active,
+        budget.notes,
+        now
+      );
     }
 
     // -------------------------------------------------------------------------
@@ -571,11 +635,24 @@ export function seedDatabase(db: BetterSqlite3.Database): void {
 
     for (const item of homeInventory) {
       insertInventory.run(
-        item.notion_id, item.item_name, item.brand, item.model, item.item_id,
-        item.room, item.location, item.type, item.condition,
-        item.in_use, item.deductible, item.purchase_date, item.warranty_expires,
-        item.replacement_value, item.resale_value,
-        item.purchase_transaction_id, item.purchased_from_id, item.purchased_from_name,
+        item.notion_id,
+        item.item_name,
+        item.brand,
+        item.model,
+        item.item_id,
+        item.room,
+        item.location,
+        item.type,
+        item.condition,
+        item.in_use,
+        item.deductible,
+        item.purchase_date,
+        item.warranty_expires,
+        item.replacement_value,
+        item.resale_value,
+        item.purchase_transaction_id,
+        item.purchased_from_id,
+        item.purchased_from_name,
         now
       );
     }
@@ -584,11 +661,51 @@ export function seedDatabase(db: BetterSqlite3.Database): void {
     // Wish List
     // -------------------------------------------------------------------------
     const wishList = [
-      { notion_id: "wish-001", item: "New Gaming PC", target_amount: 3500.0, saved: 1200.0, priority: "Soon", url: "https://www.pccasegear.com", notes: "RTX 4080, Ryzen 9 7950X build" },
-      { notion_id: "wish-002", item: "Standing Desk", target_amount: 800.0, saved: 450.0, priority: "Needing", url: "https://www.jarvis.com.au", notes: "Fully Jarvis bamboo top" },
-      { notion_id: "wish-003", item: "Japan Trip", target_amount: 8000.0, saved: 2100.0, priority: "One Day", url: null, notes: "2 week trip to Tokyo, Kyoto, Osaka" },
-      { notion_id: "wish-004", item: "Herman Miller Chair", target_amount: 2200.0, saved: 0.0, priority: "Dreaming", url: "https://www.hermanmiller.com", notes: "Aeron fully loaded" },
-      { notion_id: "wish-005", item: "New Camera", target_amount: 4500.0, saved: 800.0, priority: "One Day", url: "https://www.sony.com.au", notes: "Sony A7 IV with 24-70mm f/2.8 GM II" },
+      {
+        notion_id: "wish-001",
+        item: "New Gaming PC",
+        target_amount: 3500.0,
+        saved: 1200.0,
+        priority: "Soon",
+        url: "https://www.pccasegear.com",
+        notes: "RTX 4080, Ryzen 9 7950X build",
+      },
+      {
+        notion_id: "wish-002",
+        item: "Standing Desk",
+        target_amount: 800.0,
+        saved: 450.0,
+        priority: "Needing",
+        url: "https://www.jarvis.com.au",
+        notes: "Fully Jarvis bamboo top",
+      },
+      {
+        notion_id: "wish-003",
+        item: "Japan Trip",
+        target_amount: 8000.0,
+        saved: 2100.0,
+        priority: "One Day",
+        url: null,
+        notes: "2 week trip to Tokyo, Kyoto, Osaka",
+      },
+      {
+        notion_id: "wish-004",
+        item: "Herman Miller Chair",
+        target_amount: 2200.0,
+        saved: 0.0,
+        priority: "Dreaming",
+        url: "https://www.hermanmiller.com",
+        notes: "Aeron fully loaded",
+      },
+      {
+        notion_id: "wish-005",
+        item: "New Camera",
+        target_amount: 4500.0,
+        saved: 800.0,
+        priority: "One Day",
+        url: "https://www.sony.com.au",
+        notes: "Sony A7 IV with 24-70mm f/2.8 GM II",
+      },
     ];
 
     const insertWishList = db.prepare(`
@@ -597,12 +714,21 @@ export function seedDatabase(db: BetterSqlite3.Database): void {
     `);
 
     for (const wish of wishList) {
-      insertWishList.run(wish.notion_id, wish.item, wish.target_amount, wish.saved, wish.priority, wish.url, wish.notes, now);
+      insertWishList.run(
+        wish.notion_id,
+        wish.item,
+        wish.target_amount,
+        wish.saved,
+        wish.priority,
+        wish.url,
+        wish.notes,
+        now
+      );
     }
 
     console.log(
       `[seeder] Seeded ${entities.length} entities, ${transactions.length} transactions, ` +
-      `${budgets.length} budgets, ${homeInventory.length} inventory items, ${wishList.length} wish list items`
+        `${budgets.length} budgets, ${homeInventory.length} inventory items, ${wishList.length} wish list items`
     );
   });
 
