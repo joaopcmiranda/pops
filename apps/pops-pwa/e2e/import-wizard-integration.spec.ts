@@ -69,8 +69,9 @@ const navigateToReview = async (page: Page, csvContent: string) => {
   await expect(page.getByText('Map Columns')).toBeVisible();
   await page.getByRole('button', { name: /next/i }).click();
 
-  // Real backend processes in background — wait up to 15s for Review heading
-  await expect(page.getByRole('heading', { name: 'Review' })).toBeVisible({ timeout: 15000 });
+  // Real backend processes in background. In CI NOTION_TIMEOUT_MS=2000 keeps
+  // dummy-token Notion calls fast; allow up to 30s total as a safe margin.
+  await expect(page.getByRole('heading', { name: 'Review' })).toBeVisible({ timeout: 30000 });
 };
 
 /** Mock Notion-write endpoints (executeImport, createEntity, corrections). */

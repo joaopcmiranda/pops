@@ -47,6 +47,9 @@ jobs:
           # finance-api is started by Playwright's webServer config.
           # These dummy values are required by env.ts — Notion/Claude calls fail
           # gracefully (dedup disabled warning) so entity matching still runs.
+          # NOTION_TIMEOUT_MS: short timeout so dummy-token Notion calls fail fast
+          # rather than hanging for the OS TCP timeout (~17s) before erroring out.
+          NOTION_TIMEOUT_MS: 2000
           NOTION_API_TOKEN: test-dummy-token
           NOTION_BALANCE_SHEET_ID: test-balance-sheet-id
           NOTION_ENTITIES_DB_ID: test-entities-db-id

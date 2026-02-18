@@ -19,7 +19,13 @@ export function getNotionClient(): Client {
   }
 
   const token = requireEnv("NOTION_API_TOKEN");
-  return new Client({ auth: token });
+  // In CI/test environments the token is a dummy and api.notion.com may be
+  // unreachable. Use a short timeout so failures are fast rather than hanging
+  // for the OS default TCP timeout (~17s), which breaks integration test timing.
+  const timeoutMs = process.env["NOTION_TIMEOUT_MS"]
+    ? Number(process.env["NOTION_TIMEOUT_MS"])
+    : undefined;
+  return new Client({ auth: token, timeoutMs });
 }
 
 /**
