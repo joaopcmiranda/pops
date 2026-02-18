@@ -32,6 +32,12 @@ export default async function globalSetup(): Promise<void> {
     }
   } catch (err) {
     if (err instanceof Error && err.message.includes('fetch failed')) {
+      if (process.env['CI']) {
+        // In CI the API server must be up — Playwright's webServer config waits for it.
+        // If we still can't reach it, fail loudly so the root cause is obvious.
+        throw new Error(`[global-setup] API unreachable in CI — integration tests cannot run: ${err.message}`);
+      }
+      // Locally the API might not be started; mocked tests will still run.
       console.warn('[global-setup] API not reachable — skipping env creation (mocked tests will still run)');
       return;
     }

@@ -102,6 +102,18 @@ describe("validateEnvName", () => {
   it("rejects empty string", () => {
     expect(validateEnvName("")).not.toBeNull();
   });
+
+  it("rejects names starting with a hyphen", () => {
+    expect(validateEnvName("-test")).not.toBeNull();
+  });
+
+  it("rejects names ending with a hyphen", () => {
+    expect(validateEnvName("test-")).not.toBeNull();
+  });
+
+  it("rejects names that are only hyphens", () => {
+    expect(validateEnvName("---")).not.toBeNull();
+  });
 });
 
 // ---------------------------------------------------------------------------

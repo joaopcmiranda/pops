@@ -45,9 +45,9 @@ function runMigrations(database: BetterSqlite3.Database): void {
     files = readdirSync(MIGRATIONS_DIR)
       .filter((f) => f.endsWith(".sql"))
       .sort();
-  } catch {
-    // No migrations directory — nothing to do
-    return;
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code === "ENOENT") return; // No migrations directory
+    throw err;
   }
 
   for (const file of files) {

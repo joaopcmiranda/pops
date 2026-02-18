@@ -36,7 +36,7 @@ function envDbPath(name: string): string {
 /** Validate env name: alphanumeric + hyphens, 1–64 chars, not "prod". */
 export function validateEnvName(name: string): string | null {
   if (name === "prod") return `"prod" is reserved`;
-  if (!/^[a-zA-Z0-9-]+$/.test(name)) return "Name must be alphanumeric with hyphens only";
+  if (!(/^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$|^[a-zA-Z0-9]$/.test(name))) return "Name must start and end with alphanumeric characters, hyphens allowed in between";
   if (name.length < 1 || name.length > 64) return "Name must be 1–64 characters";
   return null;
 }
@@ -101,13 +101,20 @@ export function createEnv(name: string, seedType: "none" | "test", ttlSeconds: n
       ? new Date(Date.now() + ttlSeconds * 1000).toISOString()
       : null;
 
-  // Insert into prod DB registry
-  getDb()
-    .prepare(
-      `INSERT INTO environments (name, db_path, seed_type, ttl_seconds, expires_at)
-       VALUES (?, ?, ?, ?, ?)`
-    )
-    .run(name, dbPath, seedType, ttlSeconds, expiresAt);
+  // Insert into prod DB registry — clean up the file and cached connection on failure
+  try {
+    getDb()
+      .prepare(
+        `INSERT INTO environments (name, db_path, seed_type, ttl_seconds, expires_at)
+         VALUES (?, ?, ?, ?, ?)`
+      )
+      .run(name, dbPath, seedType, ttlSeconds, expiresAt);
+  } catch (err) {
+    db.close();
+    connections.delete(name);
+    try { unlinkSync(dbPath); } catch { /* already gone */ }
+    throw err;
+  }
 
   return getEnvRecord(name) as EnvRecord;
 }
