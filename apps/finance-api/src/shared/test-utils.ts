@@ -55,7 +55,7 @@ export function createTestDb(): Database {
       abn                      TEXT,
       aliases                  TEXT,
       default_transaction_type TEXT,
-      default_category         TEXT,
+      default_tags             TEXT,
       notes                    TEXT,
       last_edited_time         TEXT NOT NULL
     );
@@ -68,14 +68,11 @@ export function createTestDb(): Database {
       amount          REAL NOT NULL,
       date            TEXT NOT NULL,
       type            TEXT NOT NULL DEFAULT '',
-      categories      TEXT NOT NULL DEFAULT '',
+      tags            TEXT NOT NULL DEFAULT '[]',
       entity_id       TEXT,
       entity_name     TEXT,
       location        TEXT,
       country         TEXT,
-      online          INTEGER NOT NULL DEFAULT 0,
-      novated_lease   INTEGER NOT NULL DEFAULT 0,
-      tax_return      INTEGER NOT NULL DEFAULT 0,
       related_transaction_id TEXT,
       notes           TEXT,
       last_edited_time TEXT NOT NULL
@@ -129,17 +126,17 @@ export function createTestDb(): Database {
     );
 
     CREATE TABLE IF NOT EXISTS transaction_corrections (
-      id TEXT PRIMARY KEY,
+      id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
       description_pattern TEXT NOT NULL,
       match_type TEXT CHECK(match_type IN ('exact', 'contains', 'regex')) NOT NULL DEFAULT 'exact',
       entity_id TEXT,
       entity_name TEXT,
       location TEXT,
-      online INTEGER,
+      tags TEXT NOT NULL DEFAULT '[]',
       transaction_type TEXT CHECK(transaction_type IN ('purchase', 'transfer', 'income')),
       confidence REAL NOT NULL DEFAULT 0.5 CHECK(confidence >= 0.0 AND confidence <= 1.0),
       times_applied INTEGER NOT NULL DEFAULT 0,
-      created_at TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
       last_used_at TEXT,
       FOREIGN KEY (entity_id) REFERENCES entities(notion_id) ON DELETE SET NULL
     );
@@ -165,7 +162,7 @@ export function seedEntity(
     abn: string | null;
     aliases: string | null;
     default_transaction_type: string | null;
-    default_category: string | null;
+    default_tags: string | null;
     notes: string | null;
     last_edited_time: string;
   }> = {}
@@ -175,8 +172,8 @@ export function seedEntity(
   // Insert into SQLite
   db.prepare(
     `
-    INSERT INTO entities (notion_id, name, type, abn, aliases, default_transaction_type, default_category, notes, last_edited_time)
-    VALUES (@notion_id, @name, @type, @abn, @aliases, @default_transaction_type, @default_category, @notes, @last_edited_time)
+    INSERT INTO entities (notion_id, name, type, abn, aliases, default_transaction_type, default_tags, notes, last_edited_time)
+    VALUES (@notion_id, @name, @type, @abn, @aliases, @default_transaction_type, @default_tags, @notes, @last_edited_time)
   `
   ).run({
     notion_id: id,
@@ -185,7 +182,7 @@ export function seedEntity(
     abn: overrides.abn ?? null,
     aliases: overrides.aliases ?? null,
     default_transaction_type: overrides.default_transaction_type ?? null,
-    default_category: overrides.default_category ?? null,
+    default_tags: overrides.default_tags ?? null,
     notes: overrides.notes ?? null,
     last_edited_time: overrides.last_edited_time ?? "2025-01-01T00:00:00.000Z",
   });
@@ -212,14 +209,11 @@ export function seedTransaction(
     amount: number;
     date: string;
     type: string;
-    categories: string;
+    tags: string;
     entity_id: string | null;
     entity_name: string | null;
     location: string | null;
     country: string | null;
-    online: number;
-    novated_lease: number;
-    tax_return: number;
     related_transaction_id: string | null;
     notes: string | null;
     last_edited_time: string;
@@ -231,14 +225,14 @@ export function seedTransaction(
   db.prepare(
     `
     INSERT INTO transactions (
-      notion_id, description, account, amount, date, type, categories,
-      entity_id, entity_name, location, country, online, novated_lease,
-      tax_return, related_transaction_id, notes, last_edited_time
+      notion_id, description, account, amount, date, type, tags,
+      entity_id, entity_name, location, country,
+      related_transaction_id, notes, last_edited_time
     )
     VALUES (
-      @notion_id, @description, @account, @amount, @date, @type, @categories,
-      @entity_id, @entity_name, @location, @country, @online, @novated_lease,
-      @tax_return, @related_transaction_id, @notes, @last_edited_time
+      @notion_id, @description, @account, @amount, @date, @type, @tags,
+      @entity_id, @entity_name, @location, @country,
+      @related_transaction_id, @notes, @last_edited_time
     )
   `
   ).run({
@@ -248,14 +242,11 @@ export function seedTransaction(
     amount: overrides.amount ?? 100.0,
     date: overrides.date ?? "2025-01-01",
     type: overrides.type ?? "",
-    categories: overrides.categories ?? "",
+    tags: overrides.tags ?? "[]",
     entity_id: overrides.entity_id ?? null,
     entity_name: overrides.entity_name ?? null,
     location: overrides.location ?? null,
     country: overrides.country ?? null,
-    online: overrides.online ?? 0,
-    novated_lease: overrides.novated_lease ?? 0,
-    tax_return: overrides.tax_return ?? 0,
     related_transaction_id: overrides.related_transaction_id ?? null,
     notes: overrides.notes ?? null,
     last_edited_time: overrides.last_edited_time ?? "2025-01-01T00:00:00.000Z",

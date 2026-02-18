@@ -27,14 +27,11 @@ db.exec(`
     amount REAL NOT NULL,
     date TEXT NOT NULL,
     type TEXT NOT NULL,
-    categories TEXT,
+    tags TEXT NOT NULL DEFAULT '[]',
     entity_id TEXT,
     entity_name TEXT,
     location TEXT,
     country TEXT,
-    online INTEGER NOT NULL DEFAULT 0,
-    novated_lease INTEGER NOT NULL DEFAULT 0,
-    tax_return INTEGER NOT NULL DEFAULT 0,
     related_transaction_id TEXT,
     notes TEXT,
     last_edited_time TEXT NOT NULL
@@ -47,7 +44,7 @@ db.exec(`
     abn TEXT,
     aliases TEXT,
     default_transaction_type TEXT,
-    default_category TEXT,
+    default_tags TEXT,
     notes TEXT,
     last_edited_time TEXT NOT NULL
   );
@@ -123,7 +120,7 @@ db.exec(`
     entity_id TEXT,
     entity_name TEXT,
     location TEXT,
-    online INTEGER,
+    tags TEXT NOT NULL DEFAULT '[]',
     transaction_type TEXT CHECK(transaction_type IN ('purchase', 'transfer', 'income')),
     confidence REAL NOT NULL DEFAULT 0.5 CHECK(confidence >= 0.0 AND confidence <= 1.0),
     times_applied INTEGER NOT NULL DEFAULT 0,

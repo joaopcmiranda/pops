@@ -530,7 +530,7 @@ describe("executeImport", () => {
           Account: { select: { name: "Amex" } },
           Amount: { number: -125.5 },
           Date: { date: { start: "2026-02-13" } },
-          Online: { checkbox: false },
+          Tags: { multi_select: [] },
           Checksum: { rich_text: [{ text: { content: "abc123" } }] },
         }),
       })

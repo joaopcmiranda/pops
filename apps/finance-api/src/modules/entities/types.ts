@@ -11,7 +11,7 @@ export interface Entity {
   abn: string | null;
   aliases: string[];
   defaultTransactionType: string | null;
-  defaultCategory: string | null;
+  defaultTags: string[];
   notes: string | null;
   lastEditedTime: string;
 }
@@ -30,7 +30,19 @@ export function toEntity(row: EntityRow): Entity {
           .filter(Boolean)
       : [],
     defaultTransactionType: row.default_transaction_type,
-    defaultCategory: row.default_category,
+    defaultTags: row.default_tags
+      ? (() => {
+          try {
+            const parsed = JSON.parse(row.default_tags) as unknown;
+            if (Array.isArray(parsed)) {
+              return parsed.filter((item): item is string => typeof item === "string");
+            }
+            return [];
+          } catch {
+            return [];
+          }
+        })()
+      : [],
     notes: row.notes,
     lastEditedTime: row.last_edited_time,
   };
@@ -43,7 +55,7 @@ export const CreateEntitySchema = z.object({
   abn: z.string().nullable().optional(),
   aliases: z.array(z.string()).optional().default([]),
   defaultTransactionType: z.string().nullable().optional(),
-  defaultCategory: z.string().nullable().optional(),
+  defaultTags: z.array(z.string()).optional().default([]),
   notes: z.string().nullable().optional(),
 });
 export type CreateEntityInput = z.infer<typeof CreateEntitySchema>;
@@ -55,7 +67,7 @@ export const UpdateEntitySchema = z.object({
   abn: z.string().nullable().optional(),
   aliases: z.array(z.string()).optional(),
   defaultTransactionType: z.string().nullable().optional(),
-  defaultCategory: z.string().nullable().optional(),
+  defaultTags: z.array(z.string()).optional(),
   notes: z.string().nullable().optional(),
 });
 export type UpdateEntityInput = z.infer<typeof UpdateEntitySchema>;

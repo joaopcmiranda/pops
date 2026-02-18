@@ -439,7 +439,7 @@ describe("E2E: Complete Import Flow", () => {
     expect(notionCall.properties.Amount.number).toBe(-125.5);
     expect(notionCall.properties.Date.date.start).toBe("2026-02-13");
     expect(notionCall.properties.Location.select.name).toBe("North Sydney");
-    expect(notionCall.properties.Online.checkbox).toBe(false);
+    expect(notionCall.properties.Tags.multi_select).toEqual([]);
     expect(notionCall.properties.Checksum.rich_text[0].text.content).toBe("preserve123");
   }, 10000);
 });

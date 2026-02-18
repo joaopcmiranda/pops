@@ -16,7 +16,7 @@ interface Entity {
   abn: string | null;
   aliases: string[];
   defaultTransactionType: string | null;
-  defaultCategory: string | null;
+  defaultTags: string[];
   notes: string | null;
   lastEditedTime: string;
 }
@@ -111,17 +111,21 @@ export function EntitiesPage() {
       },
     },
     {
-      accessorKey: "defaultCategory",
-      header: "Default Category",
+      accessorKey: "defaultTags",
+      header: "Default Tags",
       cell: ({ row }) => {
-        const category = row.original.defaultCategory;
-        if (!category) {
+        const tags = row.original.defaultTags;
+        if (tags.length === 0) {
           return <span className="text-muted-foreground">—</span>;
         }
         return (
-          <Badge variant="secondary" className="text-xs">
-            {category}
-          </Badge>
+          <div className="flex flex-wrap gap-1">
+            {tags.map((tag) => (
+              <Badge key={tag} variant="secondary" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
+          </div>
         );
       },
     },

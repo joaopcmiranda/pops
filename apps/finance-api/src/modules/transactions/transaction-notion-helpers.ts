@@ -30,9 +30,9 @@ export function buildTransactionUpdateProperties(input: UpdateTransactionInput):
   if (input.type !== undefined) {
     properties.Type = { select: { name: input.type || "Expense" } };
   }
-  if (input.categories !== undefined) {
-    properties.Category = {
-      multi_select: input.categories.length ? input.categories.map((cat) => ({ name: cat })) : [],
+  if (input.tags !== undefined) {
+    properties.Tags = {
+      multi_select: input.tags.length ? input.tags.map((tag) => ({ name: tag })) : [],
     };
   }
   if (input.entityId !== undefined) {
@@ -43,15 +43,6 @@ export function buildTransactionUpdateProperties(input: UpdateTransactionInput):
   }
   if (input.country !== undefined) {
     properties.Country = input.country ? { select: { name: input.country } } : { select: null };
-  }
-  if (input.online !== undefined) {
-    properties.Online = { checkbox: input.online };
-  }
-  if (input.novatedLease !== undefined) {
-    properties["Novated Lease"] = { checkbox: input.novatedLease };
-  }
-  if (input.taxReturn !== undefined) {
-    properties["Tax Return"] = { checkbox: input.taxReturn };
   }
   if (input.relatedTransactionId !== undefined) {
     properties["Related Transaction"] = input.relatedTransactionId

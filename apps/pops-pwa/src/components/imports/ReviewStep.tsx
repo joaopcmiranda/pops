@@ -471,7 +471,6 @@ export function ReviewStep() {
           entityName:
             editedFields.entity?.entityName ?? transaction.entity?.entityName,
           location: editedFields.location ?? transaction.location,
-          online: editedFields.online ?? transaction.online,
         });
         toast.success("Correction saved!");
       } else if (hasChanges && !shouldLearn) {
@@ -491,7 +490,6 @@ export function ReviewStep() {
                   editedFields.entity?.entityName ??
                   transaction.entity?.entityName,
                 location: editedFields.location ?? transaction.location,
-                online: editedFields.online ?? transaction.online,
               });
               toast.success("Pattern saved!");
             },

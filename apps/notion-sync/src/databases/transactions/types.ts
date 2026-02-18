@@ -6,14 +6,11 @@ export interface TransactionRow {
   amount: number;
   date: string;
   type: string;
-  categories: string;
+  tags: string;
   entityId: string | null;
   entityName: string | null;
   location: string | null;
   country: string | null;
-  online: boolean;
-  novatedLease: boolean;
-  taxReturn: boolean;
   relatedTransactionId: string | null;
   notes: string | null;
   lastEditedTime: string;

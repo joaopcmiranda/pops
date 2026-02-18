@@ -170,7 +170,7 @@ export function DashboardPage() {
                       <p className="font-medium truncate">
                         {transaction.description}
                       </p>
-                      {transaction.online && (
+                      {transaction.tags.includes("Online") && (
                         <Badge variant="secondary" className="text-xs">
                           Online
                         </Badge>
