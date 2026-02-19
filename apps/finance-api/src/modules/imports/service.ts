@@ -86,6 +86,13 @@ async function findExistingChecksums(
   checksums: Set<string>;
   error?: { type: string; message: string; details?: string };
 }> {
+  // Skip Notion deduplication entirely when SKIP_NOTION_DEDUP=true.
+  // Used in CI/E2E environments where Notion credentials are dummies and
+  // network calls to api.notion.com are undesirable.
+  if (process.env["SKIP_NOTION_DEDUP"] === "true") {
+    return { checksums: new Set() };
+  }
+
   try {
     // Query in batches of 100 (Notion filter limit)
     const existingChecksums = new Set<string>();

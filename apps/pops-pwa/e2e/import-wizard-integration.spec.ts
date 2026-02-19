@@ -19,8 +19,8 @@
  * The CSV used by these tests is designed so the backend's prefix/alias matching
  * returns deterministic results from the seeded data.
  *
- * Note: Notion deduplication fails with test credentials and is skipped gracefully
- * (a non-blocking warning). Entity matching still runs against SQLite.
+ * Note: Notion deduplication is skipped entirely via SKIP_NOTION_DEDUP=true (set in
+ * e2e.yml). No Notion API calls are made during these tests.
  */
 import { test, expect, type Page } from '@playwright/test';
 import { useRealEndpoint } from './helpers/use-real-api';
