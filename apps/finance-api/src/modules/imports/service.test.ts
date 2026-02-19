@@ -219,13 +219,14 @@ describe("processImport", () => {
       expect(result.matched[0].entity.matchType).toBe("alias");
     });
 
-    it("handles empty entity lookup", async () => {
+    it("routes to uncertain when AI returns null (no entity match)", async () => {
       mockConfig.alwaysReturnNull = true;
 
       const result = await processImport([baseParsedTransaction], "Amex");
 
-      expect(result.failed.length).toBe(1);
-      expect(result.failed[0].error).toBe("No entity match found");
+      expect(result.uncertain.length).toBe(1);
+      expect(result.uncertain[0].error).toBe("No entity match found");
+      expect(result.failed.length).toBe(0);
     });
 
     it("throws error when matched entity missing from lookup", async () => {
@@ -323,7 +324,7 @@ describe("processImport", () => {
       expect(result.uncertain[0].status).toBe("uncertain");
     });
 
-    it("adds to failed when AI returns null", async () => {
+    it("routes to uncertain when AI returns null", async () => {
       mockConfig.alwaysReturnNull = true;
 
       const transaction: ParsedTransaction = {
@@ -334,8 +335,9 @@ describe("processImport", () => {
 
       const result = await processImport([transaction], "Amex");
 
-      expect(result.failed.length).toBe(1);
-      expect(result.failed[0].error).toBe("No entity match found");
+      expect(result.uncertain.length).toBe(1);
+      expect(result.uncertain[0].error).toBe("No entity match found");
+      expect(result.failed.length).toBe(0);
     });
   });
 
@@ -344,8 +346,8 @@ describe("processImport", () => {
       mockNotionQuery.mockResolvedValue({ results: [] });
     });
 
-    it("catches errors during entity matching", async () => {
-      // Force an error by making AI throw
+    it("routes to uncertain when AI throws (unavailable)", async () => {
+      // AI failure is not a hard transaction error — routes to uncertain for human review
       mockConfig.throwError = true;
       mockConfig.errorType = "API_ERROR";
 
@@ -357,23 +359,25 @@ describe("processImport", () => {
 
       const result = await processImport([transaction], "Amex");
 
-      expect(result.failed.length).toBe(1);
-      expect(result.failed[0].error).toBe("AI categorization unavailable");
+      expect(result.uncertain.length).toBe(1);
+      expect(result.uncertain[0].error).toBe("AI categorization unavailable");
+      expect(result.failed.length).toBe(0);
     });
 
-    it("handles mixed success and failure", async () => {
+    it("handles mixed: one matched, one routed to uncertain when AI unavailable", async () => {
       seedEntity(db, { name: "Woolworths", notion_id: "woolworths-id" });
       mockConfig.alwaysReturnNull = true;
 
       const transactions: ParsedTransaction[] = [
         baseParsedTransaction, // Will match Woolworths
-        { ...baseParsedTransaction, description: "UNKNOWN", checksum: "unknown123" }, // Will fail
+        { ...baseParsedTransaction, description: "UNKNOWN", checksum: "unknown123" }, // AI null → uncertain
       ];
 
       const result = await processImport(transactions, "Amex");
 
       expect(result.matched.length).toBe(1);
-      expect(result.failed.length).toBe(1);
+      expect(result.uncertain.length).toBe(1);
+      expect(result.failed.length).toBe(0);
     });
   });
 
