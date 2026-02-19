@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS environments (
   seed_type  TEXT    NOT NULL DEFAULT 'none' CHECK(seed_type IN ('none', 'test')),
   ttl_seconds INTEGER,          -- NULL = infinite
   created_at TEXT    NOT NULL DEFAULT (datetime('now')),
-  expires_at TEXT               -- NULL = infinite; set to datetime('now', '+N seconds') on create
+  expires_at TEXT               -- NULL = infinite; set to ISO 8601 timestamp (via Date.toISOString()) on create
 );
 
 CREATE INDEX IF NOT EXISTS idx_environments_expires_at ON environments(expires_at);

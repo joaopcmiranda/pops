@@ -58,8 +58,9 @@ test.describe('Transactions — real data loads from seeded DB', () => {
   });
 
   test('seeded transactions have tags populated', async ({ page }) => {
-    // txn-001 has tags: ["Salary"] — verify the badge renders
-    const salaryRow = page.getByRole('row', { name: /Salary Payment/i });
+    // txn-001 has tags: ["Salary"] — verify the badge renders.
+    // Use filter().first() to avoid strict mode violation: 3 salary rows are seeded.
+    const salaryRow = page.getByRole('row').filter({ hasText: 'Salary Payment' }).first();
     await expect(salaryRow).toBeVisible({ timeout: 10000 });
     await expect(salaryRow.getByText('Salary')).toBeVisible();
   });

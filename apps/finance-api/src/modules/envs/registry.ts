@@ -68,6 +68,10 @@ export function listEnvs(): EnvRecord[] {
 /**
  * Get or open a DB connection for the given env record.
  * Caches connections in memory; reopens if the process restarted.
+ *
+ * No race condition risk: better-sqlite3 is synchronous and Node.js is
+ * single-threaded, so two calls with the same name execute sequentially —
+ * the second always hits the cache set by the first.
  */
 export function getOrOpenEnvDb(record: EnvRecord): BetterSqlite3.Database {
   const cached = connections.get(record.name);

@@ -353,11 +353,13 @@ export async function processImport(
             });
           }
         } else {
-          // AI failed or returned null - add to failed
-          failed.push({
+          // No entity match and AI failed or returned null — add to uncertain for human review.
+          // AI failure (bad key, outage, quota) is not a hard transaction error; the user can
+          // still assign an entity manually. Reserve "failed" for unrecoverable parse errors.
+          uncertain.push({
             ...transaction,
             entity: { matchType: "none" },
-            status: "failed",
+            status: "uncertain",
             error: aiError ? "AI categorization unavailable" : "No entity match found",
           });
         }
@@ -739,25 +741,17 @@ export async function processImportWithProgress(
               batchItem.status = "success";
             }
           } else {
-            failed.push({
+            // No entity match and AI failed or returned null — uncertain for human review.
+            // Same rationale as processImport: AI failure is not a hard transaction error.
+            const reason = aiError ? "AI categorization unavailable" : "No entity match found";
+            uncertain.push({
               ...transaction,
               entity: { matchType: "none" },
-              status: "failed",
-              error: aiError ? "AI categorization unavailable" : "No entity match found",
+              status: "uncertain",
+              error: reason,
             });
 
-            batchItem.status = "failed";
-            batchItem.error = aiError ? "AI categorization unavailable" : "No entity match found";
-
-            const formattedError = aiError
-              ? formatImportError(aiError)
-              : { message: "No entity match found" };
-            errors.push({
-              description: transaction.description.substring(0, 50),
-              error:
-                formattedError.message +
-                (formattedError.suggestion ? ` - ${formattedError.suggestion}` : ""),
-            });
+            batchItem.status = "success";
           }
         }
       } catch (error) {
