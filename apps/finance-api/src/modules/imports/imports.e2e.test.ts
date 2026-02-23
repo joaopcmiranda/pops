@@ -357,7 +357,7 @@ describe("E2E: Complete Import Flow", () => {
     seedEntity(db, { name: "Woolworths", notion_id: "woolworths-id" });
     mockNotionQuery.mockResolvedValue({ results: [] });
 
-    // Mock AI to return null (failed categorization)
+    // Mock AI to return null — unknown transaction routes to uncertain (needs human review)
     mockConfig.alwaysReturnNull = true;
 
     const transactions = [
@@ -390,7 +390,8 @@ describe("E2E: Complete Import Flow", () => {
     expect(result).toBeDefined();
 
     expect(result.matched.length).toBe(1);
-    expect(result.failed.length).toBe(1);
+    expect(result.uncertain.length).toBe(1);
+    expect(result.failed.length).toBe(0);
   });
 
   it("preserves transaction data through complete pipeline", async () => {

@@ -31,7 +31,9 @@ export function App() {
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
-        <ReactQueryDevtools initialIsOpen={false} />
+        {/* Disabled in E2E: its SVG logo renders at intrinsic SVG size (633×633px)
+            and intercepts pointer events on portalled elements (popovers, dialogs). */}
+        {!import.meta.env.VITE_E2E && <ReactQueryDevtools initialIsOpen={false} />}
         <Toaster />
       </QueryClientProvider>
     </trpc.Provider>

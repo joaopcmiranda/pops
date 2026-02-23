@@ -30,6 +30,8 @@ vi.mock("../../../db.js", () => {
         run: mockDbRun,
       })),
     })),
+    // Always return false: tests exercise the real API path, not the named-env skip
+    isNamedEnvContext: vi.fn().mockReturnValue(false),
   };
 });
 
