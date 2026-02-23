@@ -1491,8 +1491,6 @@ test.describe('Import Wizard - Error Recovery', () => {
   test('should handle network timeout during import', async ({ page }) => {
     await setupMockAPIs(page, { executeError: true });
 
-    await navigateToReviewStep(page);
-
     await navigateToTagReviewStep(page);
 
     // Try to import from Tag Review step
