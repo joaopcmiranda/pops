@@ -21,7 +21,6 @@ export default defineConfig({
     host: true,
     clearScreen: false,
     hmr: {
-      port: 5566,
       host: "localhost"
     },
     proxy: {

@@ -24,7 +24,9 @@ export default defineConfig({
   globalTeardown: './e2e/global-teardown.ts',
 
   use: {
-    baseURL: 'http://localhost:5566',
+    // E2E server runs on 5567 (separate from dev server on 5566) so VITE_E2E=true
+    // is always active and ReactQueryDevtools never renders.
+    baseURL: 'http://localhost:5567',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
@@ -45,14 +47,15 @@ export default defineConfig({
   ],
 
   webServer: [
-    // Vite dev server (PWA) — proxies /trpc to the API below
+    // Vite dev server (PWA) — runs on port 5567 (separate from dev server on 5566)
+    // so VITE_E2E=true always takes effect regardless of whether a dev server is running.
+    // ReactQueryDevtools SVG logo renders at r=316.5px and intercepts pointer events,
+    // so it must be disabled in E2E via VITE_E2E=true.
     {
-      command: 'yarn dev',
-      url: 'http://localhost:5566',
+      command: 'yarn dev --port 5567',
+      url: 'http://localhost:5567',
       reuseExistingServer: !process.env.CI,
       timeout: 120000,
-      // Disable React Query DevTools in E2E — its SVG logo renders at full intrinsic
-      // size (r=316.5px circle) and intercepts pointer events on popover buttons.
       env: { VITE_E2E: 'true' },
     },
     // Finance API — required for integration tests; mocked tests don't use it but starting

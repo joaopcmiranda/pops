@@ -3,15 +3,16 @@ import { createMockData, createWarningMockData, type MockScenario } from './fixt
 import { simpleCSV, realisticCSV, bulkCSV, duplicatesCSV, generateLargeCSV } from './fixtures/csv-samples';
 
 /**
- * E2E tests for Import Wizard (5-step flow)
+ * E2E tests for Import Wizard (6-step flow)
  *
  * Comprehensive test coverage:
  * 1. Upload CSV file
  * 2. Map columns
  * 3. Process transactions (with progress polling)
  * 4. Review and resolve uncertain matches
- * 5. Execute import (with write overlay)
- * 6. View summary
+ * 5. Tag Review — confirm/adjust tags before import
+ * 6. Execute import (with write overlay)
+ * 7. View summary
  *
  * Features tested:
  * - Transaction editing (Save Once vs Save & Learn)
@@ -294,6 +295,15 @@ const setupMockAPIs = async (page: Page, options: SetupMockAPIsOptions = {}) => 
       }),
     });
   });
+
+  // Mock transactions.availableTags endpoint (used by TagEditor in TagReviewStep)
+  await page.route(/\/trpc\/transactions\.availableTags/, async (route) => {
+    const isBatch = new URL(route.request().url()).searchParams.has('batch');
+    const body = isBatch
+      ? [{ result: { data: ['Groceries', 'Dining', 'Transport', 'Subscriptions', 'Shopping', 'Health'] } }]
+      : { result: { data: ['Groceries', 'Dining', 'Transport', 'Subscriptions', 'Shopping', 'Health'] } };
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
+  });
 };
 
 /**
@@ -311,7 +321,7 @@ const uploadCSVFile = async (page: Page, csvContent: string, fileName: string = 
 };
 
 /**
- * Helper: Navigate to Review step with uploaded data
+ * Helper: Navigate to Review step (step 4) with uploaded data
  */
 const navigateToReviewStep = async (page: Page, csvContent: string = simpleCSV) => {
   // Step 1: Upload
@@ -324,6 +334,29 @@ const navigateToReviewStep = async (page: Page, csvContent: string = simpleCSV) 
 
   // Step 3: Wait for processing to complete
   await expect(page.getByRole('heading', { name: 'Review' })).toBeVisible({ timeout: 10000 });
+};
+
+/**
+ * Helper: Navigate to Tag Review step (step 5) — goes through Review and clicks Continue
+ */
+const navigateToTagReviewStep = async (page: Page, csvContent: string = simpleCSV) => {
+  await navigateToReviewStep(page, csvContent);
+
+  // Resolve any uncertain transactions so Continue is enabled
+  const uncertainTab = page.getByRole('tab', { name: /uncertain/i });
+  const uncertainText = await uncertainTab.textContent();
+  const uncertainCount = parseInt(uncertainText?.match(/\((\d+)\)/)?.[1] ?? '0', 10);
+  if (uncertainCount > 0) {
+    await uncertainTab.click();
+    await page.getByRole('button', { name: /list/i }).click();
+    for (let i = 0; i < uncertainCount; i++) {
+      await page.getByRole('tabpanel').locator('select').first().selectOption('woolworths-id');
+    }
+  }
+
+  // Click Continue to Tag Review
+  await page.getByRole('button', { name: /continue to tag review/i }).click();
+  await expect(page.getByRole('heading', { name: 'Tag Review' })).toBeVisible({ timeout: 5000 });
 };
 
 /**
@@ -409,13 +442,23 @@ test.describe('Import Wizard - Complete Flow', () => {
       await page.getByRole('tab', { name: /matched/i }).click();
       await expect(page.getByText('UNKNOWN MERCHANT', { exact: true }).first()).toBeVisible();
 
-      // Import button should be enabled
-      const importButton = page.getByRole('button', { name: /import/i });
+      // Continue to Tag Review (replaces old "Import" button)
+      const continueButton = page.getByRole('button', { name: /continue to tag review/i });
+      await expect(continueButton).toBeEnabled();
+      await continueButton.click();
+    });
+
+    // Step 5: Tag Review
+    await test.step('Tag review', async () => {
+      await expect(page.getByRole('heading', { name: 'Tag Review' })).toBeVisible({ timeout: 5000 });
+
+      // Import button should be visible
+      const importButton = page.getByRole('button', { name: /import.*transaction/i });
       await expect(importButton).toBeEnabled();
       await importButton.click();
     });
 
-    // Step 5: Summary
+    // Step 6: Summary
     await test.step('View summary', async () => {
       await expect(page.getByText('Import Complete')).toBeVisible({ timeout: 10000 });
       await expect(page.getByText('1 imported, 0 failed, 0 skipped')).toBeVisible();
@@ -467,13 +510,13 @@ test.describe('Import Wizard - Complete Flow', () => {
     await expect(page.getByText('test.csv')).toBeVisible();
   });
 
-  test('should disable import button when unresolved transactions exist', async ({ page }) => {
+  test('should disable Continue button when unresolved transactions exist', async ({ page }) => {
     await navigateToReviewStep(page);
 
     await expect(page.getByRole('tab', { name: /uncertain/i })).toBeVisible();
 
-    const importButton = page.getByRole('button', { name: /import/i });
-    await expect(importButton).toBeDisabled();
+    const continueButton = page.getByRole('button', { name: /continue to tag review/i });
+    await expect(continueButton).toBeDisabled();
   });
 
   test('should handle API errors gracefully', async ({ page }) => {
@@ -642,7 +685,7 @@ test.describe('Import Wizard - Transfer and Income Transactions', () => {
 
   test('should allow import after the only uncertain transaction is resolved as a transfer', async ({ page }) => {
     // Use the simple scenario: 1 matched + 1 uncertain, no failed — so resolving the
-    // one uncertain as a transfer is sufficient to enable the Import button.
+    // one uncertain as a transfer is sufficient to enable Continue to Tag Review.
     await setupMockAPIs(page);
     await navigateToReviewStep(page, simpleCSV);
 
@@ -653,9 +696,9 @@ test.describe('Import Wizard - Transfer and Income Transactions', () => {
     await page.locator('select[name="type"]').selectOption('transfer');
     await page.getByRole('button', { name: /save once/i }).click();
 
-    // Uncertain count should now be 0 and Import button enabled
+    // Uncertain count should now be 0 and Continue button enabled
     await expect(page.getByRole('tab', { name: /uncertain/i })).toContainText('(0)');
-    await expect(page.getByRole('button', { name: /import/i })).toBeEnabled({ timeout: 5000 });
+    await expect(page.getByRole('button', { name: /continue to tag review/i })).toBeEnabled({ timeout: 5000 });
   });
 
   test('should include transfer in import payload without entityId', async ({ page }) => {
@@ -690,9 +733,10 @@ test.describe('Import Wizard - Transfer and Income Transactions', () => {
     await page.locator('select[name="type"]').selectOption('transfer');
     await page.getByRole('button', { name: /save once/i }).click();
 
-    // Click Import (should be enabled now)
-    await page.getByRole('tab', { name: /matched/i }).click();
-    await page.getByRole('button', { name: /import/i }).click();
+    // Continue to Tag Review then click Import
+    await page.getByRole('button', { name: /continue to tag review/i }).click();
+    await expect(page.getByRole('heading', { name: 'Tag Review' })).toBeVisible({ timeout: 5000 });
+    await page.getByRole('button', { name: /import.*transaction/i }).click();
 
     await page.waitForTimeout(1000);
 
@@ -909,13 +953,7 @@ test.describe('Import Wizard - Progress Polling', () => {
   test('should poll for execute progress with write overlay', async ({ page }) => {
     await setupMockAPIs(page, { scenario: 'simple', progressStages: 'instant' });
 
-    await navigateToReviewStep(page);
-
-    // Resolve uncertain transaction - switch to list view for per-card select
-    await page.getByRole('tab', { name: /uncertain/i }).click();
-    await page.getByRole('button', { name: /list/i }).click();
-    const entitySelect = page.getByRole('tabpanel').locator('select').first();
-    await entitySelect.selectOption('woolworths-id');
+    await navigateToTagReviewStep(page);
 
     // Override the progress mock for the execute session to return processing first
     let executeProgressCalls = 0;
@@ -943,7 +981,7 @@ test.describe('Import Wizard - Progress Polling', () => {
             status: 200,
             contentType: 'application/json',
             body: JSON.stringify({
-              result: { data: { status: 'completed', result: { imported: 1, failed: 0, skipped: 0 } } },
+              result: { data: { status: 'completed', result: { imported: 1, failed: [], skipped: 0 } } },
             }),
           });
         }
@@ -958,9 +996,8 @@ test.describe('Import Wizard - Progress Polling', () => {
       }
     });
 
-    // Click Import
-    await page.getByRole('tab', { name: /matched/i }).click();
-    await page.getByRole('button', { name: /import/i }).click();
+    // Click Import on Tag Review step
+    await page.getByRole('button', { name: /import.*transaction/i }).click();
 
     // Verify overlay modal shown during write phase
     await expect(page.getByTestId('import-progress-overlay')).toBeVisible({ timeout: 5000 });
@@ -1103,17 +1140,10 @@ test.describe('Import Wizard - Warnings and Errors', () => {
   test('should handle write failures in execute phase', async ({ page }) => {
     await setupMockAPIs(page, { executeError: true });
 
-    await navigateToReviewStep(page);
+    await navigateToTagReviewStep(page);
 
-    // Resolve uncertain - switch to list view for per-card select
-    await page.getByRole('tab', { name: /uncertain/i }).click();
-    await page.getByRole('button', { name: /list/i }).click();
-    const entitySelect = page.locator('select').first();
-    await entitySelect.selectOption('woolworths-id');
-
-    // Try to import
-    await page.getByRole('tab', { name: /matched/i }).click();
-    await page.getByRole('button', { name: /import/i }).click();
+    // Try to import from Tag Review step
+    await page.getByRole('button', { name: /import.*transaction/i }).click();
 
     // Should show error - the component displays "Import failed" heading
     await expect(page.getByText('Import failed')).toBeVisible({ timeout: 10000 });
@@ -1147,13 +1177,13 @@ test.describe('Import Wizard - Review Tab Navigation', () => {
     await expect(page.getByRole('tab', { name: /uncertain.*\(4\)/i })).toBeVisible();
   });
 
-  test('should disable Import button when unresolved exist', async ({ page }) => {
+  test('should disable Continue button when unresolved exist', async ({ page }) => {
     await navigateToReviewStep(page, realisticCSV);
 
-    const importButton = page.getByRole('button', { name: /import/i });
+    const continueButton = page.getByRole('button', { name: /continue to tag review/i });
 
     // Should be disabled with uncertain/failed
-    await expect(importButton).toBeDisabled();
+    await expect(continueButton).toBeDisabled();
 
     // Verify tooltip or text shown
     await expect(page.getByText(/resolve all/i)).toBeVisible();
@@ -1178,11 +1208,9 @@ test.describe('Import Wizard - Review Tab Navigation', () => {
       await page.waitForTimeout(500); // Wait for dialog to close
     }
 
-    // Go back to matched tab
+    // Go back to matched tab — Continue button should now be enabled
     await page.getByRole('tab', { name: /matched/i }).click();
-
-    // Import button should be enabled
-    await expect(importButton).toBeEnabled();
+    await expect(continueButton).toBeEnabled();
   });
 
   test('should navigate between all 4 tabs', async ({ page }) => {
@@ -1257,11 +1285,14 @@ test.describe('Import Wizard - Complete Import Flows', () => {
     await page.getByRole('dialog').getByRole('button', { name: /create/i }).click();
     await page.waitForTimeout(500);
 
-    // Click Import
+    // Continue to Tag Review then import
     await page.getByRole('tab', { name: /matched/i }).click();
-    const importButton = page.getByRole('button', { name: /import/i });
-    await expect(importButton).toBeEnabled();
-    await importButton.click();
+    const continueButton = page.getByRole('button', { name: /continue to tag review/i });
+    await expect(continueButton).toBeEnabled();
+    await continueButton.click();
+
+    await expect(page.getByRole('heading', { name: 'Tag Review' })).toBeVisible({ timeout: 5000 });
+    await page.getByRole('button', { name: /import.*transaction/i }).click();
 
     // Verify Summary (mock returns base matched count, not the resolved total)
     await expect(page.getByText('Import Complete')).toBeVisible({ timeout: 10000 });
@@ -1460,22 +1491,15 @@ test.describe('Import Wizard - Error Recovery', () => {
   test('should handle network timeout during import', async ({ page }) => {
     await setupMockAPIs(page, { executeError: true });
 
-    await navigateToReviewStep(page);
+    await navigateToTagReviewStep(page);
 
-    // Resolve uncertain - switch to list view for per-card select
-    await page.getByRole('tab', { name: /uncertain/i }).click();
-    await page.getByRole('button', { name: /list/i }).click();
-    const entitySelect = page.locator('select').first();
-    await entitySelect.selectOption('woolworths-id');
-
-    // Try to import
-    await page.getByRole('tab', { name: /matched/i }).click();
-    await page.getByRole('button', { name: /import/i }).click();
+    // Try to import from Tag Review step
+    await page.getByRole('button', { name: /import.*transaction/i }).click();
 
     // Component shows "Import failed" heading in the error state
     await expect(page.getByText('Import failed')).toBeVisible({ timeout: 10000 });
 
-    // Should have retry button (from ReviewStep execute error state)
+    // Should have retry button (from TagReviewStep error state)
     await expect(page.getByRole('button', { name: /retry/i })).toBeVisible();
   });
 

@@ -18,7 +18,7 @@ export interface ProcessedTransaction extends BaseProcessedTransaction {
 }
 
 interface ImportStore {
-  // Current wizard step (1-5)
+  // Current wizard step (1-6)
   currentStep: number;
 
   // Step 1: Upload
@@ -39,7 +39,9 @@ interface ImportStore {
   // Step 3: Processing
   processSessionId: string | null;
 
-  // Step 4: Review
+  // Step 4: Review (entity confirmation, no execute here)
+
+  // Step 5: Tag Review
   executeSessionId: string | null;
   processedTransactions: {
     matched: ProcessedTransaction[]; // Uses extended type
@@ -50,7 +52,7 @@ interface ImportStore {
   };
   confirmedTransactions: ConfirmedTransaction[];
 
-  // Step 5: Summary
+  // Step 6: Summary
   importResult: {
     imported: number;
     failed: ImportResult[];
@@ -83,6 +85,9 @@ interface ImportStore {
     updates: Partial<ProcessedTransaction>
   ) => void;
   findSimilar: (transaction: ProcessedTransaction) => ProcessedTransaction[];
+
+  /** Update tags on a confirmed transaction by checksum (called from TagReviewStep). */
+  updateTransactionTags: (checksum: string, tags: string[]) => void;
 }
 
 const initialState = {
@@ -128,7 +133,7 @@ export const useImportStore = create<ImportStore>((set) => ({
   setImportResult: (importResult) => set({ importResult }),
 
   nextStep: () =>
-    set((state) => ({ currentStep: Math.min(state.currentStep + 1, 5) })),
+    set((state) => ({ currentStep: Math.min(state.currentStep + 1, 6) })),
   prevStep: () =>
     set((state) => ({ currentStep: Math.max(state.currentStep - 1, 1) })),
   goToStep: (step) => set({ currentStep: step }),
@@ -158,4 +163,11 @@ export const useImportStore = create<ImportStore>((set) => ({
     ];
     return findSimilarTransactions(transaction, allTransactions);
   },
+
+  updateTransactionTags: (checksum, tags) =>
+    set((state) => ({
+      confirmedTransactions: state.confirmedTransactions.map((t) =>
+        t.checksum === checksum ? { ...t, tags } : t
+      ),
+    })),
 }));

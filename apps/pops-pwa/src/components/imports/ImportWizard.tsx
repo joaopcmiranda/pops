@@ -3,11 +3,12 @@ import { UploadStep } from "./UploadStep";
 import { ColumnMapStep } from "./ColumnMapStep";
 import { ProcessingStep } from "./ProcessingStep";
 import { ReviewStep } from "./ReviewStep";
+import { TagReviewStep } from "./TagReviewStep";
 import { SummaryStep } from "./SummaryStep";
 import { Progress } from "../ui/progress";
 
 /**
- * Import wizard orchestrator - manages 5-step flow
+ * Import wizard orchestrator - manages 6-step flow
  */
 export function ImportWizard() {
   const currentStep = useImportStore((state) => state.currentStep);
@@ -17,7 +18,8 @@ export function ImportWizard() {
     { number: 2, label: "Map", component: ColumnMapStep },
     { number: 3, label: "Process", component: ProcessingStep },
     { number: 4, label: "Review", component: ReviewStep },
-    { number: 5, label: "Summary", component: SummaryStep },
+    { number: 5, label: "Tags", component: TagReviewStep },
+    { number: 6, label: "Summary", component: SummaryStep },
   ];
 
   const CurrentStepComponent = steps[currentStep - 1]?.component;

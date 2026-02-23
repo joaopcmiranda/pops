@@ -97,14 +97,58 @@ const mockListResponse = {
   pagination: { total: TRANSACTIONS.length, limit: 100, offset: 0, hasMore: false },
 };
 
+/**
+ * Tags returned by the availableTags mock.
+ * Must include "Dining" so tests that click the Dining suggestion pill can find it.
+ * "Groceries" is also included so it's present in autocomplete (but filtered out when
+ * the WOOLWORTHS row already has it as a current tag).
+ */
+const MOCK_AVAILABLE_TAGS = [
+  'Dining',
+  'Entertainment',
+  'Groceries',
+  'Health',
+  'Shopping',
+  'Subscriptions',
+  'Transport',
+];
+
 const setupMockAPIs = async (page: Page) => {
-  await page.route(/\/trpc\/transactions\.list/, async (route) => {
-    const isBatch = new URL(route.request().url()).searchParams.has('batch');
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(isBatch ? trpcBatchOk(mockListResponse) : trpcOk(mockListResponse)),
-    });
+  // tRPC's httpBatchLink batches concurrent queries into a single request:
+  //   GET /trpc/transactions.list,transactions.availableTags?batch=1&input=...
+  // A single Playwright route must handle any combination of these two procedures
+  // and return a correctly-indexed multi-element batch response.
+  await page.route(/\/trpc\/transactions\.(list|availableTags)/, async (route) => {
+    const url = new URL(route.request().url());
+    const path = url.pathname;
+    const hasList = path.includes('transactions.list');
+    const hasAvailableTags = path.includes('transactions.availableTags');
+    const isBatch = url.searchParams.has('batch');
+
+    if (hasList && hasAvailableTags) {
+      // Combined batch: procedures appear in URL order (list=0, availableTags=1)
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([
+          { result: { data: mockListResponse } },
+          { result: { data: MOCK_AVAILABLE_TAGS } },
+        ]),
+      });
+    } else if (hasList) {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(isBatch ? trpcBatchOk(mockListResponse) : trpcOk(mockListResponse)),
+      });
+    } else {
+      // availableTags only
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(isBatch ? trpcBatchOk(MOCK_AVAILABLE_TAGS) : trpcOk(MOCK_AVAILABLE_TAGS)),
+      });
+    }
   });
 
   await page.route(/\/trpc\/transactions\.update/, async (route) => {

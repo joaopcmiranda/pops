@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { processImport, executeImport, createEntity } from "./service.js";
 import type { ParsedTransaction, ConfirmedTransaction } from "./types.js";
-import { createTestDb, seedEntity } from "../../shared/test-utils.js";
+import { createTestDb, seedEntity, seedTransaction } from "../../shared/test-utils.js";
 import { setDb, closeDb } from "../../db.js";
 import type { Database } from "better-sqlite3";
 import { clearCache } from "./lib/ai-categorizer.js";
@@ -83,18 +83,19 @@ afterEach(() => {
   delete process.env["NOTION_WISH_LIST_ID"];
 });
 
-describe("processImport", () => {
-  const baseParsedTransaction: ParsedTransaction = {
-    date: "2026-02-13",
-    description: "WOOLWORTHS 1234",
-    amount: -125.5,
-    account: "Amex",
-    location: "North Sydney",
-    online: false,
-    rawRow: '{"Date":"13/02/2026","Description":"WOOLWORTHS 1234"}',
-    checksum: "abc123def456",
-  };
+/** Reused across processImport and suggestedTags test suites */
+const baseParsedTransaction: ParsedTransaction = {
+  date: "2026-02-13",
+  description: "WOOLWORTHS 1234",
+  amount: -125.5,
+  account: "Amex",
+  location: "North Sydney",
+  online: false,
+  rawRow: '{"Date":"13/02/2026","Description":"WOOLWORTHS 1234"}',
+  checksum: "abc123def456",
+};
 
+describe("processImport", () => {
   describe("Deduplication", () => {
     it("skips transactions with existing checksums", async () => {
       // Mock Notion returning existing checksum
@@ -424,6 +425,102 @@ describe("processImport", () => {
   });
 });
 
+describe("suggestedTags", () => {
+  beforeEach(() => {
+    mockNotionQuery.mockResolvedValue({ results: [] });
+  });
+
+  it("includes empty suggestedTags array on matched transactions when no tags exist", async () => {
+    seedEntity(db, { name: "Woolworths", notion_id: "woolworths-id" });
+
+    const result = await processImport([baseParsedTransaction], "Amex");
+
+    expect(result.matched.length).toBe(1);
+    expect(Array.isArray(result.matched[0].suggestedTags)).toBe(true);
+  });
+
+  it("includes entity default_tags as source='entity'", async () => {
+    seedEntity(db, {
+      name: "Woolworths",
+      notion_id: "woolworths-id",
+      default_tags: '["Groceries"]',
+    });
+
+    const result = await processImport([baseParsedTransaction], "Amex");
+
+    const tags = result.matched[0].suggestedTags ?? [];
+    expect(tags).toContainEqual({ tag: "Groceries", source: "entity" });
+  });
+
+  it("matches AI category to an existing tag (source='ai')", async () => {
+    // Seed a transaction with "Groceries" tag so the AI match lookup finds it
+    seedTransaction(db, { tags: '["Groceries"]' });
+
+    const rawRow = '{"Date":"13/02/2026","Description":"UNKNOWN STORE XYZ"}';
+    mockConfig.customLookup = {
+      [rawRow.toUpperCase()]: {
+        description: "UNKNOWN STORE XYZ",
+        entityName: "Unknown Store",
+        category: "groceries", // intentionally lowercase to test case-insensitive match
+        cachedAt: "2026-02-13T00:00:00Z",
+      },
+    };
+
+    const transaction: ParsedTransaction = {
+      ...baseParsedTransaction,
+      description: "UNKNOWN STORE XYZ",
+      rawRow,
+      checksum: "aitest123",
+    };
+
+    const result = await processImport([transaction], "Amex");
+
+    // Goes to uncertain (AI suggested new entity "Unknown Store")
+    const tags = result.uncertain[0]?.suggestedTags ?? [];
+    expect(tags).toContainEqual({ tag: "Groceries", source: "ai" });
+  });
+
+  it("includes correction rule tags as source='rule'", async () => {
+    seedEntity(db, { name: "Woolworths", notion_id: "woolworths-id" });
+    // Seed a correction that matches the description (entity must exist first — FK constraint)
+    db.prepare(
+      `INSERT INTO transaction_corrections (id, description_pattern, match_type, entity_id, entity_name, tags, confidence)
+       VALUES ('corr-1', 'woolworths', 'contains', 'woolworths-id', 'Woolworths', '["Groceries","Weekly Shop"]', 0.95)`
+    ).run();
+
+    const result = await processImport([baseParsedTransaction], "Amex");
+
+    // Correction takes priority — lands in matched
+    const tags = result.matched[0]?.suggestedTags ?? [];
+    // Use objectContaining since rule-sourced tags now include `pattern`
+    expect(tags).toContainEqual(
+      expect.objectContaining({ tag: "Groceries", source: "rule", pattern: "woolworths" })
+    );
+    expect(tags).toContainEqual(
+      expect.objectContaining({ tag: "Weekly Shop", source: "rule", pattern: "woolworths" })
+    );
+  });
+
+  it("does not duplicate tags when correction and entity both suggest the same tag", async () => {
+    seedEntity(db, {
+      name: "Woolworths",
+      notion_id: "woolworths-id",
+      default_tags: '["Groceries"]', // same tag as correction
+    });
+    // Entity must exist before inserting correction (FK constraint)
+    db.prepare(
+      `INSERT INTO transaction_corrections (id, description_pattern, match_type, entity_id, entity_name, tags, confidence)
+       VALUES ('corr-2', 'woolworths', 'contains', 'woolworths-id', 'Woolworths', '["Groceries"]', 0.95)`
+    ).run();
+
+    const result = await processImport([baseParsedTransaction], "Amex");
+
+    const tags = result.matched[0]?.suggestedTags ?? [];
+    const groceriesTags = tags.filter((t) => t.tag === "Groceries");
+    expect(groceriesTags.length).toBe(1);
+  });
+});
+
 describe("executeImport", () => {
   const baseConfirmedTransaction: ConfirmedTransaction = {
     date: "2026-02-13",
@@ -539,6 +636,35 @@ describe("executeImport", () => {
         }),
       })
     );
+  });
+
+  it("passes confirmed tags to Notion multi_select", async () => {
+    mockNotionCreate.mockResolvedValue({ id: "page-id" });
+
+    const transaction: ConfirmedTransaction = {
+      ...baseConfirmedTransaction,
+      tags: ["Groceries", "Weekly Shop"],
+    };
+    await executeImport([transaction]);
+
+    expect(mockNotionCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        properties: expect.objectContaining({
+          Tags: {
+            multi_select: [{ name: "Groceries" }, { name: "Weekly Shop" }],
+          },
+        }),
+      })
+    );
+  });
+
+  it("defaults to empty tags when not provided", async () => {
+    mockNotionCreate.mockResolvedValue({ id: "page-id" });
+
+    await executeImport([baseConfirmedTransaction]); // tags field absent
+
+    const call = mockNotionCreate.mock.calls[0][0];
+    expect(call.properties.Tags).toEqual({ multi_select: [] });
   });
 
   it("includes location when present", async () => {
