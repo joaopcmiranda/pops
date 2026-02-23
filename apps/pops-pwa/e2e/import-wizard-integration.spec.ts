@@ -169,6 +169,10 @@ test.describe('Import Wizard — real entity matching against seeded DB', () => 
     const uncertainTab = page.getByRole('tab', { name: /uncertain/i });
     await uncertainTab.click();
 
+    // Grouped view (default) collapses transactions — switch to list view so the
+    // description is rendered in the DOM and can be asserted.
+    await page.getByRole('button', { name: 'List' }).click();
+
     await expect(page.getByText('TOTALLY UNKNOWN MERCHANT XYZ')).toBeVisible({ timeout: 5000 });
   });
 

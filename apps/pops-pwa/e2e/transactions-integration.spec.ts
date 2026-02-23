@@ -62,11 +62,13 @@ test.describe('Transactions — real data loads from seeded DB', () => {
     // Use filter().first() to avoid strict mode violation: 3 salary rows are seeded.
     const salaryRow = page.getByRole('row').filter({ hasText: 'Salary Payment' }).first();
     await expect(salaryRow).toBeVisible({ timeout: 10000 });
-    await expect(salaryRow.getByText('Salary')).toBeVisible();
+    // Use exact match: 'Salary' (partial) also matches 'Salary Payment' text node in the same row.
+    await expect(salaryRow.getByText('Salary', { exact: true })).toBeVisible();
   });
 
   test('tag filter queries real SQLite and returns matching rows', async ({ page }) => {
-    await expect(page.getByText('Salary Payment')).toBeVisible({ timeout: 10000 });
+    // Multiple Salary Payment rows are seeded — use .first() to avoid strict mode violation.
+    await expect(page.getByText('Salary Payment').first()).toBeVisible({ timeout: 10000 });
 
     // Select "Groceries" tag filter (seeded txn-003, txn-004, txn-005, txn-016 are Groceries)
     const tagFilter = page.locator('select').filter({ hasText: /all tags|filter/i }).first();
@@ -94,11 +96,13 @@ test.describe('Transactions — TagEditor save flow', () => {
     await useRealEndpoint(page, 'transactions\\.suggestTags');
     await mockUpdateSuccess(page);
     await page.goto('/transactions');
-    await expect(page.getByText('Salary Payment')).toBeVisible({ timeout: 10000 });
+    // Multiple Salary Payment rows are seeded — use .first() to avoid strict mode violation.
+    await expect(page.getByText('Salary Payment').first()).toBeVisible({ timeout: 10000 });
   });
 
   test('opens TagEditor on a seeded transaction', async ({ page }) => {
-    const row = page.getByRole('row', { name: /Salary Payment/i });
+    // Multiple Salary Payment rows are seeded — target the first one.
+    const row = page.getByRole('row', { name: /Salary Payment/i }).first();
     await row.getByRole('button', { name: /edit tags/i }).click();
     const popover = getPopover(page);
     await expect(popover).toBeVisible();
