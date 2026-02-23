@@ -58,11 +58,39 @@ function parseCorrectionTags(raw: string): string[] {
  * The "ai" match is case-insensitive against tags returned by availableTags
  * (i.e. what's actually in the user's Notion database), so no hardcoded list.
  */
+/**
+ * Load the flat list of all tag strings currently in the transactions table.
+ * Called once per import batch; passed into buildSuggestedTags to avoid
+ * repeated identical queries for every transaction.
+ */
+function loadKnownTags(): string[] {
+  const db = getDb();
+  const rows = db
+    .prepare("SELECT tags FROM transactions WHERE tags IS NOT NULL AND tags != '[]'")
+    .all() as { tags: string }[];
+
+  const seen = new Set<string>();
+  for (const row of rows) {
+    try {
+      const parsed = JSON.parse(row.tags) as unknown;
+      if (Array.isArray(parsed)) {
+        for (const t of parsed) {
+          if (typeof t === "string") seen.add(t);
+        }
+      }
+    } catch {
+      /* ignore malformed JSON */
+    }
+  }
+  return Array.from(seen);
+}
+
 function buildSuggestedTags(
   description: string,
   entityId: string | null,
   correctionTags: string[],
   aiCategory: string | null,
+  knownTags: string[],
   correctionPattern?: string
 ): SuggestedTag[] {
   const seen = new Set<string>();
@@ -76,34 +104,11 @@ function buildSuggestedTags(
     }
   }
 
-  // 2. AI category — only if the category matches an existing tag (case-insensitive)
-  //    We get existing tags from suggestTags() output minus what entity would provide,
-  //    but more simply: check against the tags already in the SQLite transactions table.
+  // 2. AI category — only if it case-insensitively matches a tag already in the DB.
+  //    knownTags is loaded once per import batch (not per-transaction).
   if (aiCategory) {
-    const db = getDb();
-    const rows = db
-      .prepare("SELECT tags FROM transactions WHERE tags IS NOT NULL AND tags != '[]'")
-      .all() as { tags: string }[];
-
     const lowerCategory = aiCategory.toLowerCase();
-    let matched: string | null = null;
-    for (const row of rows) {
-      try {
-        const parsed = JSON.parse(row.tags) as unknown;
-        if (Array.isArray(parsed)) {
-          for (const t of parsed) {
-            if (typeof t === "string" && t.toLowerCase() === lowerCategory) {
-              matched = t;
-              break;
-            }
-          }
-        }
-      } catch {
-        /* ignore */
-      }
-      if (matched) break;
-    }
-
+    const matched = knownTags.find((t) => t.toLowerCase() === lowerCategory) ?? null;
     if (matched && !seen.has(matched)) {
       seen.add(matched);
       result.push({ tag: matched, source: "ai" });
@@ -289,9 +294,10 @@ export async function processImport(
   const newTransactions = transactions.filter((t) => !existingChecksums.has(t.checksum));
   const duplicates = transactions.filter((t) => existingChecksums.has(t.checksum));
 
-  // Step 2: Load entity lookup and aliases
+  // Step 2: Load entity lookup, aliases, and known tags (once per batch)
   const entityLookup = loadEntityLookup();
   const aliases = loadAliases();
+  const knownTags = loadKnownTags();
 
   // Step 3: Match entities for each transaction
   const matched: ProcessedTransaction[] = [];
@@ -349,6 +355,7 @@ export async function processImport(
             correction.entity_id,
             parseCorrectionTags(correction.tags),
             null,
+            knownTags,
             correction.description_pattern
           ),
         });
@@ -384,7 +391,7 @@ export async function processImport(
             matchType: match.matchType,
           },
           status: "matched",
-          suggestedTags: buildSuggestedTags(transaction.description, entityId, [], null),
+          suggestedTags: buildSuggestedTags(transaction.description, entityId, [], null, knownTags),
         });
       } else {
         // No match - try AI categorization
@@ -441,7 +448,8 @@ export async function processImport(
                 transaction.description,
                 entityId,
                 [],
-                aiResult.category
+                aiResult.category,
+                knownTags
               ),
             });
           } else {
@@ -458,7 +466,8 @@ export async function processImport(
                 transaction.description,
                 null,
                 [],
-                aiResult.category
+                aiResult.category,
+                knownTags
               ),
             });
           }
@@ -471,7 +480,7 @@ export async function processImport(
             entity: { matchType: "none" },
             status: "uncertain",
             error: aiError ? "AI categorization unavailable" : "No entity match found",
-            suggestedTags: buildSuggestedTags(transaction.description, null, [], null),
+            suggestedTags: buildSuggestedTags(transaction.description, null, [], null, knownTags),
           });
         }
       }
@@ -710,6 +719,7 @@ export async function processImportWithProgress(
 
     const entityLookup = loadEntityLookup();
     const aliases = loadAliases();
+    const knownTags = loadKnownTags();
 
     const matched: ProcessedTransaction[] = [];
     const uncertain: ProcessedTransaction[] = [];
@@ -787,7 +797,13 @@ export async function processImportWithProgress(
               matchType: match.matchType,
             },
             status: "matched",
-            suggestedTags: buildSuggestedTags(transaction.description, entityId, [], null),
+            suggestedTags: buildSuggestedTags(
+              transaction.description,
+              entityId,
+              [],
+              null,
+              knownTags
+            ),
           });
 
           batchItem.status = "success";
@@ -840,7 +856,8 @@ export async function processImportWithProgress(
                   transaction.description,
                   entityId,
                   [],
-                  aiResult.category
+                  aiResult.category,
+                  knownTags
                 ),
               });
 
@@ -858,7 +875,8 @@ export async function processImportWithProgress(
                   transaction.description,
                   null,
                   [],
-                  aiResult.category
+                  aiResult.category,
+                  knownTags
                 ),
               });
 
@@ -873,7 +891,7 @@ export async function processImportWithProgress(
               entity: { matchType: "none" },
               status: "uncertain",
               error: reason,
-              suggestedTags: buildSuggestedTags(transaction.description, null, [], null),
+              suggestedTags: buildSuggestedTags(transaction.description, null, [], null, knownTags),
             });
 
             batchItem.status = "success";
