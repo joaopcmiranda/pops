@@ -51,6 +51,9 @@ export default defineConfig({
       url: 'http://localhost:5566',
       reuseExistingServer: !process.env.CI,
       timeout: 120000,
+      // Disable React Query DevTools in E2E — its SVG logo renders at full intrinsic
+      // size (r=316.5px circle) and intercepts pointer events on popover buttons.
+      env: { VITE_E2E: 'true' },
     },
     // Finance API — required for integration tests; mocked tests don't use it but starting
     // it is harmless and ensures the proxy target is always available.

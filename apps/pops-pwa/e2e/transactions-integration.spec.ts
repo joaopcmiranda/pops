@@ -100,6 +100,11 @@ test.describe('Transactions — TagEditor save flow', () => {
     await expect(page.getByText('Salary Payment').first()).toBeVisible({ timeout: 10000 });
   });
 
+  // Clear routes so in-flight requests don't error after the page closes.
+  test.afterEach(async ({ page }) => {
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
+  });
+
   test('opens TagEditor on a seeded transaction', async ({ page }) => {
     // Multiple Salary Payment rows are seeded — target the first one.
     const row = page.getByRole('row', { name: /Salary Payment/i }).first();
