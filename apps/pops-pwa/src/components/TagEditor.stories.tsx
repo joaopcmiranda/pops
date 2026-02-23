@@ -105,11 +105,20 @@ export const WithSaveLatency: Story = {
   },
 };
 
-// Extra tags from app-specific taxonomy
-export const WithExtraTags: Story = {
+// Available tags loaded from the database (dynamic Notion Tags)
+export const WithAvailableTags: Story = {
   args: {
     currentTags: [],
     onSave: (tags) => console.log("Saved:", tags),
-    extraTags: ["Salary", "Freelance", "Reimbursement", "Cashback"],
+    availableTags: [
+      "Groceries",
+      "Dining",
+      "Transport",
+      "Subscriptions",
+      "Salary",
+      "Freelance",
+      "Reimbursement",
+      "Cashback",
+    ],
   },
 };

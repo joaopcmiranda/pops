@@ -36,12 +36,22 @@ export type EntityMatch = z.infer<typeof entityMatchSchema>;
 export const transactionTypeSchema = z.enum(["purchase", "transfer", "income"]);
 export type TransactionType = z.infer<typeof transactionTypeSchema>;
 
+export const suggestedTagSchema = z.object({
+  tag: z.string(),
+  source: z.enum(["ai", "rule", "entity"]),
+  /** For rule-sourced tags: the description_pattern from the matched correction */
+  pattern: z.string().optional(),
+});
+
+export type SuggestedTag = z.infer<typeof suggestedTagSchema>;
+
 export const processedTransactionSchema = parsedTransactionSchema.extend({
   entity: entityMatchSchema,
   status: z.enum(["matched", "uncertain", "failed", "skipped"]),
   skipReason: z.string().optional(), // For skipped transactions (e.g., "Duplicate")
   error: z.string().optional(), // For failed transactions
   transactionType: transactionTypeSchema.optional(), // User-set type; undefined = purchase (default)
+  suggestedTags: z.array(suggestedTagSchema).optional(),
 });
 
 export type ProcessedTransaction = z.infer<typeof processedTransactionSchema>;
@@ -55,6 +65,9 @@ export const confirmedTransactionSchema = parsedTransactionSchema.extend({
   entityId: z.string().optional(),
   entityName: z.string().optional(),
   entityUrl: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  /** Source attribution metadata — used by TagReviewStep for badges; not written to Notion. */
+  suggestedTags: z.array(suggestedTagSchema).optional(),
 });
 
 export type ConfirmedTransaction = z.infer<typeof confirmedTransactionSchema>;

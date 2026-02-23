@@ -32,6 +32,8 @@ export function TransactionsPage() {
     limit: 100,
   });
 
+  const { data: availableTags } = trpc.transactions.availableTags.useQuery();
+
   const updateMutation = trpc.transactions.update.useMutation({
     onSuccess: () => {
       void utils.transactions.list.invalidate();
@@ -134,6 +136,7 @@ export function TransactionsPage() {
             currentTags={tags}
             onSave={handleTagSave(notionId, entityId, description)}
             onSuggest={handleTagSuggest(description, entityId)}
+            availableTags={availableTags ?? []}
           />
         );
       },

@@ -15,6 +15,7 @@ import {
 import * as service from "./service.js";
 import { NotFoundError } from "../../shared/errors.js";
 import { suggestTags } from "../../shared/tag-suggester.js";
+import { getDb } from "../../db.js";
 
 /** Default pagination values. */
 const DEFAULT_LIMIT = 50;
@@ -117,4 +118,33 @@ export const transactionsRouter = router({
       const tags = suggestTags(input.description, input.entityId ?? null);
       return { tags };
     }),
+
+  /**
+   * List all distinct tag values from existing transactions.
+   * Used for autocomplete in tag editors — reflects the actual tags in the user's
+   * Notion database (mirrored to SQLite by notion-sync).
+   * Returns an empty array when no transactions exist yet; callers allow free-form input.
+   */
+  availableTags: protectedProcedure.query(() => {
+    const db = getDb();
+    const rows = db
+      .prepare("SELECT tags FROM transactions WHERE tags IS NOT NULL AND tags != '[]'")
+      .all() as { tags: string }[];
+
+    const tagSet = new Set<string>();
+    for (const row of rows) {
+      try {
+        const parsed = JSON.parse(row.tags) as unknown;
+        if (Array.isArray(parsed)) {
+          for (const t of parsed) {
+            if (typeof t === "string" && t.trim()) tagSet.add(t.trim());
+          }
+        }
+      } catch {
+        // malformed JSON — ignore
+      }
+    }
+
+    return [...tagSet].sort();
+  }),
 });
