@@ -37,7 +37,10 @@ export function envContextMiddleware(req: Request, res: Response, next: NextFunc
   // await, or fire-and-forget Promises that outlive the request) will NOT see
   // the env DB. This is acceptable here because:
   //  - tRPC handlers use async/await throughout — context propagates correctly.
-  //  - Background jobs (TTL watcher, import processing) always use getDb() via
-  //    the prod DB path, which is the desired behaviour for those operations.
+  //  - Fire-and-forget background tasks started from within a handler (e.g.
+  //    processImportWithProgress) inherit the env context via async_hooks, so
+  //    getDb() and isNamedEnvContext() work correctly inside them.
+  //  - Long-lived background jobs (TTL watcher) run outside any request context
+  //    and always use the prod DB, which is the correct behaviour.
   withEnvDb(db, () => next());
 }

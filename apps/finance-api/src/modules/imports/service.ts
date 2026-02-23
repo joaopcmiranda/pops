@@ -7,7 +7,7 @@
  * - AI fallback with full row context
  * - Batch writes with rate limiting
  */
-import { getDb } from "../../db.js";
+import { getDb, isNamedEnvContext } from "../../db.js";
 import { logger } from "../../lib/logger.js";
 import { formatImportError } from "../../lib/errors.js";
 import { matchEntity } from "./lib/entity-matcher.js";
@@ -86,10 +86,10 @@ async function findExistingChecksums(
   checksums: Set<string>;
   error?: { type: string; message: string; details?: string };
 }> {
-  // Skip Notion deduplication entirely when SKIP_NOTION_DEDUP=true.
-  // Used in CI/E2E environments where Notion credentials are dummies and
-  // network calls to api.notion.com are undesirable.
-  if (process.env["SKIP_NOTION_DEDUP"] === "true") {
+  // Named envs are ephemeral test databases with no Notion counterpart —
+  // deduplication against Notion is meaningless and would make an unnecessary
+  // network call. SKIP_NOTION_DEDUP=true is kept as a manual escape hatch.
+  if (isNamedEnvContext() || process.env["SKIP_NOTION_DEDUP"] === "true") {
     return { checksums: new Set() };
   }
 

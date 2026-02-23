@@ -7,7 +7,7 @@
  */
 import Anthropic from "@anthropic-ai/sdk";
 import { getEnv } from "../../../env.js";
-import { getDb } from "../../../db.js";
+import { getDb, isNamedEnvContext } from "../../../db.js";
 import { logger } from "../../../lib/logger.js";
 
 export interface AiCacheEntry {
@@ -81,6 +81,12 @@ export async function categorizeWithAi(
 ): Promise<{ result: AiCacheEntry | null; usage?: AiUsageStats }> {
   const key = rawRow.toUpperCase().trim();
   const sanitizedDescription = rawRow.trim().substring(0, 100); // Limit for logging
+
+  // Named envs are isolated test databases — no point calling the Claude API
+  // against synthetic data. Skip immediately and let callers route to uncertain.
+  if (isNamedEnvContext()) {
+    return { result: null };
+  }
 
   const cached = cache.get(key);
   if (cached) {

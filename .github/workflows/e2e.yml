@@ -45,10 +45,9 @@ jobs:
         env:
           CI: true
           # finance-api is started by Playwright's webServer config.
-          # These dummy values satisfy env.ts validation; no real Notion calls are made.
-          # SKIP_NOTION_DEDUP: bypasses the Notion checksum query in processImport so
-          # E2E tests exercise entity matching (SQLite) without any network side effects.
-          SKIP_NOTION_DEDUP: 'true'
+          # These dummy values satisfy env.ts validation. Integration tests use named
+          # envs (?env=e2e), which automatically skip all external API calls (Notion,
+          # Claude) — no real network traffic is made during E2E tests.
           NOTION_API_TOKEN: test-dummy-token
           NOTION_BALANCE_SHEET_ID: test-balance-sheet-id
           NOTION_ENTITIES_DB_ID: test-entities-db-id
