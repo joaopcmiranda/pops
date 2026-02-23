@@ -14,6 +14,7 @@ import { matchEntity } from "./lib/entity-matcher.js";
 import { categorizeWithAi, AiCategorizationError } from "./lib/ai-categorizer.js";
 import { updateProgress } from "./progress-store.js";
 import { findMatchingCorrection } from "../corrections/service.js";
+import { suggestTags } from "../../shared/tag-suggester.js";
 import { getNotionClient, getBalanceSheetId, getEntitiesDbId } from "../../shared/notion-client.js";
 import { createTransaction } from "../transactions/service.js";
 import type { Client } from "@notionhq/client";
@@ -27,10 +28,99 @@ import type {
   ImportResult,
   ImportWarning,
   AiUsageStats,
+  SuggestedTag,
 } from "./types.js";
 
 const CONCURRENCY = 3;
 const DELAY_MS = 400;
+
+/** Parse a JSON-encoded tags string from the corrections table into a string array. */
+function parseCorrectionTags(raw: string): string[] {
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (Array.isArray(parsed)) {
+      return parsed.filter((t): t is string => typeof t === "string");
+    }
+    return [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Build the suggested tags for a single transaction with source attribution.
+ *
+ * Priority: rule > ai > entity.
+ * - rule: tags from a matched correction rule
+ * - ai:   AI-returned category if it matches a tag already in the database
+ * - entity: tags from suggestTags() that weren't already attributed above
+ *
+ * The "ai" match is case-insensitive against tags returned by availableTags
+ * (i.e. what's actually in the user's Notion database), so no hardcoded list.
+ */
+function buildSuggestedTags(
+  description: string,
+  entityId: string | null,
+  correctionTags: string[],
+  aiCategory: string | null,
+  correctionPattern?: string
+): SuggestedTag[] {
+  const seen = new Set<string>();
+  const result: SuggestedTag[] = [];
+
+  // 1. Correction rule tags
+  for (const tag of correctionTags) {
+    if (!seen.has(tag)) {
+      seen.add(tag);
+      result.push({ tag, source: "rule", pattern: correctionPattern });
+    }
+  }
+
+  // 2. AI category — only if the category matches an existing tag (case-insensitive)
+  //    We get existing tags from suggestTags() output minus what entity would provide,
+  //    but more simply: check against the tags already in the SQLite transactions table.
+  if (aiCategory) {
+    const db = getDb();
+    const rows = db
+      .prepare("SELECT tags FROM transactions WHERE tags IS NOT NULL AND tags != '[]'")
+      .all() as { tags: string }[];
+
+    const lowerCategory = aiCategory.toLowerCase();
+    let matched: string | null = null;
+    for (const row of rows) {
+      try {
+        const parsed = JSON.parse(row.tags) as unknown;
+        if (Array.isArray(parsed)) {
+          for (const t of parsed) {
+            if (typeof t === "string" && t.toLowerCase() === lowerCategory) {
+              matched = t;
+              break;
+            }
+          }
+        }
+      } catch {
+        /* ignore */
+      }
+      if (matched) break;
+    }
+
+    if (matched && !seen.has(matched)) {
+      seen.add(matched);
+      result.push({ tag: matched, source: "ai" });
+    }
+  }
+
+  // 3. Entity default tags + correction tags via suggestTags — anything not already attributed
+  const entitySuggestions = suggestTags(description, entityId);
+  for (const tag of entitySuggestions) {
+    if (!seen.has(tag)) {
+      seen.add(tag);
+      result.push({ tag, source: "entity" });
+    }
+  }
+
+  return result;
+}
 
 /**
  * Load entity lookup from SQLite: name → notion_id
@@ -254,6 +344,13 @@ export async function processImport(
             confidence: correction.confidence,
           },
           status: correction.confidence >= 0.9 ? "matched" : "uncertain",
+          suggestedTags: buildSuggestedTags(
+            transaction.description,
+            correction.entity_id,
+            parseCorrectionTags(correction.tags),
+            null,
+            correction.description_pattern
+          ),
         });
         continue; // Skip to next transaction
       }
@@ -287,6 +384,7 @@ export async function processImport(
             matchType: match.matchType,
           },
           status: "matched",
+          suggestedTags: buildSuggestedTags(transaction.description, entityId, [], null),
         });
       } else {
         // No match - try AI categorization
@@ -339,6 +437,12 @@ export async function processImport(
                 matchType: "ai",
               },
               status: "matched",
+              suggestedTags: buildSuggestedTags(
+                transaction.description,
+                entityId,
+                [],
+                aiResult.category
+              ),
             });
           } else {
             // AI suggested new entity name - add to uncertain
@@ -350,6 +454,12 @@ export async function processImport(
                 confidence: 0.7,
               },
               status: "uncertain",
+              suggestedTags: buildSuggestedTags(
+                transaction.description,
+                null,
+                [],
+                aiResult.category
+              ),
             });
           }
         } else {
@@ -361,6 +471,7 @@ export async function processImport(
             entity: { matchType: "none" },
             status: "uncertain",
             error: aiError ? "AI categorization unavailable" : "No entity match found",
+            suggestedTags: buildSuggestedTags(transaction.description, null, [], null),
           });
         }
       }
@@ -467,7 +578,7 @@ export async function executeImport(
           amount: transaction.amount,
           date: transaction.date,
           type: notionType,
-          tags: [],
+          tags: transaction.tags ?? [],
           entityId: transaction.entityId ?? null,
           entityName: transaction.entityName ?? null,
           location: transaction.location ?? null,
@@ -676,6 +787,7 @@ export async function processImportWithProgress(
               matchType: match.matchType,
             },
             status: "matched",
+            suggestedTags: buildSuggestedTags(transaction.description, entityId, [], null),
           });
 
           batchItem.status = "success";
@@ -724,6 +836,12 @@ export async function processImportWithProgress(
                   matchType: "ai",
                 },
                 status: "matched",
+                suggestedTags: buildSuggestedTags(
+                  transaction.description,
+                  entityId,
+                  [],
+                  aiResult.category
+                ),
               });
 
               batchItem.status = "success";
@@ -736,6 +854,12 @@ export async function processImportWithProgress(
                   confidence: 0.7,
                 },
                 status: "uncertain",
+                suggestedTags: buildSuggestedTags(
+                  transaction.description,
+                  null,
+                  [],
+                  aiResult.category
+                ),
               });
 
               batchItem.status = "success";
@@ -749,6 +873,7 @@ export async function processImportWithProgress(
               entity: { matchType: "none" },
               status: "uncertain",
               error: reason,
+              suggestedTags: buildSuggestedTags(transaction.description, null, [], null),
             });
 
             batchItem.status = "success";
@@ -933,7 +1058,7 @@ export async function executeImportWithProgress(
             amount: transaction.amount,
             date: transaction.date,
             type: notionType,
-            tags: [],
+            tags: transaction.tags ?? [],
             entityId: transaction.entityId ?? null,
             entityName: transaction.entityName ?? null,
             location: transaction.location ?? null,

@@ -127,6 +127,15 @@ const mockNotionWrites = async (page: Page) => {
       : { result: { data: { success: true } } };
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
   });
+
+  // Mock transactions.availableTags endpoint (used by TagEditor in TagReviewStep)
+  await page.route(/\/trpc\/transactions\.availableTags/, async (route) => {
+    const isBatch = new URL(route.request().url()).searchParams.has('batch');
+    const body = isBatch
+      ? [{ result: { data: ['Groceries', 'Subscriptions', 'Transport'] } }]
+      : { result: { data: ['Groceries', 'Subscriptions', 'Transport'] } };
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
+  });
 };
 
 // ---------------------------------------------------------------------------

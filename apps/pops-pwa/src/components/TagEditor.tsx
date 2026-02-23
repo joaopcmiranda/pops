@@ -11,28 +11,14 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Badge } from "./ui/badge";
 import { cn } from "@/lib/utils";
 
-/** Common tags for autocomplete suggestions. */
-export const KNOWN_TAGS = [
-  "Groceries",
-  "Dining",
-  "Transport",
-  "Utilities",
-  "Entertainment",
-  "Shopping",
-  "Health",
-  "Insurance",
-  "Subscriptions",
-  "Income",
-  "Transfer",
-  "Government",
-  "Education",
-  "Travel",
-  "Rent",
-  "Online",
-  "Novated Lease",
-  "Tax Deductible",
-  "Other",
-];
+/** Source attribution for a tag — from AI, correction rule, or entity defaults. */
+export type TagSource = "ai" | "rule" | "entity";
+
+export interface TagMetaEntry {
+  source: TagSource;
+  /** For rule-sourced tags: the description_pattern from the matched correction. */
+  pattern?: string;
+}
 
 export interface TagEditorProps {
   /** Current tags on the transaction. */
@@ -41,10 +27,19 @@ export interface TagEditorProps {
   onSave: (tags: string[]) => void | Promise<void>;
   /** Optional async callback for AI-powered tag suggestions. */
   onSuggest?: () => Promise<string[]>;
-  /** Additional known tags beyond KNOWN_TAGS to show in autocomplete. */
-  extraTags?: string[];
+  /**
+   * Available tags for autocomplete — sourced dynamically from the
+   * transactions.availableTags endpoint (Notion Tags multi_select options).
+   * Users may still type any free-form string not in this list.
+   */
+  availableTags?: string[];
   /** Whether to disable editing (shows tags read-only). */
   disabled?: boolean;
+  /**
+   * Optional source attribution metadata keyed by tag name.
+   * When provided, source icons and pattern tooltips are shown in the trigger button.
+   */
+  tagMeta?: Map<string, TagMetaEntry>;
 }
 
 /**
@@ -59,12 +54,19 @@ export interface TagEditorProps {
  * />
  * ```
  */
+const SOURCE_ICONS: Record<TagSource, string> = {
+  ai: "🤖",
+  rule: "📋",
+  entity: "🏪",
+};
+
 export function TagEditor({
   currentTags,
   onSave,
   onSuggest,
-  extraTags = [],
+  availableTags = [],
   disabled = false,
+  tagMeta,
 }: TagEditorProps) {
   const [open, setOpen] = useState(false);
   const [tags, setTags] = useState<string[]>(currentTags);
@@ -73,18 +75,28 @@ export function TagEditor({
   const [isSuggesting, setIsSuggesting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const allKnownTags = [...new Set([...KNOWN_TAGS, ...extraTags])];
+  const allKnownTags = availableTags;
 
   // Reset local tags when prop changes (e.g. after successful external update)
   useEffect(() => {
     setTags(currentTags);
   }, [currentTags]);
 
-  const filteredSuggestions = allKnownTags.filter(
-    (tag) =>
-      !tags.includes(tag) &&
-      (inputValue === "" || tag.toLowerCase().includes(inputValue.toLowerCase()))
-  );
+  const filteredSuggestions = (() => {
+    if (inputValue === "") {
+      return allKnownTags.filter((tag) => !tags.includes(tag));
+    }
+    const lower = inputValue.toLowerCase();
+    const startsWith: string[] = [];
+    const contains: string[] = [];
+    for (const tag of allKnownTags) {
+      if (tags.includes(tag)) continue;
+      const tagLower = tag.toLowerCase();
+      if (tagLower.startsWith(lower)) startsWith.push(tag);
+      else if (tagLower.includes(lower)) contains.push(tag);
+    }
+    return [...startsWith, ...contains];
+  })();
 
   function addTag(tag: string) {
     const trimmed = tag.trim();
@@ -100,6 +112,11 @@ export function TagEditor({
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Tab" && filteredSuggestions.length > 0) {
+      e.preventDefault();
+      addTag(filteredSuggestions[0]);
+      return;
+    }
     if ((e.key === "Enter" || e.key === ",") && inputValue.trim()) {
       e.preventDefault();
       addTag(inputValue);
@@ -158,11 +175,25 @@ export function TagEditor({
           {tags.length === 0 ? (
             <span className="text-muted-foreground text-xs">—</span>
           ) : (
-            tags.slice(0, 3).map((tag) => (
-              <Badge key={tag} variant="secondary" className="text-xs">
-                {tag}
-              </Badge>
-            ))
+            tags.slice(0, 3).map((tag) => {
+              const meta = tagMeta?.get(tag);
+              const tooltipText = meta?.source === "rule" && meta?.pattern
+                ? `Rule: "${meta.pattern}"`
+                : meta?.source
+                ? `${meta.source} suggestion`
+                : undefined;
+              return (
+                <Badge
+                  key={tag}
+                  variant="secondary"
+                  className="text-xs"
+                  title={tooltipText}
+                >
+                  {meta ? `${SOURCE_ICONS[meta.source]} ` : ""}
+                  {tag}
+                </Badge>
+              );
+            })
           )}
           {tags.length > 3 && (
             <Badge variant="secondary" className="text-xs">

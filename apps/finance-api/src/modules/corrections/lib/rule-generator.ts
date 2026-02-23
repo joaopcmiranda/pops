@@ -8,28 +8,35 @@ import { getEnv } from "../../../env.js";
 import { getDb } from "../../../db.js";
 import { logger } from "../../../lib/logger.js";
 
-/** Common tags available for rule generation. */
-const KNOWN_TAGS = [
-  "Groceries",
-  "Dining",
-  "Transport",
-  "Utilities",
-  "Entertainment",
-  "Shopping",
-  "Health",
-  "Insurance",
-  "Subscriptions",
-  "Income",
-  "Transfer",
-  "Government",
-  "Education",
-  "Travel",
-  "Rent",
-  "Online",
-  "Novated Lease",
-  "Tax Deductible",
-  "Other",
-];
+/**
+ * Load all distinct tag values from existing transactions.
+ * Used to inform LLM prompts with real tags from the user's Notion database.
+ */
+function loadAvailableTagsFromDb(): string[] {
+  try {
+    const db = getDb();
+    const rows = db
+      .prepare("SELECT tags FROM transactions WHERE tags IS NOT NULL AND tags != '[]'")
+      .all() as { tags: string }[];
+
+    const tagSet = new Set<string>();
+    for (const row of rows) {
+      try {
+        const parsed = JSON.parse(row.tags) as unknown;
+        if (Array.isArray(parsed)) {
+          for (const t of parsed) {
+            if (typeof t === "string" && t.trim()) tagSet.add(t.trim());
+          }
+        }
+      } catch {
+        // malformed JSON — ignore
+      }
+    }
+    return [...tagSet].sort();
+  } catch {
+    return [];
+  }
+}
 
 export interface ProposedRule {
   descriptionPattern: string;
@@ -92,9 +99,13 @@ export async function generateRules(transactions: TransactionInput[]): Promise<P
     })
     .join("\n");
 
+  const availableTags = loadAvailableTagsFromDb();
+  const tagListStr =
+    availableTags.length > 0 ? availableTags.join(", ") : "common financial categories";
+
   const prompt = `You are a transaction categorization assistant. Given these bank transactions, propose reusable tagging rules that could apply to similar transactions in the future.
 
-Available tags: ${KNOWN_TAGS.join(", ")}
+Available tags: ${tagListStr}
 
 Transactions:
 ${transactionLines}
